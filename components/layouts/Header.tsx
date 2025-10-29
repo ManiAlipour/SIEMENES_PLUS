@@ -21,11 +21,12 @@ export default function Header() {
   ];
 
   return (
-    <header className="fixed top-0 left-0 w-full z-50 bg-white shadow-md">
-      <div className="max-w-7xl mx-auto px-4 py-3 flex flex-col gap-2">
-        {/* Top row: Logo + Links + Buttons */}
-        <div className="flex items-center justify-between w-full">
-          <Link href="/" className="flex items-center gap-2">
+    <header className="sticky top-0 left-0 w-full z-50 bg-gradient-to-b from-white to-[#f7f7f7] shadow-md">
+      <div className="max-w-7xl mx-auto px-4 py-[clamp(0.5rem,1.4vw,1rem)] flex flex-col gap-2">
+        {/* --- Top Row --- */}
+        <div className="flex flex-wrap md:flex-nowrap items-center justify-between w-full gap-[clamp(0.5rem,1vw,1.25rem)]">
+          {/* Logo */}
+          <Link href="/" className="flex items-center gap-2 flex-shrink-0">
             <Image
               src="/images/logo.jpg"
               alt="Siemens Plus Logo"
@@ -34,17 +35,17 @@ export default function Header() {
               className="rounded-full"
             />
             <div className="flex flex-col leading-tight font-vazir">
-              <span className="text-2xl font-extrabold text-gray-900">
-                سیمِنس پلاس
+              <span className="text-2xl font-extrabold text-gray-900 whitespace-nowrap">
+                زیمِنس پلاس
               </span>
-              <span className="text-xs text-gray-500">
+              <span className="text-xs text-gray-500 whitespace-nowrap">
                 فروش قطعات الکترونیکی صنعتی
               </span>
             </div>
           </Link>
 
-          {/* Desktop links */}
-          <nav className="hidden md:flex items-center gap-6 font-vazir">
+          {/* Nav Links (hide earlier than md) */}
+          <nav className="hidden sm:flex items-center flex-wrap justify-center gap-[clamp(0.5rem,1.2vw,1.25rem)] font-vazir">
             {links.map((link) => (
               <Link
                 key={link.href}
@@ -53,46 +54,46 @@ export default function Header() {
                   pathname === link.href
                     ? "text-primary font-semibold"
                     : "text-gray-800"
-                }`}
+                } whitespace-nowrap`}
               >
                 {link.name}
               </Link>
             ))}
           </nav>
 
-          {/* Desktop buttons: Login / Register / Shop */}
-          <div className="hidden md:flex items-center gap-3">
+          {/* Buttons */}
+          <div className="hidden md:flex items-center flex-shrink-0 gap-[clamp(0.4rem,1vw,0.75rem)]">
             <Link
               href="/login"
-              className="px-4 py-2 rounded-lg font-vazir text-gray-800 border border-gray-300 hover:bg-gray-100 transition transform hover:scale-105"
+              className="px-3 py-2 rounded-lg font-vazir text-gray-800 border border-gray-300 hover:bg-gray-100 transition transform hover:scale-105"
             >
               ورود
             </Link>
             <Link
               href="/register"
-              className="px-4 py-2 rounded-lg font-vazir text-white bg-primary hover:bg-primary/90 transition transform hover:scale-105"
+              className="px-3 py-2 rounded-lg font-vazir text-white bg-primary hover:bg-primary/90 transition transform hover:scale-105"
             >
               ثبت‌نام
             </Link>
             <Link
               href="/shop"
-              className="px-5 py-2 rounded-xl font-vazir text-white bg-primary hover:bg-primary/90 transition shadow-md transform hover:scale-105"
+              className="px-4 py-2 rounded-xl font-vazir text-white bg-primary hover:bg-primary/90 transition shadow-md transform hover:scale-105"
             >
               فروشگاه
             </Link>
           </div>
 
-          {/* Mobile menu button */}
+          {/* Mobile Button */}
           <button
             onClick={() => setOpen(!open)}
-            className="md:hidden text-gray-900"
+            className="sm:hidden text-gray-900 ml-auto"
           >
-            {open ? <FiX size={28} /> : <FiMenu size={28} />}
+            {open ? <FiX size={26} /> : <FiMenu size={26} />}
           </button>
         </div>
 
-        {/* Bottom row: Search + Phone (desktop) */}
-        <div className="hidden md:flex items-center justify-between w-full gap-4 mt-2">
+        {/* --- Lower Row Desktop --- */}
+        <div className="hidden md:flex items-center justify-between w-full gap-4 mt-[clamp(0.25rem,1vw,0.75rem)]">
           <div className="flex-1 max-w-md flex items-center gap-2">
             <input
               type="text"
@@ -113,7 +114,7 @@ export default function Header() {
         </div>
       </div>
 
-      {/* Mobile menu with animation */}
+      {/* --- Mobile Menu Animated --- */}
       <AnimatePresence>
         {open && (
           <motion.div
@@ -121,9 +122,8 @@ export default function Header() {
             animate={{ opacity: 1, y: 0 }}
             exit={{ opacity: 0, y: -50 }}
             transition={{ duration: 0.25 }}
-            className="md:hidden bg-white border-t border-gray-200 shadow-md"
+            className="sm:hidden bg-white border-t border-gray-200 shadow-md"
           >
-            {/* Mobile search */}
             <div className="flex items-center p-4 gap-2">
               <input
                 type="text"
@@ -137,7 +137,6 @@ export default function Header() {
               </button>
             </div>
 
-            {/* Mobile links */}
             <nav className="flex flex-col p-4 gap-3">
               {links.map((link) => (
                 <Link
@@ -154,13 +153,11 @@ export default function Header() {
                 </Link>
               ))}
 
-              {/* Mobile phone */}
               <div className="flex items-center gap-2 mt-2 text-gray-600">
                 <FiPhone />
                 <span>۰۹۱۲۳۴۵۶۷۸۹</span>
               </div>
 
-              {/* Mobile buttons: Login / Register / Shop */}
               <div className="flex flex-col gap-2 mt-3">
                 <Link
                   href="/login"
