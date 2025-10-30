@@ -1,3 +1,5 @@
+import AboutUs from "@/components/layouts/AboutUs";
+import BlogSection from "@/components/layouts/BlogSection";
 import CategoriesSection from "@/components/layouts/CategoriesSection";
 import CategoryHighlightsSection from "@/components/layouts/CategoryHighlightsSection";
 import FeaturedProductsSection from "@/components/layouts/FeaturedProductsSection";
@@ -11,6 +13,10 @@ export default function Home() {
       <FeaturedProductsSection />
 
       <CategoryHighlightsSection />
+
+      <BlogSection />
+
+      <AboutUs />
     </div>
   );
 }
