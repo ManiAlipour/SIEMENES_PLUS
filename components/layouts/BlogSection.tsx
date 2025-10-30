@@ -1,5 +1,5 @@
 // components/blog/BlogSection.tsx
-import { BlogPost, blogPosts } from "@/assets/data/blog-data";
+import { BlogPost, blogPosts } from "@/data/blog-data";
 import BlogCard from "../features/BlogCard";
 import Link from "next/link";
 

@@ -2,7 +2,7 @@
 
 import React from "react";
 import ProductCard from "../features/ProductCard";
-import { highlightedCategories } from "@/assets/data/highlighted-categories";
+import { highlightedCategories } from "@/data/highlighted-categories";
 
 export default function CategoryHighlightsSection() {
   return (

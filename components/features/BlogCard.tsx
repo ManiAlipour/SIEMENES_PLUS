@@ -1,7 +1,7 @@
 import Link from "next/link";
 import Image from "next/image";
 import AparatPlayer from "./AparatPlayer";
-import { BlogPost } from "@/assets/data/blog-data";
+import { BlogPost } from "@/data/blog-data";
 
 export default function BlogCard({ post }: { post: BlogPost }) {
   const { title, description, image, videoUrl, slug } = post;
