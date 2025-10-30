@@ -4,12 +4,14 @@ import Link from "next/link";
 import Image from "next/image";
 import { usePathname } from "next/navigation";
 import { useState, useEffect } from "react";
-import { FiMenu, FiX, FiSearch, FiPhone } from "react-icons/fi";
+import { FiMenu, FiX, FiSearch, FiPhone, FiChevronDown } from "react-icons/fi";
 import { motion, AnimatePresence } from "framer-motion";
 
 export default function Header() {
   const pathname = usePathname();
-  const [open, setOpen] = useState(false);
+  const [open, setOpen] = useState(false); // mobile sidebar
+  const [servicesOpen, setServicesOpen] = useState(false); // desktop mega
+  const [mobileServicesOpen, setMobileServicesOpen] = useState(false); // mobile submenu
   const [search, setSearch] = useState("");
   const [scrolled, setScrolled] = useState(false);
 
@@ -21,12 +23,29 @@ export default function Header() {
     return () => window.removeEventListener("scroll", handleScroll);
   }, []);
 
+  useEffect(() => {
+    // lock scroll when sidebar open
+    if (open) document.body.style.overflow = "hidden";
+    else document.body.style.overflow = "";
+    return () => {
+      document.body.style.overflow = "";
+    };
+  }, [open]);
+
   const links = [
     { name: "خانه", href: "/" },
     { name: "محصولات", href: "/products" },
+    // خدمات: handled separately for desktop
     { name: "وبلاگ", href: "/blog" },
     { name: "درباره ما", href: "/about" },
     { name: "تماس با ما", href: "/contact" },
+  ];
+
+  const services = [
+    { name: "مشاوره و طراحی", href: "/services/consulting" },
+    { name: "نصب و راه‌اندازی", href: "/services/installation" },
+    { name: "تعمیرات و نگهداری", href: "/services/maintenance" },
+    { name: "آموزش و کارگاه", href: "/services/training" },
   ];
 
   return (
@@ -60,7 +79,7 @@ export default function Header() {
           </Link>
 
           {/* ناوبری دسکتاپ */}
-          <nav className="hidden sm:flex items-center flex-wrap justify-center gap-[clamp(0.5rem,1.2vw,1.25rem)] font-vazir">
+          <nav className="hidden sm:flex items-center flex-wrap justify-center gap-[clamp(0.5rem,1.2vw,1.25rem)] font-vazir relative">
             {links.map((link) => (
               <Link
                 key={link.href}
@@ -74,6 +93,54 @@ export default function Header() {
                 {link.name}
               </Link>
             ))}
+            {/* خدمات - دسکتاپ */}
+            <div
+              className="relative"
+              onMouseEnter={() => setServicesOpen(true)}
+              onMouseLeave={() => setServicesOpen(false)}
+            >
+              <button
+                onClick={() => setServicesOpen((v) => !v)}
+                className="flex items-center gap-1 text-foreground hover:brightness-110 transition"
+                aria-haspopup="true"
+                aria-expanded={servicesOpen}
+              >
+                خدمات{" "}
+                <FiChevronDown
+                  className={`${
+                    servicesOpen ? "rotate-180" : "rotate-0"
+                  } transition-transform`}
+                />
+              </button>
+
+              <AnimatePresence>
+                {servicesOpen && (
+                  <motion.div
+                    initial={{ opacity: 0, y: 10 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    exit={{ opacity: 0, y: 10 }}
+                    transition={{ duration: 0.18 }}
+                    className="absolute right-0 mt-3 w-[min(80vw,720px)] bg-white border border-borders shadow-2xl rounded-xl p-5 grid grid-cols-2 md:grid-cols-4 gap-4 z-50"
+                    role="menu"
+                  >
+                    {services.map((s) => (
+                      <Link
+                        key={s.href}
+                        href={s.href}
+                        className="group block rounded-lg p-3 hover:bg-background transition"
+                      >
+                        <div className="font-vazir-semibold text-foreground group-hover:text-primary">
+                          {s.name}
+                        </div>
+                        <div className="text-xs text-[rgba(30,30,30,0.7)] mt-1">
+                          جزئیات بیشتر
+                        </div>
+                      </Link>
+                    ))}
+                  </motion.div>
+                )}
+              </AnimatePresence>
+            </div>
           </nav>
 
           {/* دکمه‌ها */}
@@ -98,12 +165,13 @@ export default function Header() {
             </Link>
           </div>
 
-          {/* منوی موبایل */}
+          {/* دکمه منوی موبایل */}
           <button
-            onClick={() => setOpen(!open)}
+            onClick={() => setOpen(true)}
             className="sm:hidden text-foreground"
+            aria-label="باز کردن منو"
           >
-            {open ? <FiX size={26} /> : <FiMenu size={26} />}
+            <FiMenu size={26} />
           </button>
         </div>
 
@@ -117,7 +185,10 @@ export default function Header() {
               onChange={(e) => setSearch(e.target.value)}
               className="flex-1 px-3 py-2 rounded-lg border border-borders focus:outline-none focus:ring-2 focus:ring-primary bg-card text-foreground"
             />
-            <button className="bg-primary text-white px-3 py-2 rounded-lg hover:brightness-110 transition-shadow shadow-sm">
+            <button
+              className="bg-primary text-white px-3 py-2 rounded-lg hover:brightness-110 transition-shadow shadow-sm"
+              aria-label="جستجو"
+            >
               <FiSearch />
             </button>
           </div>
@@ -129,75 +200,150 @@ export default function Header() {
         </div>
       </div>
 
-      {/* منوی موبایل */}
+      {/* اوورلی و سایدبار موبایل از راست */}
       <AnimatePresence>
         {open && (
-          <motion.div
-            initial={{ opacity: 0, y: -50 }}
-            animate={{ opacity: 1, y: 0 }}
-            exit={{ opacity: 0, y: -50 }}
-            transition={{ duration: 0.25 }}
-            className="sm:hidden bg-card border-t border-borders shadow-soft"
-          >
-            <div className="flex items-center p-4 gap-2">
-              <input
-                type="text"
-                placeholder="جستجو..."
-                value={search}
-                onChange={(e) => setSearch(e.target.value)}
-                className="flex-1 px-3 py-2 rounded-lg border border-borders focus:outline-none focus:ring-2 focus:ring-primary text-foreground"
-              />
-              <button className="bg-primary text-white px-3 py-2 rounded-lg hover:brightness-110 transition-shadow shadow-sm">
-                <FiSearch />
-              </button>
-            </div>
-
-            <nav className="flex flex-col p-4 gap-3 font-vazir">
-              {links.map((link) => (
-                <Link
-                  key={link.href}
-                  href={link.href}
+          <>
+            {/* overlay */}
+            <motion.div
+              key="overlay"
+              className="fixed bg-white inset-0 backdrop-blur-[1px] z-40"
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              exit={{ opacity: 0 }}
+              onClick={() => setOpen(false)}
+            />
+            {/* drawer */}
+            <motion.aside
+              key="drawer"
+              className="fixed right-0 top-0 h-svh w-[82vw] max-w-[360px] bg-card border-l border-borders z-50 shadow-2xl flex flex-col"
+              initial={{ x: "100%" }}
+              animate={{ x: 0 }}
+              exit={{ x: "100%" }}
+              transition={{ type: "spring", duration: 0.35 }}
+              aria-label="نوار کناری منو"
+            >
+              <div className="flex items-center justify-between p-4 border-b border-borders">
+                <span className="font-vazir-semibold">منو</span>
+                <button
                   onClick={() => setOpen(false)}
-                  className={`py-2 hover:text-primary transition ${
-                    pathname === link.href
-                      ? "text-primary font-semibold"
-                      : "text-foreground"
-                  }`}
+                  aria-label="بستن منو"
+                  className="p-2 rounded-lg "
                 >
-                  {link.name}
-                </Link>
-              ))}
-
-              <div className="flex items-center gap-2 mt-3 text-[rgba(30,30,30,0.8)]">
-                <FiPhone className="text-primary" />
-                <span>۰۹۱۲۳۴۵۶۷۸۹</span>
+                  <FiX size={22} />
+                </button>
               </div>
 
-              <div className="flex flex-col gap-2 mt-3">
-                <Link
-                  href="/login"
-                  onClick={() => setOpen(false)}
-                  className="px-4 py-2 rounded-lg text-center border border-borders text-foreground hover:bg-background transition"
+              <div className="p-4 flex items-center gap-2 border-b border-borders">
+                <input
+                  type="text"
+                  placeholder="جستجو..."
+                  value={search}
+                  onChange={(e) => setSearch(e.target.value)}
+                  className="flex-1 px-3 py-2 rounded-lg border border-borders focus:outline-none 
+                  focus:ring-2 focus:ring-primary bg-card text-foreground"
+                />
+                <button
+                  className="bg-primary  px-3 py-2 rounded-lg hover:brightness-110 transition-shadow shadow-sm"
+                  aria-label="جستجو"
                 >
-                  ورود
-                </Link>
-                <Link
-                  href="/register"
-                  onClick={() => setOpen(false)}
-                  className="px-4 py-2 rounded-lg text-center text-white bg-primary hover:brightness-110 transition"
-                >
-                  ثبت‌نام
-                </Link>
-                <Link
-                  href="/shop"
-                  onClick={() => setOpen(false)}
-                  className="px-5 py-2 rounded-xl text-white bg-primary hover:brightness-110 transition shadow-soft text-center"
-                >
-                  فروشگاه
-                </Link>
+                  <FiSearch />
+                </button>
               </div>
-            </nav>
-          </motion.div>
+
+              <nav className="flex-1 overflow-y-auto p-4 flex flex-col gap-2 font-vazir">
+                {/* خدمات - موبایل با دراپ‌دان */}
+                <div className="rounded-lg">
+                  <button
+                    onClick={() => setMobileServicesOpen((v) => !v)}
+                    className="w-full flex items-center justify-between px-2 py-3 rounded-lg hover:bg-background transition text-foreground"
+                    aria-haspopup="true"
+                    aria-expanded={mobileServicesOpen}
+                  >
+                    <span>خدمات</span>
+                    <FiChevronDown
+                      className={`${
+                        mobileServicesOpen ? "rotate-180" : "rotate-0"
+                      } transition-transform`}
+                    />
+                  </button>
+                  <AnimatePresence initial={false}>
+                    {mobileServicesOpen && (
+                      <motion.div
+                        initial={{ height: 0, opacity: 0 }}
+                        animate={{ height: "auto", opacity: 1 }}
+                        exit={{ height: 0, opacity: 0 }}
+                        transition={{ duration: 0.2 }}
+                        className="overflow-hidden pl-2 pr-2"
+                      >
+                        <div className="mt-1 mb-2 rounded-lg border border-borders bg-card">
+                          {services.map((s) => (
+                            <Link
+                              key={s.href}
+                              href={s.href}
+                              onClick={() => setOpen(false)}
+                              className={`block px-3 py-2 text-sm hover:bg-background transition ${
+                                pathname === s.href
+                                  ? "text-primary font-semibold"
+                                  : "text-foreground"
+                              }`}
+                            >
+                              {s.name}
+                            </Link>
+                          ))}
+                        </div>
+                      </motion.div>
+                    )}
+                  </AnimatePresence>
+                </div>
+
+                {/* سایر لینک‌ها */}
+                {links.map((link) => (
+                  <Link
+                    key={link.href}
+                    href={link.href}
+                    onClick={() => setOpen(false)}
+                    className={`px-2 py-3 rounded-lg hover:bg-background transition ${
+                      pathname === link.href
+                        ? "text-primary font-semibold"
+                        : "text-foreground"
+                    }`}
+                  >
+                    {link.name}
+                  </Link>
+                ))}
+                <div className="h-px bg-borders my-2" />
+                <div className="grid grid-cols-2 gap-2">
+                  <Link
+                    href="/login"
+                    onClick={() => setOpen(false)}
+                    className="px-3 py-2 rounded-lg text-center border border-borders text-foreground hover:bg-background transition"
+                  >
+                    ورود
+                  </Link>
+                  <Link
+                    href="/register"
+                    onClick={() => setOpen(false)}
+                    className="px-3 py-2 rounded-lg text-center text-white bg-primary hover:brightness-110 transition"
+                  >
+                    ثبت‌نام
+                  </Link>
+                  <Link
+                    href="/shop"
+                    onClick={() => setOpen(false)}
+                    className="col-span-2 px-4 py-2 rounded-xl text-white bg-primary hover:brightness-110 transition shadow-soft text-center"
+                  >
+                    فروشگاه
+                  </Link>
+                </div>
+
+                <div className="mt-4 flex items-center gap-2 text-[rgba(30,30,30,0.8)]">
+                  <FiPhone className="text-primary" />
+                  <span>۰۹۱۲۳۴۵۶۷۸۹</span>
+                </div>
+              </nav>
+            </motion.aside>
+          </>
         )}
       </AnimatePresence>
     </header>

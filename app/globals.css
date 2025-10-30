@@ -46,3 +46,9 @@ body {
   scrollbar-width: thin;
   scrollbar-color: #004c97 transparent;
 }
+
+
+.clip-trapezoid {
+  clip-path: polygon(0 0, 100% 25%, 100% 75%, 0% 100%);
+}
+

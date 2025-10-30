@@ -1,214 +1,276 @@
 "use client";
-
-import { useState, useEffect } from "react";
+import { useEffect, useMemo, useState } from "react";
+import {
+  motion,
+  AnimatePresence,
+  useScroll,
+  useTransform,
+} from "framer-motion";
 import Image from "next/image";
-import { FiChevronLeft, FiChevronRight } from "react-icons/fi";
-import { motion, AnimatePresence } from "framer-motion";
 
-const slides = [
-  {
-    id: 1,
-    title: "تجهیزات اتوماسیون صنعتی زیمنس",
-    description:
-      "انواع پی‌ال‌سی، اچ‌ام‌آی و قطعات صنعتی با ضمانت اصالت کالا و ارسال سریع به سراسر کشور.",
-    image: "/images/section-one-image.jpg",
-    boxImage: "/images/section-one-bg.jpg",
-  },
-  {
-    id: 2,
-    title: "خدمات تعمیر و پشتیبانی تخصصی",
-    description:
-      "تیم فنی ما آماده ارائه خدمات تعمیر، نگهداری و مشاوره در زمینه تجهیزات اتوماسیون است.",
-    image: "/images/section-two-bg.jpg",
-    boxImage: "/images/section-two-image.jpg",
-  },
+const keywords = ["اتوماسیون", "مهندسی", "خلاقیت", "کیفیت", "سرعت"];
+
+// عبارات متغیر برای عنوان و زیرتیتر
+const titlePhrases = [
+  "آینده اتوماسیون، همین‌جاست",
+  "قدرت مهندسی در خدمت سرعت",
+  "هوشمندی صنعتی، نسخه‌ی امروز",
+];
+const subtitlePhrases = [
+  "راهکارهای دقیق برای صنایع پیشرو",
+  "کیفیت پایدار، عملکرد برتر",
+  "از ایده تا اجرا، کنار شما",
 ];
 
-export default function HeroSection() {
-  const [current, setCurrent] = useState(0);
+const sideImages = [
+  {
+    src: "/images/section-one-image.jpg",
+    alt: "industrial-1",
+    accent: "#18a1e0",
+  },
+  {
+    src: "/images/section-two-image.jpg",
+    alt: "industrial-2",
+    accent: "#00cfb9",
+  },
+  {
+    src: "/images/hero-industrial-solder.jpg",
+    alt: "industrial-3",
+    accent: "#fd707e",
+  },
+  { src: "/images/section-two-bg.jpg", alt: "industrial-4", accent: "#ffd166" },
+  { src: "/images/section-one-bg.jpg", alt: "industrial-5", accent: "#a78bfa" },
+];
 
-  const nextSlide = () => setCurrent((prev) => (prev + 1) % slides.length);
-  const prevSlide = () =>
-    setCurrent((prev) => (prev - 1 + slides.length) % slides.length);
+const shapes = [
+  "rounded-[22%_78%_30%_70%/44%_56%_42%_58%]",
+  "rounded-[65%_35%_58%_42%/50%_50%_50%_50%]",
+  "rounded-[30%_70%_50%_50%/48%_52%_40%_60%]",
+  "rounded-[50%]",
+];
 
-  // تغییر خودکار اسلاید در دسکتاپ فقط
+export default function SectionHero() {
+  const [tick, setTick] = useState(0);
+  const [kw, setKw] = useState(0);
+  const [titleIdx, setTitleIdx] = useState(0);
+  const [subIdx, setSubIdx] = useState(0);
+
   useEffect(() => {
-    if (typeof window !== "undefined" && window.innerWidth < 768) return;
-    const timer = setInterval(nextSlide, 7000);
-    return () => clearInterval(timer);
+    const t = setInterval(() => setTick((v) => v + 1), 5200);
+    const k = setInterval(() => setKw((v) => (v + 1) % keywords.length), 2200);
+    const tt = setInterval(
+      () => setTitleIdx((v) => (v + 1) % titlePhrases.length),
+      4800
+    );
+    const st = setInterval(
+      () => setSubIdx((v) => (v + 1) % subtitlePhrases.length),
+      4200
+    );
+    return () => {
+      clearInterval(t);
+      clearInterval(k);
+      clearInterval(tt);
+      clearInterval(st);
+    };
   }, []);
+
+  const leftIdx = useMemo(() => (tick * 3) % sideImages.length, [tick]);
+  const rightIdx = useMemo(() => (tick * 5 + 1) % sideImages.length, [tick]);
+  const leftShape = useMemo(() => shapes[(tick + 1) % shapes.length], [tick]);
+  const rightShape = useMemo(() => shapes[(tick + 2) % shapes.length], [tick]);
+
+  // میکرو-پارالاکس با اسکرول
+  const { scrollYProgress } = useScroll();
+  const yLeft = useTransform(scrollYProgress, [0, 1], [0, -3]);
+  const yRight = useTransform(scrollYProgress, [0, 1], [0, 3]);
+
+  // واریانت‌های استگر
+  const containerVariants = {
+    hidden: { opacity: 0, y: 16 },
+    show: {
+      opacity: 1,
+      y: 0,
+      transition: { staggerChildren: 0.15, delayChildren: 0.15 },
+    },
+  } as const;
+  const itemVariants = {
+    hidden: { opacity: 0, y: 12 },
+    show: { opacity: 1, y: 0, transition: { duration: 0.5 } },
+  } as const;
 
   return (
     <section
       dir="rtl"
-      className="
-        relative w-full 
-        h-[calc(100svh-64px)] md:h-[85vh] 
-        overflow-hidden flex items-center justify-center 
-        text-right bg-background
-      "
+      className="relative w-full min-h-[calc(100svh-64px)] overflow-hidden bg-[#0e1622] flex items-center"
     >
-      {/* --- تصویر پس‌زمینه --- */}
-      <div className="absolute inset-0">
-        <AnimatePresence mode="wait">
+      {/* پس‌زمینه مینیمال با گرِین و الگوی نقطه‌ای ظریف */}
+      <div
+        aria-hidden
+        className="absolute inset-0 z-0 opacity-25"
+        style={{
+          backgroundImage:
+            "radial-gradient(circle at 10% 10%, rgba(255,255,255,.07) 0 1px, transparent 1px), radial-gradient(circle at 60% 30%, rgba(255,255,255,.06) 0 1px, transparent 1px)",
+          backgroundSize: "14px 14px, 18px 18px",
+        }}
+      />
+      <div className="absolute inset-0 z-0 bg-linear-to-tr from-[#0a2237] via-[#0f1f33] to-[#0b2038]" />
+      {/* نویز خیلی ظریف */}
+      <div
+        className="pointer-events-none absolute inset-0 z-0 opacity-[.06] mix-blend-overlay"
+        style={{
+          backgroundImage:
+            'url(\'data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="120" height="120" viewBox="0 0 120 120"><filter id="n"><feTurbulence type="fractalNoise" baseFrequency="0.9" numOctaves="2" stitchTiles="stitch"/></filter><rect width="120" height="120" filter="url(%23n)" opacity="0.35"/></svg>\')',
+          backgroundSize: "120px 120px",
+        }}
+      />
+
+      {/* محتوای مرکزی با استگر */}
+      <div className="relative z-20 w-full max-w-7xl mx-auto px-[clamp(1.25rem,6vw,4rem)] grid grid-cols-1 md:grid-cols-2 gap-8 md:gap-10 items-center">
+        <motion.div
+          className="flex flex-col gap-5 md:gap-6 text-white"
+          variants={containerVariants}
+          initial="hidden"
+          animate="show"
+        >
+          {/* عنوان متغیر با انیمیشن زیبا */}
+          <div className="min-h-[2.6em]">
+            <AnimatePresence mode="wait">
+              <motion.h1
+                key={titleIdx}
+                className="text-[2rem] sm:text-[2.5rem] md:text-6xl font-extrabold leading-[1.15] tracking-tight bg-clip-text text-transparent bg-linear-to-r from-white via-cyan-200 to-white"
+                initial={{
+                  opacity: 0,
+                  y: 30,
+                  rotateX: -25,
+                  filter: "blur(6px)",
+                }}
+                animate={{ opacity: 1, y: 0, rotateX: 0, filter: "blur(0px)" }}
+                exit={{ opacity: 0, y: -28, rotateX: 20, filter: "blur(6px)" }}
+                transition={{ duration: 0.7, ease: "easeOut" }}
+              >
+                {titlePhrases[titleIdx]}
+              </motion.h1>
+            </AnimatePresence>
+          </div>
+
+          {/* ساب‌تایتل متغیر با انیمیشن لطیف */}
+          <div className="min-h-[2em] text-lg sm:text-xl md:text-2xl text-white/85">
+            <AnimatePresence mode="wait">
+              <motion.div
+                key={subIdx}
+                initial={{ opacity: 0, y: 18, filter: "blur(4px)" }}
+                animate={{ opacity: 1, y: 0, filter: "blur(0px)" }}
+                exit={{ opacity: 0, y: -18, filter: "blur(4px)" }}
+                transition={{ duration: 0.55 }}
+              >
+                {subtitlePhrases[subIdx]} {" | "}
+                <span>راهکارهای </span>
+                <AnimatePresence mode="wait">
+                  <motion.span
+                    key={kw}
+                    initial={{ opacity: 0, y: 14, filter: "blur(4px)" }}
+                    animate={{ opacity: 1, y: 0, filter: "blur(0px)" }}
+                    exit={{ opacity: 0, y: -14, filter: "blur(4px)" }}
+                    transition={{ duration: 0.45 }}
+                    className="mx-2 font-black text-cyan-300"
+                  >
+                    {keywords[kw]}
+                  </motion.span>
+                </AnimatePresence>
+                <span>برای صنایع حرفه‌ای.</span>
+              </motion.div>
+            </AnimatePresence>
+          </div>
+
           <motion.div
-            key={slides[current].id}
-            initial={{ opacity: 0, scale: 1.05 }}
-            animate={{ opacity: 1, scale: 1 }}
-            exit={{ opacity: 0, scale: 0.98 }}
-            transition={{ duration: 0.9, ease: "easeInOut" }}
-            className="relative w-full h-full"
+            className="flex items-center gap-3 sm:gap-4 pt-1.5"
+            variants={itemVariants}
+          >
+            <a
+              href="#contact"
+              className="px-6 sm:px-7 py-2.5 sm:py-3 rounded-xl bg-cyan-500 text-white font-bold shadow-[0_10px_40px_-10px_rgba(34,211,238,.6)] hover:brightness-110 hover:scale-[1.03] transition"
+              aria-label="مشاوره رایگان"
+            >
+              مشاوره رایگان
+            </a>
+            <a
+              href="#products"
+              className="px-6 sm:px-7 py-2.5 sm:py-3 rounded-xl border border-white/25 text-white/95 hover:bg-white/10 transition"
+              aria-label="مشاهده محصولات"
+            >
+              مشاهده محصولات
+            </a>
+          </motion.div>
+        </motion.div>
+
+        {/* تصویر مرکزی ملایم برای پر کردن فضا در دسکتاپ */}
+        <div className="hidden md:block relative h-[360px] lg:h-[420px]">
+          <div className="absolute inset-0 rounded-[24px] lg:rounded-[28px] bg-white/3 border border-white/10 backdrop-blur-xl" />
+          <div className="absolute -inset-6 blur-3xl bg-cyan-400/20 rounded-[36px] lg:rounded-[40px]" />
+        </div>
+      </div>
+
+      {/* تصویر شناور سمت چپ با میکرو-پارالاکس و بهبود موبایل */}
+      <div className="pointer-events-none absolute left-[-10vw] sm:left-[-6vw] md:left-[-3vw] top-[6vh] md:top-[10vh] z-10">
+        <AnimatePresence mode="popLayout">
+          <motion.div
+            key={`L-${tick}`}
+            initial={{ x: -120, y: 40, rotate: -6, opacity: 0 }}
+            animate={{ x: 0, y: 0, rotate: 0, opacity: 1 }}
+            exit={{ x: -100, y: -40, rotate: -8, opacity: 0 }}
+            transition={{ duration: 0.8, type: "spring" }}
+            className={`relative w-[58vw] sm:w-[46vw] md:w-[44vw] max-w-[300px] sm:max-w-[340px] md:max-w-[360px] h-[68vw] sm:h-[56vw] md:h-[54vw] max-h-[420px] sm:max-h-[440px] md:max-h-[460px] overflow-hidden border-2 border-white/25 shadow-2xl ${leftShape}`}
+            style={{ y: yLeft }}
           >
             <Image
-              src={slides[current].image}
-              alt={slides[current].title}
+              src={sideImages[leftIdx].src}
+              alt={sideImages[leftIdx].alt}
               fill
-              sizes="100vw"
+              className="object-cover"
               priority
-              quality={95}
-              className="object-cover object-center"
+            />
+            <div className="absolute inset-0 bg-linear-to-t from-black/35 to-transparent" />
+            <div
+              className="absolute -inset-2 rounded-[inherit] border"
+              style={{ borderColor: `${sideImages[leftIdx].accent}88` }}
             />
           </motion.div>
         </AnimatePresence>
-
-        {/* گرادینت تاریک روی تصویر پس‌زمینه */}
-        <div className="absolute inset-0 bg-gradient-to-l from-[rgba(10,25,36,0.85)] via-[rgba(30,58,82,0.75)] to-background" />
       </div>
 
-      {/* --- محتوای اصلی --- */}
-      <div
-        className="
-          relative z-10 max-w-7xl w-full mx-auto
-          flex flex-col-reverse md:flex-row items-center
-          md:justify-end px-6 md:px-[clamp(2rem,8vw,5rem)]
-          gap-8 md:gap-10 pt-[clamp(2rem,10vh,5rem)] md:pt-0
-        "
-      >
-        {/* --- بلوک متن --- */}
-        <motion.div
-          key={slides[current].title}
-          initial={{ opacity: 0, x: 40 }}
-          animate={{ opacity: 1, x: 0 }}
-          exit={{ opacity: 0, x: -40 }}
-          transition={{ duration: 0.7, ease: "easeOut" }}
-          className="
-            flex-1 text-white space-y-6 font-vazir
-            md:order-1
-          "
-        >
-          <h1
-            className="
-              text-[1.8rem] md:text-5xl font-extrabold leading-snug tracking-tight
-              drop-shadow-[0_1px_2px_rgba(0,0,0,0.3)]
-            "
-          >
-            {slides[current].title}
-          </h1>
-
-          <p
-            className="
-              text-base md:text-lg text-white/90 leading-relaxed max-w-xl
-              drop-shadow-[0_1px_1px_rgba(0,0,0,0.25)]
-            "
-          >
-            {slides[current].description}
-          </p>
-
-          <div className="flex items-center gap-4 flex-wrap">
-            <button
-              className="
-                bg-primary text-white px-7 py-3 rounded-xl font-medium shadow-md 
-                transition-all duration-300 hover:brightness-110 hover:-translate-y-0.5
-              "
-            >
-              مشاهده جزئیات
-            </button>
-            <button
-              className="
-                border border-white/70 text-white px-6 py-3 rounded-xl font-medium 
-                transition-all duration-300 hover:bg-white/20 hover:brightness-110
-              "
-            >
-              تماس با ما
-            </button>
-          </div>
-        </motion.div>
-
-        {/* --- تصویر باکس کنار متن --- */}
-        <motion.div
-          key={slides[current].boxImage}
-          initial={{ opacity: 0, y: 60 }}
-          animate={{ opacity: 1, y: 0 }}
-          exit={{ opacity: 0, y: -60 }}
-          transition={{ duration: 0.8, ease: "easeOut" }}
-          className="flex-1 relative w-full flex justify-center md:order-2"
-        >
-          <div
-            className="
-              relative w-[90%] md:w-4/5 h-[clamp(220px,45vw,420px)]
-              rounded-2xl overflow-hidden 
-              shadow-[0_10px_40px_-10px_rgba(0,0,0,0.45)]
-            "
+      {/* تصویر شناور سمت راست با میکرو-پارالاکس و بهبود موبایل */}
+      <div className="pointer-events-none absolute right-[-10vw] sm:right-[-6vw] md:right-[-3vw] bottom-[6vh] md:bottom-[10vh] z-10">
+        <AnimatePresence mode="popLayout">
+          <motion.div
+            key={`R-${tick}`}
+            initial={{ x: 120, y: 40, rotate: 6, opacity: 0 }}
+            animate={{ x: 0, y: 0, rotate: 0, opacity: 1 }}
+            exit={{ x: 100, y: -40, rotate: 8, opacity: 0 }}
+            transition={{ duration: 0.8, type: "spring" }}
+            className={`relative w-[52vw] sm:w-[44vw] md:w-[42vw] max-w-[280px] sm:max-w-[320px] md:max-w-[340px] h-[52vw] sm:h-[44vw] md:h-[42vw] max-h-[340px] sm:max-h-[360px] md:max-h-[380px] overflow-hidden border-2 border-white/25 shadow-2xl ${rightShape}`}
+            style={{ y: yRight }}
           >
             <Image
-              src={slides[current].boxImage}
-              alt={slides[current].title}
+              src={sideImages[rightIdx].src}
+              alt={sideImages[rightIdx].alt}
               fill
-              sizes="50vw"
               className="object-cover"
               priority
-              quality={95}
             />
-            <div className="absolute inset-0 bg-gradient-to-t from-black/35 via-transparent to-transparent" />
-          </div>
-        </motion.div>
+            <div className="absolute inset-0 bg-linear-to-b from-black/35 to-transparent" />
+            <div
+              className="absolute -inset-2 rounded-[inherit] border"
+              style={{ borderColor: `${sideImages[rightIdx].accent}88` }}
+            />
+          </motion.div>
+        </AnimatePresence>
       </div>
 
-      {/* --- دکمه‌های کنترل اسلایدر --- */}
+      {/* وینیت نرم برای تمرکز نگاه */}
       <div
-        className="
-          absolute z-30 flex justify-between w-full px-4
-          md:w-auto md:flex-row-reverse md:gap-3
-          md:right-[clamp(3%,5vw,4rem)] 
-          md:bottom-[clamp(3rem,6vh,4rem)]
-        "
-      >
-        <button
-          onClick={nextSlide}
-          className="
-            bg-card/90 hover:bg-card text-foreground 
-            p-2.5 md:p-3 rounded-full shadow-md backdrop-blur-sm 
-            hover:brightness-110 active:scale-95 transition-all duration-200
-          "
-        >
-          <FiChevronLeft size={18} className="md:size-[22px]" />
-        </button>
-        <button
-          onClick={prevSlide}
-          className="
-            bg-card/90 hover:bg-card text-foreground 
-            p-2.5 md:p-3 rounded-full shadow-md backdrop-blur-sm
-            hover:brightness-110 active:scale-95 transition-all duration-200
-          "
-        >
-          <FiChevronRight size={18} className="md:size-[22px]" />
-        </button>
-      </div>
-
-      {/* --- نقاط ناوبری --- */}
-      <div className="absolute left-1/2 -translate-x-1/2 bottom-[clamp(2rem,5vh,3rem)] flex gap-2 z-25">
-        {slides.map((_, i) => (
-          <span
-            key={i}
-            onClick={() => setCurrent(i)}
-            className={`w-3 h-3 rounded-full cursor-pointer border transition-all duration-300 ${
-              current === i
-                ? "bg-primary border-primary/70 scale-110"
-                : "bg-card/70 border-borders hover:bg-highlight/40 hover:border-highlight/50"
-            }`}
-          />
-        ))}
-      </div>
+        className="pointer-events-none absolute inset-0 z-30"
+        style={{ boxShadow: "inset 0 0 140px rgba(0,0,0,.55)" }}
+      />
     </section>
   );
 }

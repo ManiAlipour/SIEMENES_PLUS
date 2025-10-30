@@ -8,12 +8,11 @@ export default function BlogCard({ post }: { post: BlogPost }) {
 
   return (
     <article
-      className="group flex flex-col overflow-hidden rounded-lg border border-gray-200
-                 bg-[#f7f9fb] hover:border-primary hover:shadow-lg hover:-translate-y-1
-                 transition-all duration-300"
+      className="group flex flex-col overflow-hidden rounded-xl border border-gray-200 bg-[#f7f9fb] shadow-sm hover:border-primary/80 hover:shadow-lg hover:-translate-y-1 transition-all duration-300 focus-within:shadow-lg"
+      aria-label={`مطلب: ${title}`}
     >
       {/* مدیا (ویدیو یا تصویر) */}
-      <div className="relative w-full aspect-[16/9] overflow-hidden">
+      <div className="relative w-full aspect-video overflow-hidden">
         {videoUrl ? (
           <div className="absolute inset-0">
             <AparatPlayer videoUrl={videoUrl} />
@@ -28,22 +27,20 @@ export default function BlogCard({ post }: { post: BlogPost }) {
             priority={false}
           />
         )}
+        <div className="pointer-events-none absolute inset-0 bg-linear-to-t from-black/20 via-transparent to-transparent" />
       </div>
 
       {/* محتوا */}
       <div className="flex-1 p-5 flex flex-col gap-3">
-        <h3
-          className="text-lg md:text-xl font-vazir-bold text-gray-800 
-                     group-hover:text-primary transition-colors"
-        >
+        <h3 className="text-lg md:text-xl font-vazir-bold text-gray-800 group-hover:text-primary transition-colors">
           {title}
         </h3>
         <p className="text-sm text-gray-600 line-clamp-3">{description}</p>
 
         <Link
           href={`/blog/${slug}`}
-          className="mt-auto self-start px-4 py-2 border border-primary text-primary rounded-md 
-                     font-vazir-medium hover:bg-primary hover:text-white transition-colors"
+          className="mt-auto self-start px-4 py-2 border border-primary text-primary rounded-md font-vazir-medium hover:bg-primary hover:text-white transition-colors focus:outline-none focus:ring-2 focus:ring-primary/40 focus:ring-offset-2"
+          aria-label={`مطالعه بیشتر: ${title}`}
         >
           مطالعه بیشتر
         </Link>

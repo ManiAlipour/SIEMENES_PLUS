@@ -45,9 +45,13 @@ export default function FeaturedProductsSection() {
   return (
     <section
       dir="rtl"
-      className="pt-16 md:pt-20 pb-12 md:pb-16 w-full bg-background py-[clamp(3rem,10vh,6rem)] text-center"
+      className="pt-16 md:pt-20 pb-12 md:pb-16 w-full bg-background text-center"
+      aria-labelledby="featured-products-heading"
     >
-      <h2 className="text-foreground font-vazir-extrabold text-2xl md:text-3xl tracking-tight mb-10">
+      <h2
+        id="featured-products-heading"
+        className="text-foreground font-vazir-extrabold text-2xl md:text-3xl tracking-tight mb-6 md:mb-10"
+      >
         محصولات پیشنهادی
       </h2>
 
@@ -64,10 +68,11 @@ export default function FeaturedProductsSection() {
 
       <button
         className="
-          mt-[clamp(2rem,6vh,3rem)]
+          mt-[clamp(1.5rem,5vh,3rem)]
           bg-primary/90 text-white font-vazir-semibold text-sm md:text-base
-          px-10 py-3 rounded-xl shadow-md hover:brightness-110 transition-all duration-300
+          px-8 md:px-10 py-2.5 md:py-3 rounded-xl shadow-md hover:brightness-110 transition-all duration-300 focus:outline-none focus:ring-2 focus:ring-primary/40 focus:ring-offset-2
         "
+        aria-label="مشاهده همه محصولات"
       >
         مشاهده همه محصولات
       </button>
