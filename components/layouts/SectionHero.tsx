@@ -31,7 +31,7 @@ export default function HeroSection() {
   const prevSlide = () =>
     setCurrent((prev) => (prev - 1 + slides.length) % slides.length);
 
-  // Disable autoplay for mobile
+  // تغییر خودکار اسلاید در دسکتاپ فقط
   useEffect(() => {
     if (typeof window !== "undefined" && window.innerWidth < 768) return;
     const timer = setInterval(nextSlide, 7000);
@@ -40,10 +40,15 @@ export default function HeroSection() {
 
   return (
     <section
-      className="relative w-full h-[90dvh] md:h-[85vh] overflow-hidden flex items-center justify-center text-right bg-[#f7f7f7]"
       dir="rtl"
+      className="
+        relative w-full 
+        h-[calc(100svh-64px)] md:h-[85vh] 
+        overflow-hidden flex items-center justify-center 
+        text-right bg-background
+      "
     >
-      {/* --- Background image --- */}
+      {/* --- تصویر پس‌زمینه --- */}
       <div className="absolute inset-0">
         <AnimatePresence mode="wait">
           <motion.div
@@ -66,48 +71,85 @@ export default function HeroSection() {
           </motion.div>
         </AnimatePresence>
 
-        {/* gradient overlay */}
-        <div className="absolute inset-0 bg-gradient-to-l from-[#0a1924e0] via-[#1e3a52cc] to-[#f7f7f7b3]" />
+        {/* گرادینت تاریک روی تصویر پس‌زمینه */}
+        <div className="absolute inset-0 bg-gradient-to-l from-[rgba(10,25,36,0.85)] via-[rgba(30,58,82,0.75)] to-background" />
       </div>
 
-      {/* --- Main content --- */}
-      <div className="relative z-10 max-w-7xl w-full mx-auto flex flex-col md:flex-row items-center md:justify-end px-6 md:px-[clamp(2rem,8vw,5rem)] gap-8 md:gap-10 pt-[clamp(4rem,12vh,7rem)] md:pt-0">
-        {/* Text Block */}
+      {/* --- محتوای اصلی --- */}
+      <div
+        className="
+          relative z-10 max-w-7xl w-full mx-auto
+          flex flex-col-reverse md:flex-row items-center
+          md:justify-end px-6 md:px-[clamp(2rem,8vw,5rem)]
+          gap-8 md:gap-10 pt-[clamp(2rem,10vh,5rem)] md:pt-0
+        "
+      >
+        {/* --- بلوک متن --- */}
         <motion.div
           key={slides[current].title}
           initial={{ opacity: 0, x: 40 }}
           animate={{ opacity: 1, x: 0 }}
           exit={{ opacity: 0, x: -40 }}
           transition={{ duration: 0.7, ease: "easeOut" }}
-          className="flex-1 order-2 md:order-1 text-white space-y-6 font-vazir"
+          className="
+            flex-1 text-white space-y-6 font-vazir
+            md:order-1
+          "
         >
-          <h1 className="text-[1.8rem] md:text-5xl font-extrabold leading-snug tracking-tight drop-shadow-[0_1px_2px_rgba(0,0,0,0.3)]">
+          <h1
+            className="
+              text-[1.8rem] md:text-5xl font-extrabold leading-snug tracking-tight
+              drop-shadow-[0_1px_2px_rgba(0,0,0,0.3)]
+            "
+          >
             {slides[current].title}
           </h1>
-          <p className="text-base md:text-lg text-gray-100/90 leading-relaxed max-w-xl drop-shadow-[0_1px_1px_rgba(0,0,0,0.25)]">
+
+          <p
+            className="
+              text-base md:text-lg text-white/90 leading-relaxed max-w-xl
+              drop-shadow-[0_1px_1px_rgba(0,0,0,0.25)]
+            "
+          >
             {slides[current].description}
           </p>
 
-          <div className="flex items-center gap-4">
-            <button className="bg-primary text-white px-7 py-3 rounded-xl font-medium shadow-md transition-all duration-300 hover:brightness-110 hover:-translate-y-0.5">
+          <div className="flex items-center gap-4 flex-wrap">
+            <button
+              className="
+                bg-primary text-white px-7 py-3 rounded-xl font-medium shadow-md 
+                transition-all duration-300 hover:brightness-110 hover:-translate-y-0.5
+              "
+            >
               مشاهده جزئیات
             </button>
-            <button className="border border-white/70 text-white px-6 py-3 rounded-xl font-medium transition-all duration-300 hover:bg-white/15">
+            <button
+              className="
+                border border-white/70 text-white px-6 py-3 rounded-xl font-medium 
+                transition-all duration-300 hover:bg-white/20 hover:brightness-110
+              "
+            >
               تماس با ما
             </button>
           </div>
         </motion.div>
 
-        {/* Box Image */}
+        {/* --- تصویر باکس کنار متن --- */}
         <motion.div
           key={slides[current].boxImage}
           initial={{ opacity: 0, y: 60 }}
           animate={{ opacity: 1, y: 0 }}
           exit={{ opacity: 0, y: -60 }}
           transition={{ duration: 0.8, ease: "easeOut" }}
-          className="flex-1 relative order-1 md:order-2 w-full flex justify-center"
+          className="flex-1 relative w-full flex justify-center md:order-2"
         >
-          <div className="relative w-10/12 md:w-4/5 h-[clamp(280px,40vw,420px)] rounded-2xl overflow-hidden shadow-[0_10px_40px_-10px_rgba(0,0,0,0.5)]">
+          <div
+            className="
+              relative w-[90%] md:w-4/5 h-[clamp(220px,45vw,420px)]
+              rounded-2xl overflow-hidden 
+              shadow-[0_10px_40px_-10px_rgba(0,0,0,0.45)]
+            "
+          >
             <Image
               src={slides[current].boxImage}
               alt={slides[current].title}
@@ -117,36 +159,44 @@ export default function HeroSection() {
               priority
               quality={95}
             />
-            <div className="absolute inset-0 bg-gradient-to-t from-[#00000033] via-transparent to-transparent" />
+            <div className="absolute inset-0 bg-gradient-to-t from-black/35 via-transparent to-transparent" />
           </div>
         </motion.div>
       </div>
 
-      {/* --- Slider Controls --- */}
+      {/* --- دکمه‌های کنترل اسلایدر --- */}
       <div
         className="
           absolute z-30 flex justify-between w-full px-4
           md:w-auto md:flex-row-reverse md:gap-3
-          md:right-[clamp(3%,5vw,4rem)] md:bottom-[clamp(3rem,6vh,4rem)]
-          top-auto md:top-auto
+          md:right-[clamp(3%,5vw,4rem)] 
+          md:bottom-[clamp(3rem,6vh,4rem)]
         "
       >
         <button
           onClick={nextSlide}
-          className="bg-white/90 hover:bg-white text-gray-700 p-2.5 md:p-3 rounded-full shadow-md backdrop-blur-sm hover:scale-110 active:scale-95 transition-all duration-200"
+          className="
+            bg-card/90 hover:bg-card text-foreground 
+            p-2.5 md:p-3 rounded-full shadow-md backdrop-blur-sm 
+            hover:brightness-110 active:scale-95 transition-all duration-200
+          "
         >
           <FiChevronLeft size={18} className="md:size-[22px]" />
         </button>
         <button
           onClick={prevSlide}
-          className="bg-white/90 hover:bg-white text-gray-700 p-2.5 md:p-3 rounded-full shadow-md backdrop-blur-sm hover:scale-110 active:scale-95 transition-all duration-200"
+          className="
+            bg-card/90 hover:bg-card text-foreground 
+            p-2.5 md:p-3 rounded-full shadow-md backdrop-blur-sm
+            hover:brightness-110 active:scale-95 transition-all duration-200
+          "
         >
           <FiChevronRight size={18} className="md:size-[22px]" />
         </button>
       </div>
 
-      {/* --- Navigation Dots --- */}
-      <div className="absolute left-1/2 -translate-x-1/2 bottom-[clamp(2rem,5vh,3rem)] flex gap-2 z-[25]">
+      {/* --- نقاط ناوبری --- */}
+      <div className="absolute left-1/2 -translate-x-1/2 bottom-[clamp(2rem,5vh,3rem)] flex gap-2 z-25">
         {slides.map((_, i) => (
           <span
             key={i}
@@ -154,7 +204,7 @@ export default function HeroSection() {
             className={`w-3 h-3 rounded-full cursor-pointer border transition-all duration-300 ${
               current === i
                 ? "bg-primary border-primary/70 scale-110"
-                : "bg-white/70 border-gray-300 hover:bg-primary/40 hover:border-primary/50"
+                : "bg-card/70 border-borders hover:bg-highlight/40 hover:border-highlight/50"
             }`}
           />
         ))}

@@ -30,3 +30,19 @@ body {
   color: var(--foreground);
   font-family: Vazir, Arial, Helvetica, sans-serif;
 }
+
+::-webkit-scrollbar {
+  width: 6px;
+  height: 6px;
+}
+::-webkit-scrollbar-thumb {
+  background-color: #004c97;
+  border-radius: 100px;
+}
+::-webkit-scrollbar-track {
+  background: transparent;
+}
+* {
+  scrollbar-width: thin;
+  scrollbar-color: #004c97 transparent;
+}
