@@ -11,7 +11,7 @@ export default function BlogCard({ post }: { post: BlogPost }) {
       className="group flex flex-col overflow-hidden rounded-xl border border-gray-200 bg-[#f7f9fb] shadow-sm hover:border-primary/80 hover:shadow-lg hover:-translate-y-1 transition-all duration-300 focus-within:shadow-lg"
       aria-label={`مطلب: ${title}`}
     >
-      {/* مدیا (ویدیو یا تصویر) */}
+      {/* Media (video or image) */}
       <div className="relative w-full aspect-video overflow-hidden">
         {videoUrl ? (
           <div className="absolute inset-0">
@@ -30,7 +30,7 @@ export default function BlogCard({ post }: { post: BlogPost }) {
         <div className="pointer-events-none absolute inset-0 bg-linear-to-t from-black/20 via-transparent to-transparent" />
       </div>
 
-      {/* محتوا */}
+      {/* Content */}
       <div className="flex-1 p-5 flex flex-col gap-3">
         <h3 className="text-lg md:text-xl font-vazir-bold text-gray-800 group-hover:text-primary transition-colors">
           {title}

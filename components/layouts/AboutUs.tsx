@@ -1,13 +1,16 @@
+"use client";
 import Image from "next/image";
+import withFixedBg from "../common/withFixedBg";
 
+// About Us section with brand accent, image, and brief description
 const AboutUs = () => {
   return (
     <section className="relative overflow-hidden py-24 md:py-28 bg-[#f6f8fa] border-t border-[#004c97]/10">
-      {/* نواری عمودی زیمنسی در راست برای هویت برند */}
+      {/* Vertical brand accent on the right */}
       <div className="absolute right-0 top-0 bottom-0 w-2 bg-[#004c97]/80 rounded-l-lg"></div>
 
       <div className="container mx-auto grid md:grid-cols-2 gap-14 items-center px-6 md:px-10">
-        {/* تصویر فنی */}
+        {/* Technical team image */}
         <div className="flex justify-center md:justify-start order-1 md:order-2">
           <div className="rounded-xl overflow-hidden shadow-[0_8px_25px_rgba(0,76,151,0.1)] border border-[#004c97]/20 w-full max-w-[500px] aspect-[4/3] ring-1 ring-[#004c97]/10">
             <Image
@@ -21,7 +24,7 @@ const AboutUs = () => {
           </div>
         </div>
 
-        {/* متن درباره ما */}
+        {/* About content (RTL text) */}
         <div className="order-2 md:order-1 text-right">
           <span className="text-sm font-vazir-medium text-[#004c97] tracking-wide uppercase border-b border-[#004c97]/30 pb-1">
             درباره ما

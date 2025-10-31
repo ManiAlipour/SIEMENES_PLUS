@@ -47,8 +47,23 @@ body {
   scrollbar-color: #004c97 transparent;
 }
 
-
 .clip-trapezoid {
   clip-path: polygon(0 0, 100% 25%, 100% 75%, 0% 100%);
 }
 
+.animate-pulse-line {
+  background: linear-gradient(90deg, #004c97, #00a9e0, #004c97);
+  height: 2px;
+  width: 60%;
+  margin: 0.5rem auto;
+  animation: pulse 2s infinite linear;
+}
+@keyframes pulse {
+  0%,
+  100% {
+    opacity: 0.2;
+  }
+  50% {
+    opacity: 1;
+  }
+}

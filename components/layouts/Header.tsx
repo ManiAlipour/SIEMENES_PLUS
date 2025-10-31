@@ -57,9 +57,9 @@ export default function Header() {
       }`}
     >
       <div className="max-w-7xl mx-auto px-4 py-[clamp(0.5rem,1.4vw,1rem)] flex flex-col gap-2">
-        {/* === خط بالا === */}
+        {/* Top row */}
         <div className="flex flex-wrap md:flex-nowrap items-center justify-between w-full gap-[clamp(0.5rem,1vw,1.25rem)]">
-          {/* لوگو */}
+          {/* Logo */}
           <Link href="/" className="flex items-center gap-2 shrink-0">
             <Image
               src="/images/logo.jpg"
@@ -78,7 +78,7 @@ export default function Header() {
             </div>
           </Link>
 
-          {/* ناوبری دسکتاپ */}
+          {/* Desktop navigation */}
           <nav className="hidden sm:flex items-center flex-wrap justify-center gap-[clamp(0.5rem,1.2vw,1.25rem)] font-vazir relative">
             {links.map((link) => (
               <Link
@@ -93,7 +93,7 @@ export default function Header() {
                 {link.name}
               </Link>
             ))}
-            {/* خدمات - دسکتاپ */}
+            {/* Services - desktop */}
             <div
               className="relative"
               onMouseEnter={() => setServicesOpen(true)}
@@ -143,7 +143,7 @@ export default function Header() {
             </div>
           </nav>
 
-          {/* دکمه‌ها */}
+          {/* Header actions */}
           <div className="hidden md:flex items-center shrink-0 gap-[clamp(0.4rem,1vw,0.75rem)] font-vazir">
             <Link
               href="/login"
@@ -165,7 +165,7 @@ export default function Header() {
             </Link>
           </div>
 
-          {/* دکمه منوی موبایل */}
+          {/* Mobile menu button */}
           <button
             onClick={() => setOpen(true)}
             className="sm:hidden text-foreground"
@@ -175,7 +175,7 @@ export default function Header() {
           </button>
         </div>
 
-        {/* سرچ دسکتاپ */}
+        {/* Desktop search */}
         <div className="hidden md:flex items-center justify-between w-full gap-4 mt-[clamp(0.25rem,1vw,0.75rem)]">
           <div className="flex-1 max-w-md flex items-center gap-2">
             <input
@@ -200,11 +200,11 @@ export default function Header() {
         </div>
       </div>
 
-      {/* اوورلی و سایدبار موبایل از راست */}
+      {/* Overlay and right-side mobile drawer */}
       <AnimatePresence>
         {open && (
           <>
-            {/* overlay */}
+            {/* Overlay */}
             <motion.div
               key="overlay"
               className="fixed bg-white inset-0 backdrop-blur-[1px] z-40"
@@ -213,7 +213,7 @@ export default function Header() {
               exit={{ opacity: 0 }}
               onClick={() => setOpen(false)}
             />
-            {/* drawer */}
+            {/* Drawer */}
             <motion.aside
               key="drawer"
               className="fixed right-0 top-0 h-svh w-[82vw] max-w-[360px] bg-card border-l border-borders z-50 shadow-2xl flex flex-col"
@@ -252,7 +252,7 @@ export default function Header() {
               </div>
 
               <nav className="flex-1 overflow-y-auto p-4 flex flex-col gap-2 font-vazir">
-                {/* خدمات - موبایل با دراپ‌دان */}
+                {/* Services - mobile with dropdown */}
                 <div className="rounded-lg">
                   <button
                     onClick={() => setMobileServicesOpen((v) => !v)}
@@ -297,7 +297,7 @@ export default function Header() {
                   </AnimatePresence>
                 </div>
 
-                {/* سایر لینک‌ها */}
+                {/* Other links */}
                 {links.map((link) => (
                   <Link
                     key={link.href}

@@ -14,7 +14,7 @@ export default function CategoryHighlightsSection() {
 
         {highlightedCategories.map((category) => (
           <div key={category.id} className="mb-16">
-            {/* عنوان هر کتگوری */}
+            {/* Category header */}
             <div className="flex items-center justify-between mb-6">
               <h3 className="text-lg font-vazir-semibold text-gray-700 tracking-tight">
                 {category.title}
@@ -24,7 +24,7 @@ export default function CategoryHighlightsSection() {
               </button>
             </div>
 
-            {/* لیست محصولات با اسکرول افقی */}
+            {/* Horizontal scrollable products list */}
             <div
               className="
                 flex gap-4 overflow-x-auto snap-x snap-mandatory

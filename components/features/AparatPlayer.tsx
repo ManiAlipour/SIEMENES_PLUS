@@ -3,10 +3,10 @@ import { useEffect, useRef } from "react";
 import Image from "next/image";
 import { FaPlay } from "react-icons/fa";
 
-// کامپوننت پلیر آپارات با کنترل‌های دیفالت
+// Aparat player component with default controls
 export default function AparatPlayer({
   videoUrl,
-  thumbnail, // اختیاری: تصویر کاور
+  thumbnail, // Optional: cover image
 }: {
   videoUrl: string;
   thumbnail?: string;
@@ -15,12 +15,12 @@ export default function AparatPlayer({
   const iframeRef = useRef<HTMLIFrameElement>(null);
 
   useEffect(() => {
-    // mount iframe فقط سمت کلاینت بعد از اولین interaction
+    // Mount iframe only on client after first interaction
     const container = containerRef.current;
     if (!container) return;
 
     const handleClick = () => {
-      // اگر iframe قبلاً ساخته نشده
+      // Create iframe if it doesn't exist yet
       if (!iframeRef.current) {
         const iframe = document.createElement("iframe");
         iframe.src = videoUrl;
@@ -30,7 +30,7 @@ export default function AparatPlayer({
         iframe.className =
           "w-full h-full rounded-lg border border-gray-200 bg-[#f7f9fb]";
         iframeRef.current = iframe;
-        container.innerHTML = ""; // حذف placeholder
+        container.innerHTML = ""; // clear placeholder
         container.appendChild(iframe);
       }
     };

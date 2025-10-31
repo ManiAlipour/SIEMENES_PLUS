@@ -28,7 +28,7 @@ export default function ProductCard({
       role="group"
       aria-label={`کارت محصول ${name}`}
     >
-      {/* تصویر محصول */}
+      {/* Product image */}
       <div className="relative w-full aspect-square bg-linear-to-b from-white to-[#f6f9fc]">
         <div className="absolute inset-0 -z-10" />
         <Image
@@ -45,7 +45,7 @@ export default function ProductCard({
         )}
       </div>
 
-      {/* توضیحات و دکمه‌ها */}
+      {/* Details and actions */}
       <div className="flex flex-col justify-between w-full p-4 gap-2">
         <h3 className="font-vazir-semibold text-sm md:text-base text-gray-800 text-center line-clamp-2">
           {name}
@@ -86,7 +86,7 @@ export default function ProductCard({
             </span>
           )}
 
-          {/* حلقه نور هنگام hover */}
+          {/* Glow ring on hover */}
           <span className="pointer-events-none absolute -z-10 left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 w-[140px] h-[40px] rounded-full bg-cyan-400/20 blur-2xl opacity-0 group-hover:opacity-100 transition" />
         </div>
       </div>

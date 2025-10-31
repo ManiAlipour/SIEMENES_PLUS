@@ -10,7 +10,7 @@ import Image from "next/image";
 
 const keywords = ["اتوماسیون", "مهندسی", "خلاقیت", "کیفیت", "سرعت"];
 
-// عبارات متغیر برای عنوان و زیرتیتر
+// Rotating phrases for title and subtitle
 const titlePhrases = [
   "آینده اتوماسیون، همین‌جاست",
   "قدرت مهندسی در خدمت سرعت",
@@ -79,12 +79,12 @@ export default function SectionHero() {
   const leftShape = useMemo(() => shapes[(tick + 1) % shapes.length], [tick]);
   const rightShape = useMemo(() => shapes[(tick + 2) % shapes.length], [tick]);
 
-  // میکرو-پارالاکس با اسکرول
+  // Micro-parallax with scroll
   const { scrollYProgress } = useScroll();
   const yLeft = useTransform(scrollYProgress, [0, 1], [0, -3]);
   const yRight = useTransform(scrollYProgress, [0, 1], [0, 3]);
 
-  // واریانت‌های استگر
+  // Staggered animation variants
   const containerVariants = {
     hidden: { opacity: 0, y: 16 },
     show: {
@@ -103,7 +103,7 @@ export default function SectionHero() {
       dir="rtl"
       className="relative w-full min-h-[calc(100svh-64px)] overflow-hidden bg-[#0e1622] flex items-center"
     >
-      {/* پس‌زمینه مینیمال با گرِین و الگوی نقطه‌ای ظریف */}
+      {/* Minimal background with grain and subtle dotted pattern */}
       <div
         aria-hidden
         className="absolute inset-0 z-0 opacity-25"
@@ -114,7 +114,7 @@ export default function SectionHero() {
         }}
       />
       <div className="absolute inset-0 z-0 bg-linear-to-tr from-[#0a2237] via-[#0f1f33] to-[#0b2038]" />
-      {/* نویز خیلی ظریف */}
+      {/* Very subtle noise overlay */}
       <div
         className="pointer-events-none absolute inset-0 z-0 opacity-[.06] mix-blend-overlay"
         style={{
@@ -124,7 +124,7 @@ export default function SectionHero() {
         }}
       />
 
-      {/* محتوای مرکزی با استگر */}
+      {/* Center content with staggered animation */}
       <div className="relative z-20 w-full max-w-7xl mx-auto px-[clamp(1.25rem,6vw,4rem)] grid grid-cols-1 md:grid-cols-2 gap-8 md:gap-10 items-center">
         <motion.div
           className="flex flex-col gap-5 md:gap-6 text-white"
@@ -132,7 +132,7 @@ export default function SectionHero() {
           initial="hidden"
           animate="show"
         >
-          {/* عنوان متغیر با انیمیشن زیبا */}
+          {/* Animated rotating title */}
           <div className="min-h-[2.6em]">
             <AnimatePresence mode="wait">
               <motion.h1
@@ -153,7 +153,7 @@ export default function SectionHero() {
             </AnimatePresence>
           </div>
 
-          {/* ساب‌تایتل متغیر با انیمیشن لطیف */}
+          {/* Animated rotating subtitle */}
           <div className="min-h-[2em] text-lg sm:text-xl md:text-2xl text-white/85">
             <AnimatePresence mode="wait">
               <motion.div
@@ -203,14 +203,14 @@ export default function SectionHero() {
           </motion.div>
         </motion.div>
 
-        {/* تصویر مرکزی ملایم برای پر کردن فضا در دسکتاپ */}
+        {/* Placeholder central panel for desktop balance */}
         <div className="hidden md:block relative h-[360px] lg:h-[420px]">
           <div className="absolute inset-0 rounded-[24px] lg:rounded-[28px] bg-white/3 border border-white/10 backdrop-blur-xl" />
           <div className="absolute -inset-6 blur-3xl bg-cyan-400/20 rounded-[36px] lg:rounded-[40px]" />
         </div>
       </div>
 
-      {/* تصویر شناور سمت چپ با میکرو-پارالاکس و بهبود موبایل */}
+      {/* Floating image (left) with micro-parallax */}
       <div className="pointer-events-none absolute left-[-10vw] sm:left-[-6vw] md:left-[-3vw] top-[6vh] md:top-[10vh] z-10">
         <AnimatePresence mode="popLayout">
           <motion.div
@@ -238,7 +238,7 @@ export default function SectionHero() {
         </AnimatePresence>
       </div>
 
-      {/* تصویر شناور سمت راست با میکرو-پارالاکس و بهبود موبایل */}
+      {/* Floating image (right) with micro-parallax */}
       <div className="pointer-events-none absolute right-[-10vw] sm:right-[-6vw] md:right-[-3vw] bottom-[6vh] md:bottom-[10vh] z-10">
         <AnimatePresence mode="popLayout">
           <motion.div
@@ -266,7 +266,7 @@ export default function SectionHero() {
         </AnimatePresence>
       </div>
 
-      {/* وینیت نرم برای تمرکز نگاه */}
+      {/* Soft vignette for focus */}
       <div
         className="pointer-events-none absolute inset-0 z-30"
         style={{ boxShadow: "inset 0 0 140px rgba(0,0,0,.55)" }}
