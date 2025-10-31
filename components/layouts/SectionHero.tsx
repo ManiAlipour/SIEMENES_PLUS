@@ -1,276 +1,385 @@
 "use client";
-import { useEffect, useMemo, useState } from "react";
+import Image from "next/image";
+import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import {
   motion,
   AnimatePresence,
   useScroll,
   useTransform,
 } from "framer-motion";
-import Image from "next/image";
 
-const keywords = ["اتوماسیون", "مهندسی", "خلاقیت", "کیفیت", "سرعت"];
-
-// Rotating phrases for title and subtitle
-const titlePhrases = [
-  "آینده اتوماسیون، همین‌جاست",
-  "قدرت مهندسی در خدمت سرعت",
-  "هوشمندی صنعتی، نسخه‌ی امروز",
-];
-const subtitlePhrases = [
-  "راهکارهای دقیق برای صنایع پیشرو",
-  "کیفیت پایدار، عملکرد برتر",
-  "از ایده تا اجرا، کنار شما",
-];
-
-const sideImages = [
-  {
-    src: "/images/section-one-image.jpg",
-    alt: "industrial-1",
-    accent: "#18a1e0",
-  },
-  {
-    src: "/images/section-two-image.jpg",
-    alt: "industrial-2",
-    accent: "#00cfb9",
-  },
-  {
-    src: "/images/hero-industrial-solder.jpg",
-    alt: "industrial-3",
-    accent: "#fd707e",
-  },
-  { src: "/images/section-two-bg.jpg", alt: "industrial-4", accent: "#ffd166" },
-  { src: "/images/section-one-bg.jpg", alt: "industrial-5", accent: "#a78bfa" },
-];
-
-const shapes = [
-  "rounded-[22%_78%_30%_70%/44%_56%_42%_58%]",
-  "rounded-[65%_35%_58%_42%/50%_50%_50%_50%]",
-  "rounded-[30%_70%_50%_50%/48%_52%_40%_60%]",
-  "rounded-[50%]",
-];
-
+// === Animated Siemens-industrial hero section with autoplay and parallax ===
 export default function SectionHero() {
-  const [tick, setTick] = useState(0);
-  const [kw, setKw] = useState(0);
-  const [titleIdx, setTitleIdx] = useState(0);
-  const [subIdx, setSubIdx] = useState(0);
+  // Slides configuration
+  const slides = useMemo(
+    () => [
+      {
+        id: 1,
+        title: "اتوماسیون صنعتی، با استاندارد زیمنس",
+        subtitle: "راهکارهای دقیق برای صنایع پیشرو",
+        image: "/images/hero-industrial-solder.jpg",
+        accent: "#00a9e0",
+      },
+      {
+        id: 2,
+        title: "قدرت مهندسی در خدمت سرعت",
+        subtitle: "کیفیت پایدار، عملکرد برتر",
+        image: "/images/section-one-image.jpg",
+        accent: "#00cfb9",
+      },
+      {
+        id: 3,
+        title: "هوشمندی صنعتی، نسخه‌ی امروز",
+        subtitle: "از ایده تا اجرا، کنار شما",
+        image: "/images/section-two-image.jpg",
+        accent: "#ffd166",
+      },
+    ],
+    []
+  );
 
+  // States
+  const [index, setIndex] = useState(0);
+  const [isPaused, setIsPaused] = useState(false);
+  const [progress, setProgress] = useState(0);
+  const timeoutRef = useRef<NodeJS.Timeout | null>(null);
+  const rafRef = useRef<number | null>(null);
+  const startTsRef = useRef<number>(0);
+  const AUTOPLAY_MS = 5200;
+
+  // Keyboard navigation
   useEffect(() => {
-    const t = setInterval(() => setTick((v) => v + 1), 5200);
-    const k = setInterval(() => setKw((v) => (v + 1) % keywords.length), 2200);
-    const tt = setInterval(
-      () => setTitleIdx((v) => (v + 1) % titlePhrases.length),
-      4800
-    );
-    const st = setInterval(
-      () => setSubIdx((v) => (v + 1) % subtitlePhrases.length),
-      4200
-    );
-    return () => {
-      clearInterval(t);
-      clearInterval(k);
-      clearInterval(tt);
-      clearInterval(st);
+    const onKey = (e: KeyboardEvent) => {
+      if (e.key === "ArrowLeft")
+        setIndex((i) => (i - 1 + slides.length) % slides.length);
+      else if (e.key === "ArrowRight") setIndex((i) => (i + 1) % slides.length);
     };
-  }, []);
+    window.addEventListener("keydown", onKey);
+    return () => window.removeEventListener("keydown", onKey);
+  }, [slides.length]);
 
-  const leftIdx = useMemo(() => (tick * 3) % sideImages.length, [tick]);
-  const rightIdx = useMemo(() => (tick * 5 + 1) % sideImages.length, [tick]);
-  const leftShape = useMemo(() => shapes[(tick + 1) % shapes.length], [tick]);
-  const rightShape = useMemo(() => shapes[(tick + 2) % shapes.length], [tick]);
+  // ✅ Fixed autoplay logic
+  useEffect(() => {
+    if (timeoutRef.current) clearTimeout(timeoutRef.current);
+    if (rafRef.current) cancelAnimationFrame(rafRef.current);
 
-  // Micro-parallax with scroll
+    setProgress(0);
+    startTsRef.current = performance.now();
+
+    const tick = () => {
+      if (isPaused) {
+        // pause handling
+        startTsRef.current = performance.now() - progress * AUTOPLAY_MS;
+        rafRef.current = requestAnimationFrame(tick);
+        return;
+      }
+      const elapsed = performance.now() - startTsRef.current;
+      const p = Math.min(1, elapsed / AUTOPLAY_MS);
+      setProgress(p);
+      if (p < 1) rafRef.current = requestAnimationFrame(tick);
+    };
+
+    rafRef.current = requestAnimationFrame(tick);
+    timeoutRef.current = setTimeout(() => {
+      setIndex((i) => (i + 1) % slides.length);
+    }, AUTOPLAY_MS);
+
+    return () => {
+      if (timeoutRef.current) clearTimeout(timeoutRef.current);
+      if (rafRef.current) cancelAnimationFrame(rafRef.current);
+    };
+  }, [index, slides.length, isPaused]); // ✅ progress removed from deps
+
+  const current = slides[index];
+
+  // Scroll parallax transforms
   const { scrollYProgress } = useScroll();
-  const yLeft = useTransform(scrollYProgress, [0, 1], [0, -3]);
-  const yRight = useTransform(scrollYProgress, [0, 1], [0, 3]);
+  const yImage = useTransform(scrollYProgress, [0, 1], [0, -12]);
+  const yAccentTop = useTransform(scrollYProgress, [0, 1], [0, -20]);
+  const yAccentBottom = useTransform(scrollYProgress, [0, 1], [0, 20]);
 
-  // Staggered animation variants
-  const containerVariants = {
-    hidden: { opacity: 0, y: 16 },
-    show: {
+  // Anim variants
+  const contentVariants = {
+    initial: { opacity: 0, y: 18, filter: "blur(4px)" },
+    animate: {
       opacity: 1,
       y: 0,
-      transition: { staggerChildren: 0.15, delayChildren: 0.15 },
+      filter: "blur(0px)",
+      transition: { duration: 0.6 },
+    },
+    exit: {
+      opacity: 0,
+      y: -18,
+      filter: "blur(4px)",
+      transition: { duration: 0.4 },
     },
   } as const;
-  const itemVariants = {
-    hidden: { opacity: 0, y: 12 },
-    show: { opacity: 1, y: 0, transition: { duration: 0.5 } },
+
+  const imageVariants = {
+    initial: { opacity: 0, scale: 0.98, y: 14 },
+    animate: {
+      opacity: 1,
+      scale: 1,
+      y: 0,
+      transition: { duration: 0.65, ease: "easeOut" },
+    },
+    exit: { opacity: 0, scale: 0.98, y: -10, transition: { duration: 0.45 } },
   } as const;
 
+  // === Render ===
   return (
     <section
       dir="rtl"
-      className="relative w-full min-h-[calc(100svh-64px)] overflow-hidden bg-[#0e1622] flex items-center"
+      className="relative w-full overflow-hidden bg-[#0b1730]"
+      onMouseEnter={() => setIsPaused(true)}
+      onMouseLeave={() => setIsPaused(false)}
     >
-      {/* Minimal background with grain and subtle dotted pattern */}
-      <div
+      {/* Gradient BG */}
+      <div className="absolute inset-0 -z-10 bg-linear-to-tr from-[#0b1730] via-[#0d1e3f] to-[#0a234a]" />
+
+      {/* Accent blobs */}
+      <motion.div
+        style={{ y: yAccentTop }}
+        className="absolute -top-24 -left-24 w-[42vw] h-[42vw] max-w-[540px] max-h-[540px] rounded-full bg-transparent -z-10"
+      >
+        <div
+          className="w-full h-full rounded-full blur-3xl"
+          style={{ backgroundColor: `${current.accent}33` }}
+        />
+      </motion.div>
+      <motion.div
+        style={{ y: yAccentBottom }}
+        className="absolute -bottom-28 -right-28 w-[36vw] h-[36vw] max-w-[460px] max-h-[460px] rounded-full bg-transparent -z-10"
+      >
+        <div
+          className="w-full h-full rounded-full blur-3xl"
+          style={{ backgroundColor: `${current.accent}1A` }}
+        />
+      </motion.div>
+
+      {/* Circuit paths overlay */}
+      <motion.svg
         aria-hidden
-        className="absolute inset-0 z-0 opacity-25"
-        style={{
-          backgroundImage:
-            "radial-gradient(circle at 10% 10%, rgba(255,255,255,.07) 0 1px, transparent 1px), radial-gradient(circle at 60% 30%, rgba(255,255,255,.06) 0 1px, transparent 1px)",
-          backgroundSize: "14px 14px, 18px 18px",
+        className="absolute inset-0 -z-10 opacity-[.18]"
+        viewBox="0 0 1200 600"
+      >
+        <g stroke="#8bcdf1" strokeWidth="1.2" fill="none" strokeLinecap="round">
+          <motion.path
+            d="M50 120 H240 V80 H420 V160 H520 V120 H680"
+            strokeDasharray="6 8"
+            initial={{ strokeDashoffset: 60 }}
+            animate={{ strokeDashoffset: [60, 0] }}
+            transition={{ duration: 6, repeat: Infinity, ease: "linear" }}
+          />
+          <motion.path
+            d="M200 300 H360 V260 H520 V340 H700 V300 H980"
+            strokeDasharray="8 10"
+            initial={{ strokeDashoffset: 100 }}
+            animate={{ strokeDashoffset: [100, 0] }}
+            transition={{
+              duration: 8,
+              repeat: Infinity,
+              ease: "linear",
+              delay: 0.6,
+            }}
+          />
+          <motion.path
+            d="M80 460 H260 V420 H420 V500 H600 V460 H860 V420 H1100"
+            strokeDasharray="5 9"
+            initial={{ strokeDashoffset: 80 }}
+            animate={{ strokeDashoffset: [80, 0] }}
+            transition={{
+              duration: 7,
+              repeat: Infinity,
+              ease: "linear",
+              delay: 1.2,
+            }}
+          />
+        </g>
+      </motion.svg>
+
+      {/* Diagonal glow sweep */}
+      <motion.div
+        aria-hidden
+        className="absolute -z-10 -inset-40"
+        initial={{ opacity: 0, x: -180, y: -180 }}
+        animate={{ opacity: [0, 0.22, 0], x: [-180, 180], y: [-180, 180] }}
+        transition={{
+          duration: 10,
+          repeat: Infinity,
+          ease: "easeInOut",
+          delay: 1.2,
         }}
-      />
-      <div className="absolute inset-0 z-0 bg-linear-to-tr from-[#0a2237] via-[#0f1f33] to-[#0b2038]" />
-      {/* Very subtle noise overlay */}
-      <div
-        className="pointer-events-none absolute inset-0 z-0 opacity-[.06] mix-blend-overlay"
         style={{
-          backgroundImage:
-            'url(\'data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="120" height="120" viewBox="0 0 120 120"><filter id="n"><feTurbulence type="fractalNoise" baseFrequency="0.9" numOctaves="2" stitchTiles="stitch"/></filter><rect width="120" height="120" filter="url(%23n)" opacity="0.35"/></svg>\')',
-          backgroundSize: "120px 120px",
+          background:
+            "radial-gradient(120px 120px at center, rgba(0,169,224,0.24) 0%, rgba(0,169,224,0.0) 70%)",
+          mixBlendMode: "screen",
         }}
       />
 
-      {/* Center content with staggered animation */}
-      <div className="relative z-20 w-full max-w-7xl mx-auto px-[clamp(1.25rem,6vw,4rem)] grid grid-cols-1 md:grid-cols-2 gap-8 md:gap-10 items-center">
-        <motion.div
-          className="flex flex-col gap-5 md:gap-6 text-white"
-          variants={containerVariants}
-          initial="hidden"
-          animate="show"
-        >
-          {/* Animated rotating title */}
-          <div className="min-h-[2.6em]">
-            <AnimatePresence mode="wait">
-              <motion.h1
-                key={titleIdx}
-                className="text-[2rem] sm:text-[2.5rem] md:text-6xl font-extrabold leading-[1.15] tracking-tight bg-clip-text text-transparent bg-linear-to-r from-white via-cyan-200 to-white"
-                initial={{
-                  opacity: 0,
-                  y: 30,
-                  rotateX: -25,
-                  filter: "blur(6px)",
-                }}
-                animate={{ opacity: 1, y: 0, rotateX: 0, filter: "blur(0px)" }}
-                exit={{ opacity: 0, y: -28, rotateX: 20, filter: "blur(6px)" }}
-                transition={{ duration: 0.7, ease: "easeOut" }}
-              >
-                {titlePhrases[titleIdx]}
-              </motion.h1>
-            </AnimatePresence>
+      {/* Content grid */}
+      <div className="max-w-7xl mx-auto px-[clamp(1.25rem,6vw,3rem)] py-[clamp(3rem,8vw,6rem)] grid grid-cols-1 md:grid-cols-2 gap-10 items-center">
+        {/* Text columns */}
+        <div className="text-white">
+          {/* Header + progress */}
+          <div className="flex items-center gap-3 mb-3">
+            <span className="text-xs px-2 py-1 rounded-md bg-white/10 border border-white/15">
+              زیمنس پلاس
+            </span>
+            <div className="relative h-[3px] flex-1 rounded bg-white/10 overflow-hidden">
+              <div
+                className="absolute left-0 top-0 h-full bg-white/80"
+                style={{ width: `${progress * 100}%` }}
+              />
+            </div>
           </div>
 
-          {/* Animated rotating subtitle */}
-          <div className="min-h-[2em] text-lg sm:text-xl md:text-2xl text-white/85">
-            <AnimatePresence mode="wait">
-              <motion.div
-                key={subIdx}
-                initial={{ opacity: 0, y: 18, filter: "blur(4px)" }}
-                animate={{ opacity: 1, y: 0, filter: "blur(0px)" }}
-                exit={{ opacity: 0, y: -18, filter: "blur(4px)" }}
-                transition={{ duration: 0.55 }}
-              >
-                {subtitlePhrases[subIdx]} {" | "}
-                <span>راهکارهای </span>
-                <AnimatePresence mode="wait">
-                  <motion.span
-                    key={kw}
-                    initial={{ opacity: 0, y: 14, filter: "blur(4px)" }}
-                    animate={{ opacity: 1, y: 0, filter: "blur(0px)" }}
-                    exit={{ opacity: 0, y: -14, filter: "blur(4px)" }}
-                    transition={{ duration: 0.45 }}
-                    className="mx-2 font-black text-cyan-300"
-                  >
-                    {keywords[kw]}
-                  </motion.span>
-                </AnimatePresence>
-                <span>برای صنایع حرفه‌ای.</span>
+          <AnimatePresence mode="wait">
+            <motion.div
+              key={`content-${current.id}`}
+              variants={contentVariants}
+              initial="initial"
+              animate="animate"
+              exit="exit"
+            >
+              <h1 className="text-[clamp(2rem,5vw,3.25rem)] leading-tight font-extrabold tracking-tight">
+                {current.title}
+              </h1>
+              <p className="mt-4 text-[clamp(0.95rem,2.4vw,1.125rem)] text-white/85 leading-relaxed max-w-[46ch]">
+                {current.subtitle}
+              </p>
+
+              <div className="mt-6 flex flex-wrap items-center gap-3">
+                <a
+                  href="#contact"
+                  className="px-6 py-2.5 rounded-xl text-white font-vazir-semibold shadow-[0_10px_28px_-10px_rgba(0,169,224,.7)] hover:brightness-110 transition"
+                  style={{ backgroundColor: current.accent }}
+                >
+                  شروع مشاوره
+                </a>
+                <a
+                  href="#products"
+                  className="px-6 py-2.5 rounded-xl border border-white/25 text-white/95 hover:bg-white/10 transition"
+                >
+                  مشاهده محصولات
+                </a>
+              </div>
+
+              {/* Chips */}
+              <ul className="mt-6 flex flex-wrap items-center gap-2 text-xs text-white/80">
+                <li className="px-2 py-1 rounded-md bg-white/10 border border-white/10">
+                  اورجینال
+                </li>
+                <li className="px-2 py-1 rounded-md bg-white/10 border border-white/10">
+                  گارانتی معتبر
+                </li>
+                <li className="px-2 py-1 rounded-md bg-white/10 border border-white/10">
+                  پشتیبانی فنی
+                </li>
+              </ul>
+            </motion.div>
+          </AnimatePresence>
+
+          {/* Dots indicator */}
+          <div className="mt-8 flex items-center gap-2">
+            {slides.map((s, i) => (
+              <button
+                key={s.id}
+                onClick={() => setIndex(i)}
+                className={`h-2.5 rounded-full transition-all duration-300 ${
+                  i === index
+                    ? "w-6 bg-white"
+                    : "w-2.5 bg-white/40 hover:bg-white/70"
+                }`}
+              />
+            ))}
+          </div>
+        </div>
+
+        {/* Image */}
+        <div className="relative h-[320px] sm:h-[380px] md:h-[420px] select-none">
+          <div className="absolute inset-0 rounded-[28px] bg-white/5 border border-white/10 backdrop-blur-xl" />
+          <AnimatePresence mode="wait">
+            <motion.div
+              key={`img-${current.id}`}
+              variants={imageVariants}
+              initial="initial"
+              animate="animate"
+              exit="exit"
+              className="absolute inset-3 rounded-[24px] overflow-hidden"
+            >
+              <motion.div style={{ y: yImage }} className="absolute inset-0">
+                <motion.div
+                  initial={{ scale: 1 }}
+                  animate={{ scale: 1.05 }}
+                  transition={{ duration: 6, ease: "linear" }}
+                  className="absolute inset-0"
+                >
+                  <Image
+                    src={current.image}
+                    alt="تصویر صنعتی"
+                    fill
+                    className="object-cover"
+                    priority
+                  />
+                </motion.div>
               </motion.div>
-            </AnimatePresence>
-          </div>
-
-          <motion.div
-            className="flex items-center gap-3 sm:gap-4 pt-1.5"
-            variants={itemVariants}
-          >
-            <a
-              href="#contact"
-              className="px-6 sm:px-7 py-2.5 sm:py-3 rounded-xl bg-cyan-500 text-white font-bold shadow-[0_10px_40px_-10px_rgba(34,211,238,.6)] hover:brightness-110 hover:scale-[1.03] transition"
-              aria-label="مشاوره رایگان"
-            >
-              مشاوره رایگان
-            </a>
-            <a
-              href="#products"
-              className="px-6 sm:px-7 py-2.5 sm:py-3 rounded-xl border border-white/25 text-white/95 hover:bg-white/10 transition"
-              aria-label="مشاهده محصولات"
-            >
-              مشاهده محصولات
-            </a>
-          </motion.div>
-        </motion.div>
-
-        {/* Placeholder central panel for desktop balance */}
-        <div className="hidden md:block relative h-[360px] lg:h-[420px]">
-          <div className="absolute inset-0 rounded-[24px] lg:rounded-[28px] bg-white/3 border border-white/10 backdrop-blur-xl" />
-          <div className="absolute -inset-6 blur-3xl bg-cyan-400/20 rounded-[36px] lg:rounded-[40px]" />
+              <div className="absolute inset-0 bg-linear-to-t from-[#0b1730]/60 via-transparent to-transparent" />
+              <div
+                className="absolute -inset-2 rounded-[inherit] border"
+                style={{ borderColor: `${current.accent}55` }}
+              />
+            </motion.div>
+          </AnimatePresence>
         </div>
       </div>
 
-      {/* Floating image (left) with micro-parallax */}
-      <div className="pointer-events-none absolute left-[-10vw] sm:left-[-6vw] md:left-[-3vw] top-[6vh] md:top-[10vh] z-10">
-        <AnimatePresence mode="popLayout">
-          <motion.div
-            key={`L-${tick}`}
-            initial={{ x: -120, y: 40, rotate: -6, opacity: 0 }}
-            animate={{ x: 0, y: 0, rotate: 0, opacity: 1 }}
-            exit={{ x: -100, y: -40, rotate: -8, opacity: 0 }}
-            transition={{ duration: 0.8, type: "spring" }}
-            className={`relative w-[58vw] sm:w-[46vw] md:w-[44vw] max-w-[300px] sm:max-w-[340px] md:max-w-[360px] h-[68vw] sm:h-[56vw] md:h-[54vw] max-h-[420px] sm:max-h-[440px] md:max-h-[460px] overflow-hidden border-2 border-white/25 shadow-2xl ${leftShape}`}
-            style={{ y: yLeft }}
-          >
-            <Image
-              src={sideImages[leftIdx].src}
-              alt={sideImages[leftIdx].alt}
-              fill
-              className="object-cover"
-              priority
-            />
-            <div className="absolute inset-0 bg-linear-to-t from-black/35 to-transparent" />
-            <div
-              className="absolute -inset-2 rounded-[inherit] border"
-              style={{ borderColor: `${sideImages[leftIdx].accent}88` }}
-            />
-          </motion.div>
-        </AnimatePresence>
-      </div>
-
-      {/* Floating image (right) with micro-parallax */}
-      <div className="pointer-events-none absolute right-[-10vw] sm:right-[-6vw] md:right-[-3vw] bottom-[6vh] md:bottom-[10vh] z-10">
-        <AnimatePresence mode="popLayout">
-          <motion.div
-            key={`R-${tick}`}
-            initial={{ x: 120, y: 40, rotate: 6, opacity: 0 }}
-            animate={{ x: 0, y: 0, rotate: 0, opacity: 1 }}
-            exit={{ x: 100, y: -40, rotate: 8, opacity: 0 }}
-            transition={{ duration: 0.8, type: "spring" }}
-            className={`relative w-[52vw] sm:w-[44vw] md:w-[42vw] max-w-[280px] sm:max-w-[320px] md:max-w-[340px] h-[52vw] sm:h-[44vw] md:h-[42vw] max-h-[340px] sm:max-h-[360px] md:max-h-[380px] overflow-hidden border-2 border-white/25 shadow-2xl ${rightShape}`}
-            style={{ y: yRight }}
-          >
-            <Image
-              src={sideImages[rightIdx].src}
-              alt={sideImages[rightIdx].alt}
-              fill
-              className="object-cover"
-              priority
-            />
-            <div className="absolute inset-0 bg-linear-to-b from-black/35 to-transparent" />
-            <div
-              className="absolute -inset-2 rounded-[inherit] border"
-              style={{ borderColor: `${sideImages[rightIdx].accent}88` }}
-            />
-          </motion.div>
-        </AnimatePresence>
-      </div>
-
-      {/* Soft vignette for focus */}
-      <div
-        className="pointer-events-none absolute inset-0 z-30"
-        style={{ boxShadow: "inset 0 0 140px rgba(0,0,0,.55)" }}
+      {/* Swipe capture for mobile */}
+      <SwipeZone
+        onSwipeLeft={() => setIndex((i) => (i + 1) % slides.length)}
+        onSwipeRight={() =>
+          setIndex((i) => (i - 1 + slides.length) % slides.length)
+        }
       />
     </section>
+  );
+}
+
+// ==== Touch swipe detector (mobile) ====
+function SwipeZone({
+  onSwipeLeft,
+  onSwipeRight,
+}: {
+  onSwipeLeft: () => void;
+  onSwipeRight: () => void;
+}) {
+  const startX = useRef<number | null>(null);
+  const delta = useRef(0);
+
+  const handleStart = useCallback((e: React.TouchEvent<HTMLDivElement>) => {
+    startX.current = e.touches[0].clientX;
+    delta.current = 0;
+  }, []);
+
+  const handleMove = useCallback((e: React.TouchEvent<HTMLDivElement>) => {
+    if (startX.current == null) return;
+    delta.current = e.touches[0].clientX - startX.current;
+  }, []);
+
+  const handleEnd = useCallback(() => {
+    if (Math.abs(delta.current) > 40) {
+      delta.current < 0 ? onSwipeLeft() : onSwipeRight();
+    }
+    startX.current = null;
+    delta.current = 0;
+  }, [onSwipeLeft, onSwipeRight]);
+
+  return (
+    <div
+      className="absolute inset-0 md:hidden"
+      onTouchStart={handleStart}
+      onTouchMove={handleMove}
+      onTouchEnd={handleEnd}
+    />
   );
 }
