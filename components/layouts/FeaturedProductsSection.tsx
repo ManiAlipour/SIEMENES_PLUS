@@ -42,7 +42,7 @@ const products = [
   },
 ];
 
- function FeaturedProductsSection() {
+function FeaturedProductsSection() {
   return (
     <section
       dir="rtl"
@@ -58,7 +58,7 @@ const products = [
 
       <div
         className="
-          grid grid-cols-2 md:grid-cols-3 gap-4 md:gap-8 
+         grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6 items-stretch
           max-w-6xl mx-auto px-4 md:px-0
         "
       >

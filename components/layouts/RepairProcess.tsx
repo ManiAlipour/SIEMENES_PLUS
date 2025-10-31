@@ -9,8 +9,9 @@ import {
   FaUmbrella,
   FaCalculator,
 } from "react-icons/fa";
+import withFixedBg from "../common/withFixedBg";
 
-export default function RepairProcess() {
+function RepairProcess() {
   const steps = [
     {
       icon: <FaCalculator />,
@@ -33,50 +34,88 @@ export default function RepairProcess() {
   ];
 
   return (
-    <section className="py-16 bg-gray-50 relative overflow-hidden">
-      {/* Section heading */}
-      <div className="text-center mb-12">
+    <section className="relative overflow-hidden py-16 md:py-20 bg-[#f8f9fb]">
+      {/* موج نوری پس‌زمینه */}
+      <div className="absolute inset-0 z-0 opacity-40">
+        <svg viewBox="0 0 1200 400" className="w-full h-full">
+          <defs>
+            <linearGradient
+              id="pulseGradient"
+              x1="0%"
+              y1="0%"
+              x2="100%"
+              y2="0%"
+            >
+              <stop offset="0%" stopColor="#00A9E0" stopOpacity="0.2" />
+              <stop offset="50%" stopColor="#00A9E0" stopOpacity="0.6" />
+              <stop offset="100%" stopColor="#00A9E0" stopOpacity="0.2" />
+            </linearGradient>
+          </defs>
+          <path
+            d="M0,200 C200,150 400,250 600,200 C800,150 1000,250 1200,200"
+            stroke="url(#pulseGradient)"
+            strokeWidth="3"
+            fill="none"
+          >
+            <animate
+              attributeName="stroke-width"
+              values="2;4;2"
+              dur="3s"
+              repeatCount="indefinite"
+            />
+          </path>
+        </svg>
+      </div>
+
+      {/* عنوان سکشن */}
+      <div className="relative z-10 text-center mb-12">
         <h2 className="text-2xl sm:text-3xl font-bold text-[#004C97]">
           فرآیند تعمیرات گروه مهندسی{" "}
           <span className="text-[#00A9E0]">زیمنس پلاس</span>
         </h2>
-        <div className="mt-3 w-28 h-1 bg-[#00A9E0] mx-auto rounded"></div>
+        <div className="mt-3 w-28 h-1 bg-[#00A9E0] mx-auto rounded-full shadow-[0_0_14px_#00A9E0]"></div>
       </div>
 
-      {/* Step-by-step path */}
-      <div className="max-w-6xl mx-auto grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-8 px-4 text-center relative">
-        {/* Connector line between steps */}
-        <div className="absolute top-12 left-0 w-full h-[2px] bg-gradient-to-r from-[#00A9E0]/30 via-[#00A9E0]/60 to-[#00A9E0]/30 animate-[pulseLine_3s_ease-in-out_infinite]" />
+      {/* مراحل */}
+      <div className="relative z-10 max-w-6xl mx-auto grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-6 px-4 text-center items-start">
         {steps.map((item, i) => (
           <motion.div
             key={i}
             initial={{ opacity: 0, y: 20 }}
             whileInView={{ opacity: 1, y: 0 }}
             transition={{ delay: i * 0.1 }}
-            className="flex flex-col items-center relative z-10"
+            className="flex flex-col items-center group"
           >
-            <div className="bg-white border-2 border-[#00A9E0] rounded-full p-4 text-[#00A9E0] text-3xl shadow-md mb-3 hover:shadow-blue-200 transition-shadow">
-              {item.icon}
+            {/* آیکون صنعتی */}
+            <div className="relative w-16 h-16 flex items-center justify-center rounded-full bg-white border-2 border-[#00A9E0] shadow-[0_0_10px_#00A9E0]/40 mb-3">
+              <motion.span
+                whileHover={{ scale: 1.1 }}
+                className="text-[#00A9E0] text-3xl"
+              >
+                {item.icon}
+              </motion.span>
+
+              {/* حلقه نوری */}
+              <span className="absolute inset-0 rounded-full bg-[#00A9E0]/10 blur-lg opacity-0 group-hover:opacity-100 transition" />
             </div>
+
+            {/* توضیحات */}
             <p className="text-sm sm:text-base font-medium text-gray-700 leading-snug max-w-[140px]">
               {item.title}
             </p>
           </motion.div>
         ))}
       </div>
-
-      {/* Subtle wave animation for the connector line */}
-      <style jsx>{`
-        @keyframes pulseLine {
-          0%,
-          100% {
-            opacity: 0.3;
-          }
-          50% {
-            opacity: 1;
-          }
-        }
-      `}</style>
     </section>
   );
 }
+
+const RepairProcessWithBg = withFixedBg(RepairProcess, {
+  backgroundImage: "/images/section-two-bg.jpg",
+  overlayColor: "#000",
+  overlayOpacity: 0.18,
+  minHeight: "auto",
+  className: "py-16 md:py-20",
+});
+
+export default RepairProcessWithBg;

@@ -27,7 +27,7 @@ export default function CategoryHighlightsSection() {
             {/* Horizontal scrollable products list */}
             <div
               className="
-                flex gap-4 overflow-x-auto snap-x snap-mandatory
+                flex gap-4 items-stretch  overflow-x-auto snap-x snap-mandatory
                 scroll-smooth scrollbar-hide pb-3
               "
             >
