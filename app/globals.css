@@ -2,7 +2,8 @@
 
 @font-face {
   font-family: Vazir;
-  src: url("/fonts/Vazir.ttf");
+  src: url("/fonts/Vazir.ttf") format("truetype");
+  font-display: swap;
 }
 
 :root {

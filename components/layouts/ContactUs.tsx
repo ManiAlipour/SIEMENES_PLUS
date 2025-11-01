@@ -8,10 +8,16 @@ export default function ContactUs() {
   return (
     <section className="relative overflow-hidden py-24">
       {/* پس‌زمینهٔ گرادیانی با پترن */}
-      <div className="absolute inset-0 bg-gradient-to-br from-[#0b1730] via-[#002b59] to-[#004c97]" />
+      <div
+        className="absolute inset-0
+       bg-linear-to-br from-[#0b1730] via-[#002b59] to-[#004c97]"
+      />
 
       {/* شبکهٔ خطوط نوری پس‌زمینه */}
-      <div className="absolute inset-0 opacity-[0.15] [background-image:radial-gradient(#00a9e0_1px,transparent_1px)] [background-size:40px_40px]" />
+      <div
+        className="absolute inset-0 opacity-[0.15]
+       bg-[radial-gradient(#00a9e0_1px,transparent_1px)] bg-size-[40px_40px]"
+      />
 
       <div className="relative container mx-auto grid md:grid-cols-2 gap-12 px-6 items-center z-10">
         {/* سمت اطلاعات */}

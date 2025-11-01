@@ -1,6 +1,5 @@
 "use client";
 import Image from "next/image";
-import withFixedBg from "../common/withFixedBg";
 
 // About Us section with brand accent, image, and brief description
 const AboutUs = () => {
@@ -12,7 +11,10 @@ const AboutUs = () => {
       <div className="container mx-auto grid md:grid-cols-2 gap-14 items-center px-6 md:px-10">
         {/* Technical team image */}
         <div className="flex justify-center md:justify-start order-1 md:order-2">
-          <div className="rounded-xl overflow-hidden shadow-[0_8px_25px_rgba(0,76,151,0.1)] border border-[#004c97]/20 w-full max-w-[500px] aspect-[4/3] ring-1 ring-[#004c97]/10">
+          <div
+            className="rounded-xl overflow-hidden shadow-[0_8px_25px_rgba(0,76,151,0.1)] border border-[#004c97]/20 w-full max-w-[500px]
+           aspect-4/3 ring-1 ring-[#004c97]/10"
+          >
             <Image
               src="/images/team-industrial.png"
               alt="تیم فنی زیمنس پلاس | SIEMENS PLUS"

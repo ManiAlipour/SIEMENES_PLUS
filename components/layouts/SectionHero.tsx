@@ -38,10 +38,10 @@ export default function SectionHero() {
     []
   );
 
-  // States
   const [index, setIndex] = useState(0);
   const [isPaused, setIsPaused] = useState(false);
   const [progress, setProgress] = useState(0);
+
   const timeoutRef = useRef<NodeJS.Timeout | null>(null);
   const rafRef = useRef<number | null>(null);
   const startTsRef = useRef<number>(0);
@@ -58,17 +58,17 @@ export default function SectionHero() {
     return () => window.removeEventListener("keydown", onKey);
   }, [slides.length]);
 
-  // ✅ Fixed autoplay logic
   useEffect(() => {
     if (timeoutRef.current) clearTimeout(timeoutRef.current);
     if (rafRef.current) cancelAnimationFrame(rafRef.current);
 
-    setProgress(0);
     startTsRef.current = performance.now();
+
+    // defer React state update
+    requestAnimationFrame(() => setProgress(0));
 
     const tick = () => {
       if (isPaused) {
-        // pause handling
         startTsRef.current = performance.now() - progress * AUTOPLAY_MS;
         rafRef.current = requestAnimationFrame(tick);
         return;
@@ -88,17 +88,16 @@ export default function SectionHero() {
       if (timeoutRef.current) clearTimeout(timeoutRef.current);
       if (rafRef.current) cancelAnimationFrame(rafRef.current);
     };
-  }, [index, slides.length, isPaused]); // ✅ progress removed from deps
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [index, slides.length, isPaused]);
 
   const current = slides[index];
 
-  // Scroll parallax transforms
   const { scrollYProgress } = useScroll();
   const yImage = useTransform(scrollYProgress, [0, 1], [0, -12]);
   const yAccentTop = useTransform(scrollYProgress, [0, 1], [0, -20]);
   const yAccentBottom = useTransform(scrollYProgress, [0, 1], [0, 20]);
 
-  // Anim variants
   const contentVariants = {
     initial: { opacity: 0, y: 18, filter: "blur(4px)" },
     animate: {
@@ -126,7 +125,6 @@ export default function SectionHero() {
     exit: { opacity: 0, scale: 0.98, y: -10, transition: { duration: 0.45 } },
   } as const;
 
-  // === Render ===
   return (
     <section
       dir="rtl"
@@ -135,12 +133,12 @@ export default function SectionHero() {
       onMouseLeave={() => setIsPaused(false)}
     >
       {/* Gradient BG */}
-      <div className="absolute inset-0 -z-10 bg-linear-to-tr from-[#0b1730] via-[#0d1e3f] to-[#0a234a]" />
+      <div className="absolute inset-0 -z-10 bg--to-tr from-[#0b1730] via-[#0d1e3f] to-[#0a234a]" />
 
       {/* Accent blobs */}
       <motion.div
         style={{ y: yAccentTop }}
-        className="absolute -top-24 -left-24 w-[42vw] h-[42vw] max-w-[540px] max-h-[540px] rounded-full bg-transparent -z-10"
+        className="absolute -top-24 -left-24 w-[42vw] h-[42vw] max-w-[540px] max-h-[540px] rounded-full -z-10"
       >
         <div
           className="w-full h-full rounded-full blur-3xl"
@@ -149,7 +147,7 @@ export default function SectionHero() {
       </motion.div>
       <motion.div
         style={{ y: yAccentBottom }}
-        className="absolute -bottom-28 -right-28 w-[36vw] h-[36vw] max-w-[460px] max-h-[460px] rounded-full bg-transparent -z-10"
+        className="absolute -bottom-28 -right-28 w-[36vw] h-[36vw] max-w-[460px] max-h-[460px] rounded-full -z-10"
       >
         <div
           className="w-full h-full rounded-full blur-3xl"
@@ -157,7 +155,7 @@ export default function SectionHero() {
         />
       </motion.div>
 
-      {/* Circuit paths overlay */}
+      {/* Circuit paths + glow sweep */}
       <motion.svg
         aria-hidden
         className="absolute inset-0 -z-10 opacity-[.18]"
@@ -198,7 +196,6 @@ export default function SectionHero() {
         </g>
       </motion.svg>
 
-      {/* Diagonal glow sweep */}
       <motion.div
         aria-hidden
         className="absolute -z-10 -inset-40"
@@ -212,19 +209,20 @@ export default function SectionHero() {
         }}
         style={{
           background:
-            "radial-gradient(120px 120px at center, rgba(0,169,224,0.24) 0%, rgba(0,169,224,0.0) 70%)",
+            "radial-gradient(120px 120px at center, rgba(0,169,224,0.24) 0%, rgba(0,169,224,0) 70%)",
           mixBlendMode: "screen",
         }}
       />
 
-      {/* Content grid */}
-      <div className="max-w-7xl mx-auto px-[clamp(1.25rem,6vw,3rem)] py-[clamp(3rem,8vw,6rem)] grid grid-cols-1 md:grid-cols-2 gap-10 items-center">
-        {/* Text columns */}
+      {/* Content */}
+      <div
+        className="max-w-7xl mx-auto px-[clamp(1.25rem,6vw,3rem)] py-[clamp(3rem,8vw,6rem)]
+      grid grid-cols-1 md:grid-cols-2 gap-10 items-center"
+      >
         <div className="text-white">
-          {/* Header + progress */}
           <div className="flex items-center gap-3 mb-3">
-            <span className="text-xs uppercase  px-2 py-1 rounded-md bg-white/10 border border-white/15">
-              Siemens plus
+            <span className="text-xs uppercase px-2 py-1 rounded-md bg-white/10 border border-white/15">
+              Siemens plus
             </span>
             <div className="relative h-[3px] flex-1 rounded bg-white/10 overflow-hidden">
               <div
@@ -265,7 +263,6 @@ export default function SectionHero() {
                 </a>
               </div>
 
-              {/* Chips */}
               <ul className="mt-6 flex flex-wrap items-center gap-2 text-xs text-white/80">
                 <li className="px-2 py-1 rounded-md bg-white/10 border border-white/10">
                   اورجینال
@@ -280,7 +277,6 @@ export default function SectionHero() {
             </motion.div>
           </AnimatePresence>
 
-          {/* Dots indicator */}
           <div className="mt-8 flex items-center gap-2">
             {slides.map((s, i) => (
               <button
@@ -296,8 +292,8 @@ export default function SectionHero() {
           </div>
         </div>
 
-        {/* Image */}
-        <div className="relative h-[320px] sm:h-[380px] md:h-[420px] select-none">
+        {/* Image side */}
+        <div className="relative h-80 sm:h-[380px] md:h-[420px] select-none">
           <div className="absolute inset-0 rounded-[28px] bg-white/5 border border-white/10 backdrop-blur-xl" />
           <AnimatePresence mode="wait">
             <motion.div
@@ -306,7 +302,7 @@ export default function SectionHero() {
               initial="initial"
               animate="animate"
               exit="exit"
-              className="absolute inset-3 rounded-[24px] overflow-hidden"
+              className="absolute inset-3 rounded-3xl overflow-hidden"
             >
               <motion.div style={{ y: yImage }} className="absolute inset-0">
                 <motion.div
@@ -319,8 +315,9 @@ export default function SectionHero() {
                     src={current.image}
                     alt="تصویر صنعتی"
                     fill
-                    className="object-cover"
                     priority
+                    className="object-cover"
+                    sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
                   />
                 </motion.div>
               </motion.div>
@@ -345,7 +342,7 @@ export default function SectionHero() {
   );
 }
 
-// ==== Touch swipe detector (mobile) ====
+// ==== Touch swipe detector ====
 function SwipeZone({
   onSwipeLeft,
   onSwipeRight,
@@ -368,12 +365,13 @@ function SwipeZone({
 
   const handleEnd = useCallback(() => {
     if (Math.abs(delta.current) > 40) {
-      delta.current < 0 ? onSwipeLeft() : onSwipeRight();
+      if (delta.current < 0) {
+        onSwipeLeft();
+      } else {
+        onSwipeRight();
+      }
     }
-    startX.current = null;
-    delta.current = 0;
   }, [onSwipeLeft, onSwipeRight]);
-
   return (
     <div
       className="absolute inset-0 md:hidden"

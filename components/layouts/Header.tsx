@@ -66,7 +66,7 @@ export default function Header() {
               alt="Siemens Plus Logo"
               width={40}
               height={40}
-              className="rounded-full shadow-sm"
+              className="rounded-full shadow-sm w-10 h-10"
             />
             <div className="flex flex-col leading-tight font-vazir">
               <span className="text-2xl font-extrabold text-foreground whitespace-nowrap">

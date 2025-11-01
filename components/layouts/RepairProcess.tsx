@@ -12,10 +12,22 @@ import {
 
 export default function RepairProcess() {
   const steps = [
-    { icon: <FaCalculator />, title: "برآورد هزینه قبل از شروع تعمیرات", step: 1 },
+    {
+      icon: <FaCalculator />,
+      title: "برآورد هزینه قبل از شروع تعمیرات",
+      step: 1,
+    },
     { icon: <FaTools />, title: "تعمیرات به‌صورت روشمند و علمی", step: 2 },
-    { icon: <FaUmbrella />, title: "سرویس و تمیز نمودن تجهیزات الکترونیک", step: 3 },
-    { icon: <FaSearchPlus />, title: "آنالیز و عیب‌یابی قطعات الکترونیک", step: 4 },
+    {
+      icon: <FaUmbrella />,
+      title: "سرویس و تمیز نمودن تجهیزات الکترونیک",
+      step: 3,
+    },
+    {
+      icon: <FaSearchPlus />,
+      title: "آنالیز و عیب‌یابی قطعات الکترونیک",
+      step: 4,
+    },
     { icon: <FaThumbsUp />, title: "تست محصول تعمیر شده", step: 5 },
     { icon: <FaShippingFast />, title: "ارسال رایگان", step: 6 },
   ];
@@ -29,7 +41,13 @@ export default function RepairProcess() {
       <div className="absolute inset-0 z-0 opacity-40">
         <svg viewBox="0 0 1200 400" className="w-full h-full">
           <defs>
-            <linearGradient id="pulseGradient" x1="0%" y1="0%" x2="100%" y2="0%">
+            <linearGradient
+              id="pulseGradient"
+              x1="0%"
+              y1="0%"
+              x2="100%"
+              y2="0%"
+            >
               <stop offset="0%" stopColor="#00A9E0" stopOpacity="0.2" />
               <stop offset="50%" stopColor="#00A9E0" stopOpacity="0.6" />
               <stop offset="100%" stopColor="#00A9E0" stopOpacity="0.2" />
@@ -71,7 +89,10 @@ export default function RepairProcess() {
             className="flex flex-col items-center group"
           >
             {/* آیکون صنعتی */}
-            <div className="relative w-16 h-16 flex items-center justify-center rounded-full bg-gradient-to-b from-[#0b1730] to-[#002b59] border-2 border-[#00A9E0] shadow-[0_0_10px_#00A9E0]/40 mb-3">
+            <div
+              className="relative w-16 h-16 flex items-center justify-center rounded-full bg-linear-to-b
+             from-[#0b1730] to-[#002b59] border-2 border-[#00A9E0] shadow-[0_0_10px_#00A9E0]/40 mb-3"
+            >
               <motion.span
                 whileHover={{ scale: 1.1 }}
                 className="text-[#00A9E0] text-3xl"
