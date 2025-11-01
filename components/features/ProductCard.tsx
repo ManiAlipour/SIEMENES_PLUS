@@ -13,7 +13,7 @@ export default function ProductCard({
   id,
   name,
   image,
-  price,
+  // price,
   inStock = true,
   className = "",
 }: ProductCardProps) {
@@ -51,9 +51,9 @@ export default function ProductCard({
           <h3 className="font-vazir-semibold text-sm md:text-base text-gray-800 text-center line-clamp-2 min-h-[40px]">
             {name}
           </h3>
-          <p className="text-primary font-vazir tracking-tight text-sm md:text-base text-center mt-1">
+          {/* <p className="text-primary font-vazir tracking-tight text-sm md:text-base text-center mt-1">
             {price.toLocaleString("fa-IR")} تومان
-          </p>
+          </p> */}
         </div>
 
         <div className="relative flex justify-center items-center gap-2 mt-2 flex-wrap">

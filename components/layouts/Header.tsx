@@ -195,7 +195,7 @@ export default function Header() {
 
           <div className="flex items-center gap-2 font-vazir text-sm text-[rgba(30,30,30,0.8)]">
             <FiPhone className="text-primary" />
-            <span>۰۹۱۲۳۴۵۶۷۸۹</span>
+            <span>09199883772</span>
           </div>
         </div>
       </div>
@@ -339,7 +339,7 @@ export default function Header() {
 
                 <div className="mt-4 flex items-center gap-2 text-[rgba(30,30,30,0.8)]">
                   <FiPhone className="text-primary" />
-                  <span>۰۹۱۲۳۴۵۶۷۸۹</span>
+                  <span>09199883772</span>
                 </div>
               </nav>
             </motion.aside>

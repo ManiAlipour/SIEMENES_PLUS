@@ -15,22 +15,22 @@ export default function SectionHero() {
     () => [
       {
         id: 1,
-        title: "اتوماسیون صنعتی، با استاندارد زیمنس",
-        subtitle: "راهکارهای دقیق برای صنایع پیشرو",
+        title: "شرکت مهندسی زیمنس پلاس",
+        subtitle: "همراه مطمئن شما در اتوماسیون و برق صنعتی",
         image: "/images/hero-industrial-solder.jpg",
         accent: "#00a9e0",
       },
       {
         id: 2,
-        title: "قدرت مهندسی در خدمت سرعت",
-        subtitle: "کیفیت پایدار، عملکرد برتر",
+        title: "فروش قطعات زیمنس",
+        subtitle: "تضمین اصالت، بهترین قیمت و پشتیبانی فنی",
         image: "/images/section-one-image.jpg",
         accent: "#00cfb9",
       },
       {
         id: 3,
-        title: "هوشمندی صنعتی، نسخه‌ی امروز",
-        subtitle: "از ایده تا اجرا، کنار شما",
+        title: "تعمیرات تخصصی زیمنس",
+        subtitle: "تشخیص دقیق، تعمیر مطمئن، تحویل سریع",
         image: "/images/section-two-image.jpg",
         accent: "#ffd166",
       },
@@ -223,8 +223,8 @@ export default function SectionHero() {
         <div className="text-white">
           {/* Header + progress */}
           <div className="flex items-center gap-3 mb-3">
-            <span className="text-xs px-2 py-1 rounded-md bg-white/10 border border-white/15">
-              زیمنس پلاس
+            <span className="text-xs uppercase  px-2 py-1 rounded-md bg-white/10 border border-white/15">
+              Siemens plus
             </span>
             <div className="relative h-[3px] flex-1 rounded bg-white/10 overflow-hidden">
               <div
@@ -252,7 +252,7 @@ export default function SectionHero() {
               <div className="mt-6 flex flex-wrap items-center gap-3">
                 <a
                   href="#contact"
-                  className="px-6 py-2.5 rounded-xl text-white font-vazir-semibold shadow-[0_10px_28px_-10px_rgba(0,169,224,.7)] hover:brightness-110 transition"
+                  className="px-6 py-2.5 rounded-xl text-black font-vazir-semibold shadow-[0_10px_28px_-10px_rgba(0,169,224,.7)] hover:brightness-110 transition"
                   style={{ backgroundColor: current.accent }}
                 >
                   شروع مشاوره

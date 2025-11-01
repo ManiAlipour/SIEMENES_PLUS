@@ -13,19 +13,29 @@ export default function Footer() {
           <nav>
             <ul className="space-y-2 text-sm">
               <li>
-                <Link className="hover:text-[#4dd0ff]" href="/about">درباره ما</Link>
+                <Link className="hover:text-[#4dd0ff]" href="/about">
+                  درباره ما
+                </Link>
               </li>
               <li>
-                <Link className="hover:text-[#4dd0ff]" href="/services">خدمات مهندسی</Link>
+                <Link className="hover:text-[#4dd0ff]" href="/services">
+                  خدمات مهندسی
+                </Link>
               </li>
               <li>
-                <Link className="hover:text-[#4dd0ff]" href="/products">محصولات</Link>
+                <Link className="hover:text-[#4dd0ff]" href="/products">
+                  محصولات
+                </Link>
               </li>
               <li>
-                <Link className="hover:text-[#4dd0ff]" href="/blog">بلاگ</Link>
+                <Link className="hover:text-[#4dd0ff]" href="/blog">
+                  بلاگ
+                </Link>
               </li>
               <li>
-                <Link className="hover:text-[#4dd0ff]" href="/contact">تماس با ما</Link>
+                <Link className="hover:text-[#4dd0ff]" href="/contact">
+                  تماس با ما
+                </Link>
               </li>
             </ul>
           </nav>
@@ -49,9 +59,9 @@ export default function Footer() {
         <div className="md:border-l border-slate-700 md:pl-6">
           <h2 className="font-bold text-lg mb-4 text-[#00a9e0]">دفتر مرکزی</h2>
           <p className="text-sm leading-6 text-gray-300">
-            تهران، خیابان پاسداران، خیابان نگهبان، پلاک ۲۳
-            <br /> تلفن: ۰۲۱‑۴۳۵۳۷۲۱۰
-            <br /> ایمیل: info@rimisplus.ir
+            قزوین-شهرصنعتی البرز-خیابان زکریای رازی -جنب شرکت مهرام پلاک  20
+            <br /> تلفن:  09199883772
+            <br /> ایمیل: siemensplus8020@gmail.com
           </p>
         </div>
 
@@ -71,16 +81,32 @@ export default function Footer() {
 
           {/* Social media links */}
           <div className="flex gap-4 mt-4 text-xl">
-            <Link aria-label="LinkedIn" className="text-gray-400 hover:text-[#00a9e0]" href="#">
+            <Link
+              aria-label="LinkedIn"
+              className="text-gray-400 hover:text-[#00a9e0]"
+              href="#"
+            >
               <FaLinkedin />
             </Link>
-            <Link aria-label="Instagram" className="text-gray-400 hover:text-[#00a9e0]" href="#">
+            <Link
+              aria-label="Instagram"
+              className="text-gray-400 hover:text-[#00a9e0]"
+              href="#"
+            >
               <FaInstagram />
             </Link>
-            <Link aria-label="YouTube" className="text-gray-400 hover:text-[#00a9e0]" href="#">
+            <Link
+              aria-label="YouTube"
+              className="text-gray-400 hover:text-[#00a9e0]"
+              href="#"
+            >
               <FaYoutube />
             </Link>
-            <Link aria-label="WhatsApp" className="text-gray-400 hover:text-[#00a9e0]" href="#">
+            <Link
+              aria-label="WhatsApp"
+              className="text-gray-400 hover:text-[#00a9e0]"
+              href="#"
+            >
               <FaWhatsapp />
             </Link>
           </div>
