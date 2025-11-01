@@ -13,6 +13,7 @@
     "isolatedModules": true,
     "jsx": "react-jsx",
     "incremental": true,
+    "noImplicitAny": false,
     "plugins": [
       {
         "name": "next"
@@ -20,8 +21,8 @@
     ],
 
     "paths": {
-      "@/*": ["./*"],
-      "@components/*": ["./components/*"],
+      "@/*": ["./src/*"],
+      "@components/*": ["./src/components/*"],
       "@store/*": ["./store/*"]
     }
   },

@@ -1,12 +1,10 @@
 "use client";
 import { useEffect, useRef } from "react";
-import Image from "next/image";
-import { FaPlay } from "react-icons/fa";
 
 // Aparat player component with default controls
 export default function AparatPlayer({
   videoUrl,
-  thumbnail, // Optional: cover image
+  // thumbnail,
 }: {
   videoUrl: string;
   thumbnail?: string;
@@ -41,7 +39,7 @@ export default function AparatPlayer({
 
   return (
     <div
-      className="relative w-full aspect-[16/9] rounded-lg overflow-hidden bg-[#f7f9fb]
+      className="relative w-full aspect-video rounded-lg overflow-hidden bg-[#f7f9fb]
              border border-gray-200 hover:shadow-md transition-all duration-300"
     >
       <iframe

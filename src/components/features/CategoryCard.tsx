@@ -23,7 +23,7 @@ export default function CategoryCard({ title, image }: CategoryCardProps) {
           sizes="50vw"
           className="
             object-cover object-center
-            after:absolute after:inset-0 after:bg-gradient-to-t after:from-white/20 after:to-transparent
+            after:absolute after:inset-0 after:bg-linear-to-t after:from-white/20 after:to-transparent
           "
         />
       </div>

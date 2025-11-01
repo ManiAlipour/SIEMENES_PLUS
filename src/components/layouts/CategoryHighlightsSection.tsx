@@ -6,7 +6,7 @@ import { highlightedCategories } from "@/data/highlighted-categories";
 
 export default function CategoryHighlightsSection() {
   return (
-    <section className="pt-16 md:pt-20 pb-12 md:pb-16 w-full pt-20 pb-10 bg-gray-50/50">
+    <section className="pt-16 md:pt-20 pb-12 md:pb-16 w-full bg-gray-50/50">
       <div className="container mx-auto px-4">
         <h2 className="text-2xl font-vazir-bold text-gray-800 text-center mb-12 tracking-tight">
           دسته‌های منتخب ما
@@ -35,7 +35,7 @@ export default function CategoryHighlightsSection() {
                 <div
                   key={product.id}
                   className="
-                    min-w-[220px] md:min-w-[280px] snap-start flex-shrink-0
+                    min-w-[220px] md:min-w-[280px] snap-start shrink-0
                   "
                 >
                   <ProductCard
@@ -43,7 +43,7 @@ export default function CategoryHighlightsSection() {
                     name={product.name}
                     image={product.image}
                     price={product.price}
-                    className="h-full hover:shadow-md hover:-translate-y-[2px] transition-transform duration-300"
+                    className="h-full hover:shadow-md hover:-translate-y-0.5 transition-transform duration-300"
                   />
                 </div>
               ))}
