@@ -13,8 +13,8 @@ const transporter = nodemailer.createTransport({
   },
 });
 
-function generateToken(userId: string) {
-  return jwt.sign({ userId }, process.env.JWT_SECRET!, {
+function generateToken(id: string, role: "user" | "admin", email: string) {
+  return jwt.sign({ id, role: role, email: email }, process.env.JWT_SECRET!, {
     expiresIn: "30d",
   });
 }
@@ -74,7 +74,7 @@ export async function login({
   const isMatch = await bcrypt.compare(password, user.password);
   if (!isMatch) throw new Error("Invalid credentials");
 
-  const token = generateToken(user._id!.toString());
+  const token = generateToken(user._id!.toString(), user.role, user.email);
 
   return {
     token,
