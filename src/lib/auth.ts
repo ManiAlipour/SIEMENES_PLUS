@@ -103,3 +103,7 @@ export async function verifyEmail({
 
   return { message: "Account verified successfully" };
 }
+
+export function verifyToken(token: string) {
+  return jwt.verify(token, process.env.JWT_SECRET!);
+}

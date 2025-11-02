@@ -1,7 +1,8 @@
 import Image from "next/image";
+import LikeProduct from "./LikeProduct";
 
 interface ProductCardProps {
-  id: number | string;
+  id: string;
   name: string;
   image: string;
   price: number;
@@ -30,7 +31,7 @@ export default function ProductCard({
       aria-label={`کارت محصول ${name}`}
     >
       {/* Product image */}
-      <div className="relative w-full aspect-square bg-gradient-to-b from-white to-[#f6f9fc] flex items-center justify-center">
+      <div className="relative w-full aspect-square bg-linear-to-b from-white to-[#f6f9fc] flex items-center justify-center">
         <Image
           src={image}
           alt={name}
@@ -46,9 +47,9 @@ export default function ProductCard({
       </div>
 
       {/* Details & Actions */}
-      <div className="flex flex-col flex-grow justify-between w-full p-4 gap-2">
+      <div className="flex flex-col grow justify-between w-full p-4 gap-2">
         <div>
-          <h3 className="font-vazir-semibold text-sm md:text-base text-gray-800 text-center line-clamp-2 min-h-[40px]">
+          <h3 className="font-vazir-semibold text-sm md:text-base text-gray-800 text-center line-clamp-2 min-h-10">
             {name}
           </h3>
           {/* <p className="text-primary font-vazir tracking-tight text-sm md:text-base text-center mt-1">
@@ -66,23 +67,10 @@ export default function ProductCard({
             مشاهده
           </button>
 
-          {inStock ? (
-            <button
-              className="
-                border border-primary text-primary bg-primary/5 text-xs md:text-sm font-vazir-semibold rounded-md 
-                px-4 py-2 transition-all duration-300 hover:bg-primary/10 focus:outline-none focus:ring-2 focus:ring-primary/40 focus:ring-offset-2
-              "
-            >
-              افزودن به سبد
-            </button>
-          ) : (
-            <span className="text-xs text-red-500 font-vazir-medium">
-              ناموجود
-            </span>
-          )}
+          <LikeProduct id={id} />
 
           {/* Glow ring */}
-          <span className="pointer-events-none absolute -z-10 left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 w-[140px] h-[40px] rounded-full bg-cyan-400/20 blur-2xl opacity-0 group-hover:opacity-100 transition" />
+          <span className="pointer-events-none absolute -z-10 left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 w-[140px] h-10 rounded-full bg-cyan-400/20 blur-2xl opacity-0 group-hover:opacity-100 transition" />
         </div>
       </div>
     </div>

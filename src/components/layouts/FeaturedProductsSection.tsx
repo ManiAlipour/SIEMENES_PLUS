@@ -1,41 +1,40 @@
 "use client";
 
-import withFixedBg from "../common/withFixedBg";
 import ProductCard from "../features/ProductCard";
 
 const products = [
   {
-    id: 1,
+    id: "1",
     name: "PLC S7-1200 زیمنس",
     image: "/images/products/plc.png",
     price: 16800000,
   },
   {
-    id: 2,
+    id: "2",
     name: "اینورتر SINAMICS G120",
     image: "/images/products/inverter.png",
     price: 24500000,
   },
   {
-    id: 3,
+    id: "3",
     name: "نمایشگر HMI KTP700",
     image: "/images/products/hmi.png",
     price: 12500000,
   },
   {
-    id: 4,
+    id: "4",
     name: "سنسور نوری SICK",
     image: "/images/products/sensor.png",
     price: 4200000,
   },
   {
-    id: 5,
+    id: "5",
     name: "سوییچ شبکه صنعتی SCALANCE",
     image: "/images/products/scalance.png",
     price: 9800000,
   },
   {
-    id: 6,
+    id: "6",
     name: "کنتاکتور و قطع‌کننده زیمنس",
     image: "/images/products/contactor.png",
     price: 3400000,
