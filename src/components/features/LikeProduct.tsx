@@ -18,7 +18,7 @@ export default function LikeProduct({
   size?: number;
 }) {
   const dispatch = useDispatch();
-  const state = useSelector((s: RootState) => s);
+  const state = useSelector((s: RootState) => s.likedPosts);
   const isLiked = productIsLiked(state, id);
 
   const toggle = () => dispatch(isLiked ? removeProduct(id) : addProduct(id));

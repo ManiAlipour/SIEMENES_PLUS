@@ -38,6 +38,6 @@ export default likedPostSlice.reducer;
 export const { addProduct, removeProduct, toggleLike, clearAll } =
   likedPostSlice.actions;
 
-export function productIsLiked(state: RootState, id: string | number) {
-  return state.likedPosts.some((p) => p === id);
+export function productIsLiked(state: string[], id: string | number) {
+  return state.some((p) => p === id);
 }

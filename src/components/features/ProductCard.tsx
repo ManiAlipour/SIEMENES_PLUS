@@ -1,3 +1,5 @@
+"use client";
+
 import Image from "next/image";
 import LikeProduct from "./LikeProduct";
 
@@ -5,7 +7,7 @@ interface ProductCardProps {
   id: string;
   name: string;
   image: string;
-  price: number;
+  price?: number;
   inStock?: boolean;
   className?: string;
 }
@@ -14,63 +16,78 @@ export default function ProductCard({
   id,
   name,
   image,
-  // price,
-  inStock = true,
+  // inStock = true,
   className = "",
 }: ProductCardProps) {
   return (
     <div
       key={id}
       className={`
-        flex flex-col h-full
-        bg-white border border-gray-100 rounded-xl shadow-sm overflow-hidden
-        transition-all duration-300 hover:-translate-y-1 hover:shadow-lg focus-within:shadow-lg focus-within:-translate-y-1
+        flex flex-col h-full relative bg-white
+        border border-gray-100 rounded-xl overflow-hidden
+        shadow-sm transition-all duration-300
+        hover:-translate-y-[3px] hover:shadow-md sm:hover:shadow-lg
+        focus-within:shadow-lg focus-within:-translate-y-[3px]
+        sm:hover:-translate-y-1
         ${className}
       `}
       role="group"
       aria-label={`کارت محصول ${name}`}
     >
-      {/* Product image */}
-      <div className="relative w-full aspect-square bg-linear-to-b from-white to-[#f6f9fc] flex items-center justify-center">
+      {/* 🔹 تصویر محصول */}
+      <div
+        className="
+          relative w-full aspect-4/3 sm:aspect-square 
+          bg-linear-to-b from-white to-[#f6f9fc]
+          flex items-center justify-center
+        "
+      >
+        <div className="absolute top-4 left-4 z-10">
+          <LikeProduct id={id} />
+        </div>
+
+        {/* 🖼️ تصویر */}
         <Image
           src={image}
           alt={name}
           fill
-          className="object-contain p-4 transition-transform duration-300 group-hover:scale-[1.03]"
-          sizes="(max-width:768px) 100vw, 33vw"
+          className="
+            object-contain p-3 sm:p-4 
+            transition-transform duration-300 
+            group-hover:scale-[1.02]
+          "
+          sizes="(max-width:768px) 90vw, 33vw"
+          priority
         />
-        {!inStock && (
-          <span className="absolute top-2 left-2 rounded-md bg-red-500 text-white text-xs px-2 py-1 shadow">
-            ناموجود
-          </span>
-        )}
       </div>
 
-      {/* Details & Actions */}
-      <div className="flex flex-col grow justify-between w-full p-4 gap-2">
+      {/* 🔹 اطلاعات و دکمه‌ها */}
+      <div className="flex flex-col grow justify-between w-full p-3 sm:p-4 gap-2">
         <div>
-          <h3 className="font-vazir-semibold text-sm md:text-base text-gray-800 text-center line-clamp-2 min-h-10">
+          <h3
+            className="
+              font-vazir-semibold text-[13px] sm:text-sm md:text-base
+              text-gray-800 text-start sm:text-center
+              line-clamp-2 min-h-[40px]
+            "
+          >
             {name}
           </h3>
-          {/* <p className="text-primary font-vazir tracking-tight text-sm md:text-base text-center mt-1">
-            {price.toLocaleString("fa-IR")} تومان
-          </p> */}
         </div>
 
-        <div className="relative flex justify-center items-center gap-2 mt-2 flex-wrap">
+        {/* 🔘 دکمه مشاهده */}
+        <div className="relative flex flex-col sm:flex-row justify-center items-center gap-2 mt-2 flex-wrap">
           <button
             className="
-              bg-primary text-white text-xs md:text-sm font-vazir-semibold rounded-md 
-              px-4 py-2 transition-all duration-300 hover:brightness-110 focus:outline-none focus:ring-2 focus:ring-primary/60 focus:ring-offset-2
+              w-full sm:w-auto
+              bg-teal-600 text-white text-[13px] sm:text-sm font-vazir-semibold
+              rounded-md px-4 py-2 transition duration-300
+              hover:brightness-:outline-none
+              focus:ring-2 focus:ring-teal-500/60 focus:ring-offset-1
             "
           >
             مشاهده
           </button>
-
-          <LikeProduct id={id} />
-
-          {/* Glow ring */}
-          <span className="pointer-events-none absolute -z-10 left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 w-[140px] h-10 rounded-full bg-cyan-400/20 blur-2xl opacity-0 group-hover:opacity-100 transition" />
         </div>
       </div>
     </div>
