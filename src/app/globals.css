@@ -11,7 +11,7 @@
   --foreground: #1e1e1e;
   --primary: #004c97;
   --card-bg: #ffffff;
-  --highlight: #2196f3;
+  --highlight: #0079c2;
   --borders: #cfd8dc;
   --warn: #ffb74d;
 }
@@ -23,6 +23,7 @@
   --color-borders: var(--borders);
   --color-card-bg: var(--card-bg);
   --color-highlight: var(--highlight);
+  --color-warn: var(--warn);
   --font-vazir: Vazir;
 }
 
