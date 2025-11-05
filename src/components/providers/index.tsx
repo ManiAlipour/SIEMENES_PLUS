@@ -14,8 +14,10 @@ const Providers = ({ children }: { children: React.ReactNode }) => {
     <ReduxProvider>
       <div className=" font-vazir">
         {!isNotHeaderAndFooter && <Header />}
+
         {children}
-        {isNotHeaderAndFooter && <Footer />}
+
+        {!isNotHeaderAndFooter && <Footer />}
       </div>
     </ReduxProvider>
   );

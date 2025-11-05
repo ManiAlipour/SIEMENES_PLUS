@@ -1,19 +1,22 @@
-import { NextResponse } from "next/server";
+import { NextResponse, NextRequest } from "next/server";
 import { connectDB } from "@/lib/db";
 import Product from "@/models/Product";
 
 export const dynamic = "force-dynamic";
 export const runtime = "nodejs";
 
+type RouteContext = {
+  params: { id: string };
+};
+
 export async function GET(
-  req: Request,
-  { params }: { params: { id: string } }
+  req: NextRequest,
+  context: { params: Promise<{ id: string }> }
 ) {
   try {
     await connectDB();
 
-    const idOrSlug = params.id;
-
+    const { id: idOrSlug } = await context.params;
     const isMongoId = /^[0-9a-fA-F]{24}$/.test(idOrSlug);
     const query = isMongoId ? { _id: idOrSlug } : { slug: idOrSlug };
 

@@ -72,7 +72,7 @@ export default function AboutPage() {
           viewport={{ once: true }}
           className="max-w-7xl mx-auto grid md:grid-cols-2 gap-12 items-center px-6 md:px-12 relative"
         >
-          <div className="relative order-1 md:order-1">
+          <div className="relative order-1PP md:order-1">
             <Image
               src="/images/logo.jpg"
               alt="Siemens Plus Sales"

@@ -35,8 +35,8 @@ export default function Header() {
     { name: "خانه", href: "/" },
     { name: "محصولات", href: "/products" },
     { name: "وبلاگ", href: "/blog" },
-    { name: "درباره ما", href: "/about" },
-    { name: "تماس با ما", href: "/contact" },
+    { name: "درباره ما", href: "/about-us" },
+    { name: "تماس با ما", href: "/contact-us" },
   ];
 
   const services = [
