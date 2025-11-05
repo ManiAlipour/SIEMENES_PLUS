@@ -5,6 +5,7 @@ import { z } from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
 import InputField from "./InputField";
 import toast from "react-hot-toast";
+import Cookie from "js-cookie";
 
 interface Props {
   mode: "register" | "login" | "verify";
@@ -55,8 +56,14 @@ export default function AuthForm({ mode }: Props) {
       toast.success(json.message || "عملیات موفقیت‌آمیز بود");
 
       if (mode === "register") window.location.href = "/verify";
-      else if (mode === "login") window.location.href = "/";
-      else if (mode === "verify") window.location.href = "/";
+      else if (mode === "login") {
+        window.dispatchEvent(new Event("auth-changed"));
+        window.location.href = "/";
+      } else if (mode === "verify") {
+        window.dispatchEvent(new Event("auth-changed"));
+
+        window.location.href = "/";
+      }
     } catch (err: any) {
       toast.error(err.message);
     } finally {

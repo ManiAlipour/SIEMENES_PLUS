@@ -4,6 +4,7 @@ import Footer from "../layouts/Footer";
 import Header from "../layouts/Header";
 import { usePathname } from "next/navigation";
 import ReduxProvider from "@/store";
+import { AuthProvider } from "./AuthProvider";
 
 const Providers = ({ children }: { children: React.ReactNode }) => {
   const notHeaderAndFooterPaths = ["/login", "/register", "/verify"];
@@ -12,13 +13,15 @@ const Providers = ({ children }: { children: React.ReactNode }) => {
 
   return (
     <ReduxProvider>
-      <div className=" font-vazir">
-        {!isNotHeaderAndFooter && <Header />}
+      <AuthProvider>
+        <div className=" font-vazir">
+          {!isNotHeaderAndFooter && <Header />}
 
-        {children}
+          {children}
 
-        {!isNotHeaderAndFooter && <Footer />}
-      </div>
+          {!isNotHeaderAndFooter && <Footer />}
+        </div>
+      </AuthProvider>
     </ReduxProvider>
   );
 };

@@ -6,7 +6,7 @@ import { usePathname } from "next/navigation";
 import { useState, useEffect } from "react";
 import { FiMenu, FiX, FiSearch, FiPhone, FiChevronDown } from "react-icons/fi";
 import { motion, AnimatePresence } from "framer-motion";
-import { useAuth } from "@/hooks/useAuth";
+import { useAuth } from "@/components/providers/AuthProvider";
 
 export default function Header() {
   const pathname = usePathname();
@@ -16,7 +16,7 @@ export default function Header() {
   const [search, setSearch] = useState("");
   const [scrolled, setScrolled] = useState(false);
 
-  const { isAuthenticated } = useAuth();
+  const { token } = useAuth();
 
   useEffect(() => {
     const handleScroll = () => setScrolled(window.scrollY > 20);
@@ -140,7 +140,7 @@ export default function Header() {
 
           {/* Header actions */}
           <div className="hidden md:flex items-center shrink-0 gap-[clamp(0.4rem,1vw,0.75rem)] font-vazir">
-            {isAuthenticated ? (
+            {token ? (
               <Link
                 href="/dashboard"
                 className="px-3 py-2 rounded-lg text-primary bg-white hover:brightness-110 transition border border-primary"
@@ -361,7 +361,7 @@ export default function Header() {
 
                       {/* --- Bottom Actions --- */}
                       <div className="p-4 border-t border-gray-200 flex flex-col gap-2">
-                        {isAuthenticated ? (
+                        {token ? (
                           <Link
                             href="/dashboard"
                             onClick={() => setOpen(false)}

@@ -1,4 +1,3 @@
-// useAuth hook to check if user is authenticated
 "use client";
 import { useEffect, useState } from "react";
 import Cookies from "js-cookie";
@@ -8,10 +7,13 @@ export const useAuth = () => {
   const [token, setToken] = useState<string | null>(null);
 
   useEffect(() => {
-    const token = Cookies.get("token");
-    if (token) {
+    const t = Cookies.get("token");
+    if (t && typeof t === "string") {
       setIsAuthenticated(true);
-      setToken(token as string);
+      setToken(t);
+    } else {
+      setIsAuthenticated(false);
+      setToken(null);
     }
   }, []);
 
