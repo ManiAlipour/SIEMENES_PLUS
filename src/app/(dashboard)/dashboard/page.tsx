@@ -1,12 +1,7 @@
 "use client";
 // import { redirect } from "next/navigation";
 
-
-
-const DashboardPage = async () => {
-
-
-
+const DashboardPage = () => {
   return <div>Welcome to Dashboard Page</div>;
 };
 

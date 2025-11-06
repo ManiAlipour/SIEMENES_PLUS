@@ -1,9 +1,14 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { RootState } from "@/store";
+import { setUser } from "@/store/slices/userSlice";
+import { useEffect } from "react";
+import { useDispatch, useSelector } from "react-redux";
 
 export default function Layout({ children }: { children: React.ReactNode }) {
-  const [user, setUser] = useState({});
+  const dispatch = useDispatch();
+
+  // const user = useSelector((state: RootState) => state.user);
 
   useEffect(() => {
     const fetchUserData = async () => {
@@ -15,10 +20,9 @@ export default function Layout({ children }: { children: React.ReactNode }) {
           credentials: "include",
         });
 
-        // const res = await fetch("/api/users/get-one");
         const user = await res.json();
 
-        setUser(user);
+        dispatch(setUser(user.data));
       } catch (error) {
         console.log(error);
       }

@@ -105,5 +105,38 @@ export async function verifyEmail({
 }
 
 export function verifyToken(token: string) {
-  return jwt.verify(token, process.env.JWT_SECRET!);
+  return jwt.verify(token, process.env.JWT_SECRET!) as {
+    id: string;
+    role: "admin" | "user";
+    email: string;
+  };
+}
+
+interface IUser {
+  _id: string;
+  name: string;
+  email: string;
+  password: string;
+  role: string;
+  verified: boolean;
+  verificationCode: null | string;
+  createdAt: string;
+  updatedAt: string;
+}
+
+/**
+ * فیلتر کردن فیلدهای حساس کاربر قبل از ارسال به کلاینت
+ */
+export function sanitizeUser(user: User) {
+  const { _id, name, email, role, verified, createdAt, updatedAt } = user;
+
+  return {
+    id: _id,
+    name,
+    email,
+    role,
+    verified,
+    createdAt,
+    updatedAt,
+  };
 }
