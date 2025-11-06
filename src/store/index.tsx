@@ -2,21 +2,20 @@
 
 import { combineReducers, configureStore } from "@reduxjs/toolkit";
 import { Provider, useSelector, useDispatch } from "react-redux";
-import likedPosts, { addProduct } from "./slices/likedPosts";
 import { useEffect } from "react";
+import likedPosts, { addProduct } from "./slices/likedPosts";
+import user from "./slices/userSlice";
 
-const reducer = combineReducers({ likedPosts });
+const reducer = combineReducers({ likedPosts, user });
 const store = configureStore({ reducer });
 
 export type RootState = ReturnType<typeof store.getState>;
 export type AppDispatch = typeof store.dispatch;
 
-// کپشر state از درون استور بعد از Mount
 function InnerProvider({ children }: { children: React.ReactNode }) {
   const dispatch = useDispatch<AppDispatch>();
   const likedPosts = useSelector((state: RootState) => state.likedPosts);
 
-  // لود اولیه
   useEffect(() => {
     const storedLiked = JSON.parse(
       localStorage.getItem("likedPosts") || "[]"
@@ -27,7 +26,6 @@ function InnerProvider({ children }: { children: React.ReactNode }) {
     }
   }, [dispatch]);
 
-  // ذخیره هر تغییری در likedPosts
   useEffect(() => {
     localStorage.setItem("likedPosts", JSON.stringify(likedPosts));
   }, [likedPosts]);

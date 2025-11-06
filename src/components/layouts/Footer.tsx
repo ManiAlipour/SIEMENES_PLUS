@@ -4,7 +4,7 @@ import { FaLinkedin, FaInstagram, FaYoutube, FaWhatsapp } from "react-icons/fa";
 export default function Footer() {
   return (
     <footer className="w-full bg-[#002b59] text-gray-200 pt-12 pb-6">
-      <div className="max-w-7xl mx-auto px-4 grid gap-10 sm:gap-8 md:grid-cols-4">
+      <div className="max-w-7xl mx-auto px-4 grid gap-10 sm:gap-8 md:grid-cols-5">
         {/* Column 1: Quick links */}
         <div>
           <h2 className="font-bold text-lg mb-4 text-[#00a9e0]">
@@ -66,7 +66,7 @@ export default function Footer() {
         </div>
 
         {/* Column 4: Newsletter + Social links */}
-        <div className="md:border-l border-slate-700 md:pl-6">
+        <div className="md:border-l col-span-2 border-slate-700 md:pl-6">
           <h2 className="font-bold text-lg mb-4 text-[#00a9e0]">خبرنامه</h2>
           <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-2 mb-3">
             <input

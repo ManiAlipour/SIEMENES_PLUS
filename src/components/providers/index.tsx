@@ -7,7 +7,13 @@ import ReduxProvider from "@/store";
 import { AuthProvider } from "./AuthProvider";
 
 const Providers = ({ children }: { children: React.ReactNode }) => {
-  const notHeaderAndFooterPaths = ["/login", "/register", "/verify"];
+  const notHeaderAndFooterPaths = [
+    "/login",
+    "/register",
+    "/verify",
+    "/dashboard",
+    "/admin",
+  ];
   const pathname = usePathname();
   const isNotHeaderAndFooter = notHeaderAndFooterPaths.includes(pathname);
 
