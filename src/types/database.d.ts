@@ -1,4 +1,4 @@
-declare interface User  {
+declare interface User {
   _id: string;
   name: string;
   email: string;
@@ -8,4 +8,14 @@ declare interface User  {
   verificationCode: null | string;
   createdAt: string;
   updatedAt: string;
-};
+}
+
+declare interface UserRedux {
+  id: string;
+  role: string;
+  verified: boolean;
+  name: string;
+  email: string;
+  createdAt: string;
+  updatedAt: string;
+}

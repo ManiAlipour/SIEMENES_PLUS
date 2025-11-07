@@ -1,9 +1,10 @@
 "use client";
 
-import { RootState } from "@/store";
+import Header from "@/components/layouts/dash/user/Header";
+import Sidebar from "@/components/layouts/dash/user/Sidebar";
 import { setUser } from "@/store/slices/userSlice";
-import { useEffect } from "react";
-import { useDispatch, useSelector } from "react-redux";
+import { useEffect, useState } from "react";
+import { useDispatch } from "react-redux";
 
 export default function Layout({ children }: { children: React.ReactNode }) {
   const dispatch = useDispatch();
@@ -31,5 +32,15 @@ export default function Layout({ children }: { children: React.ReactNode }) {
     fetchUserData();
   }, []);
 
-  return <div>{children}</div>;
+  const [open, setOpen] = useState(false);
+
+  return (
+    <div className="flex h-screen">
+      <Sidebar open={open} onToggleSidebar={() => setOpen(false)} />
+      <div className="flex flex-col flex-1 overflow-auto">
+        <Header onToggleSidebar={() => setOpen(!open)} />
+        <main className="p-6 font-vazir">{children}</main>
+      </div>
+    </div>
+  );
 }

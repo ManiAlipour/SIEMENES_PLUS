@@ -1,5 +1,4 @@
 "use client";
-import { useState } from "react";
 import Footer from "../layouts/Footer";
 import Header from "../layouts/Header";
 import { usePathname } from "next/navigation";
@@ -14,17 +13,19 @@ const Providers = ({ children }: { children: React.ReactNode }) => {
     "/dashboard",
     "/admin",
   ];
+
   const pathname = usePathname();
-  const isNotHeaderAndFooter = notHeaderAndFooterPaths.includes(pathname);
+
+  const isNotHeaderAndFooter = notHeaderAndFooterPaths.some((path) =>
+    pathname.startsWith(path)
+  );
 
   return (
     <ReduxProvider>
       <AuthProvider>
-        <div className=" font-vazir">
+        <div className="font-vazir">
           {!isNotHeaderAndFooter && <Header />}
-
           {children}
-
           {!isNotHeaderAndFooter && <Footer />}
         </div>
       </AuthProvider>
