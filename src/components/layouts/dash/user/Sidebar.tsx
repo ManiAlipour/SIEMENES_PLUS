@@ -5,6 +5,7 @@ import { usePathname } from "next/navigation";
 import { Home, Settings, User, LogOut, BarChart3, Folder } from "lucide-react";
 
 import { IoMdClose } from "react-icons/io";
+import { FaHeart } from "react-icons/fa";
 
 const navItems = [
   { href: "/dashboard", label: "داشبورد", icon: <Home size={18} /> },
@@ -13,6 +14,11 @@ const navItems = [
     href: "/dashboard/settings",
     label: "تنظیمات",
     icon: <Settings size={18} />,
+  },
+  {
+    href: "/dashboard/likes",
+    label: "محصولات موردعلاقه",
+    icon: <FaHeart size={18} />,
   },
 ];
 
