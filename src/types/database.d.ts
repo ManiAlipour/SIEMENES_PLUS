@@ -19,3 +19,27 @@ declare interface UserRedux {
   createdAt: string;
   updatedAt: string;
 }
+
+
+interface StatsObject {
+  monthlyViews: any[];
+  popularProducts: any[];
+  topSearches: any[];
+  eventStats: any[];
+  overview: Overview;
+  trendStats: TrendStats;
+}
+
+interface TrendStats {
+  viewsGrowth: string;
+  activeUsersGrowth: string;
+}
+
+interface Overview {
+  totalViews: number;
+  totalProductViews: number;
+  totalSearches: number;
+  totalInteractions: number;
+  activeUsersDaily: number;
+  activeUsersMonthly: number;
+}

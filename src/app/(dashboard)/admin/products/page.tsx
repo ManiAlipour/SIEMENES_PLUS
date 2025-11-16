@@ -1,0 +1,192 @@
+"use client";
+
+import { useState, useEffect } from "react";
+import TitleBar from "@/components/ui/dash/TitleBar";
+import { CiShoppingCart } from "react-icons/ci";
+import { FiSearch } from "react-icons/fi";
+import { BsBoxSeam, BsGraphUp } from "react-icons/bs";
+import { MdAddCircleOutline } from "react-icons/md";
+import Link from "next/link";
+
+export default function ProductsPage() {
+  const [query, setQuery] = useState("");
+  const [products, setProducts] = useState([]);
+  const [loading, setLoading] = useState(false);
+
+  useEffect(() => {
+    const fetchProducts = async () => {
+      try {
+        setLoading(true);
+        const res = await fetch(
+          `${process.env.NEXT_PUBLIC_SITE_URL}/api/products?limit=15`
+        );
+        const { items } = await res.json();
+        setProducts(items);
+
+        setLoading(false);
+      } catch (err) {
+        console.log(err);
+        setLoading(false);
+      }
+    };
+    fetchProducts();
+  }, []);
+
+  if (loading) return null;
+
+  const filtered = products.filter((p: any) =>
+    p.name.toLowerCase().includes(query.toLowerCase().trim())
+  );
+
+  return (
+    <div
+      dir="rtl"
+      className="relative z-0 min-h-screen font-vazirmatn bg-linear-to-br from-white to-[#f1f5f9] px-4 md:px-8 py-6"
+    >
+      {/* عنوان صفحه */}
+      <TitleBar
+        Icon={CiShoppingCart}
+        title="مدیریت محصولات"
+        address={["داشبورد", "محصولات"]}
+      />
+
+      {/* نوار بالایی */}
+      <div className="mt-8 relative z-10 flex flex-wrap md:flex-nowrap items-center justify-between gap-4 bg-white/60 backdrop-blur-lg border border-[#e5e7eb]/70 shadow-[inset_0_0_10px_rgba(255,255,255,0.3)] rounded-2xl px-4 py-3 transition-all duration-300 hover:shadow-[0_4px_20px_rgba(6,182,212,0.25)]">
+        <div className="flex items-center gap-2 bg-white/50 backdrop-blur-md border border-[#e5e7eb]/60 rounded-xl px-3 py-2 w-full md:w-1/3 focus-within:border-[#06b6d4]/70 transition-colors duration-200">
+          <FiSearch size={20} className="text-[#6b7280]" />
+          <input
+            type="text"
+            placeholder="جستجوی محصول..."
+            value={query}
+            onChange={(e) => setQuery(e.target.value)}
+            className="bg-transparent w-full outline-none text-sm text-[#374151] placeholder-[#9ca3af] focus:text-[#111827]"
+          />
+        </div>
+
+        <Link
+          href="/admin/products/add"
+          className="flex items-center gap-2 justify-center w-full md:w-auto px-4 py-2 bg-linear-to-r from-[#06b6d4] to-[#0e7490] text-white rounded-xl text-sm font-semibold hover:scale-[1.02] active:scale-[0.98] transition duration-300 shadow-[0_3px_12px_rgba(6,182,212,0.35)]"
+        >
+          <MdAddCircleOutline size={20} />
+          افزودن محصول جدید
+        </Link>
+      </div>
+
+      {/* کارت‌های آمار */}
+      <div className="relative z-10 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 mt-10">
+        <InfoCard
+          label="تعداد کل محصولات"
+          value={products.length.toString()}
+          icon={<BsBoxSeam size={24} />}
+          color="from-[#06b6d4] to-[#0e7490]"
+        />
+        <InfoCard
+          label="محصولات فعال"
+          value={products
+            .filter((p: any) => p.status === "موجود")
+            .length.toString()}
+          icon={<BsGraphUp size={24} />}
+          color="from-[#16a34a] to-[#065f46]"
+        />
+        <InfoCard
+          label="محصولات ناموجود"
+          value={products
+            .filter((p: any) => p.status === "ناموجود")
+            .length.toString()}
+          icon={<BsBoxSeam size={24} />}
+          color="from-[#f59e0b] to-[#b45309]"
+        />
+      </div>
+
+      {/* جدول محصولات */}
+      <ProductTable products={filtered} />
+    </div>
+  );
+}
+
+/* ------------------
+   InfoCard Glass
+------------------- */
+function InfoCard({
+  label,
+  value,
+  icon,
+  color,
+}: {
+  label: string;
+  value: string;
+  icon: React.ReactNode;
+  color: string;
+}) {
+  return (
+    <div
+      className={`rounded-2xl backdrop-blur-xl bg-white/80 border border-[#e5e7eb]/60 shadow-[0_2px_10px_rgba(0,0,0,0.05)] p-5 flex flex-col gap-4 hover:shadow-[0_2px_20px_rgba(6,182,212,0.15)] transition-all duration-300`}
+    >
+      <div
+        className={`w-12 h-12 flex items-center justify-center rounded-xl bg-linear-to-br ${color} text-white shadow-[inset_0_0_8px_rgba(255,255,255,0.3)]`}
+      >
+        {icon}
+      </div>
+      <div className="flex flex-col">
+        <span className="text-sm text-[#6b7280]">{label}</span>
+        <span className="text-2xl font-extrabold text-[#1f2937] tracking-tight">
+          {value}
+        </span>
+      </div>
+    </div>
+  );
+}
+
+/* ------------------
+   ProductTable Glass
+------------------- */
+function ProductTable({ products }: { products: any[] }) {
+  return (
+    <div className="mt-10 relative z-10 rounded-2xl backdrop-blur-lg bg-white/90 border border-[#e5e7eb]/50 shadow-[0_4px_16px_rgba(0,0,0,0.05)] overflow-hidden">
+      <div className="overflow-x-auto">
+        <table className="min-w-full text-sm text-[#374151] border-collapse">
+          <thead className="bg-linear-to-r from-[#f9fafb] to-[#f3f4f6] border-b border-[#e5e7eb]">
+            <tr>
+              <th className="text-right py-3 px-5 font-semibold">نام محصول</th>
+              <th className="text-right py-3 px-5 font-semibold">قیمت</th>
+              <th className="text-right py-3 px-5 font-semibold">وضعیت</th>
+            </tr>
+          </thead>
+          <tbody>
+            {products.length === 0 ? (
+              <tr>
+                <td
+                  colSpan={3}
+                  className="text-center py-8 text-[#9ca3af] font-medium"
+                >
+                  هیچ محصولی یافت نشد.
+                </td>
+              </tr>
+            ) : (
+              products.map((p, i) => (
+                <tr
+                  key={i}
+                  className={`transition duration-200 ${
+                    i % 2 === 0 ? "bg-white/70" : "bg-transparent"
+                  } hover:bg-[#06b6d4]/10`}
+                >
+                  <td className="py-3 px-5 whitespace-nowrap text-[#111827]">
+                    {p.name}
+                  </td>
+                  <td className="py-3 px-5 text-[#1e293b]">{p.price} تومان</td>
+                  <td
+                    className={`py-3 px-5 font-semibold ${
+                      p.status === "موجود" ? "text-[#16a34a]" : "text-[#dc2626]"
+                    }`}
+                  >
+                    {p.status}
+                  </td>
+                </tr>
+              ))
+            )}
+          </tbody>
+        </table>
+      </div>
+    </div>
+  );
+}

@@ -4,6 +4,7 @@ import Header from "../layouts/Header";
 import { usePathname } from "next/navigation";
 import ReduxProvider from "@/store";
 import { AuthProvider } from "./AuthProvider";
+import { useEffect } from "react";
 
 const Providers = ({ children }: { children: React.ReactNode }) => {
   const notHeaderAndFooterPaths = [
@@ -19,6 +20,20 @@ const Providers = ({ children }: { children: React.ReactNode }) => {
   const isNotHeaderAndFooter = notHeaderAndFooterPaths.some((path) =>
     pathname.startsWith(path)
   );
+
+  useEffect(() => {
+    const record = async () => {
+      await fetch("/api/analytics/pageview", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          url: window.location.pathname,
+          userAgent: navigator.userAgent,
+        }),
+      });
+    };
+    record();
+  }, [pathname]);
 
   return (
     <ReduxProvider>

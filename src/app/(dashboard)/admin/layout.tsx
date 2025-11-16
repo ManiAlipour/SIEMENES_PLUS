@@ -2,7 +2,6 @@
 
 import { useState } from "react";
 import AdminSideBar from "@/components/layouts/dash/admin/Sidebar";
-import TopNavBar from "@/components/layouts/dash/admin/TopNavbar";
 import Header from "@/components/layouts/dash/admin/Header";
 
 interface AdminLayoutProps {
@@ -11,17 +10,18 @@ interface AdminLayoutProps {
 
 export default function AdminLayout({ children }: AdminLayoutProps) {
   const [sidebarOpen, setSidebarOpen] = useState(false);
-
   const toggleSidebar = () => setSidebarOpen(!sidebarOpen);
 
   return (
     <div className="flex min-h-screen bg-[#f9fafc]">
-      {/* Sidebar */}
+      {/* Sidebar (Glassmorphic fixed) */}
       <AdminSideBar open={sidebarOpen} toggleOpen={toggleSidebar} />
 
-      {/* Main Content */}
-      <div className="flex-1 flex flex-col md:mr-52">
-        {/* Top Nav */}
+      {/* Main Content Container */}
+      <div
+        className={`flex flex-col flex-1 transition-all duration-300 overflow-x-hidden md:mr-52`}
+      >
+        {/* Header */}
         <Header onToggleSidebar={toggleSidebar} />
 
         {/* Page Content */}
