@@ -14,6 +14,7 @@
   --highlight: #0079c2;
   --borders: #cfd8dc;
   --warn: #ffb74d;
+  --meuted: #374151;
 }
 
 @theme inline {
@@ -24,6 +25,7 @@
   --color-card-bg: var(--card-bg);
   --color-highlight: var(--highlight);
   --color-warn: var(--warn);
+  --color-meuted: var(--meuted);
   --font-vazir: Vazir;
 }
 
@@ -68,4 +70,40 @@ body {
   50% {
     opacity: 1;
   }
+}
+
+/* --- INPUTS (Lux Industrial White Refined Edition) --- */
+.input {
+  @apply w-full rounded-xl px-3.5 py-2.5 text-sm font-vazir text-meuted
+    bg-white/70 border border-slate-300 shadow-sm
+    placeholder:text-slate-400 placeholder:font-light
+    focus:outline-none focus:ring-2 focus:ring-primary focus:border-primary
+    transition-all duration-200;
+}
+
+/* حالت بلور شیشه‌ای */
+.input-glass {
+  @apply bg-white/40 backdrop-blur-xl border border-slate-200
+    shadow-[inset_0_1px_1px_rgba(255,255,255,0.6)] hover:bg-white/50
+    focus:ring-2 focus:ring-primary/50 focus:border-primary/60
+    transition-all;
+}
+
+/* حالت غیر فعال */
+.input-disabled {
+  @apply bg-slate-100 text-slate-500 border-slate-200 cursor-not-allowed;
+}
+
+/* حالت تاریک ادمین */
+.input-dark {
+  @apply bg-slate-900/60 text-slate-100 border border-slate-600
+    placeholder:text-slate-400 focus:ring-primary/60 focus:border-primary/40;
+}
+
+/* textarea */
+.textarea {
+  @apply w-full rounded-xl p-3 text-sm font-vazir text-meuted
+    bg-white/70 border border-slate-300 shadow-sm resize-none
+    placeholder:text-slate-400 focus:outline-none focus:ring-2
+    focus:ring-primary focus:border-primary transition-all duration-200;
 }

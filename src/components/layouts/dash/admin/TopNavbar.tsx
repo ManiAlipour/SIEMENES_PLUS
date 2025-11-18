@@ -15,10 +15,10 @@ export default function TopNavBar({ toggleSidebar }: TopNavBarProps) {
     >
       {/* Mobile Menu Button */}
       <button
-        className="md:hidden p-2 rounded hover:bg-[#06b6d4]/20"
+        className="md:hidden p-2 rounded hover:bg-primary/20"
         onClick={toggleSidebar}
       >
-        <Menu size={20} className="text-[#06b6d4]" />
+        <Menu size={20} className="text-primary" />
       </button>
 
       {/* Search */}

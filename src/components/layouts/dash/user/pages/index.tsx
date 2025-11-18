@@ -10,7 +10,7 @@ export default function UserDashboard() {
   const user = useSelector((state: RootState) => state.user);
 
   return (
-    <main className="min-h-screen bg-[#f9fafc] font-vazirmatn text-gray-800 flex flex-col gap-6 md:gap-8 p-4 sm:p-6 lg:p-10 transition-all">
+    <main className="min-h-screen bg-[#f9fafc] font-vazir text-gray-800 flex flex-col gap-6 md:gap-8 p-4 sm:p-6 lg:p-10 transition-all">
       {/* ===== Header ===== */}
       <header className="sticky top-0 z-20 rounded-xl p-3 sm:p-5 flex flex-col sm:flex-row sm:justify-between sm:items-center gap-2 bg-white/80 backdrop-blur-md border-b border-cyan-100/60 shadow-[0_2px_8px_rgba(0,0,0,0.05)]">
         <h1 className="text-lg sm:text-xl font-bold text-gray-700 text-center sm:text-right">

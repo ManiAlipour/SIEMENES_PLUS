@@ -9,7 +9,7 @@ export default function ProfilePage() {
   const user = useSelector((state: RootState) => state.user) as UserRedux;
 
   return (
-    <main className="min-h-screen bg-[#f9fafc] text-gray-800 font-vazirmatn px-4 py-10 sm:px-8 lg:px-12 transition-all">
+    <main className="min-h-screen bg-[#f9fafc] text-gray-800 font-vazir px-4 py-10 sm:px-8 lg:px-12 transition-all">
       {/* ===== Header ===== */}
       <header className="mb-10 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3 pb-4 border-b border-cyan-100/60 bg-white/70 backdrop-blur-md rounded-xl shadow-[0_2px_10px_-4px_rgba(0,255,255,0.1)] p-4 sm:p-6">
         <h1 className="text-xl sm:text-2xl font-bold text-gray-700 flex items-center gap-2">

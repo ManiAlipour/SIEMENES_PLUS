@@ -18,7 +18,7 @@ export default function AdminChartSection() {
       className="mt-8 bg-white/60 backdrop-blur-xl border border-slate-400/10 
                         shadow-[0_4px_20px_rgba(0,0,0,0.05)] rounded-xl p-6"
     >
-      <h2 className="text-lg font-semibold text-[#374151] mb-4">
+      <h2 className="text-lg font-semibold text-meuted mb-4">
         آمار ماهانه سایت
       </h2>
 

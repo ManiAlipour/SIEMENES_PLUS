@@ -11,13 +11,13 @@ export default function Header({
 }) {
   return (
     <header className="w-full flex items-center justify-between px-6 py-3 bg-[rgba(255,255,255,0.15)] backdrop-blur-xl border-b border-[rgba(0,255,255,0.25)] shadow-sm">
-      {/* لوگو و عنوان */}
       <Link href="/" className="flex items-center gap-3">
         <Image
           src="/images/logo.jpg"
           alt="Siemens Plus Logo"
           width={40}
           height={40}
+          priority
           className="rounded-full shadow-lg ring-2 ring-cyan-400/40"
         />
         <div className="flex flex-col">

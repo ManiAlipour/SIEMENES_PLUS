@@ -7,11 +7,14 @@ import { FiSearch } from "react-icons/fi";
 import { BsBoxSeam, BsGraphUp } from "react-icons/bs";
 import { MdAddCircleOutline } from "react-icons/md";
 import Link from "next/link";
+import AddProductModal from "@/components/layouts/dash/admin/addProductModal";
+import toast from "react-hot-toast";
 
 export default function ProductsPage() {
   const [query, setQuery] = useState("");
   const [products, setProducts] = useState([]);
   const [loading, setLoading] = useState(false);
+  const [addProductModalOpen, setAddProductModalOpen] = useState(false);
 
   useEffect(() => {
     const fetchProducts = async () => {
@@ -38,10 +41,15 @@ export default function ProductsPage() {
     p.name.toLowerCase().includes(query.toLowerCase().trim())
   );
 
+  const addProductHandler = () => {
+    setAddProductModalOpen(false);
+    toast.success("محصول با موفقیت افزوده شد!");
+  };
+
   return (
     <div
       dir="rtl"
-      className="relative z-0 min-h-screen font-vazirmatn bg-linear-to-br from-white to-[#f1f5f9] px-4 md:px-8 py-6"
+      className="relative z-0 min-h-screen font-vazir bg-linear-to-br from-white to-[#f1f5f9] px-4 md:px-8 py-6"
     >
       {/* عنوان صفحه */}
       <TitleBar
@@ -52,25 +60,32 @@ export default function ProductsPage() {
 
       {/* نوار بالایی */}
       <div className="mt-8 relative z-10 flex flex-wrap md:flex-nowrap items-center justify-between gap-4 bg-white/60 backdrop-blur-lg border border-[#e5e7eb]/70 shadow-[inset_0_0_10px_rgba(255,255,255,0.3)] rounded-2xl px-4 py-3 transition-all duration-300 hover:shadow-[0_4px_20px_rgba(6,182,212,0.25)]">
-        <div className="flex items-center gap-2 bg-white/50 backdrop-blur-md border border-[#e5e7eb]/60 rounded-xl px-3 py-2 w-full md:w-1/3 focus-within:border-[#06b6d4]/70 transition-colors duration-200">
+        <div className="flex items-center gap-2 bg-white/50 backdrop-blur-md border border-[#e5e7eb]/60 rounded-xl px-3 py-2 w-full md:w-1/3 focus-within:border-primary/70 transition-colors duration-200">
           <FiSearch size={20} className="text-[#6b7280]" />
           <input
             type="text"
             placeholder="جستجوی محصول..."
             value={query}
             onChange={(e) => setQuery(e.target.value)}
-            className="bg-transparent w-full outline-none text-sm text-[#374151] placeholder-[#9ca3af] focus:text-[#111827]"
+            className="bg-transparent w-full outline-none text-sm text-meuted placeholder-[#9ca3af] focus:text-[#111827]"
           />
         </div>
 
-        <Link
-          href="/admin/products/add"
-          className="flex items-center gap-2 justify-center w-full md:w-auto px-4 py-2 bg-linear-to-r from-[#06b6d4] to-[#0e7490] text-white rounded-xl text-sm font-semibold hover:scale-[1.02] active:scale-[0.98] transition duration-300 shadow-[0_3px_12px_rgba(6,182,212,0.35)]"
+        <button
+          onClick={() => setAddProductModalOpen(true)}
+          className="flex items-center gap-2 justify-center w-full md:w-auto px-4 py-2 bg-linear-to-r from-primary to-[#0e7490] text-white rounded-xl text-sm font-semibold hover:scale-[1.02] active:scale-[0.98] transition duration-300 shadow-[0_3px_12px_rgba(6,182,212,0.35)]"
         >
           <MdAddCircleOutline size={20} />
           افزودن محصول جدید
-        </Link>
+        </button>
       </div>
+
+      {addProductModalOpen && (
+        <AddProductModal
+          onAdd={addProductHandler}
+          onClose={() => setAddProductModalOpen(false)}
+        />
+      )}
 
       {/* کارت‌های آمار */}
       <div className="relative z-10 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 mt-10">
@@ -78,7 +93,7 @@ export default function ProductsPage() {
           label="تعداد کل محصولات"
           value={products.length.toString()}
           icon={<BsBoxSeam size={24} />}
-          color="from-[#06b6d4] to-[#0e7490]"
+          color="from-primary to-[#0e7490]"
         />
         <InfoCard
           label="محصولات فعال"
@@ -144,7 +159,7 @@ function ProductTable({ products }: { products: any[] }) {
   return (
     <div className="mt-10 relative z-10 rounded-2xl backdrop-blur-lg bg-white/90 border border-[#e5e7eb]/50 shadow-[0_4px_16px_rgba(0,0,0,0.05)] overflow-hidden">
       <div className="overflow-x-auto">
-        <table className="min-w-full text-sm text-[#374151] border-collapse">
+        <table className="min-w-full text-sm text-meuted border-collapse">
           <thead className="bg-linear-to-r from-[#f9fafb] to-[#f3f4f6] border-b border-[#e5e7eb]">
             <tr>
               <th className="text-right py-3 px-5 font-semibold">نام محصول</th>
@@ -168,7 +183,7 @@ function ProductTable({ products }: { products: any[] }) {
                   key={i}
                   className={`transition duration-200 ${
                     i % 2 === 0 ? "bg-white/70" : "bg-transparent"
-                  } hover:bg-[#06b6d4]/10`}
+                  } hover:bg-primary/10`}
                 >
                   <td className="py-3 px-5 whitespace-nowrap text-[#111827]">
                     {p.name}

@@ -7,9 +7,14 @@ interface IInfoCardProps {
   color: "primary" | "warn" | "danger" | "success";
 }
 
-export default function InfoCard({ title, desc, count, color }: IInfoCardProps) {
+export default function InfoCard({
+  title,
+  desc,
+  count,
+  color,
+}: IInfoCardProps) {
   const colorMap = {
-    primary: "from-[#06b6d4] to-[#0e7490]",
+    primary: "from-primary to-[#0e7490]",
     warn: "from-[#f59e0b] to-[#b45309]",
     danger: "from-[#ef4444] to-[#7f1d1d]",
     success: "from-[#10b981] to-[#065f46]",
@@ -40,9 +45,7 @@ export default function InfoCard({ title, desc, count, color }: IInfoCardProps) 
       </div>
 
       {/* Description */}
-      <p className="text-[13px] text-[#374151] leading-relaxed mt-auto">
-        {desc}
-      </p>
+      <p className="text-[13px] text-meuted leading-relaxed mt-auto">{desc}</p>
 
       {/* Accent bar */}
       <div

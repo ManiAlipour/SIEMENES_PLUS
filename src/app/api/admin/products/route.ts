@@ -1,43 +1,47 @@
-import { NextRequest, NextResponse } from "next/server";
-import multer from "multer";
-import { ZodError, z } from "zod";
+import { NextResponse } from "next/server";
+import { ZodError } from "zod";
 import { adminOnly } from "@/lib/middlewares/adminOnly";
 import { uploadToLiara } from "@/lib/uploadToLiara";
 import { connectDB } from "@/lib/db";
 import Product from "@/models/Product";
 import { productRequestSchema } from "@/lib/validations/productValidator";
 
-const upload = multer({ storage: multer.memoryStorage() });
-const runMiddleware = (req: any, res: any, fn: any) =>
-  new Promise((resolve, reject) =>
-    fn(req, res, (result: any) =>
-      result instanceof Error ? reject(result) : resolve(result)
-    )
-  );
-
-// تنظیمات لازم برای Multer در محیط App Router
-export const config = { api: { bodyParser: false } };
 export const runtime = "nodejs";
 export const dynamic = "force-dynamic";
 
-export async function POST(request: NextRequest) {
-  const req = request as any;
-  const res = {} as any;
-
+export async function POST(request: Request) {
   try {
     await adminOnly(request);
+
     await connectDB();
 
-    // اجرای multer برای استخراج فایل
-    await runMiddleware(req, res, upload.single("image"));
-    const file = req.file;
-    const fields = req.body;
+    const formData = await request.formData();
+    const file = formData.get("image") as File | null;
 
-    // اعتبارسنجی مقادیر
-    const parsed = productRequestSchema.parse({ body: fields, file });
+    const body: Record<string, any> = {};
+    formData.forEach((val, key) => {
+      if (key === "image") return;
+      body[key] = val;
+    });
+
+    if (body.specifications && typeof body.specifications === "string") {
+      try {
+        body.specifications = JSON.parse(body.specifications);
+      } catch {
+        body.specifications = {};
+      }
+    }
+
+    if (!("isFeatured" in body)) {
+      body.isFeatured = false;
+    } else if (typeof body.isFeatured === "string") {
+      const val = body.isFeatured.toLowerCase();
+      body.isFeatured = val === "true" || val === "on" || val === "1";
+    }
+
+    const parsed = productRequestSchema.parse({ body, file });
     const data = parsed.body;
 
-    // بررسی تکراری نبودن slug
     const existing = await Product.findOne({ slug: data.slug });
     if (existing) {
       return NextResponse.json(
@@ -46,13 +50,15 @@ export async function POST(request: NextRequest) {
       );
     }
 
-    // آپلود تصویر به Liara
-    const { url } = await uploadToLiara(file, "products");
+    let imageUrl: string | null = null;
+    if (file) {
+      const { url } = await uploadToLiara(file, "products");
+      imageUrl = url;
+    }
 
-    // ذخیره محصول
     const newProduct = new Product({
       ...data,
-      image: url,
+      image: imageUrl,
     });
     await newProduct.save();
 
@@ -69,10 +75,7 @@ export async function POST(request: NextRequest) {
 
     if (error instanceof ZodError) {
       return NextResponse.json(
-        {
-          success: false,
-          message: "ورودی نامعتبر است",
-        },
+        { success: false, message: "ورودی نامعتبر است", error: error.format() },
         { status: 400 }
       );
     }

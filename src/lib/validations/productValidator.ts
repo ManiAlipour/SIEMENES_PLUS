@@ -8,20 +8,16 @@ export const productSchemaZod = z.object({
   brand: z.string().trim().optional(),
   category: z.string().trim().optional(),
   modelNumber: z.string().trim().optional(),
-  image: z.string().trim(), // این مرحله بعد از آپلود و تبدیل به URL استفاده می‌شود
+  image: z.string().trim(),
   description: z.string().trim().optional(),
   specifications: z.record(z.string(), z.string()).optional(),
-  datasheetUrl: z.string().trim().optional(),
-  contactNeeded: z.boolean().optional().default(true),
   isFeatured: z.boolean().optional().default(false),
   createdBy: z
     .string()
     .regex(/^[0-9a-fA-F]{24}$/)
     .optional(),
-  // timestamps را در لایه دیتابیس مدیریت می‌کنیم
 });
 
-// برای ساخت محصول، وقتی فایل به صورت file ورودی است
 export const productRequestSchema = z.object({
   body: z.object({
     name: productSchemaZod.shape.name,
@@ -34,19 +30,8 @@ export const productRequestSchema = z.object({
     isFeatured: productSchemaZod.shape.isFeatured,
     createdBy: productSchemaZod.shape.createdBy,
   }),
-  file: z
-    .object({
-      fieldname: z.string(),
-      originalname: z.string(),
-      mimetype: z.string(),
-      buffer: z.instanceof(Buffer).optional(),
-      size: z.number().optional(),
-      path: z.string().optional(),
-    })
-    .optional()
-    .refine((file) => !!file, "تصویر محصول اجباری است."),
+  file: z.instanceof(File).optional().optional(),
 });
 
-// ولیدیشن داده‌ای برای ذخیره در مونگو، بعد از ساخت URL
 export const productCreateSchema = productSchemaZod;
 export const productUpdateSchema = productSchemaZod.partial();

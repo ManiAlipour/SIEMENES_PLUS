@@ -11,8 +11,8 @@ export default function FavoritePage() {
 
   if (!likedPosts.length)
     return (
-      <div className="flex flex-col items-center justify-center min-h-[80vh] bg-[#f9fafc] text-[#374151] font-[Vazirmatn]">
-        <div className="w-20 h-20 rounded-full bg-[#06b6d4]/10 flex items-center justify-center mb-4">
+      <div className="flex flex-col items-center justify-center min-h-[80vh] bg-[#f9fafc] text-meuted font-[Vazirmatn]">
+        <div className="w-20 h-20 rounded-full bg-primary/10 flex items-center justify-center mb-4">
           <span className="text-4xl">💙</span>
         </div>
         <h1 className="text-lg font-semibold">هنوز چیزی لایک نکردید!</h1>
@@ -32,7 +32,7 @@ export default function FavoritePage() {
 
   return (
     <div className="min-h-screen bg-[#f9fafc] px-4 sm:px-8 py-10 font-[Vazirmatn]">
-      <h1 className="text-2xl font-bold text-[#374151] mb-8">
+      <h1 className="text-2xl font-bold text-meuted mb-8">
         موارد دلخواه من ❤️
       </h1>
 
@@ -51,19 +51,19 @@ export default function FavoritePage() {
               />
             </div>
 
-            <div className="p-4 text-[#374151]">
+            <div className="p-4 text-meuted">
               <h2 className="text-base font-semibold truncate">{post.title}</h2>
               <p className="text-sm text-gray-500 line-clamp-2 mt-1">
                 {post.description}
               </p>
 
               <div className="mt-4 flex items-center justify-between">
-                <span className="font-bold text-[#06b6d4]">
+                <span className="font-bold text-primary">
                   {post.price ? `${post.price} تومان` : "—"}
                 </span>
                 <Link
                   href={`/products/${post.id}`}
-                  className="text-[#06b6d4] text-sm font-semibold hover:underline"
+                  className="text-primary text-sm font-semibold hover:underline"
                 >
                   مشاهده
                 </Link>

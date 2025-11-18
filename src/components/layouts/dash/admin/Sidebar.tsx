@@ -1,6 +1,10 @@
 import Link from "next/link";
 import { IoIosClose, IoIosSettings, IoIosStats } from "react-icons/io";
-import { MdDashboardCustomize, MdOutlineMessage } from "react-icons/md";
+import {
+  MdCategory,
+  MdDashboardCustomize,
+  MdOutlineMessage,
+} from "react-icons/md";
 import { IoCartSharp } from "react-icons/io5";
 import { FaList } from "react-icons/fa";
 import { FcDocument } from "react-icons/fc";
@@ -23,6 +27,11 @@ export default function AdminSideBar({ open, toggleOpen }: ISideBarProps) {
       title: "محصولات",
       href: "/admin/products",
       icon: IoCartSharp,
+    },
+    {
+      title: "دسته بندی ها",
+      href: "/admin/categories",
+      icon: MdCategory,
     },
     {
       title: "لاگ ها",
@@ -52,8 +61,10 @@ export default function AdminSideBar({ open, toggleOpen }: ISideBarProps) {
     <div
       className={`md:flex flex-col gap-4 z-40 px-6 transition-all duration-300 py-5
          bg-primary text-white h-screen  min-w-52 fixed ${
-      open ? "translate-x-0 backdrop-blur-3xl shadow-2xl" : "translate-x-full md:translate-x-0"
-    }`}
+           open
+             ? "translate-x-0 backdrop-blur-3xl shadow-2xl"
+             : "translate-x-full md:translate-x-0"
+         }`}
     >
       <div className="text-xl mb-3 flex justify-between items-center gap-2 ">
         پنل ادمین

@@ -12,8 +12,8 @@ export default function TitleBar({ title, address, Icon }: TitleBarProps) {
     <div className="flex flex-col gap-2">
       {/* Title Section */}
       <div className="flex items-center gap-2">
-        <div className="p-[6px] rounded-xl bg-linear-to-br from-[#06b6d4] to-[#0e7490] bg-opacity-20 shadow-[inset_0_0_6px_rgba(6,182,212,0.4)]">
-          <Icon size={26} className="text-[#06b6d4]" />
+        <div className="p-[6px] rounded-xl bg-linear-to-br from-primary to-[#0e7490] bg-opacity-20 shadow-[inset_0_0_6px_rgba(6,182,212,0.4)]">
+          <Icon size={26} className="text-primary" />
         </div>
         <h1 className="text-2xl font-extrabold tracking-tight text-[#1f2937]">
           {title}
@@ -21,13 +21,13 @@ export default function TitleBar({ title, address, Icon }: TitleBarProps) {
       </div>
 
       {/* Address (Breadcrumb) */}
-      <nav className="flex items-center flex-wrap text-sm text-[#374151]/80 pl-[6px]">
+      <nav className="flex items-center flex-wrap text-sm text-meuted/80 pl-[6px]">
         {address.map((a, i) => (
           <span key={i} className="flex items-center">
             <span
-              className={`hover:text-[#06b6d4] transition-colors duration-200 ${
+              className={`hover:text-primary transition-colors duration-200 ${
                 i === address.length - 1
-                  ? "font-semibold text-[#06b6d4]"
+                  ? "font-semibold text-primary"
                   : "font-light"
               }`}
             >
