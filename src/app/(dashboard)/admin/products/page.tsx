@@ -9,6 +9,7 @@ import { MdAddCircleOutline } from "react-icons/md";
 import Link from "next/link";
 import AddProductModal from "@/components/layouts/dash/admin/addProductModal";
 import toast from "react-hot-toast";
+import ProductTable from "@/components/layouts/dash/admin/ProductTable";
 
 export default function ProductsPage() {
   const [query, setQuery] = useState("");
@@ -147,60 +148,6 @@ function InfoCard({
         <span className="text-2xl font-extrabold text-[#1f2937] tracking-tight">
           {value}
         </span>
-      </div>
-    </div>
-  );
-}
-
-/* ------------------
-   ProductTable Glass
-------------------- */
-function ProductTable({ products }: { products: any[] }) {
-  return (
-    <div className="mt-10 relative z-10 rounded-2xl backdrop-blur-lg bg-white/90 border border-[#e5e7eb]/50 shadow-[0_4px_16px_rgba(0,0,0,0.05)] overflow-hidden">
-      <div className="overflow-x-auto">
-        <table className="min-w-full text-sm text-meuted border-collapse">
-          <thead className="bg-linear-to-r from-[#f9fafb] to-[#f3f4f6] border-b border-[#e5e7eb]">
-            <tr>
-              <th className="text-right py-3 px-5 font-semibold">نام محصول</th>
-              <th className="text-right py-3 px-5 font-semibold">قیمت</th>
-              <th className="text-right py-3 px-5 font-semibold">وضعیت</th>
-            </tr>
-          </thead>
-          <tbody>
-            {products.length === 0 ? (
-              <tr>
-                <td
-                  colSpan={3}
-                  className="text-center py-8 text-[#9ca3af] font-medium"
-                >
-                  هیچ محصولی یافت نشد.
-                </td>
-              </tr>
-            ) : (
-              products.map((p, i) => (
-                <tr
-                  key={i}
-                  className={`transition duration-200 ${
-                    i % 2 === 0 ? "bg-white/70" : "bg-transparent"
-                  } hover:bg-primary/10`}
-                >
-                  <td className="py-3 px-5 whitespace-nowrap text-[#111827]">
-                    {p.name}
-                  </td>
-                  <td className="py-3 px-5 text-[#1e293b]">{p.price} تومان</td>
-                  <td
-                    className={`py-3 px-5 font-semibold ${
-                      p.status === "موجود" ? "text-[#16a34a]" : "text-[#dc2626]"
-                    }`}
-                  >
-                    {p.status}
-                  </td>
-                </tr>
-              ))
-            )}
-          </tbody>
-        </table>
       </div>
     </div>
   );

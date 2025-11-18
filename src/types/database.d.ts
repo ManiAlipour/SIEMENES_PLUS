@@ -20,7 +20,6 @@ declare interface UserRedux {
   updatedAt: string;
 }
 
-
 interface StatsObject {
   monthlyViews: any[];
   popularProducts: any[];
@@ -43,3 +42,14 @@ interface Overview {
   activeUsersDaily: number;
   activeUsersMonthly: number;
 }
+
+declare type Product = {
+  _id: string;
+  name: string;
+  slug: string;
+  brand: string;
+  price: number;
+  category?: string;
+  image?: string;
+  isFeatured?: boolean;
+};
