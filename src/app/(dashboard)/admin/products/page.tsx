@@ -6,17 +6,20 @@ import { CiShoppingCart } from "react-icons/ci";
 import { FiSearch } from "react-icons/fi";
 import { BsBoxSeam, BsGraphUp } from "react-icons/bs";
 import { MdAddCircleOutline } from "react-icons/md";
-import Link from "next/link";
 import AddProductModal from "@/components/layouts/dash/admin/addProductModal";
 import toast from "react-hot-toast";
 import ProductTable from "@/components/layouts/dash/admin/ProductTable";
 
+/* -----------------------
+   Main Products Page
+------------------------ */
 export default function ProductsPage() {
   const [query, setQuery] = useState("");
-  const [products, setProducts] = useState([]);
+  const [products, setProducts] = useState<any[]>([]);
   const [loading, setLoading] = useState(false);
   const [addProductModalOpen, setAddProductModalOpen] = useState(false);
 
+  // Fetch products on mount
   useEffect(() => {
     const fetchProducts = async () => {
       try {
@@ -26,17 +29,23 @@ export default function ProductsPage() {
         );
         const { items } = await res.json();
         setProducts(items);
-
         setLoading(false);
       } catch (err) {
-        console.log(err);
+        console.error(err);
         setLoading(false);
       }
     };
     fetchProducts();
   }, []);
 
-  if (loading) return null;
+  // Loading state skeleton
+  if (loading) {
+    return (
+      <div className="flex justify-center items-center min-h-screen text-[#06b6d4] font-vazirmatn">
+        در حال بارگذاری محصولات...
+      </div>
+    );
+  }
 
   const filtered = products.filter((p: any) =>
     p.name.toLowerCase().includes(query.toLowerCase().trim())
@@ -50,37 +59,50 @@ export default function ProductsPage() {
   return (
     <div
       dir="rtl"
-      className="relative z-0 min-h-screen font-vazir bg-linear-to-br from-white to-[#f1f5f9] px-4 md:px-8 py-6"
+      className="relative z-0 min-h-screen font-vazirmatn bg-gradient-to-br from-white to-[#f1f5f9] px-4 md:px-8 py-6"
     >
-      {/* عنوان صفحه */}
+      {/* ===== Title Bar ===== */}
       <TitleBar
         Icon={CiShoppingCart}
         title="مدیریت محصولات"
         address={["داشبورد", "محصولات"]}
       />
 
-      {/* نوار بالایی */}
-      <div className="mt-8 relative z-10 flex flex-wrap md:flex-nowrap items-center justify-between gap-4 bg-white/60 backdrop-blur-lg border border-[#e5e7eb]/70 shadow-[inset_0_0_10px_rgba(255,255,255,0.3)] rounded-2xl px-4 py-3 transition-all duration-300 hover:shadow-[0_4px_20px_rgba(6,182,212,0.25)]">
-        <div className="flex items-center gap-2 bg-white/50 backdrop-blur-md border border-[#e5e7eb]/60 rounded-xl px-3 py-2 w-full md:w-1/3 focus-within:border-primary/70 transition-colors duration-200">
+      {/* ===== Top Bar ===== */}
+      <div
+        className="mt-8 relative z-10 flex flex-wrap md:flex-nowrap items-center justify-between gap-4
+                      bg-white/70 backdrop-blur-xl border border-[#e5e7eb]/70 rounded-2xl px-4 py-3
+                      shadow-[0_6px_16px_rgba(0,0,0,0.06)] transition-all duration-300 hover:shadow-[0_4px_25px_rgba(6,182,212,0.18)]"
+      >
+        {/* Search Field */}
+        <div
+          className="grow flex items-center gap-2 bg-white/60 backdrop-blur-md border border-[#e5e7eb]/60 
+                        rounded-xl px-3 py-2 focus-within:border-[#06b6d4]/70 transition-colors duration-200"
+        >
           <FiSearch size={20} className="text-[#6b7280]" />
           <input
             type="text"
             placeholder="جستجوی محصول..."
             value={query}
             onChange={(e) => setQuery(e.target.value)}
-            className="bg-transparent w-full outline-none text-sm text-meuted placeholder-[#9ca3af] focus:text-[#111827]"
+            className="bg-transparent w-full outline-none text-sm text-[#111827] placeholder-[#9ca3af]"
           />
         </div>
 
+        {/* Add Product Button */}
         <button
           onClick={() => setAddProductModalOpen(true)}
-          className="flex items-center gap-2 justify-center w-full md:w-auto px-4 py-2 bg-linear-to-r from-primary to-[#0e7490] text-white rounded-xl text-sm font-semibold hover:scale-[1.02] active:scale-[0.98] transition duration-300 shadow-[0_3px_12px_rgba(6,182,212,0.35)]"
+          className="flex items-center gap-2 justify-center w-full md:w-auto px-4 py-2
+                     bg-gradient-to-r from-[#06b6d4] to-[#0e7490] text-white rounded-xl
+                     text-sm font-medium hover:scale-[1.02] active:scale-[0.98]
+                     transition duration-300 shadow-[0_6px_18px_rgba(6,182,212,0.25)]"
         >
           <MdAddCircleOutline size={20} />
           افزودن محصول جدید
         </button>
       </div>
 
+      {/* Add Product Modal */}
       {addProductModalOpen && (
         <AddProductModal
           onAdd={addProductHandler}
@@ -88,13 +110,13 @@ export default function ProductsPage() {
         />
       )}
 
-      {/* کارت‌های آمار */}
+      {/* ===== Info Cards ===== */}
       <div className="relative z-10 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 mt-10">
         <InfoCard
           label="تعداد کل محصولات"
           value={products.length.toString()}
           icon={<BsBoxSeam size={24} />}
-          color="from-primary to-[#0e7490]"
+          color="from-[#06b6d4] to-[#0e7490]"
         />
         <InfoCard
           label="محصولات فعال"
@@ -114,14 +136,14 @@ export default function ProductsPage() {
         />
       </div>
 
-      {/* جدول محصولات */}
+      {/* ===== Product Table ===== */}
       <ProductTable products={filtered} />
     </div>
   );
 }
 
 /* ------------------
-   InfoCard Glass
+   InfoCard Component
 ------------------- */
 function InfoCard({
   label,
@@ -136,16 +158,20 @@ function InfoCard({
 }) {
   return (
     <div
-      className={`rounded-2xl backdrop-blur-xl bg-white/80 border border-[#e5e7eb]/60 shadow-[0_2px_10px_rgba(0,0,0,0.05)] p-5 flex flex-col gap-4 hover:shadow-[0_2px_20px_rgba(6,182,212,0.15)] transition-all duration-300`}
+      className={`rounded-2xl backdrop-blur-xl bg-white/80 border border-[#e5e7eb]/60 
+                  shadow-[0_2px_10px_rgba(0,0,0,0.05)] p-5 flex flex-col gap-4 
+                  hover:shadow-[0_4px_25px_rgba(6,182,212,0.18)] hover:scale-[1.015]
+                  transition-all duration-300`}
     >
       <div
-        className={`w-12 h-12 flex items-center justify-center rounded-xl bg-linear-to-br ${color} text-white shadow-[inset_0_0_8px_rgba(255,255,255,0.3)]`}
+        className={`w-12 h-12 flex items-center justify-center rounded-xl bg-gradient-to-br ${color} 
+                    text-white shadow-[inset_0_0_8px_rgba(255,255,255,0.3)]`}
       >
         {icon}
       </div>
       <div className="flex flex-col">
-        <span className="text-sm text-[#6b7280]">{label}</span>
-        <span className="text-2xl font-extrabold text-[#1f2937] tracking-tight">
+        <span className="text-sm text-[#6b7280] font-medium">{label}</span>
+        <span className="text-2xl font-bold text-[#1f2937] tracking-tight">
           {value}
         </span>
       </div>

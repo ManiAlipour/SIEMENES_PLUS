@@ -3,7 +3,6 @@
 import { useEffect, useState } from "react";
 import { Formik, Form, Field } from "formik";
 import * as Yup from "yup";
-import { slugify, transliterate } from "transliteration";
 
 const CategorySchema = Yup.object().shape({
   name: Yup.string().required("نام دسته الزامی است"),
@@ -18,9 +17,9 @@ export default function AdminCategoriesPage() {
   const [loading, setLoading] = useState(false);
   const [errorMsg, setErrorMsg] = useState("");
 
-  //------------------------------------------------------
-  // Fetch categories
-  //------------------------------------------------------
+  //---------------------------
+  // 🧩 Fetch categories
+  //---------------------------
   const fetchCats = async () => {
     try {
       setLoading(true);
@@ -35,40 +34,49 @@ export default function AdminCategoriesPage() {
     }
   };
 
-  // first render
   useEffect(() => {
     fetchCats();
   }, []);
 
-  //------------------------------------------------------
-  // Delete category
-  //------------------------------------------------------
+  //---------------------------
+  // 🗑 Delete category
+  //---------------------------
   const deleteCat = async (id: string) => {
     if (!confirm("آیا از حذف این دسته مطمئن هستید؟")) return;
     try {
       await fetch(`/api/admin/categories/${id}`, { method: "DELETE" });
-      fetchCats(); // refresh list
+      fetchCats();
     } catch (err) {
       console.error(err);
       alert("حذف دسته با خطا مواجه شد!");
     }
   };
 
-  //------------------------------------------------------
-  // JSX
-  //------------------------------------------------------
+  //---------------------------
+  // 🧱 JSX
+  //---------------------------
   return (
-    <div className="relative z-0 bg-linear-to-br from-white via-slate-50 to-cyan-50/30 min-h-screen p-6 font-vazir">
+    <div
+      dir="rtl"
+      className="relative z-0 min-h-screen font-vazirmatn
+                 bg-gradient-to-br from-white via-slate-50 to-cyan-50/30
+                 p-6 sm:p-8 transition-colors duration-300"
+    >
       {/* Header */}
-      <div className="flex justify-between items-center mb-8 border-b border-slate-200 pb-3">
-        <h1 className="text-2xl font-extrabold text-gray-800">
+      <div className="flex justify-between items-center mb-10 border-b border-slate-200 pb-3">
+        <h1 className="text-2xl font-extrabold text-gray-800 tracking-tight">
           مدیریت دسته‌بندی‌ها
         </h1>
       </div>
 
-      <div className="grid md:grid-cols-2 gap-6">
+      <div className="grid md:grid-cols-2 gap-8">
         {/* Form Section */}
-        <div className="bg-white/70 backdrop-blur-md border border-slate-200 rounded-2xl shadow-lg p-6">
+        <div
+          className="rounded-2xl border border-slate-200/60 bg-white/75 backdrop-blur-xl
+                     shadow-[0_8px_20px_rgba(0,0,0,0.05)]
+                     hover:shadow-[0_12px_28px_rgba(6,182,212,0.12)]
+                     p-6 transition-all duration-300"
+        >
           <h2 className="text-lg font-semibold mb-4 text-cyan-700">
             افزودن دسته جدید
           </h2>
@@ -90,6 +98,7 @@ export default function AdminCategoriesPage() {
           >
             {({ errors, touched, setFieldValue }) => (
               <Form className="space-y-4">
+                {/* 🔸 Name */}
                 <div>
                   <label className="text-sm font-medium text-gray-700">
                     نام دسته
@@ -99,13 +108,14 @@ export default function AdminCategoriesPage() {
                     onChange={(e: any) => {
                       const value = e.target.value;
                       setFieldValue("name", value);
-
                       setFieldValue(
                         "slug",
                         value.replace(/\s+/g, "-").toLowerCase()
                       );
                     }}
-                    className="input bg-white/70 border border-slate-300 rounded-xl w-full"
+                    className="mt-1 w-full rounded-xl border border-slate-300
+                               bg-white/70 px-3 py-2 focus:outline-none focus:ring-2
+                               focus:ring-cyan-500"
                     placeholder="مثلاً: اینورترها"
                   />
                   {touched.name && errors.name && (
@@ -113,13 +123,16 @@ export default function AdminCategoriesPage() {
                   )}
                 </div>
 
+                {/* Slug */}
                 <div>
                   <label className="text-sm font-medium text-gray-700">
                     شناسه (slug)
                   </label>
                   <Field
                     name="slug"
-                    className="input bg-white/70 border border-slate-300 rounded-xl w-full"
+                    className="mt-1 w-full rounded-xl border border-slate-300
+                               bg-white/70 px-3 py-2 focus:outline-none focus:ring-2
+                               focus:ring-cyan-500"
                     placeholder="مثلاً: inverter"
                   />
                   {touched.slug && errors.slug && (
@@ -127,6 +140,7 @@ export default function AdminCategoriesPage() {
                   )}
                 </div>
 
+                {/* Description */}
                 <div>
                   <label className="text-sm font-medium text-gray-700">
                     توضیحات
@@ -134,13 +148,18 @@ export default function AdminCategoriesPage() {
                   <Field
                     as="textarea"
                     name="description"
-                    className="input bg-white/70 border border-slate-300 rounded-xl w-full h-24 resize-none"
+                    className="mt-1 w-full h-24 resize-none rounded-xl border border-slate-300
+                               bg-white/70 px-3 py-2 focus:outline-none focus:ring-2
+                               focus:ring-cyan-500"
+                    placeholder="توضیح کوتاهی درباره‌ دسته بنویسید..."
                   />
                 </div>
 
                 <button
                   type="submit"
-                  className="w-full py-2.5 bg-linear-to-r from-cyan-500 to-cyan-700 text-white rounded-xl font-semibold shadow-md hover:scale-[1.02] transition-all"
+                  className="w-full py-2.5 bg-gradient-to-r from-cyan-500 to-cyan-700
+                             text-white rounded-xl font-semibold shadow-md
+                             hover:scale-[1.02] transition-all duration-300"
                 >
                   ثبت دسته
                 </button>
@@ -150,17 +169,22 @@ export default function AdminCategoriesPage() {
         </div>
 
         {/* Table Section */}
-        <div className="bg-white/70 backdrop-blur-md border border-slate-200 rounded-2xl shadow-lg p-6">
+        <div
+          className="rounded-2xl border border-slate-200/60 bg-white/75 backdrop-blur-xl
+                     shadow-[0_8px_20px_rgba(0,0,0,0.05)]
+                     hover:shadow-[0_12px_28px_rgba(6,182,212,0.12)]
+                     p-6 transition-all duration-300"
+        >
           <h2 className="text-lg font-semibold mb-4 text-cyan-700">
             لیست دسته‌ها
           </h2>
 
           {loading ? (
-            <p className="text-gray-500">در حال دریافت اطلاعات...</p>
+            <p className="text-slate-500">در حال دریافت اطلاعات...</p>
           ) : errorMsg ? (
             <p className="text-red-500">{errorMsg}</p>
           ) : categories.length === 0 ? (
-            <p className="text-gray-500 text-sm">هنوز دسته‌ای ثبت نشده است.</p>
+            <p className="text-slate-500 text-sm">هنوز دسته‌ای ثبت نشده است.</p>
           ) : (
             <table className="w-full text-sm text-gray-700">
               <thead>
@@ -174,7 +198,7 @@ export default function AdminCategoriesPage() {
                 {categories.map((cat) => (
                   <tr
                     key={cat._id}
-                    className="border-b border-slate-200 hover:bg-cyan-50/60 transition"
+                    className="border-b border-slate-200 hover:bg-cyan-50/60 transition-colors"
                   >
                     <td className="py-2">{cat.name}</td>
                     <td className="py-2">{cat.slug}</td>
@@ -182,7 +206,10 @@ export default function AdminCategoriesPage() {
                       <button
                         type="button"
                         onClick={() => deleteCat(cat._id)}
-                        className="px-3 py-1.5 text-xs bg-red-500/20 text-red-600 rounded-lg hover:bg-red-600 hover:text-white transition-all"
+                        className="px-3 py-1.5 text-xs text-red-600
+                                   bg-red-500/10 rounded-lg border border-red-500/20
+                                   hover:bg-red-600 hover:text-white
+                                   transition-all duration-200"
                       >
                         حذف
                       </button>

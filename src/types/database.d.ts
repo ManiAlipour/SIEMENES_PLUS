@@ -43,13 +43,18 @@ interface Overview {
   activeUsersMonthly: number;
 }
 
-declare type Product = {
+declare interface Product {
   _id: string;
   name: string;
   slug: string;
   brand: string;
-  price: number;
-  category?: string;
-  image?: string;
-  isFeatured?: boolean;
-};
+  category: string;
+  modelNumber: string;
+  image: string;
+  description: string;
+  specifications: object;
+  isFeatured: boolean;
+  createdAt: string;
+  updatedAt: string;
+  __v: number;
+}

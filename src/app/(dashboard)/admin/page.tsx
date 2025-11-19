@@ -1,32 +1,24 @@
 "use client";
 
 import AdminChartSection from "@/components/layouts/dash/admin/AdminChartSection";
+import RecentActionsWidget from "@/components/layouts/dash/admin/RecentActionsWidget";
 import InfoCard from "@/components/ui/admin/InfoCard";
 
 export default function AdminDashboardPage() {
   return (
     <div
       dir="rtl"
-      className="min-h-screen font-vazir bg-linear-to-br from-white to-[#f1f5f9]
-                 px-6 md:px-10 py-8"
+      className="min-h-screen font-vazirmatn bg-gradient-to-br from-white to-[#f1f5f9]
+                 px-6 md:px-10 py-8 transition-colors duration-300"
     >
-      {/* 🧭 هدر صفحه */}
+      {/* Header Section */}
       <header className="mb-10 flex items-center justify-between">
         <h1 className="text-2xl font-extrabold text-[#1f2937] tracking-tight">
           داشبورد مدیریتی
         </h1>
-
-        <span
-          className="px-4 py-1.5 rounded-full text-sm font-medium text-primary
-                     bg-primary/10 backdrop-blur-md border border-primary/30
-                     shadow-[inset_0_0_6px_rgba(255,255,255,0.45)]
-                     hover:bg-primary/20 transition-all duration-300"
-        >
-          Lux Industrial Refined Edition
-        </span>
       </header>
 
-      {/* 💠 کارت‌های آماری بالای صفحه */}
+      {/* Info Cards */}
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 mb-10">
         <InfoCard
           title="کاربران"
@@ -54,27 +46,53 @@ export default function AdminDashboardPage() {
         />
       </div>
 
-      <section className="rounded-2xl backdrop-blur-md bg-white/80 border border-slate-200/40 shadow p-6">
+      {/* Performance Summary */}
+      <section
+        className="rounded-2xl backdrop-blur-xl bg-white/75 border border-slate-200/60
+                   shadow-[0_8px_20px_rgba(0,0,0,0.05)]
+                   hover:shadow-[0_12px_28px_rgba(6,182,212,0.12)]
+                   p-6 transition-all duration-300"
+      >
         <h2 className="text-lg font-semibold text-[#1f2937] mb-4">
           شاخص عملکرد کلی
         </h2>
-        <div className="space-y-4">
+
+        <div className="space-y-5">
+          {/* --- Progress Item 1 --- */}
           <div>
-            <div className="flex justify-between text-sm font-medium text-meuted">
+            <div className="flex justify-between text-sm font-medium text-slate-500">
               <span>نرخ تعامل کاربران</span>
               <span>۷۸٪</span>
             </div>
-            <div className="h-[6px] rounded-full bg-linear-to-r from-primary to-[#0e7490] mt-1"></div>
+
+            {/* Progress bar container */}
+            <div className="h-[6px] w-full rounded-full bg-slate-200/60 overflow-hidden mt-1.5">
+              <div className="h-full w-[78%] bg-gradient-to-r from-[#06b6d4] to-[#0e7490] rounded-full transition-all duration-700" />
+            </div>
           </div>
+
+          {/* --- Progress Item 2 --- */}
           <div>
-            <div className="flex justify-between text-sm font-medium text-meuted">
+            <div className="flex justify-between text-sm font-medium text-slate-500">
               <span>تکمیل سفارشات</span>
               <span>۶۳٪</span>
             </div>
-            <div className="h-[6px] rounded-full bg-linear-to-r from-[#f59e0b] to-[#b45309] mt-1"></div>
+
+            <div className="h-[6px] w-full rounded-full bg-slate-200/60 overflow-hidden mt-1.5">
+              <div className="h-full w-[63%] bg-gradient-to-r from-[#f59e0b] to-[#b45309] rounded-full transition-all duration-700" />
+            </div>
           </div>
         </div>
       </section>
+
+      <div className="mt-10">
+        <RecentActionsWidget />
+      </div>
+
+      {/* Chart Section */}
+      <div className="mt-10">
+        <AdminChartSection />
+      </div>
     </div>
   );
 }
