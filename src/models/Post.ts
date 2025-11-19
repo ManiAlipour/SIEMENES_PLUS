@@ -42,7 +42,13 @@ const PostSchema = new Schema(
     },
     coverImage: {
       type: String,
-      default: "",
+      default: "", // can be image path or video url based on mediaType
+    },
+    mediaType: {
+      type: String,
+      enum: ["image", "video"],
+      default: "image",
+      required: true,
     },
   },
   { timestamps: true }
@@ -51,9 +57,28 @@ const PostSchema = new Schema(
 const Post = models.Post || mongoose.model("Post", PostSchema);
 export default Post;
 
-// پاکسازی قبل از ارسال به کلاینت
+// Sanitization remains almost same; add mediaType to output:
 export function sanitizePost(post: any) {
-  const { _id, title, content, likes, tags, coverImage, status, createdAt } =
-    post;
-  return { _id, title, content, likes, tags, coverImage, status, createdAt };
+  const {
+    _id,
+    title,
+    content,
+    likes,
+    tags,
+    coverImage,
+    mediaType,
+    status,
+    createdAt,
+  } = post;
+  return {
+    _id,
+    title,
+    content,
+    likes,
+    tags,
+    coverImage,
+    mediaType,
+    status,
+    createdAt,
+  };
 }

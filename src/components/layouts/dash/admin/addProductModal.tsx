@@ -140,7 +140,7 @@ export default function AddProductModal({
       className="fixed inset-0 z-50 flex items-center justify-center bg-black/40 backdrop-blur-xl animate-fadeIn"
     >
       <div className="w-[90%] md:w-[650px] rounded-2xl bg-white/80 backdrop-blur-2xl shadow-[0_8px_24px_rgba(0,0,0,0.08)] border border-slate-200 p-6 animate-scaleIn overflow-y-auto max-h-[90vh]">
-        {/* 🩶 Header */}
+        {/*  Header */}
         <div className="flex justify-between items-center mb-5 pb-3 border-b border-slate-200/60 bg-gradient-to-r from-white/80 via-white/60 to-white/80 backdrop-blur-lg">
           <h2 className="text-xl font-bold text-slate-800 font-vazirmatn">
             افزودن محصول جدید
@@ -285,7 +285,7 @@ export default function AddProductModal({
                         alt="preview"
                         width={500}
                         height={300}
-                        className="rounded-xl border border-slate-200 shadow-lg animate-fadeIn object-cover"
+                        className="rounded-xl border border-slate-200 shadow-lg animate-fadeIn object-cover cursor-pointer"
                       />
                       <button
                         type="button"

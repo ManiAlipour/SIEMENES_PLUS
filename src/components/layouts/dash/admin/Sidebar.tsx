@@ -6,10 +6,9 @@ import {
   MdOutlineMessage,
 } from "react-icons/md";
 import { IoCartSharp } from "react-icons/io5";
-import { FaList } from "react-icons/fa";
 import { FcDocument } from "react-icons/fc";
-import { X } from "lucide-react";
 import { usePathname } from "next/navigation";
+import { FaUsersGear } from "react-icons/fa6";
 
 interface ISideBarProps {
   open: boolean;
@@ -34,14 +33,14 @@ export default function AdminSideBar({ open, toggleOpen }: ISideBarProps) {
       icon: MdCategory,
     },
     {
-      title: "لاگ ها",
-      href: "/admin/logs",
-      icon: FaList,
-    },
-    {
       title: "بلاگ ها",
       href: "/admin/blogs",
       icon: FcDocument,
+    },
+    {
+      title: "کاربران",
+      href: "/admin/users",
+      icon: FaUsersGear,
     },
     {
       title: "کامنت ها",
