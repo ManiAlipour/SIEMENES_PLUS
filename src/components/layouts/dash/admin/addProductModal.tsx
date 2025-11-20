@@ -93,12 +93,10 @@ export default function AddProductModal({
       });
 
       if (res.ok) {
-        // Logging admin action after success
         await fetch("/api/admin/actions", {
           method: "POST",
           headers: { "Content-Type": "application/json" },
           body: JSON.stringify({
-            user: "مانی ایمانی", // TODO: Replace with real session
             action: "ADD_PRODUCT",
             entity: "product",
             entityName: values.name,

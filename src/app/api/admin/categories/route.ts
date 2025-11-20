@@ -1,9 +1,9 @@
-import { NextResponse } from "next/server";
+import { NextRequest, NextResponse } from "next/server";
 import { connectDB } from "@/lib/db";
 import { adminOnly } from "@/lib/middlewares/adminOnly";
 import Category from "@/models/Category";
 
-export async function POST(request: Request) {
+export async function POST(request: NextRequest) {
   await adminOnly(request);
   await connectDB();
 

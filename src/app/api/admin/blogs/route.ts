@@ -1,6 +1,8 @@
-import { NextResponse } from "next/server";
+import { NextRequest, NextResponse } from "next/server";
 import Post, { sanitizePost } from "@/models/Post";
-import {connectDB} from "@/lib/db"; // اتصال به MongoDB
+import { connectDB } from "@/lib/db"; // اتصال به MongoDB
+import { adminOnly } from "@/lib/middlewares/adminOnly";
+import { verifyToken } from "@/lib/auth";
 
 export async function GET() {
   try {
@@ -15,9 +17,16 @@ export async function GET() {
   }
 }
 
-export async function POST(req: Request) {
+export async function POST(req: NextRequest) {
   try {
     await connectDB();
+
+    await adminOnly(req);
+
+    const token = req.cookies.get("token")?.value;
+
+    const decoded = verifyToken(token as string);
+
     const body = await req.json();
     const {
       title,
@@ -26,11 +35,10 @@ export async function POST(req: Request) {
       coverImage,
       mediaType,
       status = "draft",
-      author,
     } = body;
 
     // Validation
-    if (!title || !content || !author || !mediaType) {
+    if (!title || !content || !mediaType) {
       return NextResponse.json(
         { error: "Missing required fields" },
         { status: 400 }
@@ -60,11 +68,12 @@ export async function POST(req: Request) {
       coverImage,
       mediaType,
       status,
-      author,
+      author: decoded.id,
     });
 
     return NextResponse.json({ data: sanitizePost(postDoc) }, { status: 201 });
   } catch (err: any) {
+    console.log(err);
     return NextResponse.json({ error: err.message }, { status: 500 });
   }
 }

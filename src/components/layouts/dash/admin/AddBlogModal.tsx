@@ -86,7 +86,6 @@ export default function AddBlogModal({ onClose, onAdd }: AddBlogModalProps) {
           method: "POST",
           headers: { "Content-Type": "application/json" },
           body: JSON.stringify({
-            user: "مانی ایمانی",
             action: "ADD_BLOG",
             entity: "blog",
             entityName: title,

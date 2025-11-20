@@ -3,12 +3,12 @@ import Post, { sanitizePost } from "@/models/Post";
 import { connectDB } from "@/lib/db";
 
 interface Params {
-  params: { id: string };
+  params: Promise<{ id: string }>;
 }
 
 // DELETE blog
 export async function DELETE(req: Request, { params }: Params) {
-  const { id } = params;
+  const { id } = await params;
   try {
     await connectDB();
     const deleted = await Post.findByIdAndDelete(id);
@@ -23,7 +23,7 @@ export async function DELETE(req: Request, { params }: Params) {
 
 // PATCH blog (edit)
 export async function PATCH(req: Request, { params }: Params) {
-  const { id } = params;
+  const { id } = await params;
   try {
     await connectDB();
     const body = await req.json();
