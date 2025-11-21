@@ -1,26 +1,10 @@
 "use client";
 
 import Link from "next/link";
-import { usePathname } from "next/navigation";
-import { Home, Settings, User, LogOut, BarChart3, Folder } from "lucide-react";
-
-import { IoMdClose } from "react-icons/io";
-import { FaHeart } from "react-icons/fa";
-
-const navItems = [
-  { href: "/dashboard", label: "داشبورد", icon: <Home size={18} /> },
-  { href: "/dashboard/profile", label: "پروفایل", icon: <User size={18} /> },
-  {
-    href: "/dashboard/settings",
-    label: "تنظیمات",
-    icon: <Settings size={18} />,
-  },
-  {
-    href: "/dashboard/likes",
-    label: "محصولات موردعلاقه",
-    icon: <FaHeart size={18} />,
-  },
-];
+import { usePathname, useRouter } from "next/navigation";
+import { Home, Settings, User, LogOut, Heart } from "lucide-react";
+import { motion, AnimatePresence } from "framer-motion";
+import Image from "next/image";
 
 export default function Sidebar({
   open,
@@ -30,52 +14,173 @@ export default function Sidebar({
   onToggleSidebar?: () => void;
 }) {
   const pathname = usePathname();
+  const router = useRouter();
+
+  const navItems = [
+    {
+      href: "/dashboard",
+      label: "داشبورد",
+      icon: Home,
+      color: "from-blue-500 to-blue-600",
+    },
+    {
+      href: "/dashboard/profile",
+      label: "پروفایل",
+      icon: User,
+      color: "from-purple-500 to-purple-600",
+    },
+    {
+      href: "/dashboard/settings",
+      label: "تنظیمات",
+      icon: Settings,
+      color: "from-gray-500 to-gray-600",
+    },
+    {
+      href: "/dashboard/likes",
+      label: "محصولات موردعلاقه",
+      icon: Heart,
+      color: "from-pink-500 to-pink-600",
+    },
+  ];
+
+  const handleLogout = () => {
+    // TODO: Implement logout
+    router.push("/");
+  };
 
   return (
-    <aside
-      className={`fixed lg:static bg-[rgba(19,27,33,0.85)] backdrop-blur-md h-screen top-0 left-0 z-50 transition-all duration-300
-        ${
-          open ? "translate-x-0" : "-translate-x-full"
-        } lg:translate-x-0 w-64 border-r border-cyan-500/30`}
-    >
-      <div className="flex flex-col py-6 font-vazir text-[15px] text-gray-200">
-        <div className="flex justify-between items-center">
-          <span className="px-6 mb-5 text-lg font-bold text-cyan-400">
-            منوی پنل
-          </span>
+    <>
+      {/* Overlay for mobile */}
+      <AnimatePresence>
+        {open && (
+          <motion.div
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            onClick={onToggleSidebar}
+            className="fixed inset-0 bg-black/50 backdrop-blur-sm z-40 lg:hidden"
+          />
+        )}
+      </AnimatePresence>
 
-          <button className="mb-5 lg:hidden" onClick={onToggleSidebar}>
-            <IoMdClose size={20} />
-          </button>
-        </div>
-
-        {navItems.map((item) => {
-          const isActive = pathname.startsWith(item.href);
-          return (
-            <Link
-              key={item.href}
-              href={item.href}
-              className={`flex items-center gap-3 px-6 py-2.5 hover:bg-[rgba(0,255,255,0.15)] 
-                hover:text-white rounded-md mb-1 transition-colors
-                ${
-                  isActive
-                    ? "bg-[rgba(0,255,255,0.25)] text-white"
-                    : "text-gray-300"
-                }`}
+      {/* Sidebar */}
+      <aside
+        className={`
+          fixed
+          top-0 right-0
+          h-screen z-50
+          w-72
+          bg-gradient-to-b from-gray-900 via-gray-800 to-gray-900
+          backdrop-blur-xl shadow-2xl
+          border-l border-white/10
+          flex flex-col
+          transition-transform duration-300 ease-in-out
+          lg:translate-x-0
+          ${open ? "translate-x-0" : "translate-x-full lg:translate-x-0"}
+        `}
+      >
+        {/* Header */}
+        <div className="p-6 border-b border-white/10">
+          <div className="flex items-center justify-between mb-4">
+            <div className="flex items-center gap-3">
+              <div className="w-12 h-12 rounded-xl bg-gradient-to-br from-cyan-500 to-blue-600 flex items-center justify-center shadow-lg">
+                <Image
+                  src="/images/logo.jpg"
+                  alt="Logo"
+                  width={40}
+                  height={40}
+                  className="rounded-lg"
+                />
+              </div>
+              <div>
+                <h2 className="text-lg font-bold text-white">پنل کاربری</h2>
+                <p className="text-xs text-white/70">زیمنس پلاس</p>
+              </div>
+            </div>
+            <button
+              onClick={onToggleSidebar}
+              className="lg:hidden p-2 hover:bg-white/10 rounded-lg transition-colors"
             >
-              <span className="text-cyan-400">{item.icon}</span>
-              <span>{item.label}</span>
-            </Link>
-          );
-        })}
+              <span className="text-white text-xl">×</span>
+            </button>
+          </div>
+        </div>
 
-        <div className="mt-auto px-6 pt-6 border-t border-cyan-500/20">
-          <button className="flex items-center gap-2 text-red-400 hover:text-red-300">
-            <LogOut size={18} />
-            خروج
+        {/* Navigation */}
+        <nav className="flex-1 overflow-y-auto p-4 space-y-2">
+          {navItems.map((item, index) => {
+            const Icon = item.icon;
+            const isActive = pathname === item.href;
+
+            return (
+              <motion.div
+                key={item.href}
+                initial={{ opacity: 0, x: -20 }}
+                animate={{ opacity: 1, x: 0 }}
+                transition={{ delay: index * 0.05 }}
+              >
+                <Link
+                  href={item.href}
+                  onClick={() => {
+                    if (window.innerWidth < 1024) onToggleSidebar?.();
+                  }}
+                  className={`group relative flex items-center gap-3 px-4 py-3 rounded-xl transition-all duration-300 ${
+                    isActive
+                      ? "bg-white/20 shadow-lg"
+                      : "hover:bg-white/10 hover:translate-x-1"
+                  }`}
+                >
+                  {/* Active indicator */}
+                  {isActive && (
+                    <motion.div
+                      layoutId="userActiveIndicator"
+                      className="absolute right-0 top-0 bottom-0 w-1 bg-white rounded-l-full"
+                    />
+                  )}
+
+                  {/* Icon */}
+                  <div
+                    className={`p-2 rounded-lg bg-gradient-to-br ${
+                      item.color
+                    } shadow-md ${
+                      isActive ? "scale-110" : "group-hover:scale-105"
+                    } transition-transform`}
+                  >
+                    <Icon className="w-5 h-5 text-white" />
+                  </div>
+
+                  {/* Label */}
+                  <span
+                    className={`font-semibold ${
+                      isActive ? "text-white" : "text-white/80"
+                    }`}
+                  >
+                    {item.label}
+                  </span>
+
+                  {/* Hover effect */}
+                  <div className="absolute inset-0 rounded-xl bg-gradient-to-r from-white/0 via-white/5 to-white/0 opacity-0 group-hover:opacity-100 transition-opacity" />
+                </Link>
+              </motion.div>
+            );
+          })}
+        </nav>
+
+        {/* Footer */}
+        <div className="p-4 border-t border-white/10">
+          <button
+            onClick={handleLogout}
+            className="w-full flex items-center gap-3 px-4 py-3 rounded-xl hover:bg-red-500/20 transition-colors group"
+          >
+            <div className="p-2 rounded-lg bg-red-500/20 group-hover:bg-red-500/30 transition-colors">
+              <LogOut className="w-5 h-5 text-red-400" />
+            </div>
+            <span className="font-semibold text-red-400 group-hover:text-red-300 transition-colors">
+              خروج از حساب
+            </span>
           </button>
         </div>
-      </div>
-    </aside>
+      </aside>
+    </>
   );
 }

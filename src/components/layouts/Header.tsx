@@ -33,6 +33,7 @@ export default function Header() {
 
   const links = [
     { name: "خانه", href: "/" },
+    { name: "فروشگاه", href: "/shop" },
     { name: "محصولات", href: "/products" },
     { name: "وبلاگ", href: "/blog" },
     { name: "درباره ما", href: "/about-us" },
@@ -124,7 +125,7 @@ export default function Header() {
                         href={s.href}
                         className="group block rounded-lg p-3 hover:bg-background transition"
                       >
-                        <div className="font-vazir-semibold text-foreground group-hover:text-primary">
+                        <div className="font-semibold text-foreground group-hover:text-primary">
                           {s.name}
                         </div>
                         <div className="text-xs text-[rgba(30,30,30,0.7)] mt-1">
@@ -227,7 +228,7 @@ export default function Header() {
               transition={{ type: "spring", duration: 0.35 }}
             >
               <div className="flex items-center justify-between p-4 border-b border-borders">
-                <span className="font-vazir-semibold">منو</span>
+                <span className="font-semibold">منو</span>
                 <button
                   onClick={() => setOpen(false)}
                   aria-label="بستن منو"
@@ -273,7 +274,7 @@ export default function Header() {
                             height={34}
                             className="rounded-full"
                           />
-                          <span className="font-vazir-semibold text-lg text-gray-800">
+                          <span className="font-semibold text-lg text-gray-800">
                             زیمنس پلاس
                           </span>
                         </Link>

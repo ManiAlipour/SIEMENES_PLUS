@@ -32,7 +32,7 @@ export default function BlogCard({ post }: { post: BlogPost }) {
 
       {/* Content */}
       <div className="flex-1 p-5 flex flex-col gap-3">
-        <h3 className="text-lg md:text-xl font-vazir-bold text-gray-800 group-hover:text-primary transition-colors">
+        <h3 className="text-lg md:text-xl font-bold text-gray-800 group-hover:text-primary transition-colors">
           {title}
         </h3>
         <p className="text-sm text-gray-600 line-clamp-3">{description}</p>

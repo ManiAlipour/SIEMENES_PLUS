@@ -31,7 +31,7 @@ const AboutUs = () => {
           <span className="text-sm font-vazir-medium text-[#004c97] tracking-wide uppercase border-b border-[#004c97]/30 pb-1">
             درباره ما
           </span>
-          <h2 className="text-3xl md:text-4xl font-vazir-bold text-[#004c97] mt-3 mb-5">
+          <h2 className="text-3xl md:text-4xl font-bold text-[#004c97] mt-3 mb-5">
             زیمنس پلاس{" "}
             <span className="block text-gray-500 text-lg">SIEMENS PLUS</span>
           </h2>

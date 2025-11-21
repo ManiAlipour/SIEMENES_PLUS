@@ -3,130 +3,185 @@
 import { useSelector } from "react-redux";
 import { RootState } from "@/store";
 import { motion } from "framer-motion";
-import Image from "next/image";
-import { FaUser } from "react-icons/fa";
+import Link from "next/link";
+import {
+  FiUser,
+  FiMail,
+  FiCalendar,
+  FiCheckCircle,
+  FiClock,
+  FiSettings,
+  FiFileText,
+  FiPackage,
+  FiHeart,
+  FiTrendingUp,
+} from "react-icons/fi";
 
 export default function UserDashboard() {
   const user = useSelector((state: RootState) => state.user);
 
-  return (
-    <main className="min-h-screen bg-[#f9fafc] font-vazir text-gray-800 flex flex-col gap-6 md:gap-8 p-4 sm:p-6 lg:p-10 transition-all">
-      {/* ===== Header ===== */}
-      <header className="sticky top-0 z-20 rounded-xl p-3 sm:p-5 flex flex-col sm:flex-row sm:justify-between sm:items-center gap-2 bg-white/80 backdrop-blur-md border-b border-cyan-100/60 shadow-[0_2px_8px_rgba(0,0,0,0.05)]">
-        <h1 className="text-lg sm:text-xl font-bold text-gray-700 text-center sm:text-right">
-          پنل کاربری <span className="text-cyan-600">زیمنس پلاس</span>
-        </h1>
-      </header>
+  const infoCards = [
+    {
+      label: "نقش",
+      value: user.role === "admin" ? "مدیر" : "کاربر عادی",
+      icon: FiUser,
+      color: "from-blue-500 to-blue-600",
+    },
+    {
+      label: "وضعیت تأیید",
+      value: user.verified ? "تأیید شده" : "در انتظار تأیید",
+      icon: FiCheckCircle,
+      color: user.verified
+        ? "from-emerald-500 to-emerald-600"
+        : "from-amber-500 to-amber-600",
+      badge: user.verified ? "✅" : "🔸",
+    },
+    {
+      label: "ایمیل",
+      value: user.email || "تعریف نشده",
+      icon: FiMail,
+      color: "from-purple-500 to-purple-600",
+    },
+    {
+      label: "تاریخ عضویت",
+      value: user.createdAt
+        ? new Date(user.createdAt).toLocaleDateString("fa-IR")
+        : "تعریف نشده",
+      icon: FiCalendar,
+      color: "from-pink-500 to-pink-600",
+    },
+    {
+      label: "آخرین ورود",
+      value: "۱۴۰۴/۰۸/۱۵ – ۱۰:۳۲ ق.ظ",
+      icon: FiClock,
+      color: "from-cyan-500 to-cyan-600",
+    },
+    {
+      label: "پشتیبانی",
+      value: "آنلاین",
+      icon: FiTrendingUp,
+      color: "from-green-500 to-green-600",
+      badge: "✅",
+    },
+  ];
 
-      {/* ===== Welcome section ===== */}
-      <motion.div
-        initial={{ opacity: 0, y: -10 }}
-        animate={{ opacity: 1, y: 0 }}
-        transition={{ duration: 0.4 }}
-        className="p-4 sm:p-6 rounded-2xl bg-white/70 backdrop-blur-lg border border-cyan-100/40 shadow-[0_5px_15px_-3px_rgba(0,255,255,0.06)] flex flex-col sm:flex-row sm:items-center gap-4 sm:gap-6"
-      >
-        <FaUser
-          size={80}
-          className="mx-auto sm:mx-0 rounded-full ring-4 ring-cyan-300/30 shadow-lg"
-        />
-        <div className="text-center sm:text-right">
-          <h2 className="text-xl sm:text-2xl font-bold text-cyan-600">
-            👋 سلام {user.name}!
-          </h2>
-          <p className="text-gray-500 mt-1 text-sm sm:text-base leading-relaxed">
-            خوش اومدی به حساب کاربری خودت در{" "}
-            <span className="text-cyan-600 font-semibold">زیمنس‌پلاس</span>.
-          </p>
+  const actionCards = [
+    {
+      href: "/dashboard/profile",
+      icon: FiUser,
+      title: "پروفایل",
+      description: "ویرایش اطلاعات شخصی و عکس کاربری",
+      color: "from-blue-500 to-blue-600",
+    },
+    {
+      href: "/dashboard/likes",
+      icon: FiHeart,
+      title: "محصولات موردعلاقه",
+      description: "مشاهده و مدیریت محصولات موردعلاقه شما",
+      color: "from-pink-500 to-pink-600",
+    },
+    {
+      href: "/dashboard/settings",
+      icon: FiSettings,
+      title: "تنظیمات",
+      description: "تنظیمات حساب کاربری و اعلان‌ها",
+      color: "from-gray-500 to-gray-600",
+    },
+  ];
+
+  return (
+    <div className="min-h-screen bg-gradient-to-br from-gray-50 via-white to-gray-50">
+      <div className="max-w-7xl mx-auto px-4 md:px-6 lg:px-8 py-8">
+        {/* Welcome Section */}
+        <motion.div
+          initial={{ opacity: 0, y: -20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.5 }}
+          className="mb-8"
+        >
+          <div className="bg-gradient-to-r from-primary via-primary/90 to-primary/80 rounded-3xl p-6 md:p-8 shadow-xl border border-primary/20">
+            <div className="flex flex-col md:flex-row items-center md:items-start gap-6">
+              <div className="w-20 h-20 rounded-2xl bg-white/20 backdrop-blur-sm flex items-center justify-center shadow-lg">
+                <FiUser className="w-10 h-10 text-white" />
+              </div>
+              <div className="flex-1 text-center md:text-right">
+                <h1 className="text-2xl md:text-3xl font-bold text-white mb-2">
+                  👋 سلام {user.name || "کاربر"}!
+                </h1>
+                <p className="text-white/90 text-sm md:text-base">
+                  خوش آمدید به حساب کاربری خود در{" "}
+                  <span className="font-semibold">زیمنس پلاس</span>
+                </p>
+              </div>
+            </div>
+          </div>
+        </motion.div>
+
+        {/* Info Cards Grid */}
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 md:gap-6 mb-8">
+          {infoCards.map((card, index) => {
+            const Icon = card.icon;
+            return (
+              <motion.div
+                key={card.label}
+                initial={{ opacity: 0, y: 20 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ delay: index * 0.1, duration: 0.4 }}
+                whileHover={{ y: -4, scale: 1.02 }}
+                className="bg-white rounded-2xl p-5 border-2 border-gray-200 shadow-sm hover:shadow-xl transition-all duration-300"
+              >
+                <div className="flex items-start justify-between mb-3">
+                  <div className="flex-1">
+                    <p className="text-xs text-gray-500 mb-1">{card.label}</p>
+                    <p className="text-base font-bold text-gray-900 flex items-center gap-2">
+                      {card.badge && <span>{card.badge}</span>}
+                      {card.value}
+                    </p>
+                  </div>
+                  <div
+                    className={`p-3 rounded-xl bg-gradient-to-br ${card.color} shadow-md`}
+                  >
+                    <Icon className="w-5 h-5 text-white" />
+                  </div>
+                </div>
+              </motion.div>
+            );
+          })}
         </div>
-      </motion.div>
 
-      {/* ===== Info cards ===== */}
-      <section className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3 sm:gap-4">
-        <UserInfoCard label="نقش" value="کاربر عادی" />
-        <UserInfoCard
-          label="وضعیت تأیید"
-          value={user.verified ? "تأیید شده ✅" : "در انتظار تأیید 🔸"}
-        />
-        <UserInfoCard label="ایمیل" value={user.email} />
-        <UserInfoCard
-          label="تاریخ عضویت"
-          value={new Date(user.createdAt).toLocaleDateString("fa-IR")}
-        />
-        <UserInfoCard label="آخرین ورود" value="۱۴۰۴/۰۸/۱۵ – ۱۰:۳۲ ق.ظ" />
-        <UserInfoCard label="پشتیبانی فعال" value="آنلاین ✅" />
-      </section>
-
-      {/* ===== Action cards ===== */}
-      <motion.div
-        initial={{ opacity: 0 }}
-        animate={{ opacity: 1 }}
-        transition={{ delay: 0.15, duration: 0.5 }}
-        className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 mt-2 sm:mt-4"
-      >
-        <DashboardActionCard
-          icon="👤"
-          title="پروفایل"
-          description="ویرایش اطلاعات شخصی و عکس کاربری"
-        />
-        <DashboardActionCard
-          icon="📑"
-          title="گزارش‌ها"
-          description="مشاهده آخرین فعالیت‌ها و گزارش‌های ارسال‌شده"
-        />
-        <DashboardActionCard
-          icon="🧱"
-          title="پروژه‌های من"
-          description="مشاهده و مدیریت پروژه‌هایی که ثبت کردی"
-        />
-      </motion.div>
-    </main>
-  );
-}
-
-/* ===== Sub Components ===== */
-
-// کارت اطلاعات
-function UserInfoCard({ label, value }: { label: string; value: string }) {
-  return (
-    <motion.div
-      initial={{ opacity: 0, y: 10 }}
-      animate={{ opacity: 1, y: 0 }}
-      transition={{ duration: 0.3 }}
-      className="p-4 sm:p-5 rounded-xl bg-white border border-gray-100 shadow-sm hover:shadow-[0_6px_20px_-3px_rgba(0,255,255,0.1)] hover:border-cyan-400/40 transition-all"
-    >
-      <h3 className="text-xs sm:text-sm text-gray-500 mb-1">{label}</h3>
-      <p className="text-base sm:text-lg font-semibold text-cyan-600 break-all">
-        {value}
-      </p>
-    </motion.div>
-  );
-}
-
-// کارت اکشن
-function DashboardActionCard({
-  icon,
-  title,
-  description,
-}: {
-  icon: string;
-  title: string;
-  description: string;
-}) {
-  return (
-    <motion.div
-      whileHover={{ y: -4 }}
-      transition={{ duration: 0.2 }}
-      className="p-4 sm:p-6 rounded-2xl bg-white shadow-[0_5px_20px_-3px_rgba(0,0,0,0.08)] border border-gray-100 hover:shadow-[0_10px_25px_-4px_rgba(0,255,255,0.25)] hover:border-cyan-400/50 transition-all duration-300 cursor-pointer flex flex-col items-center sm:items-start text-center sm:text-right"
-    >
-      <span className="text-3xl sm:text-4xl mb-2 sm:mb-3 text-cyan-500">
-        {icon}
-      </span>
-      <h3 className="text-base sm:text-lg font-bold mb-1 sm:mb-2 text-gray-800">
-        {title}
-      </h3>
-      <p className="text-xs sm:text-sm text-gray-500 leading-relaxed">
-        {description}
-      </p>
-    </motion.div>
+        {/* Action Cards */}
+        <motion.div
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ delay: 0.3, duration: 0.5 }}
+          className="grid grid-cols-1 md:grid-cols-3 gap-4 md:gap-6"
+        >
+          {actionCards.map((card, index) => {
+            const Icon = card.icon;
+            return (
+              <Link key={card.href} href={card.href}>
+                <motion.div
+                  whileHover={{ y: -6, scale: 1.02 }}
+                  whileTap={{ scale: 0.98 }}
+                  className="bg-white rounded-2xl p-6 border-2 border-gray-200 shadow-sm hover:shadow-xl transition-all duration-300 cursor-pointer group"
+                >
+                  <div
+                    className={`w-14 h-14 rounded-xl bg-gradient-to-br ${card.color} flex items-center justify-center mb-4 shadow-lg group-hover:scale-110 transition-transform`}
+                  >
+                    <Icon className="w-7 h-7 text-white" />
+                  </div>
+                  <h3 className="text-lg font-bold text-gray-900 mb-2">
+                    {card.title}
+                  </h3>
+                  <p className="text-sm text-gray-600 leading-relaxed">
+                    {card.description}
+                  </p>
+                </motion.div>
+              </Link>
+            );
+          })}
+        </motion.div>
+      </div>
+    </div>
   );
 }

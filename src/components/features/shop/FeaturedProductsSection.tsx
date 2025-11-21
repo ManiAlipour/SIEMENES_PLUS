@@ -1,7 +1,7 @@
 "use client";
 
 import { useState, useEffect } from "react";
-import ProductCard from "../features/ProductCard";
+import ProductCard from "../ProductCard";
 import Link from "next/link";
 import { FiArrowLeft } from "react-icons/fi";
 import { motion } from "framer-motion";
@@ -16,18 +16,11 @@ export default function FeaturedProductsSection() {
       try {
         const res = await fetch("/api/products?isFeatured=true&limit=8");
         const data = await res.json();
-        if (data.success && data.items?.length > 0) {
-          setProducts(data.items);
-        } else {
-          // Fallback to default products if no featured products
-          const allRes = await fetch("/api/products?limit=6");
-          const allData = await allRes.json();
-          if (allData.success) {
-            setProducts(allData.items || []);
-          }
+        if (data.success) {
+          setProducts(data.items || []);
         }
       } catch (err) {
-        console.error("خطا در دریافت محصولات:", err);
+        console.error("خطا در دریافت محصولات ویژه:", err);
       } finally {
         setLoading(false);
       }
@@ -37,13 +30,9 @@ export default function FeaturedProductsSection() {
 
   if (loading) {
     return (
-      <section
-        dir="rtl"
-        className="pt-16 md:pt-20 pb-12 md:pb-16 w-full bg-background"
-        aria-labelledby="featured-products-heading"
-      >
-        <div className="max-w-6xl mx-auto px-4 md:px-0">
-          <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4 md:gap-6">
+      <section className="py-12 md:py-16 bg-gradient-to-br from-primary/5 via-white to-primary/5">
+        <div className="container mx-auto px-4 md:px-6 max-w-7xl">
+          <div className="grid grid-cols-2 md:grid-cols-4 gap-4 md:gap-6">
             {Array.from({ length: 8 }).map((_, i) => (
               <div
                 key={i}
@@ -65,12 +54,8 @@ export default function FeaturedProductsSection() {
   if (products.length === 0) return null;
 
   return (
-    <section
-      dir="rtl"
-      className="pt-16 md:pt-20 pb-12 md:pb-16 w-full bg-background"
-      aria-labelledby="featured-products-heading"
-    >
-      <div className="max-w-7xl mx-auto px-4 md:px-6">
+    <section className="py-12 md:py-16 bg-gradient-to-br from-primary/5 via-white to-primary/5">
+      <div className="container mx-auto px-4 md:px-6 max-w-7xl">
         {/* Header */}
         <motion.div
           initial={{ opacity: 0, y: 20 }}
@@ -84,11 +69,8 @@ export default function FeaturedProductsSection() {
               <FaWandMagicSparkles className="w-6 h-6 text-primary" />
             </div>
             <div>
-              <h2
-                id="featured-products-heading"
-                className="text-2xl md:text-3xl font-bold text-gray-900"
-              >
-                محصولات پیشنهادی
+              <h2 className="text-2xl md:text-3xl font-bold text-gray-900">
+                محصولات ویژه
               </h2>
               <p className="text-sm text-gray-600 mt-1">
                 بهترین و محبوب‌ترین محصولات ما
@@ -96,7 +78,7 @@ export default function FeaturedProductsSection() {
             </div>
           </div>
           <Link
-            href="/shop"
+            href="/shop?sort=-createdAt"
             className="hidden sm:flex items-center gap-2 text-primary hover:text-primary/80 font-semibold transition-colors"
           >
             مشاهده همه
@@ -105,7 +87,7 @@ export default function FeaturedProductsSection() {
         </motion.div>
 
         {/* Products Grid */}
-        <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4 md:gap-6">
+        <div className="grid grid-cols-2 md:grid-cols-4 gap-4 md:gap-6">
           {products.map((product, index) => (
             <motion.div
               key={product._id}
@@ -127,23 +109,16 @@ export default function FeaturedProductsSection() {
           ))}
         </div>
 
-        {/* View All Button */}
-        <motion.div
-          initial={{ opacity: 0 }}
-          whileInView={{ opacity: 1 }}
-          viewport={{ once: true }}
-          transition={{ duration: 0.5, delay: 0.3 }}
-          className="mt-8 md:mt-12 text-center"
-        >
+        {/* Mobile View All Button */}
+        <div className="mt-8 text-center sm:hidden">
           <Link
-            href="/shop"
-            className="inline-flex items-center gap-2 bg-primary text-white px-8 md:px-10 py-3 md:py-3.5 rounded-xl font-semibold hover:bg-primary/90 transition-all duration-300 shadow-md hover:shadow-lg hover:-translate-y-0.5"
-            aria-label="مشاهده همه محصولات"
+            href="/shop?sort=-createdAt"
+            className="inline-flex items-center gap-2 bg-primary text-white px-6 py-3 rounded-xl font-semibold hover:bg-primary/90 transition-colors shadow-md"
           >
             مشاهده همه محصولات
             <FiArrowLeft className="w-4 h-4" />
           </Link>
-        </motion.div>
+        </div>
       </div>
     </section>
   );

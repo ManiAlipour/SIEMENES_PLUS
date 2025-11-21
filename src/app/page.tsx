@@ -8,6 +8,7 @@ import RepairProcess from "@/components/layouts/RepairProcess";
 import HeroSection from "@/components/layouts/SectionHero";
 import ServiceFeatures from "@/components/layouts/ServiceFeatures";
 import LocationSection from "@/components/layouts/Location";
+import PublicStats from "@/components/features/PublicStats";
 
 export default function Home() {
   return (
@@ -16,6 +17,7 @@ export default function Home() {
       <CategoriesSection />
       <FeaturedProductsSection />
       <CategoryHighlightsSection />
+      <PublicStats />
       <ServiceFeatures />
       <BlogSection />
       <RepairProcess />

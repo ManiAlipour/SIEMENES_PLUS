@@ -1,10 +1,15 @@
 "use client";
 
+import { motion } from "framer-motion";
+import { FiTrendingUp, FiTrendingDown } from "react-icons/fi";
+
 interface IInfoCardProps {
   title: string;
   desc: string;
   count: number;
   color: "primary" | "warn" | "danger" | "success";
+  trend?: number;
+  icon?: React.ReactNode;
 }
 
 export default function InfoCard({
@@ -12,45 +17,110 @@ export default function InfoCard({
   desc,
   count,
   color,
+  trend,
+  icon,
 }: IInfoCardProps) {
   const colorMap = {
-    primary: "from-primary to-[#0e7490]",
-    warn: "from-[#f59e0b] to-[#b45309]",
-    danger: "from-[#ef4444] to-[#7f1d1d]",
-    success: "from-[#10b981] to-[#065f46]",
+    primary: {
+      gradient: "from-blue-500 to-blue-600",
+      bg: "bg-blue-50",
+      text: "text-blue-600",
+      border: "border-blue-200",
+    },
+    warn: {
+      gradient: "from-amber-500 to-amber-600",
+      bg: "bg-amber-50",
+      text: "text-amber-600",
+      border: "border-amber-200",
+    },
+    danger: {
+      gradient: "from-red-500 to-red-600",
+      bg: "bg-red-50",
+      text: "text-red-600",
+      border: "border-red-200",
+    },
+    success: {
+      gradient: "from-emerald-500 to-emerald-600",
+      bg: "bg-emerald-50",
+      text: "text-emerald-600",
+      border: "border-emerald-200",
+    },
+  };
+
+  const colors = colorMap[color];
+  const formatNumber = (num: number) => {
+    return new Intl.NumberFormat("fa-IR").format(num);
   };
 
   return (
-    <div
-      className={`flex flex-col justify-between rounded-2xl p-5 min-h-[140px]
-                  backdrop-blur-xl bg-white/70 border border-[#e5e7eb]/50
-                  shadow-[0_2px_12px_rgba(0,0,0,0.06)]
-                  hover:shadow-[0_4px_20px_rgba(6,182,212,0.25)]
-                  hover:scale-[1.02] transition-all duration-300`}
+    <motion.div
+      initial={{ opacity: 0, y: 20 }}
+      animate={{ opacity: 1, y: 0 }}
+      whileHover={{ y: -4, scale: 1.02 }}
+      transition={{ duration: 0.3 }}
+      className={`group relative overflow-hidden rounded-2xl p-6 bg-white border-2 ${colors.border} shadow-sm hover:shadow-xl transition-all duration-300`}
     >
-      {/* Header */}
-      <div className="flex justify-between items-center mb-3">
-        <h3 className="text-[16px] font-semibold text-[#1f2937] tracking-tight">
-          {title}
-        </h3>
+      {/* Background Gradient */}
+      <div
+        className={`absolute inset-0 bg-gradient-to-br ${colors.gradient} opacity-0 group-hover:opacity-5 transition-opacity duration-300`}
+      />
 
-        <div
-          className={`w-12 h-12 rounded-xl flex items-center justify-center
-                      bg-linear-to-br ${colorMap[color]}
-                      text-white font-extrabold text-[18px]
-                      shadow-[inset_0_0_10px_rgba(255,255,255,0.5)]`}
-        >
-          {count}
+      {/* Header */}
+      <div className="flex items-start justify-between mb-4">
+        <div className="flex-1">
+          <h3 className="text-sm font-semibold text-gray-600 mb-1">{title}</h3>
+          <p className="text-xs text-gray-500">{desc}</p>
         </div>
+
+        {/* Icon */}
+        {icon ? (
+          <div
+            className={`p-3 rounded-xl bg-gradient-to-br ${colors.gradient} shadow-lg`}
+          >
+            {icon}
+          </div>
+        ) : (
+          <div
+            className={`w-12 h-12 rounded-xl bg-gradient-to-br ${colors.gradient} flex items-center justify-center shadow-lg`}
+          >
+            <span className="text-white font-bold text-lg">
+              {count.toString().slice(0, 1)}
+            </span>
+          </div>
+        )}
       </div>
 
-      {/* Description */}
-      <p className="text-[13px] text-meuted leading-relaxed mt-auto">{desc}</p>
+      {/* Count */}
+      <div className="mb-3">
+        <motion.div
+          initial={{ scale: 0.8, opacity: 0 }}
+          animate={{ scale: 1, opacity: 1 }}
+          transition={{ delay: 0.2 }}
+          className={`text-3xl font-extrabold bg-gradient-to-r ${colors.gradient} bg-clip-text text-transparent`}
+        >
+          {formatNumber(count)}
+        </motion.div>
+      </div>
 
-      {/* Accent bar */}
+      {/* Trend */}
+      {trend !== undefined && (
+        <div className="flex items-center gap-2">
+          {trend >= 0 ? (
+            <FiTrendingUp className={`w-4 h-4 ${colors.text}`} />
+          ) : (
+            <FiTrendingDown className={`w-4 h-4 ${colors.text}`} />
+          )}
+          <span className={`text-xs font-semibold ${colors.text}`}>
+            {trend >= 0 ? "+" : ""}
+            {trend}% نسبت به ماه قبل
+          </span>
+        </div>
+      )}
+
+      {/* Accent Line */}
       <div
-        className={`mt-4 h-[3px] w-[40%] rounded-full bg-linear-to-r ${colorMap[color]} transition-all duration-300`}
-      ></div>
-    </div>
+        className={`absolute bottom-0 right-0 left-0 h-1 bg-gradient-to-r ${colors.gradient} transform scale-x-0 group-hover:scale-x-100 transition-transform duration-300 origin-right`}
+      />
+    </motion.div>
   );
 }

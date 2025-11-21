@@ -13,19 +13,18 @@ export default function AdminLayout({ children }: AdminLayoutProps) {
   const toggleSidebar = () => setSidebarOpen(!sidebarOpen);
 
   return (
-    <div className="flex min-h-screen bg-[#f9fafc]">
-      {/* Sidebar (Glassmorphic fixed) */}
+    <div className="flex min-h-screen bg-gradient-to-br from-gray-50 to-white">
+      {/* Sidebar - Always fixed, hidden on mobile when closed */}
       <AdminSideBar open={sidebarOpen} toggleOpen={toggleSidebar} />
 
       {/* Main Content Container */}
-      <div
-        className={`flex flex-col flex-1 transition-all duration-300 overflow-x-hidden md:mr-52`}
-      >
+      <div className="flex flex-col lg:mr-72
+       flex-1 w-full md:w-[calc(100%-18rem)] transition-all duration-300">
         {/* Header */}
         <Header onToggleSidebar={toggleSidebar} />
 
         {/* Page Content */}
-        <main className="flex-1 p-6 mt-[56px]">{children}</main>
+        <main className="flex-1 w-full">{children}</main>
       </div>
     </div>
   );

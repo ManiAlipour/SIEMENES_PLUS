@@ -1,17 +1,21 @@
 "use client";
+
 import { useState } from "react";
 import { useForm } from "react-hook-form";
 import { z } from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
 import InputField from "./InputField";
 import toast from "react-hot-toast";
-import Cookie from "js-cookie";
+import { motion } from "framer-motion";
+import { FiLoader, FiLogIn, FiUserPlus, FiCheckCircle } from "react-icons/fi";
+import { useRouter } from "next/navigation";
 
 interface Props {
   mode: "register" | "login" | "verify";
 }
 
 export default function AuthForm({ mode }: Props) {
+  const router = useRouter();
   const schemaMap = {
     register: z.object({
       name: z.string().min(2, "نام حداقل باید ۲ کاراکتر باشد"),
@@ -55,14 +59,14 @@ export default function AuthForm({ mode }: Props) {
 
       toast.success(json.message || "عملیات موفقیت‌آمیز بود");
 
-      if (mode === "register") window.location.href = "/verify";
-      else if (mode === "login") {
+      if (mode === "register") {
+        router.push("/verify");
+      } else if (mode === "login") {
         window.dispatchEvent(new Event("auth-changed"));
-        window.location.href = "/";
+        router.push("/");
       } else if (mode === "verify") {
         window.dispatchEvent(new Event("auth-changed"));
-
-        window.location.href = "/";
+        router.push("/");
       }
     } catch (err: any) {
       toast.error(err.message);
@@ -72,60 +76,121 @@ export default function AuthForm({ mode }: Props) {
   };
 
   return (
-    <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
+    <form onSubmit={handleSubmit(onSubmit)} className="space-y-6">
       {mode === "register" && (
-        <InputField
-          label="نام کامل"
-          register={register("name")}
-          error={(errors as any).name?.message}
-        />
+        <motion.div
+          initial={{ opacity: 0, x: -20 }}
+          animate={{ opacity: 1, x: 0 }}
+          transition={{ delay: 0.1 }}
+        >
+          <InputField
+            label="نام کامل"
+            register={register("name")}
+            error={(errors as any).name?.message}
+          />
+        </motion.div>
       )}
 
-      <InputField
-        label="ایمیل"
-        type="email"
-        register={register("email")}
-        error={errors.email?.message}
-      />
+      <motion.div
+        initial={{ opacity: 0, x: -20 }}
+        animate={{ opacity: 1, x: 0 }}
+        transition={{ delay: mode === "register" ? 0.2 : 0.1 }}
+      >
+        <InputField
+          label="ایمیل"
+          type="email"
+          register={register("email")}
+          error={errors.email?.message}
+        />
+      </motion.div>
+
       {mode !== "verify" && (
-        <InputField
-          label="رمز عبور"
-          type="password"
-          register={register("password")}
-          error={(errors as any).password?.message}
-        />
-      )}
-      {mode === "verify" && (
-        <InputField
-          label="کد تأیید"
-          register={register("code")}
-          error={(errors as any).code?.message}
-        />
+        <motion.div
+          initial={{ opacity: 0, x: -20 }}
+          animate={{ opacity: 1, x: 0 }}
+          transition={{ delay: mode === "register" ? 0.3 : 0.2 }}
+        >
+          <InputField
+            label="رمز عبور"
+            type="password"
+            register={register("password")}
+            error={(errors as any).password?.message}
+          />
+        </motion.div>
       )}
 
-      <button
+      {mode === "verify" && (
+        <motion.div
+          initial={{ opacity: 0, x: -20 }}
+          animate={{ opacity: 1, x: 0 }}
+          transition={{ delay: 0.2 }}
+        >
+          <InputField
+            label="کد تأیید"
+            register={register("code")}
+            error={(errors as any).code?.message}
+          />
+        </motion.div>
+      )}
+
+      {mode === "login" && (
+        <motion.div
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          transition={{ delay: 0.3 }}
+          className="flex items-center justify-between text-sm"
+        >
+          <label className="flex items-center gap-2 text-gray-600 cursor-pointer">
+            <input type="checkbox" className="w-4 h-4 rounded border-gray-300" />
+            <span>مرا به خاطر بسپار</span>
+          </label>
+          <a href="#" className="text-primary hover:underline font-semibold">
+            رمز عبور را فراموش کرده‌اید؟
+          </a>
+        </motion.div>
+      )}
+
+      <motion.button
         type="submit"
         disabled={loading}
-        className={`w-full py-2.5 rounded-md font-medium text-[15px] tracking-wide transition-all duration-200 ease-out
+        initial={{ opacity: 0, y: 20 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ delay: 0.4 }}
+        whileHover={{ scale: loading ? 1 : 1.02 }}
+        whileTap={{ scale: loading ? 1 : 0.98 }}
+        className={`
+          w-full py-4 rounded-xl font-bold text-white
+          transition-all duration-300
+          flex items-center justify-center gap-2
           ${
             loading
-              ? "bg-teal-600/40 cursor-not-allowed"
-              : "bg-gradient-to-r from-teal-500 to-cyan-500 hover:opacity-90 shadow-[0_0_15px_rgba(14,165,233,0.35)]"
-          }`}
+              ? "bg-gray-400 cursor-not-allowed"
+              : "bg-gradient-to-r from-primary to-primary/80 hover:from-primary/90 hover:to-primary/70 shadow-lg hover:shadow-xl"
+          }
+        `}
       >
         {loading ? (
-          <span className="inline-flex items-center justify-center gap-2">
-            <span className="w-4 h-4 border-2 border-white/40 border-t-transparent animate-spin rounded-full"></span>
+          <>
+            <FiLoader className="w-5 h-5 animate-spin" />
             <span>در حال ارسال...</span>
-          </span>
+          </>
         ) : mode === "register" ? (
-          "ثبت‌نام"
+          <>
+            <FiUserPlus className="w-5 h-5" />
+            <span>ثبت‌نام</span>
+          </>
         ) : mode === "login" ? (
-          "ورود"
+          <>
+            <FiLogIn className="w-5 h-5" />
+            <span>ورود</span>
+          </>
         ) : (
-          "تأیید حساب"
+          <>
+            <FiCheckCircle className="w-5 h-5" />
+            <span>تأیید حساب</span>
+          </>
         )}
-      </button>
+      </motion.button>
     </form>
   );
 }

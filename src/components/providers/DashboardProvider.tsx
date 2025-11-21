@@ -12,8 +12,7 @@ export default function DashboardProvider({
   children: React.ReactNode;
 }) {
   const dispatch = useDispatch();
-
-  // const user = useSelector((state: RootState) => state.user);
+  const [open, setOpen] = useState(false);
 
   useEffect(() => {
     const fetchUserData = async () => {
@@ -34,17 +33,17 @@ export default function DashboardProvider({
     };
 
     fetchUserData();
-  }, []);
-
-  const [open, setOpen] = useState(false);
+  }, [dispatch]);
 
   return (
-    <div className="flex h-screen">
+    <div className="flex min-h-screen bg-gradient-to-br from-gray-50 to-white">
+      {/* Sidebar - Always fixed, hidden on mobile when closed */}
       <Sidebar open={open} onToggleSidebar={() => setOpen(false)} />
-      <div className="flex flex-col flex-1 overflow-auto">
-        <Header onToggleSidebar={() => setOpen(!open)} />
 
-        <main className="p-6 font-vazir">{children}</main>
+      {/* Main Content Container */}
+      <div className="flex flex-col flex-1 w-full lg:w-[calc(100%-18rem)]  lg:mr-72 transition-all duration-300">
+        <Header onToggleSidebar={() => setOpen(!open)} />
+        <main className="flex-1 w-full">{children}</main>
       </div>
     </div>
   );

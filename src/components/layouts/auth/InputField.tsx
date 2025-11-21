@@ -1,6 +1,9 @@
 "use client";
+
 import React from "react";
 import { UseFormRegisterReturn } from "react-hook-form";
+import { FiEye, FiEyeOff } from "react-icons/fi";
+import { useState } from "react";
 
 interface Props {
   label: string;
@@ -15,17 +18,56 @@ export default function InputField({
   register,
   error,
 }: Props) {
+  const [showPassword, setShowPassword] = useState(false);
+  const isPassword = type === "password";
+  const inputType = isPassword && showPassword ? "text" : type;
+
   return (
-    <div className="mb-5">
-      <label className="block mb-1.5 text-sm leading-tight text-gray-300 select-none">
+    <div className="mb-6">
+      <label className="block mb-2 text-sm font-semibold text-gray-700">
         {label}
       </label>
-      <input
-        {...register}
-        type={type}
-        className="w-full px-3.5 py-2.5 rounded-md bg-white/5 border border-white/20 focus:border-teal-400 focus:ring-2 focus:ring-teal-600 outline-none text-sm text-white placeholder-gray-400 transition-all duration-200 ease-out"
-      />
-      {error && <p className="mt-1 text-xs text-rose-400">{error}</p>}
+      <div className="relative">
+        <input
+          {...register}
+          type={inputType}
+          className={`
+            w-full px-4 py-3.5 rounded-xl
+            bg-gray-50 border-2 transition-all duration-300
+            focus:outline-none focus:ring-2
+            ${
+              error
+                ? "border-red-300 focus:border-red-500 focus:ring-red-200"
+                : "border-gray-200 focus:border-primary focus:ring-primary/20"
+            }
+            text-gray-900 placeholder-gray-400
+            hover:border-gray-300
+          `}
+        />
+        {isPassword && (
+          <button
+            type="button"
+            onClick={() => setShowPassword(!showPassword)}
+            className="absolute left-4 top-1/2 -translate-y-1/2 text-gray-400 hover:text-gray-600 transition-colors"
+          >
+            {showPassword ? (
+              <FiEyeOff className="w-5 h-5" />
+            ) : (
+              <FiEye className="w-5 h-5" />
+            )}
+          </button>
+        )}
+      </div>
+      {error && (
+        <motion.p
+          initial={{ opacity: 0, y: -5 }}
+          animate={{ opacity: 1, y: 0 }}
+          className="mt-2 text-sm text-red-600 flex items-center gap-1"
+        >
+          <span>⚠</span>
+          {error}
+        </motion.p>
+      )}
     </div>
   );
 }

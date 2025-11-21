@@ -15,6 +15,8 @@ export async function GET(req: Request) {
     const limit = Number(searchParams.get("limit") || 10);
     const page = Number(searchParams.get("page") || 1);
     const modelNumber = searchParams.get("modelNumber");
+    const category = searchParams.get("category");
+    const isFeatured = searchParams.get("isFeatured");
     const sort = searchParams.get("sort") || "-createdAt";
 
     const filter: any = {};
@@ -30,6 +32,14 @@ export async function GET(req: Request) {
 
     if (modelNumber) {
       filter.modelNumber = { $regex: modelNumber, $options: "i" };
+    }
+
+    if (category) {
+      filter.category = { $regex: category, $options: "i" };
+    }
+
+    if (isFeatured === "true") {
+      filter.isFeatured = true;
     }
 
     const safeSort = /^[\w\-\s]+$/.test(sort) ? sort : "-createdAt";
