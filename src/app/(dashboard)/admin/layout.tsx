@@ -18,8 +18,10 @@ export default function AdminLayout({ children }: AdminLayoutProps) {
       <AdminSideBar open={sidebarOpen} toggleOpen={toggleSidebar} />
 
       {/* Main Content Container */}
-      <div className="flex flex-col lg:mr-72
-       flex-1 w-full md:w-[calc(100%-18rem)] transition-all duration-300">
+      <div
+        className="flex flex-col lg:mr-72
+       flex-1 w-full md:w-[calc(100%-18rem)] transition-all duration-300"
+      >
         {/* Header */}
         <Header onToggleSidebar={toggleSidebar} />
 

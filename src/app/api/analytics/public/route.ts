@@ -76,11 +76,11 @@ export async function GET(req: Request) {
         ]);
 
         const productIds = popularProducts.map((p) => p._id);
-        const products = await Product.find({
+        const products = (await Product.find({
           _id: { $in: productIds },
         })
           .select("name slug image brand")
-          .lean();
+          .lean()) as Product[];
 
         const productsWithViews = products.map((product) => {
           const viewData = popularProducts.find(
@@ -159,4 +159,3 @@ export async function GET(req: Request) {
     );
   }
 }
-

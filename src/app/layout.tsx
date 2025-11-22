@@ -1,8 +1,9 @@
-import type { Metadata } from "next";
+import type { Metadata, Viewport } from "next";
 import "./globals.css";
 import Providers from "@/components/providers";
 
 export const metadata: Metadata = {
+  metadataBase: new URL("https://site-mohandesi.ir"),
   title: "زیمنس پلاس | اتوماسیون و قطعات صنعتی",
   description:
     "فروش و پشتیبانی تخصصی تجهیزات اتوماسیون صنعتی زیمنس و ارائه راهکارهای مهندسی. PLC، اینورتر، HMI و قطعات صنعتی.",
@@ -38,8 +39,7 @@ export const metadata: Metadata = {
   twitter: {
     card: "summary_large_image",
     title: "زیمنس پلاس | اتوماسیون و قطعات صنعتی",
-    description:
-      "فروش و پشتیبانی تخصصی تجهیزات اتوماسیون صنعتی زیمنس",
+    description: "فروش و پشتیبانی تخصصی تجهیزات اتوماسیون صنعتی زیمنس",
     images: ["/images/logo.jpg"],
   },
   robots: {
@@ -53,11 +53,13 @@ export const metadata: Metadata = {
       "max-snippet": -1,
     },
   },
-  viewport: {
-    width: "device-width",
-    initialScale: 1,
-    maximumScale: 5,
-  },
+};
+
+// ✅ Viewport باید جداگانه export بشه
+export const viewport: Viewport = {
+  width: "device-width",
+  initialScale: 1,
+  maximumScale: 5,
 };
 
 export default function RootLayout({

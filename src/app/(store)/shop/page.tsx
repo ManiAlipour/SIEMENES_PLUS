@@ -1,5 +1,7 @@
 import type { Metadata } from "next";
 import ShopPageClient from "./ShopPageClient";
+import { Suspense } from "react";
+import LoadingFallback from "./LoadingFallback";
 
 export const metadata: Metadata = {
   title: "فروشگاه محصولات | زیمنس پلاس",
@@ -80,7 +82,9 @@ export default function ShopPage() {
         type="application/ld+json"
         dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
       />
-      <ShopPageClient />
+      <Suspense fallback={<LoadingFallback />}>
+        <ShopPageClient />
+      </Suspense>
     </>
   );
 }

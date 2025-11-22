@@ -1,9 +1,9 @@
 "use client";
 
-import React from "react";
 import { UseFormRegisterReturn } from "react-hook-form";
 import { FiEye, FiEyeOff } from "react-icons/fi";
 import { useState } from "react";
+import { motion } from "framer-motion";
 
 interface Props {
   label: string;
