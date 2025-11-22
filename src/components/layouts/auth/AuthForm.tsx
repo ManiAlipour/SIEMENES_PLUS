@@ -9,6 +9,7 @@ import toast from "react-hot-toast";
 import { motion } from "framer-motion";
 import { FiLoader, FiLogIn, FiUserPlus, FiCheckCircle } from "react-icons/fi";
 import { useRouter } from "next/navigation";
+import Link from "next/link";
 
 interface Props {
   mode: "register" | "login" | "verify";
@@ -141,12 +142,15 @@ export default function AuthForm({ mode }: Props) {
           className="flex items-center justify-between text-sm"
         >
           <label className="flex items-center gap-2 text-gray-600 cursor-pointer">
-            <input type="checkbox" className="w-4 h-4 rounded border-gray-300" />
+            <input
+              type="checkbox"
+              className="w-4 h-4 rounded border-gray-300"
+            />
             <span>مرا به خاطر بسپار</span>
           </label>
-          <a href="#" className="text-primary hover:underline font-semibold">
+          <Link href="#" className="text-primary hover:underline font-semibold">
             رمز عبور را فراموش کرده‌اید؟
-          </a>
+          </Link>
         </motion.div>
       )}
 
