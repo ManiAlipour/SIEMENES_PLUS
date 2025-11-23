@@ -1,8 +1,9 @@
 "use client";
 
 import ProductCard from "../ProductCard";
-import Link from "next/link";
 import Image from "next/image";
+import { useRouter } from "next/navigation";
+import { FiShoppingCart } from "react-icons/fi";
 
 interface ProductGridProps {
   products: Product[];
@@ -15,6 +16,8 @@ export default function ProductGrid({
   viewMode,
   loading = false,
 }: ProductGridProps) {
+  const router = useRouter();
+
   if (loading) {
     return (
       <div
@@ -69,42 +72,80 @@ export default function ProductGrid({
   if (viewMode === "list") {
     return (
       <div className="space-y-4">
-        {products.map((product) => (
-          <div className="bg-white rounded-xl border border-gray-100 p-4 hover:shadow-md transition-shadow flex gap-4">
-            <div className="relative w-24 h-24 sm:w-32 sm:h-32 flex-shrink-0 bg-gray-50 rounded-lg overflow-hidden">
-              <Image
-                src={product.image}
-                alt={product.name}
-                fill
-                className="object-contain"
-                sizes="(max-width: 640px) 96px, 128px"
-              />
+        {products.map((product) => {
+          const productUrl = product.slug
+            ? `/products/${product.slug}`
+            : `/products/${product._id}`;
+
+          return (
+            <div
+              key={product._id}
+              className="group bg-white rounded-2xl border border-slate-200/50 shadow-sm 
+                         hover:shadow-lg hover:-translate-y-1 transition-all duration-500 ease-[0.42,0,0.58,1]
+                         flex gap-4 overflow-hidden"
+            >
+              {/* Image Section */}
+              <div
+                onClick={() => router.push(productUrl)}
+                className="relative w-32 sm:w-40 aspect-[4/3] bg-slate-50 cursor-pointer 
+                           overflow-hidden flex-shrink-0"
+              >
+                <Image
+                  src={product.image}
+                  alt={product.name}
+                  fill
+                  className="object-contain p-4 group-hover:scale-105 transition-transform duration-500 ease-[0.42,0,0.58,1]"
+                />
+              </div>
+
+              {/* Content Section */}
+              <div className="flex flex-col justify-between flex-1 p-4">
+                <div>
+                  <h3
+                    onClick={() => router.push(productUrl)}
+                    className="cursor-pointer font-semibold text-base text-gray-900 line-clamp-2
+                               hover:text-primary transition-colors duration-300"
+                  >
+                    {product.name}
+                  </h3>
+                  {product.description && (
+                    <p className="text-sm text-gray-600 line-clamp-2 mt-1">
+                      {product.description}
+                    </p>
+                  )}
+                  {product.brand && (
+                    <span className="inline-block text-xs text-gray-500 bg-gray-100 px-2 py-0.5 rounded mt-2">
+                      {product.brand}
+                    </span>
+                  )}
+                </div>
+
+                {/* Price + CTA */}
+                <div className="flex items-center justify-between mt-3">
+                  <button
+                    onClick={() => {
+                      // TODO: اتصال به سیستم سبد خرید
+                    }}
+                    className="flex items-center gap-1.5 bg-primary text-white text-xs font-bold px-3 py-1.5 rounded-lg 
+                               hover:bg-primary/90 transition-all shadow-sm hover:shadow-md"
+                  >
+                    <FiShoppingCart className="w-3.5 h-3.5" /> افزودن
+                  </button>
+                </div>
+              </div>
             </div>
-            <div className="flex-1 min-w-0">
-              <h3 className="font-semibold text-gray-800 mb-2 line-clamp-2">
-                {product.name}
-              </h3>
-              {product.description && (
-                <p className="text-sm text-gray-600 line-clamp-2 mb-2">
-                  {product.description}
-                </p>
-              )}
-              {product.brand && (
-                <span className="inline-block text-xs text-gray-500 bg-gray-100 px-2 py-1 rounded">
-                  {product.brand}
-                </span>
-              )}
-            </div>
-          </div>
-        ))}
+          );
+        })}
       </div>
     );
   }
 
+  // Grid Mode
   return (
     <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4 md:gap-6">
       {products.map((product) => (
         <ProductCard
+          key={product._id}
           id={product._id}
           name={product.name}
           image={product.image}

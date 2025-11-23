@@ -8,15 +8,15 @@ import {
   productIsLiked,
 } from "@/store/slices/likedPosts";
 import { motion, AnimatePresence } from "framer-motion";
-import { FaHeart } from "react-icons/fa";
+import { FiHeart } from "react-icons/fi";
 
-export default function LikeProduct({
-  id,
-  size = 22,
-}: {
+interface Props {
   id: string;
   size?: number;
-}) {
+  className?: string;
+}
+
+export default function LikeButton({ id, size = 18, className = "" }: Props) {
   const dispatch = useDispatch();
   const state = useSelector((s: RootState) => s.likedPosts);
   const isLiked = productIsLiked(state, id);
@@ -26,57 +26,38 @@ export default function LikeProduct({
   return (
     <motion.button
       onClick={toggle}
-      whileTap={{ scale: 0.9 }}
-      className={`
-        relative flex items-center justify-center
-        rounded-full p-[clamp(0.5rem,0.7vw,0.65rem)]
-        shadow-soft transition-all duration-300
-        border border-gray-300/80
-        ${
-          isLiked
-            ? "bg-gradient-to-br from-teal-500 to-cyan-600"
-            : "bg-gray-100 hover:bg-gray-200"
-        }
-      `}
-      aria-label="افزودن به علاقه‌مندی‌ها"
+      whileTap={{ scale: 0.92 }}
+      transition={{ duration: 0.15, ease: [0.4, 0, 0.6, 1] }}
+      className={`relative flex items-center justify-center h-10 w-10 rounded-md
+                  border border-gray-300 bg-white/90 backdrop-blur-sm 
+                  hover:border-cyan-400 hover:bg-white transition-colors
+                  ${className}`}
+      aria-label="Toggle like"
     >
       <AnimatePresence mode="wait" initial={false}>
-        {isLiked ? (
-          <motion.span
-            key="liked"
-            initial={{ scale: 0.7, opacity: 0 }}
-            animate={{ scale: 1, opacity: 1 }}
-            exit={{ scale: 0.6, opacity: 0 }}
-            transition={{ duration: 0.25 }}
-          >
-            <FaHeart
-              size={size}
-              className="text-rose-100 drop-shadow-[0_0_6px_rgba(0,0,0,0.25)]"
-            />
-          </motion.span>
-        ) : (
-          <motion.span
-            key="unliked"
-            initial={{ scale: 0.7, opacity: 0 }}
-            animate={{ scale: 1, opacity: 1 }}
-            exit={{ scale: 0.6, opacity: 0 }}
-            transition={{ duration: 0.25 }}
-          >
-            <FaHeart
-              size={size}
-              className="text-gray-500 group-hover:text-gray-700 transition-colors duration-200"
-            />
-          </motion.span>
-        )}
+        <motion.span
+          key={isLiked ? "liked" : "unliked"}
+          initial={{ opacity: 0, scale: 0.85 }}
+          animate={{ opacity: 1, scale: 1 }}
+          exit={{ opacity: 0, scale: 0.85 }}
+          transition={{ duration: 0.18, ease: [0.42, 0, 0.58, 1] }}
+        >
+          <FiHeart
+            size={size}
+            className={`transition-colors duration-200 ${
+              isLiked ? "text-cyan-500 fill-cyan-400" : "text-gray-500"
+            }`}
+          />
+        </motion.span>
       </AnimatePresence>
 
-      {/* پالس واضح فقط زمان لایک */}
+      {/* Pulse flash when liked */}
       {isLiked && (
-        <motion.span
-          initial={{ scale: 0, opacity: 0.4 }}
-          animate={{ scale: 1.8, opacity: 0 }}
-          transition={{ duration: 0.6, ease: "easeOut" }}
-          className="absolute inset-0 bg-rose-400/30 rounded-full pointer-events-none"
+        <motion.div
+          initial={{ scale: 1, opacity: 0.25 }}
+          animate={{ scale: 1.6, opacity: 0 }}
+          transition={{ duration: 0.4, ease: "easeOut" }}
+          className="absolute inset-0 rounded-md bg-cyan-400/40 pointer-events-none"
         />
       )}
     </motion.button>

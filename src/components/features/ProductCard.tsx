@@ -2,10 +2,9 @@
 
 import Image from "next/image";
 import { useRouter } from "next/navigation";
-import LikeProduct from "./LikeProduct";
-import { FiStar, FiShoppingCart, FiEye, FiArrowLeft } from "react-icons/fi";
+import LikeButton from "./LikeProduct"
+import { FiStar, FiEye, FiArrowLeft } from "react-icons/fi";
 import { motion } from "framer-motion";
-import React from "react";
 import Link from "next/link";
 
 interface ProductCardProps {
@@ -34,19 +33,11 @@ export default function ProductCard({
   const router = useRouter();
   const productUrl = slug ? `/products/${slug}` : `/products/${id}`;
 
-  const formatPrice = (price?: number) => {
-    if (!price) return null;
-    return new Intl.NumberFormat("fa-IR").format(price);
-  };
+  const formatPrice = (price?: number) =>
+    price ? new Intl.NumberFormat("fa-IR").format(price) : null;
 
-  // --- Handlers ---
   const handleNavigate = () => router.push(productUrl);
-  const handleAddToCart = (e: React.MouseEvent) => {
-    e.stopPropagation();
-    // TODO: Connect to cart system
-  };
 
-  // --- SEO: Local JSON-LD for Product ---
   const productJsonLd = {
     "@context": "https://schema.org/",
     "@type": "Product",
@@ -72,10 +63,12 @@ export default function ProductCard({
       whileInView={{ opacity: 1, y: 0 }}
       transition={{ duration: 0.4, ease: [0.42, 0, 0.58, 1] }}
       viewport={{ once: true }}
-      className={`group flex flex-col h-full relative bg-white border border-gray-100 rounded-3xl overflow-hidden shadow-sm hover:shadow-2xl hover:-translate-y-2 transition-all duration-500 ${className}`}
       aria-label={`کارت محصول ${name}`}
+      className={`group flex flex-col h-full relative bg-white border border-gray-100 
+                  rounded-2xl overflow-hidden shadow-sm hover:shadow-[0_6px_16px_rgba(6,182,212,0.2)]
+                  hover:-translate-y-[0.6rem] transition-all duration-500 ${className}`}
     >
-      {/* JSON-LD */}
+      {/* SEO JSON-LD */}
       <script type="application/ld+json">
         {JSON.stringify(productJsonLd)}
       </script>
@@ -86,98 +79,112 @@ export default function ProductCard({
           initial={{ scale: 0 }}
           animate={{ scale: 1 }}
           transition={{ delay: 0.2, type: "spring", stiffness: 120 }}
-          className="absolute top-4 left-4 z-30 flex items-center gap-1.5 bg-gradient-to-r from-yellow-400 via-orange-500 to-pink-500 text-white text-xs font-bold px-3 py-1.5 rounded-full shadow-xl backdrop-blur-sm"
+          className="absolute top-3 left-3 z-30 flex items-center gap-1.5 
+                     bg-gradient-to-r from-yellow-400 via-orange-500 to-pink-500 
+                     text-white text-xs font-bold px-2.5 py-1 rounded-full shadow-lg backdrop-blur-sm"
         >
-          <FiStar className="w-3.5 h-3.5 animate-pulse" />
+          <FiStar className="w-3 h-3 animate-pulse" />
           <span>ویژه</span>
         </motion.div>
       )}
 
-      {/* Brand & Like */}
-      {brand && (
-        <div className="absolute top-4 right-4 z-20 bg-white/95 backdrop-blur-md text-gray-800 text-xs font-bold px-3 py-1.5 rounded-lg shadow-lg border border-gray-200">
-          {brand}
-        </div>
-      )}
-      <div
-        className="absolute top-4 left-4 z-20"
-        onClick={(e) => e.stopPropagation()}
-      >
-        <LikeProduct id={id} />
+      {/* Brand + Like */}
+      <div className="absolute top-3 right-3 z-20 flex items-center gap-2">
+        {brand && (
+          <span className="bg-slate-100 text-[11px] font-bold px-2.5 py-1 rounded-md border border-slate-200 text-slate-700">
+            {brand}
+          </span>
+        )}
+        <LikeButton id={id} size={16} />
       </div>
 
-      {/* تصویر اصلی */}
+      {/* تصویر محصول */}
       <div
         onClick={handleNavigate}
-        className="relative w-full aspect-square bg-gradient-to-br from-slate-50 via-white to-blue-50/30 flex items-center justify-center overflow-hidden cursor-pointer"
+        className="relative w-full aspect-[4/3] sm:aspect-square 
+                   bg-gradient-to-br from-slate-50 via-white to-blue-50/30 
+                   flex items-center justify-center overflow-hidden cursor-pointer"
       >
         <Image
           src={image}
           alt={`${name} ${brand ? "، محصول برند " + brand : ""}`}
           fill
-          className="object-contain p-4 sm:p-6 transition-transform duration-700 group-hover:scale-110 group-hover:rotate-[1deg]"
-          sizes="(max-width: 640px) 50vw, (max-width: 1024px) 33vw, 25vw"
+          className="object-contain p-3 sm:p-6 transition-transform duration-700 
+                     group-hover:scale-[1.06] group-hover:rotate-[1deg]"
+          sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 25vw"
         />
 
         {/* Shine */}
-        <div className="absolute inset-0 -translate-x-full group-hover:translate-x-full transition-transform duration-[1200ms] ease-[0.42,0,0.58,1] bg-gradient-to-r from-transparent via-white/20 to-transparent" />
+        <div
+          className="absolute inset-0 -translate-x-full group-hover:translate-x-full 
+                        transition-transform duration-[1200ms] ease-[0.42,0,0.58,1] 
+                        bg-gradient-to-r from-transparent via-white/20 to-transparent"
+        />
 
-        {/* Hover Overlay */}
-        <div className="absolute inset-0 bg-gradient-to-t from-black/10 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
+        {/* Overlay hover */}
+        <div
+          className="absolute inset-0 bg-gradient-to-t from-black/10 via-transparent 
+                        to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500"
+        />
 
-        {/* Desktop CTA */}
-        <div className="absolute bottom-0 left-0 right-0 p-4 bg-gradient-to-t from-white via-white/95 to-transparent backdrop-blur-md translate-y-full group-hover:translate-y-0 transition-transform duration-500 flex gap-2">
-          <button
-            onClick={handleAddToCart}
-            className="flex-1 bg-gradient-to-r from-primary to-primary/80 text-white text-xs font-bold py-2.5 rounded-xl flex items-center justify-center gap-2 shadow-lg hover:scale-105 transition-all"
-          >
-            <FiShoppingCart className="w-4 h-4" />
-            <span>سبد خرید</span>
-          </button>
+        {/* CTA دسکتاپ بدون سبد خرید */}
+        <div
+          className="absolute bottom-0 left-0 right-0 p-3 bg-gradient-to-t from-white via-white/95 to-transparent
+                     backdrop-blur-md translate-y-full group-hover:translate-y-0 transition-transform duration-500"
+        >
           <button
             onClick={handleNavigate}
-            className="flex-1 bg-white/90 backdrop-blur-sm text-gray-700 text-xs font-bold py-2.5 rounded-xl border-2 border-gray-200 hover:border-primary hover:text-primary flex items-center justify-center gap-2 shadow-lg hover:scale-105 transition-all"
+            className="w-full bg-white/90 backdrop-blur-sm text-gray-800 text-xs font-semibold py-2 rounded-lg
+                       border border-gray-200 hover:border-cyan-500 hover:text-cyan-600 shadow-sm
+                       flex items-center justify-center gap-1 transition-all"
           >
             <FiEye className="w-4 h-4" />
-            <span>مشاهده</span>
+            مشاهده جزئیات
           </button>
         </div>
       </div>
 
-      {/* اطلاعات محصول */}
-      <div className="flex flex-col grow justify-between p-5 gap-4 bg-white">
+      {/* اطلاعات */}
+      <div className="flex flex-col grow justify-between p-3 sm:p-5 gap-2 sm:gap-4 bg-white">
         <h3
           onClick={handleNavigate}
-          className="cursor-pointer font-bold text-base md:text-lg text-gray-900 line-clamp-2 min-h-[3.5rem] leading-relaxed hover:text-primary transition-colors duration-300"
+          className="cursor-pointer font-bold text-[15px] sm:text-lg text-gray-900 line-clamp-2 
+                     leading-snug hover:text-cyan-600 transition-colors duration-300"
         >
           {name}
         </h3>
 
         {/* قیمت */}
         {price && (
-          <div className="flex items-baseline gap-2 mb-3">
-            <span className="text-2xl md:text-3xl font-extrabold text-transparent bg-clip-text bg-gradient-to-r from-primary to-primary/70">
+          <div className="flex items-baseline gap-1 sm:gap-2 mb-2">
+            <span
+              className="text-xl sm:text-3xl font-extrabold 
+                             text-transparent bg-clip-text bg-gradient-to-r from-cyan-500 to-cyan-700"
+            >
               {formatPrice(price)}
             </span>
-            <span className="text-sm text-gray-500 font-medium">تومان</span>
+            <span className="text-xs sm:text-sm text-gray-500 font-medium">
+              تومان
+            </span>
           </div>
         )}
 
-        {/* وضعیت */}
+        {/* وضعیت موجودی */}
         {inStock !== undefined && (
           <span
-            className={`inline-flex items-center gap-1.5 text-xs font-semibold px-3 py-1.5 rounded-full ${
-              inStock
-                ? "bg-emerald-50 text-emerald-700 border border-emerald-200"
-                : "bg-red-50 text-red-700 border border-red-200"
-            }`}
+            className={`inline-flex items-center gap-1 text-[11px] font-semibold 
+                        px-2.5 py-1 rounded-full ${
+                          inStock
+                            ? "bg-emerald-50 text-emerald-700 border border-emerald-200"
+                            : "bg-red-50 text-red-700 border border-red-200"
+                        }`}
           >
             <span
-              className={`w-2 h-2 rounded-full animate-pulse ${
+              className={`w-1.5 h-1.5 rounded-full animate-pulse ${
                 inStock ? "bg-emerald-500" : "bg-red-500"
               }`}
             />
-            {inStock ? "موجود در انبار" : "ناموجود"}
+            {inStock ? "موجود" : "ناموجود"}
           </span>
         )}
       </div>
@@ -185,10 +192,12 @@ export default function ProductCard({
       {/* CTA موبایل */}
       <Link
         href={productUrl}
-        className="sm:hidden w-full bg-gradient-to-r from-primary to-primary/80 text-white text-sm font-bold py-3 rounded-xl flex items-center justify-center gap-2 shadow-md hover:scale-105 transition-all"
+        className="sm:hidden w-full bg-gradient-to-r from-cyan-500 to-cyan-600 
+                   text-white text-sm font-bold py-2 rounded-b-2xl 
+                   flex items-center justify-center gap-1.5 shadow-md 
+                   hover:scale-[1.03] transition-all"
       >
-        <span>مشاهده</span>
-        <FiArrowLeft className="w-4 h-4" />
+        مشاهده <FiArrowLeft className="w-4 h-4" />
       </Link>
     </motion.article>
   );
