@@ -1,7 +1,8 @@
 import type { Metadata } from "next";
-import ShopPageClient from "./ShopPageClient";
 import { Suspense } from "react";
+import ShopPageClient from "./ShopPageClient";
 import LoadingFallback from "./LoadingFallback";
+import Script from "next/script";
 
 export const metadata: Metadata = {
   title: "فروشگاه محصولات | زیمنس پلاس",
@@ -25,7 +26,9 @@ export const metadata: Metadata = {
     siteName: "زیمنس پلاس",
     images: [
       {
-        url: "/images/logo.jpg",
+        url: `${
+          process.env.NEXT_PUBLIC_SITE_URL || "https://site-mohandesi.ir"
+        }/images/logo.jpg`,
         width: 1200,
         height: 630,
         alt: "زیمنس پلاس - فروشگاه محصولات",
@@ -37,7 +40,11 @@ export const metadata: Metadata = {
     title: "فروشگاه محصولات | زیمنس پلاس",
     description:
       "فروشگاه تخصصی تجهیزات اتوماسیون صنعتی، PLC، اینورتر، HMI و قطعات زیمنس",
-    images: ["/images/logo.jpg"],
+    images: [
+      `${
+        process.env.NEXT_PUBLIC_SITE_URL || "https://site-mohandesi.ir"
+      }/images/logo.jpg`,
+    ],
   },
   alternates: {
     canonical: "/shop",
@@ -55,8 +62,7 @@ export const metadata: Metadata = {
   },
 };
 
-// JSON-LD Structured Data
-function generateJsonLd() {
+function generateJsonLd(products: any[] = []) {
   return {
     "@context": "https://schema.org",
     "@type": "CollectionPage",
@@ -68,20 +74,31 @@ function generateJsonLd() {
     }/shop`,
     mainEntity: {
       "@type": "ItemList",
-      itemListElement: [],
+      itemListElement: products.map((product, index) => ({
+        "@type": "Product",
+        position: index + 1,
+        name: product.title,
+        url: `${
+          process.env.NEXT_PUBLIC_SITE_URL || "https://site-mohandesi.ir"
+        }/product/${product.slug}`,
+      })),
     },
   };
 }
 
 export default function ShopPage() {
-  const jsonLd = generateJsonLd();
+  const jsonLd = generateJsonLd([]);
 
   return (
     <>
-      <script
+      {/* Structured data (for SEO parsers) */}
+      <Script
+        id="shop-jsonld-schema"
         type="application/ld+json"
         dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
+        strategy="beforeInteractive"
       />
+      {/* Suspense allows lazy hydration for subloads */}
       <Suspense fallback={<LoadingFallback />}>
         <ShopPageClient />
       </Suspense>

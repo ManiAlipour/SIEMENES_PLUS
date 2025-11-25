@@ -9,12 +9,14 @@ import HeroSection from "@/components/layouts/SectionHero";
 import ServiceFeatures from "@/components/layouts/ServiceFeatures";
 import LocationSection from "@/components/layouts/Location";
 import PublicStats from "@/components/features/PublicStats";
+import TopCategoriesSection from "@/components/features/shop/TopCategoriesSection";
 
 export default function Home() {
   return (
     <div>
       <HeroSection />
-      <CategoriesSection />
+      {/* <CategoriesSection /> */}
+      <TopCategoriesSection />
       <FeaturedProductsSection />
       <CategoryHighlightsSection />
       <PublicStats />

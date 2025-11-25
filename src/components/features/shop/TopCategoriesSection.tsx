@@ -24,7 +24,6 @@ export default function TopCategoriesSection() {
         const res = await fetch("/api/categories");
         const data = await res.json();
         if (data.data) {
-          // فقط 6 دسته اول را نمایش می‌دهیم
           setCategories(data.data.slice(0, 6) || []);
         }
       } catch (err) {

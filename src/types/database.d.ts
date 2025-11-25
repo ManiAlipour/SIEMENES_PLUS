@@ -43,7 +43,7 @@ interface Overview {
   activeUsersMonthly: number;
 }
 
-declare interface Product {
+declare interface ProductObject {
   _id: string;
   name: string;
   slug: string;
@@ -57,4 +57,8 @@ declare interface Product {
   createdAt: string;
   updatedAt: string;
   __v: number;
+}
+
+declare interface Product extends ProductObject {
+  similarProducts: ProductObject[];
 }
