@@ -26,7 +26,7 @@ export default function ProductGrid({
       <div
         className={`grid gap-7 ${
           viewMode === "grid"
-            ? "grid-cols-2 md:grid-cols-3 lg:grid-cols-4"
+            ? "grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4"
             : "grid-cols-1"
         }`}
       >
@@ -97,17 +97,17 @@ export default function ProductGrid({
               whileInView={{ opacity: 1, y: 0 }}
               viewport={{ once: true }}
               transition={{ duration: 0.36, delay: idx * 0.08 }}
-              className="group bg-white rounded-3xl border border-slate-200/80 shadow-md hover:shadow-2xl hover:-translate-y-1 transition-all duration-400 flex gap-6 overflow-hidden relative"
+              className="group bg-white rounded-3xl border border-slate-200/80 shadow-md hover:shadow-2xl hover:-translate-y-1 transition-all duration-400 flex flex-col sm:flex-row gap-6 overflow-hidden relative"
             >
               <div
                 onClick={() => router.push(productUrl)}
-                className="relative w-44 sm:w-56 aspect-square bg-gradient-to-br from-cyan-50 to-primary/10 hover:from-primary/10 transition-all duration-300 cursor-pointer overflow-hidden flex-shrink-0 flex items-center justify-center"
+                className="relative w-full sm:w-44 sm:w-56 aspect-square bg-gradient-to-br from-cyan-50 to-primary/10 hover:from-primary/10 transition-all duration-300 cursor-pointer overflow-hidden flex-shrink-0 flex items-center justify-center"
               >
                 <Image
                   src={product.image}
                   alt={product.name}
                   fill
-                  sizes="(max-width: 640px) 180px, 220px"
+                  sizes="(max-width: 640px) 100vw, (max-width: 1024px) 176px, 220px"
                   className="object-contain p-5 scale-95 group-hover:scale-105 group-hover:rotate-2 drop-shadow-xl transition-transform duration-500"
                   draggable={false}
                   priority={idx < 2}
@@ -118,16 +118,16 @@ export default function ProductGrid({
                   </span>
                 )}
               </div>
-              <div className="flex flex-col justify-between flex-1 py-6 pr-3 min-w-0">
+              <div className="flex flex-col justify-between flex-1 py-4 px-4 sm:py-6 sm:pr-3 min-w-0">
                 <div>
                   <h3
                     onClick={() => router.push(productUrl)}
-                    className="cursor-pointer font-bold text-xl text-gray-900 truncate max-w-full group-hover:text-primary transition-colors duration-250"
+                    className="cursor-pointer font-bold text-lg sm:text-xl text-gray-900 truncate max-w-full group-hover:text-primary transition-colors duration-250"
                   >
                     {product.name}
                   </h3>
                   {product.description && (
-                    <p className="text-base text-gray-500 line-clamp-2 mt-2 mb-2 leading-snug">
+                    <p className="text-sm sm:text-base text-gray-500 line-clamp-2 mt-2 mb-2 leading-snug">
                       {product.description}
                     </p>
                   )}
@@ -173,7 +173,7 @@ export default function ProductGrid({
 
   // Grid Mode - Enhanced UI
   return (
-    <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6 md:gap-8">
+    <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4 sm:gap-6">
       {products.map((product, idx) => (
         <motion.div
           key={product._id}
