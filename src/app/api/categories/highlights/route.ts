@@ -34,7 +34,7 @@ export async function GET() {
         }));
 
         return {
-          id: category._id.toString(),
+          id: (category._id as string).toString(),
           title: category.name,
           products: productsFormatted,
         };

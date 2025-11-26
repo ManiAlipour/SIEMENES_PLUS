@@ -5,10 +5,6 @@ import Product from "@/models/Product";
 export const dynamic = "force-dynamic";
 export const runtime = "nodejs";
 
-type RouteContext = {
-  params: { id: string };
-};
-
 // Helper to find similar products by brand/category but not itself
 async function getSimilarProducts(product: any, limit: number = 8) {
   if (!product) return [];

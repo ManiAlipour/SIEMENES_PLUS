@@ -6,6 +6,8 @@ import LikeButton from "./LikeButton";
 import { FaWhatsapp, FaTelegramPlane, FaInstagram } from "react-icons/fa";
 import { FiPhone } from "react-icons/fi";
 
+
+
 type ProductObject = {
   _id: string;
   name: string;
