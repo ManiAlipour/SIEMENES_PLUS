@@ -177,8 +177,11 @@ export default function CategoryHighlightsSection() {
 
               {/* Horizontal scrollable products list */}
               <div className="relative">
-                <div className="flex gap-3 md:gap-4 items-stretch overflow-x-auto snap-x snap-mandatory scroll-smooth pb-4 
-                scrollbar-thin scrollbar-thumb-primary scrollbar-track-gray-100">
+                <div
+                  className="flex gap-3 md:gap-4 items-stretch overflow-y-hidden overflow-x-auto 
+                my-auto snap-x snap-mandatory scroll-smooth pb-4 
+                scrollbar-thin scrollbar-thumb-primary scrollbar-track-gray-100"
+                >
                   {category.products.length === 0 ? (
                     <motion.div
                       initial={{ opacity: 0, scale: 0.9 }}

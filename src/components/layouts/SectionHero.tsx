@@ -1,383 +1,216 @@
 "use client";
+
+import { useState, useEffect } from "react";
 import Image from "next/image";
-import { useCallback, useEffect, useMemo, useRef, useState } from "react";
-import {
-  motion,
-  AnimatePresence,
-  useScroll,
-  useTransform,
-} from "framer-motion";
+import { motion, AnimatePresence, Variants } from "framer-motion"; // Added Variants type
+import { FiArrowLeft, FiChevronRight, FiChevronLeft } from "react-icons/fi";
 
-// === Animated Siemens-industrial hero section with autoplay and parallax ===
-export default function SectionHero() {
-  // Slides configuration
-  const slides = useMemo(
-    () => [
-      {
-        id: 1,
-        title: "شرکت مهندسی زیمنس پلاس",
-        subtitle: "همراه مطمئن شما در اتوماسیون و برق صنعتی",
-        image: "/images/hero-industrial-solder.jpg",
-        accent: "#00a9e0",
-      },
-      {
-        id: 2,
-        title: "فروش قطعات زیمنس",
-        subtitle: "تضمین اصالت، بهترین قیمت و پشتیبانی فنی",
-        image: "/images/section-one-image.jpg",
-        accent: "#00cfb9",
-      },
-      {
-        id: 3,
-        title: "تعمیرات تخصصی زیمنس",
-        subtitle: "تشخیص دقیق، تعمیر مطمئن، تحویل سریع",
-        image: "/images/section-two-image.jpg",
-        accent: "#ffd166",
-      },
-    ],
-    []
-  );
+// === DATA ===
+const slides = [
+  {
+    id: 1,
+    tag: "Industrial Automation",
+    title: "هوشمندی در صنعت",
+    description: "ارتقای خطوط تولید با نسل جدید پی‌ال‌سی‌های S7-1500 زیمنس. پایداری، سرعت و دقت همزمان.",
+    image: "/images/hero-industrial-solder.jpg",
+    color: "text-cyan-400",
+    btnColor: "bg-cyan-600 hover:bg-cyan-500",
+    borderColor: "border-cyan-500/30"
+  },
+  {
+    id: 2,
+    tag: "Drive Technology",
+    title: "قدرت محرکه بی‌پایان",
+    description: "درایوهای سینامیکس با بالاترین راندمان انرژی. کنترل دقیق موتورهای صنعتی.",
+    image: "/images/section-one-image.jpg",
+    color: "text-emerald-400",
+    btnColor: "bg-emerald-600 hover:bg-emerald-500",
+    borderColor: "border-emerald-500/30"
+  },
+  {
+    id: 3,
+    tag: "Technical Support",
+    title: "تعمیرات تخصصی",
+    description: "تیم مهندسی ما در تمام مراحل نصب و راه‌اندازی همراه شماست تا توقف تولید به صفر برسد.",
+    image: "/images/section-two-image.jpg",
+    color: "text-amber-400",
+    btnColor: "bg-amber-600 hover:bg-amber-500",
+    borderColor: "border-amber-500/30"
+  },
+];
 
-  const [index, setIndex] = useState(0);
+const AUTOPLAY_TIME = 6000;
+
+export default function HeroSectionMobileOptimized() {
+  const [currentIndex, setCurrentIndex] = useState(0);
   const [isPaused, setIsPaused] = useState(false);
-  const [progress, setProgress] = useState(0);
 
-  const timeoutRef = useRef<NodeJS.Timeout | null>(null);
-  const rafRef = useRef<number | null>(null);
-  const startTsRef = useRef<number>(0);
-  const AUTOPLAY_MS = 5200;
-
-  // Keyboard navigation
-  useEffect(() => {
-    const onKey = (e: KeyboardEvent) => {
-      if (e.key === "ArrowLeft")
-        setIndex((i) => (i - 1 + slides.length) % slides.length);
-      else if (e.key === "ArrowRight") setIndex((i) => (i + 1) % slides.length);
-    };
-    window.addEventListener("keydown", onKey);
-    return () => window.removeEventListener("keydown", onKey);
-  }, [slides.length]);
+  // --- Logic ---
+  const nextSlide = () => setCurrentIndex((prev) => (prev + 1) % slides.length);
+  const prevSlide = () => setCurrentIndex((prev) => (prev - 1 + slides.length) % slides.length);
 
   useEffect(() => {
-    if (timeoutRef.current) clearTimeout(timeoutRef.current);
-    if (rafRef.current) cancelAnimationFrame(rafRef.current);
+    if (isPaused) return;
+    const timer = setInterval(nextSlide, AUTOPLAY_TIME);
+    return () => clearInterval(timer);
+  }, [isPaused, currentIndex]);
 
-    startTsRef.current = performance.now();
+  const currentSlide = slides[currentIndex];
 
-    // defer React state update
-    requestAnimationFrame(() => setProgress(0));
+  // --- Animation Variants (FIXED TYPES) ---
+  
+  // Explicitly typing this as 'Variants' fixes the TS error
+  const slideVariants: Variants = {
+    initial: { scale: 1.1, opacity: 0 },
+    animate: { scale: 1, opacity: 1, transition: { duration: 1 } },
+    exit: { opacity: 0, transition: { duration: 0.5 } }
+  };
 
-    const tick = () => {
-      if (isPaused) {
-        startTsRef.current = performance.now() - progress * AUTOPLAY_MS;
-        rafRef.current = requestAnimationFrame(tick);
-        return;
-      }
-      const elapsed = performance.now() - startTsRef.current;
-      const p = Math.min(1, elapsed / AUTOPLAY_MS);
-      setProgress(p);
-      if (p < 1) rafRef.current = requestAnimationFrame(tick);
-    };
-
-    rafRef.current = requestAnimationFrame(tick);
-    timeoutRef.current = setTimeout(() => {
-      setIndex((i) => (i + 1) % slides.length);
-    }, AUTOPLAY_MS);
-
-    return () => {
-      if (timeoutRef.current) clearTimeout(timeoutRef.current);
-      if (rafRef.current) cancelAnimationFrame(rafRef.current);
-    };
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [index, slides.length, isPaused]);
-
-  const current = slides[index];
-
-  const { scrollYProgress } = useScroll();
-  const yImage = useTransform(scrollYProgress, [0, 1], [0, -12]);
-  const yAccentTop = useTransform(scrollYProgress, [0, 1], [0, -20]);
-  const yAccentBottom = useTransform(scrollYProgress, [0, 1], [0, 20]);
-
-  const contentVariants = {
-    initial: { opacity: 0, y: 18, filter: "blur(4px)" },
-    animate: {
-      opacity: 1,
-      y: 0,
-      filter: "blur(0px)",
-      transition: { duration: 0.6 },
-    },
-    exit: {
-      opacity: 0,
-      y: -18,
-      filter: "blur(4px)",
-      transition: { duration: 0.4 },
-    },
-  } as const;
-
-  const imageVariants = {
-    initial: { opacity: 0, scale: 0.98, y: 14 },
-    animate: {
-      opacity: 1,
-      scale: 1,
-      y: 0,
-      transition: { duration: 0.65, ease: "easeOut" },
-    },
-    exit: { opacity: 0, scale: 0.98, y: -10, transition: { duration: 0.45 } },
-  } as const;
+  const textVariants: Variants = {
+    hidden: { y: 30, opacity: 0 },
+    visible: { 
+        y: 0, 
+        opacity: 1, 
+        transition: { 
+            duration: 0.6, 
+            // Using a Bezier array is safer for TS than string literals like "easeOut"
+            // [0.25, 0.1, 0.25, 1] is equivalent to standard 'ease'
+            ease: [0.25, 0.1, 0.25, 1] 
+        } 
+    }
+  };
 
   return (
-    <section
-      dir="rtl"
-      className="relative w-full overflow-hidden bg-[#0b1730]"
+    <section 
+      className="relative w-full h-[100dvh] lg:h-[85vh] min-h-[600px] bg-slate-950 overflow-hidden font-vazir group"
       onMouseEnter={() => setIsPaused(true)}
       onMouseLeave={() => setIsPaused(false)}
     >
-      {/* Gradient BG */}
-      <div className="absolute inset-0 -z-10 bg--to-tr from-[#0b1730] via-[#0d1e3f] to-[#0a234a]" />
-
-      {/* Accent blobs */}
-      <motion.div
-        style={{ y: yAccentTop }}
-        className="absolute -top-24 -left-24 w-[42vw] h-[42vw] max-w-[540px] max-h-[540px] rounded-full -z-10"
-      >
-        <div
-          className="w-full h-full rounded-full blur-3xl"
-          style={{ backgroundColor: `${current.accent}33` }}
-        />
-      </motion.div>
-      <motion.div
-        style={{ y: yAccentBottom }}
-        className="absolute -bottom-28 -right-28 w-[36vw] h-[36vw] max-w-[460px] max-h-[460px] rounded-full -z-10"
-      >
-        <div
-          className="w-full h-full rounded-full blur-3xl"
-          style={{ backgroundColor: `${current.accent}1A` }}
-        />
-      </motion.div>
-
-      {/* Circuit paths + glow sweep */}
-      <motion.svg
-        aria-hidden
-        className="absolute inset-0 -z-10 opacity-[.18]"
-        viewBox="0 0 1200 600"
-      >
-        <g stroke="#8bcdf1" strokeWidth="1.2" fill="none" strokeLinecap="round">
-          <motion.path
-            d="M50 120 H240 V80 H420 V160 H520 V120 H680"
-            strokeDasharray="6 8"
-            initial={{ strokeDashoffset: 60 }}
-            animate={{ strokeDashoffset: [60, 0] }}
-            transition={{ duration: 6, repeat: Infinity, ease: "linear" }}
+      
+      {/* === 1. Background Image & Overlays === */}
+      <AnimatePresence mode="popLayout">
+        <motion.div
+          key={currentSlide.id}
+          variants={slideVariants}
+          initial="initial"
+          animate="animate"
+          exit="exit"
+          className="absolute inset-0 w-full h-full"
+        >
+          <Image
+            src={currentSlide.image}
+            alt={currentSlide.title}
+            fill
+            className="object-cover object-center"
+            priority
           />
-          <motion.path
-            d="M200 300 H360 V260 H520 V340 H700 V300 H980"
-            strokeDasharray="8 10"
-            initial={{ strokeDashoffset: 100 }}
-            animate={{ strokeDashoffset: [100, 0] }}
-            transition={{
-              duration: 8,
-              repeat: Infinity,
-              ease: "linear",
-              delay: 0.6,
-            }}
-          />
-          <motion.path
-            d="M80 460 H260 V420 H420 V500 H600 V460 H860 V420 H1100"
-            strokeDasharray="5 9"
-            initial={{ strokeDashoffset: 80 }}
-            animate={{ strokeDashoffset: [80, 0] }}
-            transition={{
-              duration: 7,
-              repeat: Infinity,
-              ease: "linear",
-              delay: 1.2,
-            }}
-          />
-        </g>
-      </motion.svg>
+          
+          {/* Mobile Overlay: Strong gradient from bottom for readability */}
+          <div className="absolute inset-0 bg-gradient-to-t from-slate-950 via-slate-900/80 to-transparent lg:bg-gradient-to-r lg:from-black/80 lg:via-black/50 lg:to-transparent opacity-90 lg:opacity-100" />
+        </motion.div>
+      </AnimatePresence>
 
-      <motion.div
-        aria-hidden
-        className="absolute -z-10 -inset-40"
-        initial={{ opacity: 0, x: -180, y: -180 }}
-        animate={{ opacity: [0, 0.22, 0], x: [-180, 180], y: [-180, 180] }}
-        transition={{
-          duration: 10,
-          repeat: Infinity,
-          ease: "easeInOut",
-          delay: 1.2,
-        }}
-        style={{
-          background:
-            "radial-gradient(120px 120px at center, rgba(0,169,224,0.24) 0%, rgba(0,169,224,0) 70%)",
-          mixBlendMode: "screen",
-        }}
-      />
 
-      {/* Content */}
-      <div
-        className="max-w-7xl mx-auto px-[clamp(1.25rem,6vw,3rem)] py-[clamp(3rem,8vw,6rem)]
-      grid grid-cols-1 md:grid-cols-2 gap-10 items-center"
-      >
-        <div className="text-white">
-          <div className="flex items-center gap-3 mb-3">
-            <span className="text-xs uppercase px-2 py-1 rounded-md bg-white/10 border border-white/15">
-              Siemens plus
-            </span>
-            <div className="relative h-[3px] flex-1 rounded bg-white/10 overflow-hidden">
-              <div
-                className="absolute left-0 top-0 h-full bg-white/80"
-                style={{ width: `${progress * 100}%` }}
-              />
-            </div>
-          </div>
-
-          <AnimatePresence mode="wait">
-            <motion.div
-              key={`content-${current.id}`}
-              variants={contentVariants}
-              initial="initial"
-              animate="animate"
-              exit="exit"
-            >
-              <h1 className="text-[clamp(2rem,5vw,3.25rem)] leading-tight font-extrabold tracking-tight">
-                {current.title}
-              </h1>
-              <p className="mt-4 text-[clamp(0.95rem,2.4vw,1.125rem)] text-white/85 leading-relaxed max-w-[46ch]">
-                {current.subtitle}
-              </p>
-
-              <div className="mt-6 flex flex-wrap items-center gap-3">
-                <a
-                  href="#contact"
-                  className="px-6 py-2.5 rounded-xl text-black font-vazir-semibold shadow-[0_10px_28px_-10px_rgba(0,169,224,.7)] hover:brightness-110 transition"
-                  style={{ backgroundColor: current.accent }}
+      {/* === 2. Text Content === */}
+      <div className="absolute inset-0 container mx-auto px-5 sm:px-6 flex flex-col justify-end lg:justify-center pb-28 lg:pb-0 z-20">
+        <div className="max-w-3xl w-full"> 
+            
+            <AnimatePresence mode="wait">
+                <motion.div 
+                    key={`content-${currentIndex}`}
+                    initial="hidden"
+                    animate="visible"
+                    exit="hidden"
+                    className="flex flex-col items-start"
                 >
-                  شروع مشاوره
-                </a>
-                <a
-                  href="#products"
-                  className="px-6 py-2.5 rounded-xl border border-white/25 text-white/95 hover:bg-white/10 transition"
-                >
-                  مشاهده محصولات
-                </a>
-              </div>
+                    {/* Tag */}
+                    <motion.div variants={textVariants} className="mb-3 lg:mb-4">
+                        <span className={`inline-block px-3 py-1 bg-black/40 backdrop-blur-md border ${currentSlide.borderColor} rounded text-xs lg:text-sm font-bold tracking-wider uppercase ${currentSlide.color}`}>
+                            {currentSlide.tag}
+                        </span>
+                    </motion.div>
 
-              <ul className="mt-6 flex flex-wrap items-center gap-2 text-xs text-white/80">
-                <li className="px-2 py-1 rounded-md bg-white/10 border border-white/10">
-                  اورجینال
-                </li>
-                <li className="px-2 py-1 rounded-md bg-white/10 border border-white/10">
-                  گارانتی معتبر
-                </li>
-                <li className="px-2 py-1 rounded-md bg-white/10 border border-white/10">
-                  پشتیبانی فنی
-                </li>
-              </ul>
-            </motion.div>
-          </AnimatePresence>
+                    {/* Title */}
+                    <motion.h1 
+                        variants={textVariants} 
+                        transition={{ delay: 0.1 }}
+                        className="text-3xl sm:text-4xl md:text-6xl lg:text-7xl font-black text-white leading-tight mb-4 drop-shadow-lg"
+                    >
+                        {currentSlide.title}
+                    </motion.h1>
 
-          <div className="mt-8 flex items-center gap-2">
-            {slides.map((s, i) => (
-              <button
-                key={s.id}
-                onClick={() => setIndex(i)}
-                className={`h-2.5 rounded-full transition-all duration-300 ${
-                  i === index
-                    ? "w-6 bg-white"
-                    : "w-2.5 bg-white/40 hover:bg-white/70"
-                }`}
-              />
-            ))}
-          </div>
-        </div>
+                    {/* Description */}
+                    <motion.p 
+                        variants={textVariants} 
+                        transition={{ delay: 0.2 }}
+                        className="text-slate-300 text-sm sm:text-base lg:text-xl leading-relaxed mb-8 max-w-xl drop-shadow-md"
+                    >
+                        {currentSlide.description}
+                    </motion.p>
 
-        {/* Image side */}
-        <div className="relative h-80 sm:h-[380px] md:h-[420px] select-none">
-          <div className="absolute inset-0 rounded-[28px] bg-white/5 border border-white/10 backdrop-blur-xl" />
-          <AnimatePresence mode="wait">
-            <motion.div
-              key={`img-${current.id}`}
-              variants={imageVariants}
-              initial="initial"
-              animate="animate"
-              exit="exit"
-              className="absolute inset-3 rounded-3xl overflow-hidden"
-            >
-              <motion.div style={{ y: yImage }} className="absolute inset-0">
-                <motion.div
-                  initial={{ scale: 1 }}
-                  animate={{ scale: 1.05 }}
-                  transition={{ duration: 6, ease: "linear" }}
-                  className="absolute inset-0"
-                >
-                  <Image
-                    src={current.image}
-                    alt="تصویر صنعتی"
-                    fill
-                    priority
-                    className="object-cover"
-                    sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
-                  />
+                    {/* Buttons */}
+                    <motion.div 
+                        variants={textVariants} 
+                        transition={{ delay: 0.3 }}
+                        className="flex flex-col sm:flex-row items-center gap-3 w-full sm:w-auto"
+                    >
+                        <button className={`w-full sm:w-auto px-6 py-3 lg:px-8 lg:py-4 rounded-lg text-white font-bold transition-all shadow-lg flex justify-center items-center gap-2 ${currentSlide.btnColor}`}>
+                            محصولات مرتبط
+                            <FiArrowLeft />
+                        </button>
+                        <button className="w-full sm:w-auto px-6 py-3 lg:px-8 lg:py-4 rounded-lg text-white font-medium border border-white/20 bg-white/5 hover:bg-white/10 backdrop-blur-sm transition-all">
+                            تماس با ما
+                        </button>
+                    </motion.div>
                 </motion.div>
-              </motion.div>
-              <div className="absolute inset-0 bg-linear-to-t from-[#0b1730]/60 via-transparent to-transparent" />
-              <div
-                className="absolute -inset-2 rounded-[inherit] border"
-                style={{ borderColor: `${current.accent}55` }}
-              />
-            </motion.div>
-          </AnimatePresence>
+            </AnimatePresence>
+
         </div>
       </div>
 
-      {/* Swipe capture for mobile */}
-      <SwipeZone
-        onSwipeLeft={() => setIndex((i) => (i + 1) % slides.length)}
-        onSwipeRight={() =>
-          setIndex((i) => (i - 1 + slides.length) % slides.length)
-        }
-      />
+
+      {/* === 3. Bottom Controls (Responsive) === */}
+      <div className="absolute bottom-0 left-0 w-full z-30 border-t border-white/10 bg-slate-950/50 backdrop-blur-md">
+        <div className="container mx-auto px-5 sm:px-6 h-16 lg:h-20 flex items-center justify-between">
+            
+            {/* Left: Progress */}
+            <div className="flex flex-col lg:flex-row lg:items-center gap-1 lg:gap-4 w-full max-w-[120px] lg:max-w-md">
+                <div className="text-xs lg:text-base text-slate-400 font-mono hidden lg:block">
+                    <span className="text-white font-bold">0{currentIndex + 1}</span> / 0{slides.length}
+                </div>
+                {/* Progress Line */}
+                <div className="w-full h-1 bg-white/10 rounded-full overflow-hidden">
+                     <motion.div 
+                        key={currentIndex}
+                        initial={{ width: "0%" }}
+                        animate={{ width: "100%" }}
+                        transition={{ duration: AUTOPLAY_TIME / 1000, ease: "linear" }}
+                        className={`h-full ${currentSlide.btnColor}`}
+                    />
+                </div>
+            </div>
+
+            {/* Right: Navigation Arrows */}
+            <div className="flex items-center gap-3">
+                <button 
+                    onClick={prevSlide}
+                    className="w-10 h-10 lg:w-12 lg:h-12 flex items-center justify-center rounded-full border border-white/10 text-white active:bg-white active:text-black lg:hover:bg-white lg:hover:text-black transition-all"
+                >
+                    <FiChevronRight size={20} className="lg:hidden" />
+                    <FiChevronRight size={24} className="hidden lg:block" />
+                </button>
+                <button 
+                    onClick={nextSlide}
+                    className="w-10 h-10 lg:w-12 lg:h-12 flex items-center justify-center rounded-full border border-white/10 text-white active:bg-white active:text-black lg:hover:bg-white lg:hover:text-black transition-all"
+                >
+                    <FiChevronLeft size={20} className="lg:hidden" />
+                    <FiChevronLeft size={24} className="hidden lg:block" />
+                </button>
+            </div>
+
+        </div>
+      </div>
+
     </section>
-  );
-}
-
-// ==== Touch swipe detector ====
-function SwipeZone({
-  onSwipeLeft,
-  onSwipeRight,
-}: {
-  onSwipeLeft: () => void;
-  onSwipeRight: () => void;
-}) {
-  const startX = useRef<number | null>(null);
-  const delta = useRef(0);
-
-  const handleStart = useCallback((e: React.TouchEvent<HTMLDivElement>) => {
-    startX.current = e.touches[0].clientX;
-    delta.current = 0;
-  }, []);
-
-  const handleMove = useCallback((e: React.TouchEvent<HTMLDivElement>) => {
-    if (startX.current == null) return;
-    delta.current = e.touches[0].clientX - startX.current;
-  }, []);
-
-  const handleEnd = useCallback(() => {
-    if (Math.abs(delta.current) > 40) {
-      if (delta.current < 0) {
-        onSwipeLeft();
-      } else {
-        onSwipeRight();
-      }
-    }
-  }, [onSwipeLeft, onSwipeRight]);
-  return (
-    <div
-      className="absolute inset-0 md:hidden"
-      onTouchStart={handleStart}
-      onTouchMove={handleMove}
-      onTouchEnd={handleEnd}
-    />
   );
 }
