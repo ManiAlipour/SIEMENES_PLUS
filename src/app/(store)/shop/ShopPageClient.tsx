@@ -8,9 +8,10 @@ import LoadingFallback from "./LoadingFallback";
 import Pagination from "@/components/features/shop/Pagination";
 import ProductGrid from "@/components/features/shop/ProductGrid";
 import Divider from "@/components/ui/Divider";
-import { FiSearch, FiArrowDownCircle, FiShoppingBag } from "react-icons/fi";
+import { FiArrowDownCircle, FiShoppingBag } from "react-icons/fi";
 import { FaBoxesStacked } from "react-icons/fa6";
 import { motion } from "framer-motion";
+import CategoryHighlightsSection from "@/components/layouts/CategoryHighlightsSection";
 
 const FeaturedProductsSection = dynamic(
   () => import("@/components/features/shop/FeaturedProductsSection"),
@@ -18,10 +19,6 @@ const FeaturedProductsSection = dynamic(
 );
 const TopCategoriesSection = dynamic(
   () => import("@/components/features/shop/TopCategoriesSection"),
-  { ssr: false }
-);
-const SuggestedCategoriesSection = dynamic(
-  () => import("@/components/features/shop/SuggestedCategoriesSection"),
   { ssr: false }
 );
 const ProductFilters = dynamic(
@@ -238,7 +235,7 @@ export default function ShopPageClient() {
               transition={{ duration: 0.6 }}
             >
               <Suspense fallback={<LoadingFallback />}>
-                <SuggestedCategoriesSection />
+                <CategoryHighlightsSection />
               </Suspense>
             </motion.div>
           </div>

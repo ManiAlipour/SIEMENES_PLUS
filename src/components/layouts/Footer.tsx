@@ -1,121 +1,180 @@
 import Link from "next/link";
-import { FaLinkedin, FaInstagram, FaYoutube, FaWhatsapp } from "react-icons/fa";
+import {
+  FaLinkedinIn,
+  FaInstagram,
+  FaYoutube,
+  FaWhatsapp,
+  FaMapMarkerAlt,
+  FaPhoneAlt,
+  FaEnvelope,
+  FaArrowLeft,
+} from "react-icons/fa";
 
 export default function Footer() {
   return (
-    <footer className="w-full bg-[#002b59] text-gray-200 pt-12 pb-6">
-      <div className="max-w-7xl mx-auto px-4 grid gap-10 sm:gap-8 md:grid-cols-5">
-        {/* Column 1: Quick links */}
-        <div>
-          <h2 className="font-bold text-lg mb-4 text-[#00a9e0]">
-            لینک‌های سریع
-          </h2>
-          <nav>
-            <ul className="space-y-2 text-sm">
-              <li>
-                <Link className="hover:text-[#4dd0ff]" href="/about">
-                  درباره ما
-                </Link>
+    // Main Footer Container with a deep, rich gradient background
+    <footer className="w-full bg-gradient-to-b from-slate-900 to-slate-950 text-slate-300 pt-16 pb-8 font-sans border-t border-slate-800">
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        {/* Top Section: Main Grid */}
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-12 gap-10 lg:gap-8 mb-12">
+          {/* Column 1: Brand & Contact (Spans 4 cols on desktop) */}
+          <div className="lg:col-span-4 space-y-6">
+            <div className="flex items-center gap-2">
+              {/* Placeholder for Logo */}
+              <div className="w-10 h-10 bg-cyan-500 rounded-lg flex items-center justify-center text-white font-bold text-xl">
+                S
+              </div>
+              <span className="text-2xl font-bold text-white tracking-tight">
+                SIEMENS <span className="text-cyan-400">PLUS</span>
+              </span>
+            </div>
+            <p className="text-slate-400 text-sm leading-relaxed max-w-sm">
+              ارائه دهنده پیشرفته‌ترین تجهیزات اتوماسیون صنعتی زیمنس و راهکارهای
+              مهندسی دقیق برای صنایع کشور.
+            </p>
+
+            {/* Contact Info with Icons */}
+            <ul className="space-y-4 pt-2">
+              <li className="flex items-start gap-3 text-sm group">
+                <FaMapMarkerAlt className="text-cyan-500 mt-1 text-lg group-hover:animate-bounce" />
+                <span className="group-hover:text-white transition-colors">
+                  قزوین، شهر صنعتی البرز، خیابان زکریای رازی، جنب شرکت مهرام،
+                  پلاک 20
+                </span>
               </li>
-              <li>
-                <Link className="hover:text-[#4dd0ff]" href="/services">
-                  خدمات مهندسی
-                </Link>
+              <li className="flex items-center gap-3 text-sm group">
+                <FaPhoneAlt className="text-cyan-500 group-hover:rotate-12 transition-transform" />
+                <span className="font-mono dir-ltr group-hover:text-white transition-colors">
+                  0919-988-3772
+                </span>
               </li>
-              <li>
-                <Link className="hover:text-[#4dd0ff]" href="/products">
-                  محصولات
-                </Link>
-              </li>
-              <li>
-                <Link className="hover:text-[#4dd0ff]" href="/blog">
-                  بلاگ
-                </Link>
-              </li>
-              <li>
-                <Link className="hover:text-[#4dd0ff]" href="/contact">
-                  تماس با ما
-                </Link>
+              <li className="flex items-center gap-3 text-sm group">
+                <FaEnvelope className="text-cyan-500 group-hover:scale-110 transition-transform" />
+                <span className="font-mono group-hover:text-white transition-colors">
+                  siemensplus8020@gmail.com
+                </span>
               </li>
             </ul>
-          </nav>
+          </div>
+
+          {/* Column 2: Quick Links (Spans 2 cols) */}
+          <div className="lg:col-span-2 lg:pl-4">
+            <h3 className="font-bold text-white text-lg mb-6 relative inline-block">
+              لینک‌های سریع
+              <span className="absolute -bottom-2 right-0 w-1/2 h-0.5 bg-cyan-500 rounded-full"></span>
+            </h3>
+            <ul className="space-y-3 text-sm">
+              {[
+                { name: "درباره ما", href: "/about" },
+                { name: "خدمات مهندسی", href: "/services" },
+                { name: "محصولات", href: "/products" },
+                { name: "بلاگ آموزشی", href: "/blog" },
+                { name: "تماس با ما", href: "/contact" },
+              ].map((item) => (
+                <li key={item.name}>
+                  <Link
+                    href={item.href}
+                    className="flex items-center gap-2 hover:text-cyan-400 hover:translate-x-[-4px] transition-all duration-300"
+                  >
+                    <span className="w-1.5 h-1.5 rounded-full bg-slate-600"></span>
+                    {item.name}
+                  </Link>
+                </li>
+              ))}
+            </ul>
+          </div>
+
+          {/* Column 3: Categories (Spans 2 cols) */}
+          <div className="lg:col-span-2">
+            <h3 className="font-bold text-white text-lg mb-6 relative inline-block">
+              محصولات
+              <span className="absolute -bottom-2 right-0 w-1/2 h-0.5 bg-cyan-500 rounded-full"></span>
+            </h3>
+            <ul className="space-y-3 text-sm font-medium">
+              {[
+                "PLC & Automation",
+                "Drives & Motors",
+                "HMI Panels",
+                "LV Boards",
+                "Sensors",
+              ].map((cat) => (
+                <li
+                  key={cat}
+                  className="block hover:text-cyan-400 cursor-pointer transition-colors duration-200"
+                >
+                  {cat}
+                </li>
+              ))}
+            </ul>
+          </div>
+
+          {/* Column 4: Newsletter (Spans 4 cols) */}
+          <div className="lg:col-span-4 bg-slate-800/30 rounded-2xl p-6 border border-white/5 backdrop-blur-sm">
+            <h3 className="font-bold text-white text-lg mb-2">
+              عضویت در خبرنامه
+            </h3>
+            <p className="text-xs text-slate-400 mb-4">
+              از آخرین تخفیف‌ها و مقالات فنی ما باخبر شوید.
+            </p>
+
+            <div className="flex gap-2 mb-6">
+              <input
+                type="email"
+                placeholder="ایمیل شما..."
+                className="flex-1 bg-slate-900/50 border border-slate-700 rounded-lg px-4 py-3 text-sm text-white focus:outline-none focus:border-cyan-500 focus:ring-1 focus:ring-cyan-500 transition-all placeholder:text-slate-600"
+              />
+              <button className="bg-cyan-600 hover:bg-cyan-500 text-white px-4 py-2 rounded-lg transition-colors duration-300 flex items-center justify-center">
+                <FaArrowLeft />
+              </button>
+            </div>
+
+            <div className="flex items-center gap-4">
+              <SocialLink href="#" icon={<FaLinkedinIn />} label="LinkedIn" />
+              <SocialLink href="#" icon={<FaInstagram />} label="Instagram" />
+              <SocialLink href="#" icon={<FaYoutube />} label="YouTube" />
+              <SocialLink href="#" icon={<FaWhatsapp />} label="WhatsApp" />
+            </div>
+          </div>
         </div>
 
-        {/* Column 2: Product categories */}
-        <div className="md:border-l border-slate-700 md:pl-6">
-          <h2 className="font-bold text-lg mb-4 text-[#00a9e0]">
-            دسته‌های محصولات
-          </h2>
-          <ul className="space-y-2 text-sm">
-            <li>PLC & Automation</li>
-            <li>Drives & Motors</li>
-            <li>HMI Panels</li>
-            <li>LV Boards</li>
-            <li>Sensors & Instruments</li>
-          </ul>
-        </div>
-
-        {/* Column 3: Office address */}
-        <div className="md:border-l border-slate-700 md:pl-6">
-          <h2 className="font-bold text-lg mb-4 text-[#00a9e0]">دفتر مرکزی</h2>
-          <p className="text-sm leading-6 text-gray-300">
-            قزوین-شهرصنعتی البرز-خیابان زکریای رازی -جنب شرکت مهرام پلاک  20
-            <br /> تلفن:  09199883772
-            <br /> ایمیل: siemensplus8020@gmail.com
+        {/* Bottom Section: Copyright */}
+        <div className="border-t border-slate-800/60 pt-8 flex flex-col md:flex-row justify-between items-center gap-4">
+          <p className="text-xs text-slate-500 text-center md:text-right">
+            © 2025{" "}
+            <span className="text-slate-300 font-bold">SIEMENS PLUS</span> —
+            تمامی حقوق محفوظ است.
           </p>
-        </div>
-
-        {/* Column 4: Newsletter + Social links */}
-        <div className="md:border-l col-span-2 border-slate-700 md:pl-6">
-          <h2 className="font-bold text-lg mb-4 text-[#00a9e0]">خبرنامه</h2>
-          <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-2 mb-3">
-            <input
-              type="email"
-              placeholder="ایمیل خود را وارد کنید..."
-              className="flex-1 rounded-md bg-slate-800 px-3 py-2 text-sm border border-slate-600 focus:border-[#00a9e0] outline-none text-gray-200 placeholder-gray-400"
-            />
-            <button className="px-4 py-2 bg-[#004c97] hover:bg-[#0a5fb9] text-white rounded-md text-sm font-medium">
-              عضویت
-            </button>
-          </div>
-
-          {/* Social media links */}
-          <div className="flex gap-4 mt-4 text-xl">
-            <Link
-              aria-label="LinkedIn"
-              className="text-gray-400 hover:text-[#00a9e0]"
-              href="#"
-            >
-              <FaLinkedin />
+          <div className="flex gap-6 text-xs text-slate-500">
+            <Link href="#" className="hover:text-cyan-400 transition-colors">
+              قوانین و مقررات
             </Link>
-            <Link
-              aria-label="Instagram"
-              className="text-gray-400 hover:text-[#00a9e0]"
-              href="#"
-            >
-              <FaInstagram />
-            </Link>
-            <Link
-              aria-label="YouTube"
-              className="text-gray-400 hover:text-[#00a9e0]"
-              href="#"
-            >
-              <FaYoutube />
-            </Link>
-            <Link
-              aria-label="WhatsApp"
-              className="text-gray-400 hover:text-[#00a9e0]"
-              href="#"
-            >
-              <FaWhatsapp />
+            <Link href="#" className="hover:text-cyan-400 transition-colors">
+              حریم خصوصی
             </Link>
           </div>
         </div>
-      </div>
-
-      <div className="mt-12 text-center text-gray-400 text-xs tracking-wide px-4">
-        © 2025 SIEMENS PLUS — تمام حقوق محفوظ است
       </div>
     </footer>
+  );
+}
+
+// Helper Component for Social Links
+function SocialLink({
+  href,
+  icon,
+  label,
+}: {
+  href: string;
+  icon: React.ReactNode;
+  label: string;
+}) {
+  return (
+    <Link
+      href={href}
+      aria-label={label}
+      className="w-10 h-10 rounded-full bg-slate-800 flex items-center justify-center text-slate-400 hover:bg-cyan-500 hover:text-white hover:-translate-y-1 transition-all duration-300 shadow-lg shadow-black/20"
+    >
+      {icon}
+    </Link>
   );
 }

@@ -205,7 +205,7 @@ export default function CategoryHighlightsSection() {
                           duration: 0.4,
                           delay: productIndex * 0.1,
                         }}
-                        className="min-w-[180px] xs:max-w-[200px] md:max-w-[220px] lg:max-w-[240px] snap-start shrink-0"
+                        className="max-w-[150px] xs:max-w-[200px] md:max-w-[220px] lg:max-w-[240px] snap-start shrink-0"
                       >
                         <ProductCard
                           id={product.id}

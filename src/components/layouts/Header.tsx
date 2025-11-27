@@ -4,133 +4,164 @@ import Link from "next/link";
 import Image from "next/image";
 import { usePathname } from "next/navigation";
 import { useState, useEffect } from "react";
-import { FiMenu, FiX, FiSearch, FiPhone, FiChevronDown } from "react-icons/fi";
+import {
+  FiMenu,
+  FiX,
+  FiSearch,
+  FiChevronDown,
+  FiUser,
+  FiShoppingBag,
+} from "react-icons/fi";
 import { motion, AnimatePresence } from "framer-motion";
 import { useAuth } from "@/components/providers/AuthProvider";
 
 export default function Header() {
   const pathname = usePathname();
-  const [open, setOpen] = useState(false); // mobile sidebar
-  const [servicesOpen, setServicesOpen] = useState(false); // desktop mega
-  const [mobileServicesOpen, setMobileServicesOpen] = useState(false); // mobile submenu
-  const [search, setSearch] = useState("");
-  const [scrolled, setScrolled] = useState(false);
-
   const { token } = useAuth();
 
+  // State management
+  const [isMobileOpen, setIsMobileOpen] = useState(false);
+  const [isServicesOpen, setIsServicesOpen] = useState(false); // Desktop hover
+  const [isMobileServicesOpen, setIsMobileServicesOpen] = useState(false); // Mobile click
+  const [scrolled, setScrolled] = useState(false);
+  const [searchQuery, setSearchQuery] = useState("");
+
+  // Handle Scroll Effect
   useEffect(() => {
     const handleScroll = () => setScrolled(window.scrollY > 20);
     window.addEventListener("scroll", handleScroll);
     return () => window.removeEventListener("scroll", handleScroll);
   }, []);
 
+  // Lock body scroll when mobile menu is open
   useEffect(() => {
-    document.body.style.overflow = open ? "hidden" : "";
-    return () => {
-      document.body.style.overflow = "";
-    };
-  }, [open]);
+    if (isMobileOpen) {
+      document.body.style.overflow = "hidden";
+    } else {
+      document.body.style.overflow = "unset";
+    }
+  }, [isMobileOpen]);
 
+  // Navigation Data
   const links = [
     { name: "خانه", href: "/" },
-    { name: "فروشگاه", href: "/shop" },
     { name: "محصولات", href: "/products" },
+    { name: "فروشگاه", href: "/shop" },
     { name: "وبلاگ", href: "/blog" },
-    { name: "درباره ما", href: "/about-us" },
-    { name: "تماس با ما", href: "/contact-us" },
   ];
 
   const services = [
-    { name: "مشاوره و طراحی", href: "/services/consulting" },
-    { name: "نصب و راه‌اندازی", href: "/services/installation" },
-    { name: "تعمیرات و نگهداری", href: "/services/maintenance" },
-    { name: "آموزش و کارگاه", href: "/services/training" },
+    {
+      name: "اتوماسیون صنعتی",
+      href: "/services/automation",
+      desc: "PLC, HMI, SCADA",
+    },
+    {
+      name: "درایو و موتور",
+      href: "/services/drives",
+      desc: "Sinamics, Simotics",
+    },
+    {
+      name: "فشار ضعیف",
+      href: "/services/low-voltage",
+      desc: "Sirius, Sentron",
+    },
+    { name: "مشاوره فنی", href: "/services/consulting", desc: "طراحی و اجرا" },
   ];
 
   return (
-    <header
-      className={`sticky top-0 left-0 w-full z-50 transition-all duration-300 ${
-        scrolled
-          ? "bg-white shadow-md py-[0.3rem]"
-          : "bg-linear-to-b from-card to-background shadow-soft"
-      }`}
-    >
-      <div className="max-w-7xl mx-auto px-4 py-[clamp(0.3rem,0.8vw,0.7rem)] flex flex-col gap-1.5">
-        {/* Top row */}
-        <div className="flex flex-wrap md:flex-nowrap items-center justify-between w-full gap-[clamp(0.5rem,1vw,1.25rem)]">
-          {/* Logo */}
-          <Link href="/" className="flex items-center gap-2 shrink-0">
-            <Image
-              src="/images/logo.jpg"
-              alt="Siemens Plus Logo"
-              width={40}
-              height={40}
-              className="rounded-full shadow-sm w-10 h-10"
-            />
-            <div className="flex flex-col leading-tight font-vazir">
-              <span className="text-2xl font-extrabold text-foreground whitespace-nowrap">
-                زیمِنس پلاس
+    <>
+      {/* --- Main Header --- */}
+      <header
+        className={`sticky top-0 left-0 w-full z-50 transition-all duration-300 border-b ${
+          scrolled
+            ? "bg-white/90 backdrop-blur-md border-slate-200 py-3 shadow-sm"
+            : "bg-white border-transparent py-5"
+        }`}
+      >
+        <div className="max-w-7xl mx-auto px-4 lg:px-6 flex items-center justify-between gap-4">
+          {/* 1. Logo Section */}
+          <Link href="/" className="flex items-center gap-3 shrink-0 group">
+            <div className="relative w-10 h-10 overflow-hidden rounded-lg">
+              <Image
+                src="/images/logo.jpg"
+                alt="Siemens Plus"
+                fill
+                className="object-cover group-hover:scale-110 transition-transform duration-500"
+              />
+            </div>
+            <div className="hidden sm:flex flex-col font-vazir">
+              <span className="text-xl font-bold text-slate-900 leading-none">
+                زیمِنس <span className="text-cyan-600">پلاس</span>
               </span>
-              <span className="text-xs text-[rgba(0,0,0,0.55)] whitespace-nowrap">
-                فروش قطعات الکترونیکی صنعتی
+              <span className="text-[10px] text-slate-500 tracking-wider mt-1">
+                INDUSTRIAL AUTOMATION
               </span>
             </div>
           </Link>
 
-          {/* Desktop navigation */}
-          <nav className="hidden sm:flex items-center flex-wrap justify-center gap-[clamp(0.5rem,1.2vw,1.25rem)] font-vazir relative">
+          {/* 2. Desktop Navigation (Centered) */}
+          <nav className="hidden lg:flex items-center gap-1 bg-slate-50/50 p-1 rounded-full border border-slate-200/50 px-2">
             {links.map((link) => (
               <Link
                 key={link.href}
                 href={link.href}
-                className={`transition duration-200 hover:brightness-110 ${
+                className={`px-4 py-2 rounded-full text-sm font-medium transition-all ${
                   pathname === link.href
-                    ? "text-primary font-semibold"
-                    : "text-foreground"
-                } whitespace-nowrap`}
+                    ? "bg-white text-cyan-700 shadow-sm border border-slate-100"
+                    : "text-slate-600 hover:text-cyan-600 hover:bg-slate-100/50"
+                }`}
               >
                 {link.name}
               </Link>
             ))}
-            {/* Services dropdown */}
+
+            {/* Services Dropdown Trigger */}
             <div
               className="relative"
-              onMouseEnter={() => setServicesOpen(true)}
-              onMouseLeave={() => setServicesOpen(false)}
+              onMouseEnter={() => setIsServicesOpen(true)}
+              onMouseLeave={() => setIsServicesOpen(false)}
             >
               <button
-                onClick={() => setServicesOpen((v) => !v)}
-                className="flex items-center gap-1 text-foreground hover:brightness-110 transition"
+                className={`flex items-center gap-1 px-4 py-2 rounded-full text-sm font-medium transition-all ${
+                  isServicesOpen
+                    ? "text-cyan-600 bg-slate-100/50"
+                    : "text-slate-600 hover:text-cyan-600"
+                }`}
               >
                 خدمات
                 <FiChevronDown
-                  className={`transition-transform ${
-                    servicesOpen ? "rotate-180" : "rotate-0"
+                  className={`transition-transform duration-300 ${
+                    isServicesOpen ? "rotate-180" : ""
                   }`}
                 />
               </button>
 
+              {/* Services Mega Menu */}
               <AnimatePresence>
-                {servicesOpen && (
+                {isServicesOpen && (
                   <motion.div
-                    initial={{ opacity: 0, y: 10 }}
-                    animate={{ opacity: 1, y: 0 }}
-                    exit={{ opacity: 0, y: 10 }}
-                    transition={{ duration: 0.18 }}
-                    className="absolute right-0 mt-3 w-[min(80vw,720px)] bg-white text-black border border-borders shadow-2xl rounded-xl p-5 grid grid-cols-2 md:grid-cols-4 gap-4 z-50"
+                    initial={{ opacity: 0, y: 15, scale: 0.98 }}
+                    animate={{ opacity: 1, y: 0, scale: 1 }}
+                    exit={{ opacity: 0, y: 15, scale: 0.98 }}
+                    transition={{ duration: 0.2 }}
+                    className="absolute top-full right-0 mt-2 w-72 bg-white border border-slate-100 rounded-2xl shadow-xl p-2 grid gap-1 overflow-hidden"
                   >
-                    {services.map((s) => (
+                    {/* Decorative gradient line at top */}
+                    <div className="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-cyan-500 to-blue-600" />
+
+                    {services.map((service) => (
                       <Link
-                        key={s.href}
-                        href={s.href}
-                        className="group block rounded-lg p-3 hover:bg-background transition"
+                        key={service.href}
+                        href={service.href}
+                        className="flex flex-col px-4 py-3 rounded-xl hover:bg-slate-50 transition group"
                       >
-                        <div className="font-semibold text-foreground group-hover:text-primary">
-                          {s.name}
-                        </div>
-                        <div className="text-xs text-[rgba(30,30,30,0.7)] mt-1">
-                          جزئیات بیشتر
-                        </div>
+                        <span className="text-sm font-bold text-slate-800 group-hover:text-cyan-600 transition-colors">
+                          {service.name}
+                        </span>
+                        <span className="text-xs text-slate-400 mt-0.5">
+                          {service.desc}
+                        </span>
                       </Link>
                     ))}
                   </motion.div>
@@ -139,271 +170,204 @@ export default function Header() {
             </div>
           </nav>
 
-          {/* Header actions */}
-          <div className="hidden md:flex items-center shrink-0 gap-[clamp(0.4rem,1vw,0.75rem)] font-vazir">
+          {/* 3. Right Actions (Search + Auth + Cart) */}
+          <div className="flex items-center gap-2 sm:gap-3">
+            {/* Compact Search Bar */}
+            <div className="hidden md:flex items-center relative group">
+              <FiSearch className="absolute right-3 text-slate-400 group-focus-within:text-cyan-500 transition-colors z-10" />
+              <input
+                type="text"
+                placeholder="جستجوی قطعه..."
+                value={searchQuery}
+                onChange={(e) => setSearchQuery(e.target.value)}
+                className="w-40 focus:w-60 transition-[width] duration-300 bg-slate-100 border-transparent focus:bg-white border focus:border-cyan-200 rounded-full py-2 pr-9 pl-4 text-sm outline-none text-slate-700 placeholder:text-slate-400"
+              />
+            </div>
+
+            {/* Mobile Search Button (Icon Only) */}
+            <button className="md:hidden p-2 text-slate-600 hover:text-cyan-600">
+              <FiSearch size={22} />
+            </button>
+
+            <div className="h-6 w-px bg-slate-200 hidden sm:block"></div>
+
+            {/* Cart Button */}
+            <Link
+              href="/cart"
+              className="relative p-2 text-slate-600 hover:text-cyan-600 transition bg-slate-50 hover:bg-cyan-50 rounded-full border border-slate-200 hover:border-cyan-200"
+            >
+              <FiShoppingBag size={20} />
+              {/* Badge example */}
+              <span className="absolute -top-1 -right-1 w-4 h-4 bg-red-500 text-white text-[10px] font-bold flex items-center justify-center rounded-full">
+                2
+              </span>
+            </Link>
+
+            {/* Login / Dashboard */}
             {token ? (
               <Link
                 href="/dashboard"
-                className="px-3 py-2 rounded-lg text-primary bg-white hover:brightness-110 transition border border-primary"
+                className="hidden sm:flex items-center gap-2 px-4 py-2 bg-cyan-600 hover:bg-cyan-700 text-white rounded-full text-sm font-medium transition shadow-sm shadow-cyan-200"
               >
-                داشبورد
+                <FiUser />
+                <span>داشبورد</span>
               </Link>
             ) : (
-              <>
-                <Link
-                  href="/login"
-                  className="px-3 py-2 rounded-lg text-foreground border border-borders hover:bg-background transition hover:brightness-105"
-                >
-                  ورود
-                </Link>
-                <Link
-                  href="/register"
-                  className="px-3 py-2 rounded-lg text-white bg-primary hover:brightness-110 transition"
-                >
-                  ثبت‌نام
-                </Link>
-              </>
+              <Link
+                href="/login"
+                className="hidden sm:flex items-center gap-2 px-5 py-2 bg-slate-900 hover:bg-slate-800 text-white rounded-full text-sm font-medium transition"
+              >
+                ورود
+              </Link>
             )}
-            <Link
-              href="/shop"
-              className="px-4 py-2 rounded-xl text-white bg-primary hover:brightness-110 transition shadow-soft"
-            >
-              فروشگاه
-            </Link>
-          </div>
 
-          {/* Mobile menu */}
-          <button
-            onClick={() => setOpen(true)}
-            className="sm:hidden text-foreground"
-            aria-label="باز کردن منو"
-          >
-            <FiMenu size={26} />
-          </button>
-        </div>
-
-        {/* Desktop search (spacing fixed) */}
-        <div className="hidden md:flex items-center justify-between w-full gap-4">
-          <div className="flex-1 max-w-md flex items-center gap-2">
-            <input
-              type="text"
-              placeholder="جستجو..."
-              value={search}
-              onChange={(e) => setSearch(e.target.value)}
-              className="flex-1 px-3 py-2 rounded-lg border border-borders focus:outline-none focus:ring-2 focus:ring-primary bg-card text-foreground"
-            />
+            {/* Mobile Menu Trigger */}
             <button
-              className="bg-primary text-white px-3 py-2 rounded-lg hover:brightness-110 transition-shadow shadow-sm"
-              aria-label="جستجو"
+              onClick={() => setIsMobileOpen(true)}
+              className="lg:hidden p-2 text-slate-800 bg-slate-100 rounded-lg active:scale-95 transition"
             >
-              <FiSearch />
+              <FiMenu size={24} />
             </button>
           </div>
-
-          <div className="flex items-center gap-2 font-vazir text-sm text-[rgba(30,30,30,0.8)]">
-            <FiPhone className="text-primary" />
-            <span>09199883772</span>
-          </div>
         </div>
-      </div>
+      </header>
 
-      {/* موبایل دراور */}
+      {/* --- Mobile Drawer (Fixed Logic) --- */}
       <AnimatePresence>
-        {open && (
+        {isMobileOpen && (
           <>
+            {/* Backdrop */}
             <motion.div
-              key="overlay"
-              className="fixed bg-white inset-0 backdrop-blur-[1px] z-40"
               initial={{ opacity: 0 }}
               animate={{ opacity: 1 }}
               exit={{ opacity: 0 }}
-              onClick={() => setOpen(false)}
+              onClick={() => setIsMobileOpen(false)}
+              className="fixed inset-0 bg-slate-900/60 backdrop-blur-sm z-[60]"
             />
+
+            {/* Drawer Panel */}
             <motion.aside
-              key="drawer"
-              className="fixed right-0 top-0 h-svh w-[82vw] max-w-[360px] bg-card border-l border-borders z-50 shadow-2xl flex flex-col"
               initial={{ x: "100%" }}
               animate={{ x: 0 }}
               exit={{ x: "100%" }}
-              transition={{ type: "spring", duration: 0.35 }}
+              transition={{ type: "spring", damping: 25, stiffness: 200 }}
+              className="fixed top-0 right-0 w-[85vw] max-w-[320px] h-screen bg-white z-[70] shadow-2xl overflow-y-auto"
             >
-              <div className="flex items-center justify-between p-4 border-b border-borders">
-                <span className="font-semibold">منو</span>
+              {/* Drawer Header */}
+              <div className="p-5 flex items-center justify-between border-b border-slate-100">
+                <div className="font-bold text-lg text-slate-800">
+                  منوی دسترسی
+                </div>
                 <button
-                  onClick={() => setOpen(false)}
-                  aria-label="بستن منو"
-                  className="p-2 rounded-lg"
+                  onClick={() => setIsMobileOpen(false)}
+                  className="p-2 hover:bg-red-50 text-slate-500 hover:text-red-500 rounded-full transition"
                 >
-                  <FiX size={22} />
+                  <FiX size={24} />
                 </button>
               </div>
-              {/* موبایل دراور */}
-              <AnimatePresence>
-                {open && (
-                  <>
-                    {/* --- Overlay semi‑transparent --- */}
-                    <motion.div
-                      key="overlay"
-                      className="fixed inset-0 bg-black/40 backdrop-blur-[2px] z-40"
-                      initial={{ opacity: 0 }}
-                      animate={{ opacity: 1 }}
-                      exit={{ opacity: 0 }}
-                      onClick={() => setOpen(false)}
-                    />
 
-                    {/* --- Drawer --- */}
-                    <motion.aside
-                      key="drawer"
-                      className="fixed top-0 right-0 h-svh w-[82vw] max-w-[370px] bg-white border-l border-gray-200 z-50 shadow-2xl flex flex-col justify-between"
-                      initial={{ x: "100%" }}
-                      animate={{ x: 0 }}
-                      exit={{ x: "100%" }}
-                      transition={{ type: "spring", duration: 0.4 }}
+              {/* Drawer Content */}
+              <div className="p-4 space-y-6">
+                {/* Mobile Search */}
+                <div className="relative">
+                  <FiSearch className="absolute right-3 top-3 text-slate-400" />
+                  <input
+                    type="text"
+                    placeholder="جستجو در محصولات..."
+                    className="w-full bg-slate-50 border border-slate-200 rounded-xl py-2.5 pr-10 pl-4 text-sm focus:border-cyan-500 outline-none transition"
+                  />
+                </div>
+
+                {/* Mobile Links */}
+                <div className="flex flex-col space-y-1">
+                  {links.map((link) => (
+                    <Link
+                      key={link.href}
+                      href={link.href}
+                      onClick={() => setIsMobileOpen(false)}
+                      className={`px-4 py-3 rounded-xl text-sm font-medium transition ${
+                        pathname === link.href
+                          ? "bg-cyan-50 text-cyan-700"
+                          : "text-slate-600 hover:bg-slate-50"
+                      }`}
                     >
-                      {/* --- Header --- */}
-                      <div className="flex items-center justify-between p-4 border-b border-gray-200">
-                        <Link
-                          href="/"
-                          onClick={() => setOpen(false)}
-                          className="flex items-center gap-2"
+                      {link.name}
+                    </Link>
+                  ))}
+
+                  {/* Mobile Services Dropdown */}
+                  <div className="border-t border-slate-100 my-2 pt-2">
+                    <button
+                      onClick={() =>
+                        setIsMobileServicesOpen(!isMobileServicesOpen)
+                      }
+                      className="w-full flex items-center justify-between px-4 py-3 rounded-xl text-sm font-medium text-slate-600 hover:bg-slate-50 transition"
+                    >
+                      <span>خدمات ما</span>
+                      <FiChevronDown
+                        className={`transition-transform ${
+                          isMobileServicesOpen ? "rotate-180" : ""
+                        }`}
+                      />
+                    </button>
+
+                    <AnimatePresence>
+                      {isMobileServicesOpen && (
+                        <motion.div
+                          initial={{ height: 0, opacity: 0 }}
+                          animate={{ height: "auto", opacity: 1 }}
+                          exit={{ height: 0, opacity: 0 }}
+                          className="overflow-hidden pr-4"
                         >
-                          <Image
-                            src="/images/logo.jpg"
-                            alt="زیمنس پلاس"
-                            width={34}
-                            height={34}
-                            className="rounded-full"
-                          />
-                          <span className="font-semibold text-lg text-gray-800">
-                            زیمنس پلاس
-                          </span>
-                        </Link>
-                        <button
-                          onClick={() => setOpen(false)}
-                          aria-label="بستن منو"
-                          className="p-2 rounded-lg text-gray-600 hover:bg-gray-100 transition"
-                        >
-                          <FiX size={22} />
-                        </button>
-                      </div>
-
-                      {/* --- Search --- */}
-                      <div className="p-4 border-b border-gray-200 flex items-center gap-2">
-                        <input
-                          type="text"
-                          placeholder="جستجو..."
-                          value={search}
-                          onChange={(e) => setSearch(e.target.value)}
-                          className="flex-1 px-3 py-2 rounded-lg border border-gray-300 focus:outline-none focus:ring-2 focus:ring-primary text-[15px]"
-                        />
-                        <button
-                          className="p-2 rounded-lg bg-primary text-white hover:brightness-110 transition"
-                          aria-label="جستجو"
-                        >
-                          <FiSearch size={20} />
-                        </button>
-                      </div>
-
-                      {/* --- Links Section --- */}
-                      <div className="flex-1 overflow-y-auto p-4 space-y-2 font-vazir">
-                        {links.map((link) => (
-                          <Link
-                            key={link.href}
-                            href={link.href}
-                            onClick={() => setOpen(false)}
-                            className={`block px-3 py-2 rounded-lg text-[15px] ${
-                              pathname === link.href
-                                ? "bg-teal-50 text-primary font-semibold"
-                                : "text-gray-800 hover:bg-gray-50"
-                            } transition`}
-                          >
-                            {link.name}
-                          </Link>
-                        ))}
-
-                        {/* --- Services Submenu --- */}
-                        <div className="border-t border-gray-100 pt-3">
-                          <button
-                            onClick={() => setMobileServicesOpen((v) => !v)}
-                            className="w-full flex items-center justify-between px-3 py-2 rounded-lg text-gray-800 hover:bg-gray-50 transition"
-                          >
-                            <span className="text-[15px]">خدمات</span>
-                            <FiChevronDown
-                              className={`transition-transform ${
-                                mobileServicesOpen ? "rotate-180" : "rotate-0"
-                              }`}
-                            />
-                          </button>
-
-                          <AnimatePresence>
-                            {mobileServicesOpen && (
-                              <motion.div
-                                initial={{ height: 0, opacity: 0 }}
-                                animate={{ height: "auto", opacity: 1 }}
-                                exit={{ height: 0, opacity: 0 }}
-                                transition={{ duration: 0.3 }}
-                                className="pl-4 pt-1 flex flex-col space-y-1"
+                          <div className="border-r-2 border-slate-100 pr-4 py-2 space-y-1">
+                            {services.map((s) => (
+                              <Link
+                                key={s.href}
+                                href={s.href}
+                                onClick={() => setIsMobileOpen(false)}
+                                className="block py-2 text-sm text-slate-500 hover:text-cyan-600 transition"
                               >
-                                {services.map((s) => (
-                                  <Link
-                                    key={s.href}
-                                    href={s.href}
-                                    onClick={() => setOpen(false)}
-                                    className="block px-3 py-1.5 rounded-lg text-gray-700 hover:bg-gray-50 text-[14px]"
-                                  >
-                                    {s.name}
-                                  </Link>
-                                ))}
-                              </motion.div>
-                            )}
-                          </AnimatePresence>
-                        </div>
-                      </div>
+                                {s.name}
+                              </Link>
+                            ))}
+                          </div>
+                        </motion.div>
+                      )}
+                    </AnimatePresence>
+                  </div>
+                </div>
 
-                      {/* --- Bottom Actions --- */}
-                      <div className="p-4 border-t border-gray-200 flex flex-col gap-2">
-                        {token ? (
-                          <Link
-                            href="/dashboard"
-                            onClick={() => setOpen(false)}
-                            className="w-full text-center px-3 py-2 rounded-lg border border-primary text-primary hover:bg-teal-50 transition font-vazir"
-                          >
-                            داشبورد
-                          </Link>
-                        ) : (
-                          <>
-                            <Link
-                              href="/login"
-                              onClick={() => setOpen(false)}
-                              className="w-full text-center px-3 py-2 rounded-lg border border-gray-300 text-gray-800 hover:bg-gray-50 transition font-vazir"
-                            >
-                              ورود
-                            </Link>
-                            <Link
-                              href="/register"
-                              onClick={() => setOpen(false)}
-                              className="w-full text-center px-3 py-2 rounded-lg bg-primary text-white hover:brightness-110 transition font-vazir"
-                            >
-                              ثبت‌نام
-                            </Link>
-                          </>
-                        )}
-                        <Link
-                          href="/shop"
-                          onClick={() => setOpen(false)}
-                          className="w-full text-center px-3 py-2 rounded-lg bg-primary text-white hover:brightness-110 transition font-vazir shadow-sm"
-                        >
-                          فروشگاه
-                        </Link>
-                      </div>
-                    </motion.aside>
-                  </>
-                )}
-              </AnimatePresence>
+                {/* Mobile Auth Buttons */}
+                <div className="pt-6 border-t border-slate-100">
+                  {!token ? (
+                    <div className="grid grid-cols-2 gap-3">
+                      <Link
+                        href="/login"
+                        className="flex justify-center py-2.5 border border-slate-200 rounded-xl text-sm font-medium text-slate-700"
+                      >
+                        ورود
+                      </Link>
+                      <Link
+                        href="/register"
+                        className="flex justify-center py-2.5 bg-slate-900 text-white rounded-xl text-sm font-medium"
+                      >
+                        ثبت نام
+                      </Link>
+                    </div>
+                  ) : (
+                    <Link
+                      href="/dashboard"
+                      className="flex items-center justify-center gap-2 w-full py-3 bg-cyan-600 text-white rounded-xl text-sm font-medium"
+                    >
+                      <FiUser /> ورود به داشبورد
+                    </Link>
+                  )}
+                </div>
+              </div>
             </motion.aside>
           </>
         )}
       </AnimatePresence>
-    </header>
+    </>
   );
 }
