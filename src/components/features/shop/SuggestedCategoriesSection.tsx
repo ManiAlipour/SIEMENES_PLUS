@@ -107,8 +107,11 @@ export default function SuggestedCategoriesSection() {
 
             {/* Products Scroll Container */}
             <div className="relative">
+              {/* --- FIX IS HERE --- */}
               <div
-                ref={(el) => (scrollRefs.current[category.id] = el)}
+                ref={(el) => {
+                  scrollRefs.current[category.id] = el;
+                }}
                 className="flex gap-4 p-6 overflow-x-auto scrollbar-hide scroll-smooth"
                 style={{ scrollbarWidth: "none", msOverflowStyle: "none" }}
               >
