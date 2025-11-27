@@ -18,8 +18,8 @@ export async function GET() {
       topCategories.map(async (category) => {
         // Find up to 5 latest products for this category
         const products = await Product.find(
-          { category: category._id },
-          "name price image"
+          { category: category.slug },
+          "name image slug brand price"
         )
           .sort({ createdAt: -1 })
           .limit(5)
@@ -42,6 +42,7 @@ export async function GET() {
     );
 
     return NextResponse.json({
+      success: true,
       message: "هایلایت دسته‌بندی‌ها با موفقیت دریافت شد!",
       data: highlightedCategories,
     });

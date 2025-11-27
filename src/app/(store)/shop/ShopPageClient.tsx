@@ -20,6 +20,10 @@ const TopCategoriesSection = dynamic(
   () => import("@/components/features/shop/TopCategoriesSection"),
   { ssr: false }
 );
+const SuggestedCategoriesSection = dynamic(
+  () => import("@/components/features/shop/SuggestedCategoriesSection"),
+  { ssr: false }
+);
 const ProductFilters = dynamic(
   () => import("@/components/features/shop/ProductFilters"),
   { ssr: false }
@@ -218,6 +222,24 @@ export default function ShopPageClient() {
               transition={{ duration: 0.6 }}
             >
               <TopCategoriesSection />
+            </motion.div>
+          </div>
+        </section>
+
+        <Divider />
+
+        {/* Suggested Categories */}
+        <section className="py-14 md:py-18">
+          <div className="container max-w-7xl mx-auto px-4 md:px-6">
+            <motion.div
+              initial={{ opacity: 0, y: 30 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              viewport={{ once: true }}
+              transition={{ duration: 0.6 }}
+            >
+              <Suspense fallback={<LoadingFallback />}>
+                <SuggestedCategoriesSection />
+              </Suspense>
             </motion.div>
           </div>
         </section>
