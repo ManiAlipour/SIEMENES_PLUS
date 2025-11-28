@@ -14,6 +14,10 @@ import {
 } from "react-icons/fi";
 import { motion, AnimatePresence } from "framer-motion";
 import { useAuth } from "@/components/providers/AuthProvider";
+import { BsBagHeart } from "react-icons/bs";
+import { useSelector } from "react-redux";
+import { RootState } from "@/store";
+import HeaderLikeBtn from "../features/HeaderLikeBtn";
 
 export default function Header() {
   const pathname = usePathname();
@@ -45,7 +49,6 @@ export default function Header() {
   // Navigation Data
   const links = [
     { name: "خانه", href: "/" },
-    { name: "محصولات", href: "/products" },
     { name: "فروشگاه", href: "/shop" },
     { name: "وبلاگ", href: "/blog" },
   ];
@@ -68,6 +71,7 @@ export default function Header() {
     },
     { name: "مشاوره فنی", href: "/services/consulting", desc: "طراحی و اجرا" },
   ];
+
 
   return (
     <>
@@ -184,24 +188,10 @@ export default function Header() {
               />
             </div>
 
-            {/* Mobile Search Button (Icon Only) */}
-            <button className="md:hidden p-2 text-slate-600 hover:text-cyan-600">
-              <FiSearch size={22} />
-            </button>
-
             <div className="h-6 w-px bg-slate-200 hidden sm:block"></div>
 
-            {/* Cart Button */}
-            <Link
-              href="/cart"
-              className="relative p-2 text-slate-600 hover:text-cyan-600 transition bg-slate-50 hover:bg-cyan-50 rounded-full border border-slate-200 hover:border-cyan-200"
-            >
-              <FiShoppingBag size={20} />
-              {/* Badge example */}
-              <span className="absolute -top-1 -right-1 w-4 h-4 bg-red-500 text-white text-[10px] font-bold flex items-center justify-center rounded-full">
-                2
-              </span>
-            </Link>
+            {/* Likes Button */}
+          <HeaderLikeBtn />
 
             {/* Login / Dashboard */}
             {token ? (

@@ -2,6 +2,13 @@ import type { Metadata, Viewport } from "next";
 import "./globals.css";
 import Providers from "@/components/providers";
 
+export const viewport: Viewport = {
+  width: "device-width",
+  initialScale: 1,
+  maximumScale: 1,
+  viewportFit: "cover",
+};
+
 export const metadata: Metadata = {
   metadataBase: new URL("https://site-mohandesi.ir"),
   title: "زیمنس پلاس | اتوماسیون و قطعات صنعتی",
@@ -53,13 +60,6 @@ export const metadata: Metadata = {
       "max-snippet": -1,
     },
   },
-};
-
-// ✅ Viewport باید جداگانه export بشه
-export const viewport: Viewport = {
-  width: "device-width",
-  initialScale: 1,
-  maximumScale: 5,
 };
 
 export default function RootLayout({
