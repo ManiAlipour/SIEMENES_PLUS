@@ -40,9 +40,7 @@ export default function Header({
               <div className="absolute inset-0 rounded-xl bg-primary/10 opacity-0 group-hover:opacity-100 transition-opacity" />
             </div>
             <div className="flex flex-col">
-              <span className="font-bold text-gray-900 text-lg">
-                پنل ادمین
-              </span>
+              <span className="font-bold text-gray-900 text-lg">پنل ادمین</span>
               <span className="text-xs text-gray-500">زیمنس پلاس</span>
             </div>
           </Link>
@@ -84,7 +82,9 @@ export default function Header({
               <span className="text-sm font-semibold text-gray-900">
                 مدیر سیستم
               </span>
-              <span className="text-xs text-gray-500">admin@siemensplus.ir</span>
+              <span className="text-xs text-gray-500">
+                admin@siemensplus.ir
+              </span>
             </div>
             <div className="relative group">
               <button className="w-10 h-10 rounded-xl bg-gradient-to-br from-primary to-primary/80 flex items-center justify-center shadow-md hover:shadow-lg transition-all">

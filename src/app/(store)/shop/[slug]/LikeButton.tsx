@@ -17,7 +17,10 @@ export default function LikeButton({
   const likedPosts = useSelector((state: RootState) => state.likedPosts);
 
   // تعیین وضعیت لایک‌شدن بر اساس store
-  const liked = useMemo(() => likedPosts.includes(productId), [likedPosts, productId]);
+  const liked = useMemo(
+    () => likedPosts.includes(productId),
+    [likedPosts, productId]
+  );
 
   const dispatch = useDispatch();
   const [loading, setLoading] = useState(false);

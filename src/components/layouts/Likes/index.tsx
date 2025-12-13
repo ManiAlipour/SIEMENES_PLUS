@@ -56,7 +56,6 @@ const SkeletonGrid = () => (
 const MobileListItem = ({ product }: { product: Product }) => {
   const dispatch = useDispatch();
 
-  // هندل کردن حذف آیتم
   const handleRemove = (e: React.MouseEvent) => {
     e.preventDefault();
     e.stopPropagation();
@@ -102,10 +101,6 @@ const MobileListItem = ({ product }: { product: Product }) => {
               className="p-2 bg-red-50 text-red-500 rounded-lg hover:bg-red-100 transition-colors"
             >
               <BsTrash size={16} />
-            </button>
-
-            <button className="p-2 bg-primary/10 text-primary rounded-lg hover:bg-primary hover:text-white transition-colors">
-              <BsCartPlus size={18} />
             </button>
           </div>
         </div>

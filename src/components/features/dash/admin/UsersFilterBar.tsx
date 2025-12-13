@@ -5,7 +5,7 @@ import { FiSearch, FiFilter } from "react-icons/fi";
 interface UsersFilterBarProps {
   onSearch: (query: string) => void;
   onFilter: (filter: { role: string; sort: "newest" | "oldest" }) => void;
-  roles?: string[]; 
+  roles?: string[];
 }
 
 export default function UsersFilterBar({

@@ -22,11 +22,19 @@ export async function GET(req: Request) {
     const filter: any = {};
 
     if (search) {
+      const searchRegex = new RegExp(
+        search.replace(/[.*+?^${}()|[\]\\]/g, "\\$&"),
+        "i"
+      );
       filter.$or = [
-        { name: { $regex: search, $options: "i" } },
-        { slug: { $regex: search, $options: "i" } },
-        { description: { $regex: search, $options: "i" } },
-        { "specifications.value": { $regex: search, $options: "i" } },
+        { name: { $regex: searchRegex } },
+        { slug: { $regex: searchRegex } },
+        { description: { $regex: searchRegex } },
+        { brand: { $regex: searchRegex } },
+        { modelNumber: { $regex: searchRegex } },
+        { "specifications.key": { $regex: searchRegex } },
+        { "specifications.value": { $regex: searchRegex } },
+        { category: { $regex: searchRegex } },
       ];
     }
 

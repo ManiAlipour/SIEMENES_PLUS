@@ -14,7 +14,15 @@ import {
   ChartOptions,
 } from "chart.js";
 
-ChartJS.register(LineElement, PointElement, CategoryScale, LinearScale, Tooltip, Filler, Legend);
+ChartJS.register(
+  LineElement,
+  PointElement,
+  CategoryScale,
+  LinearScale,
+  Tooltip,
+  Filler,
+  Legend
+);
 
 export default function AdminStatPage() {
   const [data, setData] = useState<any>(null);
@@ -26,7 +34,10 @@ export default function AdminStatPage() {
       .catch((e) => console.error(e));
   }, []);
 
-  if (!data) return <div className="p-6 text-center text-slate-600">در حال بارگذاری...</div>;
+  if (!data)
+    return (
+      <div className="p-6 text-center text-slate-600">در حال بارگذاری...</div>
+    );
 
   return (
     <div className="p-6 font-vazirmatn space-y-8 animate-fadeIn">
@@ -42,7 +53,10 @@ export default function AdminStatPage() {
       </ChartCard>
 
       {/* ===== Dual Line Chart – Product vs Search ===== */}
-      <ChartCard title="مقایسه بازدید محصول و جستجوها" gradient="from-amber-50 to-white">
+      <ChartCard
+        title="مقایسه بازدید محصول و جستجوها"
+        gradient="from-amber-50 to-white"
+      >
         <DualLineChart
           products={data.monthlyViews.map((m: any) => m.views * 0.8)}
           searches={data.monthlyViews.map((m: any) => m.views * 0.6)}
@@ -52,12 +66,19 @@ export default function AdminStatPage() {
 
       {/* ===== Mini Charts (Active Users + Interactions) ===== */}
       <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-        <ChartCard title="کاربران فعال روزانه" gradient="from-cyan-50 via-white to-white">
-          <MiniAreaChart data={data.monthlyViews.map((v: any) => v.views * 0.3)} />
+        <ChartCard
+          title="کاربران فعال روزانه"
+          gradient="from-cyan-50 via-white to-white"
+        >
+          <MiniAreaChart
+            data={data.monthlyViews.map((v: any) => v.views * 0.3)}
+          />
         </ChartCard>
 
         <ChartCard title="نمودار تعاملات" gradient="from-blue-50 to-white">
-          <SparklineChart data={data.monthlyViews.map((v: any) => v.views * 0.15)} />
+          <SparklineChart
+            data={data.monthlyViews.map((v: any) => v.views * 0.15)}
+          />
         </ChartCard>
       </div>
     </div>
@@ -65,7 +86,15 @@ export default function AdminStatPage() {
 }
 
 /* ============ ChartCard Base ============ */
-function ChartCard({ title, gradient, children }: { title: string; gradient: string; children: React.ReactNode }) {
+function ChartCard({
+  title,
+  gradient,
+  children,
+}: {
+  title: string;
+  gradient: string;
+  children: React.ReactNode;
+}) {
   return (
     <div
       className={`bg-gradient-to-b ${gradient} p-6 rounded-2xl border border-slate-200/60 backdrop-blur-md shadow-[0_4px_14px_rgba(0,0,0,0.05)] transition-all duration-200 hover:scale-[0.99]`}

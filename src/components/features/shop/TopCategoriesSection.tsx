@@ -37,13 +37,16 @@ export default function TopCategoriesSection() {
 
   if (loading) {
     return (
-      <section className="py-12 md:py-16 bg-white">
+      <section className="py-12 md:py-16">
         <div className="container mx-auto px-4 md:px-6 max-w-7xl">
-          <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-4 md:gap-6">
+          <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-5 md:gap-6">
             {Array.from({ length: 6 }).map((_, i) => (
-              <div
+              <motion.div
                 key={i}
-                className="bg-gray-50 rounded-2xl border border-gray-200 animate-pulse aspect-square"
+                initial={{ opacity: 0, scale: 0.9 }}
+                animate={{ opacity: 1, scale: 1 }}
+                transition={{ delay: i * 0.1 }}
+                className="bg-white rounded-3xl border-2 border-gray-200 animate-pulse aspect-square shadow-lg"
               />
             ))}
           </div>
@@ -64,40 +67,46 @@ export default function TopCategoriesSection() {
   };
 
   return (
-    <section className="py-12 md:py-16 bg-white">
+    <section className="py-12 md:py-16">
       <div className="container mx-auto px-4 md:px-6 max-w-7xl">
-        {/* Header */}
+        {/* Header - Modern Design */}
         <motion.div
-          initial={{ opacity: 0, y: 20 }}
+          initial={{ opacity: 0, y: 30 }}
           whileInView={{ opacity: 1, y: 0 }}
           viewport={{ once: true }}
-          transition={{ duration: 0.5 }}
-          className="flex items-center justify-between mb-8 md:mb-12"
+          transition={{ duration: 0.6 }}
+          className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-6 mb-10 md:mb-12"
         >
-          <div className="flex items-center gap-3">
-            <div className="p-2 bg-primary/10 rounded-xl">
-              <FiTrendingUp className="w-6 h-6 text-primary" />
-            </div>
+          <div className="flex items-center gap-4">
+            <motion.div
+              whileHover={{ scale: 1.1, rotate: -5 }}
+              whileTap={{ scale: 0.95 }}
+              className="p-4 bg-gradient-to-br from-primary via-cyan-500 to-blue-600 rounded-3xl shadow-2xl shadow-primary/30"
+            >
+              <FiTrendingUp className="w-7 h-7 md:w-8 md:h-8 text-white" />
+            </motion.div>
             <div>
-              <h2 className="text-2xl md:text-3xl font-bold text-gray-900">
+              <h2 className="text-3xl md:text-4xl font-black text-gray-900 mb-2">
                 دسته‌بندی‌های برتر
               </h2>
-              <p className="text-sm text-gray-600 mt-1">
+              <p className="text-base md:text-lg text-gray-600 font-medium">
                 محبوب‌ترین دسته‌بندی‌های محصولات
               </p>
             </div>
           </div>
-          <Link
-            href="/shop"
-            className="hidden sm:flex items-center gap-2 text-primary hover:text-primary/80 font-semibold transition-colors"
-          >
-            مشاهده همه
-            <FiArrowLeft className="w-4 h-4" />
-          </Link>
+          <motion.div whileHover={{ x: -5 }} whileTap={{ scale: 0.95 }}>
+            <Link
+              href="/shop"
+              className="hidden sm:inline-flex items-center gap-2 text-primary hover:text-cyan-600 font-bold transition-colors px-6 py-3 rounded-2xl hover:bg-primary/10 border-2 border-primary/20 hover:border-primary/40 transition-all duration-300 text-base md:text-lg"
+            >
+              مشاهده همه
+              <FiArrowLeft className="w-5 h-5" />
+            </Link>
+          </motion.div>
         </motion.div>
 
-        {/* Categories Grid */}
-        <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-4 md:gap-6">
+        {/* Categories Grid - Enhanced */}
+        <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-5 md:gap-6">
           {categories.map((category, index) => {
             const imageUrl =
               categoryImages[category.slug] ||
@@ -107,32 +116,55 @@ export default function TopCategoriesSection() {
             return (
               <motion.div
                 key={category._id}
-                initial={{ opacity: 0, scale: 0.9 }}
-                whileInView={{ opacity: 1, scale: 1 }}
-                viewport={{ once: true }}
-                transition={{ duration: 0.4, delay: index * 0.1 }}
+                initial={{ opacity: 0, scale: 0.8, y: 30 }}
+                whileInView={{ opacity: 1, scale: 1, y: 0 }}
+                viewport={{ once: true, margin: "-50px" }}
+                transition={{
+                  duration: 0.5,
+                  delay: index * 0.1,
+                  type: "spring",
+                  stiffness: 150,
+                }}
+                whileHover={{ y: -10, scale: 1.05 }}
               >
                 <Link
                   href={`/shop?category=${category.slug}`}
-                  className="group block bg-gradient-to-br from-white to-gray-50 border-2 border-gray-200 rounded-2xl p-4 md:p-6 hover:border-primary hover:shadow-xl transition-all duration-300 hover:-translate-y-2 text-center"
+                  className="group block bg-gradient-to-br from-white via-gray-50 to-white border-2 border-gray-200 rounded-3xl p-5 md:p-6 hover:border-primary hover:shadow-2xl transition-all duration-500 text-center relative overflow-hidden"
                 >
-                  <div className="relative w-full aspect-square mb-4">
-                    <Image
-                      src={imageUrl}
-                      alt={category.name}
-                      fill
-                      className="object-contain group-hover:scale-110 transition-transform duration-300"
-                      sizes="(max-width: 640px) 50vw, (max-width: 1024px) 33vw, 16vw"
-                    />
+                  {/* Background Gradient on Hover */}
+                  <div className="absolute inset-0 bg-gradient-to-br from-primary/5 via-cyan-50/50 to-blue-50/50 opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
+                  
+                  {/* Image Container */}
+                  <div className="relative w-full aspect-square mb-5 relative z-10">
+                    <motion.div
+                      whileHover={{ scale: 1.1, rotate: 5 }}
+                      transition={{ duration: 0.3 }}
+                      className="relative w-full h-full"
+                    >
+                      <Image
+                        src={imageUrl}
+                        alt={category.name}
+                        fill
+                        className="object-contain group-hover:drop-shadow-2xl transition-all duration-500"
+                        sizes="(max-width: 640px) 50vw, (max-width: 1024px) 33vw, 16vw"
+                      />
+                    </motion.div>
+                    {/* Glow Effect */}
+                    <div className="absolute inset-0 bg-gradient-to-br from-primary/20 to-transparent rounded-full blur-2xl opacity-0 group-hover:opacity-100 transition-opacity duration-500 -z-10" />
                   </div>
-                  <h3 className="font-semibold text-sm md:text-base text-gray-900 group-hover:text-primary transition-colors line-clamp-2">
+                  
+                  {/* Category Name */}
+                  <h3 className="font-black text-base md:text-lg text-gray-900 group-hover:text-primary transition-colors duration-300 line-clamp-2 relative z-10">
                     {category.name}
                   </h3>
                   {category.description && (
-                    <p className="text-xs text-gray-500 mt-2 line-clamp-2">
+                    <p className="text-xs md:text-sm text-gray-500 mt-2 line-clamp-2 relative z-10">
                       {category.description}
                     </p>
                   )}
+                  
+                  {/* Decorative Element */}
+                  <div className="absolute bottom-0 left-0 right-0 h-1 bg-gradient-to-r from-transparent via-primary to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
                 </Link>
               </motion.div>
             );
@@ -140,17 +172,18 @@ export default function TopCategoriesSection() {
         </div>
 
         {/* Mobile View All Button */}
-        <div className="mt-8 text-center sm:hidden">
-          <Link
-            href="/shop"
-            className="inline-flex items-center gap-2 bg-primary text-white px-6 py-3 rounded-xl font-semibold hover:bg-primary/90 transition-colors shadow-md"
-          >
-            مشاهده همه دسته‌بندی‌ها
-            <FiArrowLeft className="w-4 h-4" />
-          </Link>
+        <div className="mt-10 text-center sm:hidden">
+          <motion.div whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.95 }}>
+            <Link
+              href="/shop"
+              className="inline-flex items-center gap-2 bg-gradient-to-r from-primary to-cyan-500 text-white px-8 py-4 rounded-2xl font-bold hover:shadow-2xl transition-all duration-300 shadow-lg"
+            >
+              مشاهده همه دسته‌بندی‌ها
+              <FiArrowLeft className="w-5 h-5" />
+            </Link>
+          </motion.div>
         </div>
       </div>
     </section>
   );
 }
-

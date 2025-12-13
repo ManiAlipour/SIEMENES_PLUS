@@ -77,4 +77,3 @@ export function useProducts({
     refetch: fetchProducts,
   };
 }
-

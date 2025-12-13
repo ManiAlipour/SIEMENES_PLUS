@@ -2,7 +2,7 @@
 
 import Link from "next/link";
 import Image from "next/image";
-import { usePathname } from "next/navigation";
+import { usePathname, useRouter } from "next/navigation";
 import { useState, useEffect } from "react";
 import {
   FiMenu,
@@ -18,9 +18,11 @@ import { BsBagHeart } from "react-icons/bs";
 import { useSelector } from "react-redux";
 import { RootState } from "@/store";
 import HeaderLikeBtn from "../features/HeaderLikeBtn";
+import HeaderSearchbar from "../features/HeaderSearchbar";
 
 export default function Header() {
   const pathname = usePathname();
+  const router = useRouter();
   const { token } = useAuth();
 
   // State management
@@ -71,7 +73,6 @@ export default function Header() {
     },
     { name: "مشاوره فنی", href: "/services/consulting", desc: "طراحی و اجرا" },
   ];
-
 
   return (
     <>
@@ -177,21 +178,12 @@ export default function Header() {
           {/* 3. Right Actions (Search + Auth + Cart) */}
           <div className="flex items-center gap-2 sm:gap-3">
             {/* Compact Search Bar */}
-            <div className="hidden md:flex items-center relative group">
-              <FiSearch className="absolute right-3 text-slate-400 group-focus-within:text-cyan-500 transition-colors z-10" />
-              <input
-                type="text"
-                placeholder="جستجوی قطعه..."
-                value={searchQuery}
-                onChange={(e) => setSearchQuery(e.target.value)}
-                className="w-40 focus:w-60 transition-[width] duration-300 bg-slate-100 border-transparent focus:bg-white border focus:border-cyan-200 rounded-full py-2 pr-9 pl-4 text-sm outline-none text-slate-700 placeholder:text-slate-400"
-              />
-            </div>
+            <HeaderSearchbar />
 
             <div className="h-6 w-px bg-slate-200 hidden sm:block"></div>
 
             {/* Likes Button */}
-          <HeaderLikeBtn />
+            <HeaderLikeBtn />
 
             {/* Login / Dashboard */}
             {token ? (
@@ -259,14 +251,7 @@ export default function Header() {
               {/* Drawer Content */}
               <div className="p-4 space-y-6">
                 {/* Mobile Search */}
-                <div className="relative">
-                  <FiSearch className="absolute right-3 top-3 text-slate-400" />
-                  <input
-                    type="text"
-                    placeholder="جستجو در محصولات..."
-                    className="w-full bg-slate-50 border border-slate-200 rounded-xl py-2.5 pr-10 pl-4 text-sm focus:border-cyan-500 outline-none transition"
-                  />
-                </div>
+                <HeaderSearchbar />
 
                 {/* Mobile Links */}
                 <div className="flex flex-col space-y-1">

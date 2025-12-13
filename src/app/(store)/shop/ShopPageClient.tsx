@@ -7,11 +7,10 @@ import { useProducts } from "@/hooks/useProducts";
 import LoadingFallback from "./LoadingFallback";
 import Pagination from "@/components/features/shop/Pagination";
 import ProductGrid from "@/components/features/shop/ProductGrid";
-import Divider from "@/components/ui/Divider";
-import { FiArrowDownCircle, FiShoppingBag } from "react-icons/fi";
-import { FaBoxesStacked } from "react-icons/fa6";
+import { FiShoppingBag, FiLayers } from "react-icons/fi";
 import { motion } from "framer-motion";
 import CategoryHighlightsSection from "@/components/layouts/CategoryHighlightsSection";
+import { useLocalStorage } from "iso-hooks";
 
 const FeaturedProductsSection = dynamic(
   () => import("@/components/features/shop/FeaturedProductsSection"),
@@ -31,8 +30,11 @@ type ViewMode = "grid" | "list";
 export default function ShopPageClient() {
   const searchParams = useSearchParams();
   const router = useRouter();
-  const [viewMode, setViewMode] = useState<ViewMode>("grid");
-
+  const [viewMode, setViewMode] = useLocalStorage<ViewMode>(
+    "shop:view-mode",
+    "grid"
+  );
+  const [showFilters, setShowFilters] = useState(false);
   const search = searchParams.get("search") || "";
   const category = searchParams.get("category") || "";
   const sort = searchParams.get("sort") || "-createdAt";
@@ -114,91 +116,114 @@ export default function ShopPageClient() {
 
       <main
         dir="rtl"
-        className="min-h-screen bg-gradient-to-b from-white via-slate-50/80 to-slate-100 text-gray-800"
-        style={{
-          backgroundImage:
-            "linear-gradient(135deg, #f8fafc 70%, #dbf4ff 100%, #e6f7f6 120%)",
-        }}
+        className="min-h-screen bg-gradient-to-br from-slate-50 via-white to-blue-50/30"
       >
-        {/* Hero & Filters */}
-        <section className="pt-10 pb-8 md:py-16">
-          <div className="container max-w-7xl mx-auto px-4 md:px-6 text-center relative">
+        {/* Hero Section - Modern & Stunning */}
+        <section className="relative pt-6 pb-8 md:pt-12 md:pb-16 overflow-hidden">
+          {/* Animated Background */}
+          <div className="absolute inset-0 overflow-hidden pointer-events-none">
+            <div className="absolute top-0 right-0 w-[600px] h-[600px] bg-gradient-to-br from-primary/20 via-cyan-400/20 to-blue-500/20 rounded-full blur-3xl animate-pulse" />
+            <div className="absolute bottom-0 left-0 w-[500px] h-[500px] bg-gradient-to-tr from-blue-300/20 via-cyan-300/20 to-transparent rounded-full blur-3xl" />
             <motion.div
-              initial={{ opacity: 0, y: 35 }}
+              animate={{
+                scale: [1, 1.2, 1],
+                opacity: [0.3, 0.5, 0.3],
+              }}
+              transition={{
+                duration: 8,
+                repeat: Infinity,
+                ease: "easeInOut",
+              }}
+              className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[800px] h-[800px] bg-gradient-to-r from-primary/10 to-cyan-400/10 rounded-full blur-3xl"
+            />
+          </div>
+
+          <div className="container max-w-7xl mx-auto px-4 md:px-6 relative z-10">
+            {/* Hero Content */}
+            <motion.div
+              initial={{ opacity: 0, y: 40 }}
               animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.7, ease: "easeOut" }}
-              className="rounded-3xl shadow-xl bg-primary/10 mx-auto md:px-16 py-12 px-4 mb-7 border-t-4 border-b-8 border-primary/30"
+              transition={{ duration: 0.8, ease: "easeOut" }}
+              className="text-center mb-8 md:mb-12"
             >
               <motion.div
-                initial={{ opacity: 0, scale: 1.04 }}
-                animate={{ opacity: 1, scale: 1 }}
-                transition={{ duration: 0.8, delay: 0.2, type: "spring" }}
-                className="inline-flex items-center justify-center bg-primary/40 text-white rounded-2xl w-16 h-16 mb-6"
+                initial={{ opacity: 0, scale: 0.8, rotate: -10 }}
+                animate={{ opacity: 1, scale: 1, rotate: 0 }}
+                transition={{
+                  duration: 0.6,
+                  delay: 0.2,
+                  type: "spring",
+                  stiffness: 200,
+                }}
+                className="inline-flex items-center justify-center w-24 h-24 md:w-32 md:h-32 mb-6 rounded-3xl bg-gradient-to-br from-primary via-cyan-500 to-blue-600 shadow-2xl shadow-primary/40 relative overflow-hidden"
               >
-                <FiShoppingBag className="w-9 h-9" />
+                <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/20 to-transparent animate-shimmer" />
+                <FiShoppingBag className="w-12 h-12 md:w-16 md:h-16 text-white relative z-10" />
               </motion.div>
-              <h1 className="font-vazirmatn text-[2.2rem] leading-tight md:text-5xl font-extrabold tracking-tight mb-3 bg-gradient-to-l from-blue-600 via-primary to-cyan-500 bg-clip-text text-transparent drop-shadow">
-                فروشگاه تخصصی محصولات زیمنس
-              </h1>
-              <p className="text-gray-600 max-w-2xl mx-auto mb-8 text-lg md:text-xl font-[400]">
-                کامل‌ترین مرجع فروش تجهیزات اتوماسیون صنعتی،{" "}
-                <span className="font-bold text-primary">ارسال</span> فوری و
-                مشاوره رایگان فنی
-              </p>
-              <motion.div
-                initial={{ opacity: 0, y: 25 }}
+
+              <motion.h1
+                initial={{ opacity: 0, y: 20 }}
                 animate={{ opacity: 1, y: 0 }}
-                transition={{ duration: 0.7, delay: 0.16 }}
-                className="max-w-3xl sm:mx-auto"
+                transition={{ duration: 0.6, delay: 0.3 }}
+                className="text-4xl md:text-6xl lg:text-7xl font-black mb-6 leading-tight"
               >
-                <div className="bg-white/90 border border-slate-200 rounded-2xl p-4 md:p-6 shadow-[0_6px_28px_rgba(6,182,212,0.12)] flex flex-col md:flex-row md:items-center gap-4 justify-center">
-                  <ProductFilters
-                    search={search}
-                    onSearchChange={(v) => updateParams({ search: v, page: 1 })}
-                    category={category}
-                    onCategoryChange={(v) =>
-                      updateParams({ category: v, page: 1 })
-                    }
-                    sort={sort}
-                    onSortChange={(v) => updateParams({ sort: v, page: 1 })}
-                    viewMode={viewMode}
-                    onViewModeChange={setViewMode}
-                    totalProducts={total}
-                  />
-                  <span className="hidden md:inline-flex items-center gap-2 text-primary bg-primary/10 rounded-xl py-2 px-3 text-lg font-semibold ml-2">
-                    <FaBoxesStacked className="w-5 h-5" />{" "}
-                    <span>{total > 0 ? total.toLocaleString() : "---"}</span>
-                    <span>محصول</span>
-                  </span>
-                </div>
-              </motion.div>
-              <motion.div
-                initial={{ opacity: 0, scale: 1.06 }}
-                animate={{ opacity: 1, scale: 1 }}
-                transition={{ duration: 0.7, delay: 0.35, type: "spring" }}
-                className="flex justify-center mt-8 md:mt-12"
+                <span className="bg-gradient-to-l from-gray-900 via-primary to-cyan-600 bg-clip-text text-transparent">
+                  فروشگاه تخصصی
+                </span>
+                <br />
+                <span className="bg-gradient-to-r from-primary via-cyan-500 to-blue-600 bg-clip-text text-transparent">
+                  محصولات زیمنس
+                </span>
+              </motion.h1>
+
+              <motion.p
+                initial={{ opacity: 0, y: 20 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ duration: 0.6, delay: 0.4 }}
+                className="text-lg md:text-xl lg:text-2xl text-gray-700 max-w-3xl mx-auto leading-relaxed font-medium"
               >
-                <a
-                  href="#shop-products-list"
-                  className="inline-flex items-center gap-2 px-5 py-2 rounded-lg bg-gradient-to-l from-primary to-blue-600 hover:to-primary/90 text-white shadow-lg font-semibold transition-all hover:scale-105 active:scale-95"
-                >
-                  <span>رفتن به محصولات</span>
-                  <FiArrowDownCircle className="w-5 h-5" />
-                </a>
-              </motion.div>
+                کامل‌ترین مرجع فروش تجهیزات اتوماسیون صنعتی
+                <br />
+                <span className="text-primary font-bold">
+                  ارسال فوری
+                </span> و{" "}
+                <span className="text-cyan-600 font-bold">
+                  مشاوره رایگان فنی
+                </span>
+              </motion.p>
+            </motion.div>
+
+            {/* Search Bar - Prominent */}
+            <motion.div
+              initial={{ opacity: 0, y: 30 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.6, delay: 0.5 }}
+              className="max-w-4xl mx-auto mb-6"
+            >
+              <ProductFilters
+                search={search}
+                onSearchChange={(v) => updateParams({ search: v, page: 1 })}
+                category={category}
+                onCategoryChange={(v) => updateParams({ category: v, page: 1 })}
+                sort={sort}
+                onSortChange={(v) => updateParams({ sort: v, page: 1 })}
+                viewMode={viewMode}
+                onViewModeChange={setViewMode}
+                totalProducts={total}
+                showFilters={showFilters}
+                onToggleFilters={() => setShowFilters(!showFilters)}
+              />
             </motion.div>
           </div>
         </section>
 
-        <Divider />
-
-        {/* Featured */}
-        <section className="pb-12 pt-3 md:pt-8 md:pb-16">
+        {/* Featured Products Section */}
+        <section className="py-12 md:py-16 bg-white/60 backdrop-blur-sm">
           <div className="container max-w-7xl mx-auto px-4 md:px-6">
             <motion.div
-              initial={{ opacity: 0, y: 45 }}
+              initial={{ opacity: 0, y: 30 }}
               whileInView={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.8, delay: 0.1 }}
+              transition={{ duration: 0.6 }}
               viewport={{ once: true }}
             >
               <Suspense fallback={<LoadingFallback />}>
@@ -207,10 +232,9 @@ export default function ShopPageClient() {
             </motion.div>
           </div>
         </section>
-        <Divider />
 
-        {/* Categories */}
-        <section className="py-14 md:py-18 bg-gradient-to-l from-white via-[#eefaff] to-slate-100">
+        {/* Top Categories Section */}
+        <section className="py-12 md:py-16 bg-gradient-to-br from-slate-50 via-white to-cyan-50/40">
           <div className="container max-w-7xl mx-auto px-4 md:px-6">
             <motion.div
               initial={{ opacity: 0, y: 30 }}
@@ -223,10 +247,8 @@ export default function ShopPageClient() {
           </div>
         </section>
 
-        <Divider />
-
-        {/* Suggested Categories */}
-        <section className="py-14 md:py-18">
+        {/* Category Highlights */}
+        <section className="py-12 md:py-16 bg-white">
           <div className="container max-w-7xl mx-auto px-4 md:px-6">
             <motion.div
               initial={{ opacity: 0, y: 30 }}
@@ -241,50 +263,101 @@ export default function ShopPageClient() {
           </div>
         </section>
 
-        <Divider />
-
-        {/* Product Grid */}
-        <section id="shop-products-list" className="py-14 md:py-20">
+        {/* Main Products Section */}
+        <section
+          id="shop-products-list"
+          className="py-16 md:py-24 bg-gradient-to-b from-white via-slate-50/50 to-white"
+        >
           <div className="container max-w-7xl mx-auto px-4 md:px-6">
             <motion.div
-              initial={{ opacity: 0, y: 35 }}
+              initial={{ opacity: 0, y: 30 }}
               whileInView={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.7 }}
+              transition={{ duration: 0.6 }}
               viewport={{ once: true }}
             >
-              <div className="flex items-center justify-between mb-8">
-                <div className="flex items-center gap-2 text-primary-700 font-vazirmatn text-2xl md:text-3xl font-extrabold mb-0">
-                  <FaBoxesStacked className="w-7 h-7 text-primary" />
-                  <span>
-                    مشاهده {total > 0 ? total.toLocaleString() + " " : ""}
-                    محصول
-                  </span>
+              {/* Section Header */}
+              <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 mb-10 md:mb-12">
+                <div className="flex items-center gap-4">
+                  <motion.div
+                    whileHover={{ scale: 1.1, rotate: 5 }}
+                    whileTap={{ scale: 0.95 }}
+                    className="p-4 bg-gradient-to-br from-primary via-cyan-500 to-blue-600 rounded-2xl shadow-xl shadow-primary/30"
+                  >
+                    <FiLayers className="w-7 h-7 md:w-8 md:h-8 text-white" />
+                  </motion.div>
+                  <div>
+                    <h2 className="text-3xl md:text-4xl font-black text-gray-900 mb-2">
+                      همه محصولات
+                    </h2>
+                    <p className="text-base md:text-lg text-gray-600">
+                      {loading ? (
+                        <span className="inline-flex items-center gap-2">
+                          <span className="w-4 h-4 border-2 border-primary border-t-transparent rounded-full animate-spin" />
+                          در حال بارگذاری...
+                        </span>
+                      ) : total > 0 ? (
+                        <>
+                          <span className="font-black text-primary text-xl">
+                            {total.toLocaleString("fa-IR")}
+                          </span>{" "}
+                          محصول موجود
+                        </>
+                      ) : (
+                        "محصولی یافت نشد"
+                      )}
+                    </p>
+                  </div>
                 </div>
-                {!loading && (
-                  <span className="text-gray-500 text-sm">
-                    صفحه
-                    <strong className="mx-1 text-primary">{currentPage}</strong>
-                    از
-                    <strong className="mx-1 text-primary">{pages}</strong>
-                  </span>
+                {!loading && pages > 1 && (
+                  <motion.div
+                    initial={{ opacity: 0, scale: 0.9 }}
+                    animate={{ opacity: 1, scale: 1 }}
+                    className="flex items-center gap-3 px-6 py-3 bg-white rounded-2xl border-2 border-gray-200 shadow-lg"
+                  >
+                    <span className="text-sm font-semibold text-gray-600">
+                      صفحه
+                    </span>
+                    <span className="font-black text-primary text-2xl">
+                      {currentPage}
+                    </span>
+                    <span className="text-sm font-semibold text-gray-600">
+                      از
+                    </span>
+                    <span className="font-black text-gray-900 text-xl">
+                      {pages}
+                    </span>
+                  </motion.div>
                 )}
               </div>
+
+              {/* Error State */}
               {error && (
-                <div className="text-center text-red-600 py-14">{error}</div>
+                <motion.div
+                  initial={{ opacity: 0, y: 20 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  className="bg-red-50 border-2 border-red-300 rounded-3xl p-8 md:p-12 text-center shadow-lg"
+                >
+                  <p className="text-red-600 font-bold text-lg md:text-xl">
+                    {error}
+                  </p>
+                </motion.div>
               )}
 
+              {/* Products Grid */}
               <ProductGrid
                 products={products}
                 viewMode={viewMode}
                 loading={loading}
               />
 
+              {/* Pagination */}
               {!loading && pages > 1 && (
                 <motion.div
-                  initial={{ opacity: 0, y: 13 }}
-                  animate={{ opacity: 1, y: 0 }}
-                  transition={{ duration: 0.6, delay: 0.1 }}
-                  className="pt-10 flex justify-center"
+                  initial={{ opacity: 0, y: 20 }}
+                  whileInView={{ opacity: 1, y: 0 }}
+                  viewport={{ once: true }}
+                  transition={{ duration: 0.5 }}
+                  className="pt-12 flex justify-center"
                 >
                   <Pagination
                     currentPage={currentPage}

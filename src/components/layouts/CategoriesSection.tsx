@@ -43,13 +43,14 @@ export default function CategoriesSection() {
     fetchCategories();
   }, []);
 
-  const displayCategories = categories.length > 0
-    ? categories.map((cat) => ({
-        title: cat.name,
-        image: cat.image || `/images/categories/${cat.slug}.png`,
-        slug: cat.slug,
-      }))
-    : defaultCategories;
+  const displayCategories =
+    categories.length > 0
+      ? categories.map((cat) => ({
+          title: cat.name,
+          image: cat.image || `/images/categories/${cat.slug}.png`,
+          slug: cat.slug,
+        }))
+      : defaultCategories;
 
   return (
     <section className="pt-16 md:pt-20 pb-12 md:pb-16 w-full bg-background">
