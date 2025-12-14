@@ -41,9 +41,9 @@ export default function DashboardProvider({
       <Sidebar open={open} onToggleSidebar={() => setOpen(false)} />
 
       {/* Main Content Container */}
-      <div className="flex flex-col flex-1 w-full lg:w-[calc(100%-18rem)]  lg:mr-72 transition-all duration-300">
+      <div className="flex flex-col flex-1 w-full lg:w-[calc(100%-18rem)] lg:mr-72 transition-all duration-300">
         <Header onToggleSidebar={() => setOpen(!open)} />
-        <main className="flex-1 w-full">{children}</main>
+        <main className="flex-1 w-full px-3 sm:px-4 md:px-6 py-4 sm:py-6">{children}</main>
       </div>
     </div>
   );

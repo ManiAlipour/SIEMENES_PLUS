@@ -18,13 +18,14 @@ export default function Header({
 
   return (
     <header className="sticky top-0 z-20 w-full bg-white/80 backdrop-blur-xl border-b border-gray-200/50 shadow-sm">
-      <div className="flex items-center justify-between px-6 py-4">
+      <div className="flex items-center justify-between px-3 sm:px-4 md:px-6 py-3 sm:py-4">
         {/* Left Section */}
         <div className="flex items-center gap-4">
           {/* Mobile Menu Button */}
           <button
             onClick={onToggleSidebar}
-            className="lg:hidden p-2 hover:bg-gray-100 rounded-lg transition-colors"
+            className="lg:hidden p-2.5 hover:bg-gray-100 active:bg-gray-200 rounded-lg transition-colors min-w-[44px] min-h-[44px] flex items-center justify-center touch-manipulation"
+            aria-label="باز کردن منو"
           >
             <Menu className="w-6 h-6 text-gray-700" />
           </button>
@@ -66,7 +67,8 @@ export default function Header({
           <motion.button
             whileHover={{ scale: 1.05 }}
             whileTap={{ scale: 0.95 }}
-            className="relative p-2.5 hover:bg-gray-100 rounded-xl transition-colors"
+            className="relative p-2.5 hover:bg-gray-100 active:bg-gray-200 rounded-xl transition-colors min-w-[44px] min-h-[44px] flex items-center justify-center touch-manipulation"
+            aria-label="اعلان‌ها"
           >
             <Bell className="w-5 h-5 text-gray-700" />
             {notifications > 0 && (
@@ -91,7 +93,7 @@ export default function Header({
               </span>
             </div>
             <div className="relative group">
-              <button className="w-10 h-10 rounded-xl bg-gradient-to-br from-cyan-500 to-blue-600 flex items-center justify-center shadow-md hover:shadow-lg transition-all">
+              <button className="w-11 h-11 sm:w-10 sm:h-10 rounded-xl bg-gradient-to-br from-cyan-500 to-blue-600 flex items-center justify-center shadow-md hover:shadow-lg active:shadow-md active:scale-95 transition-all touch-manipulation" aria-label="منوی کاربر">
                 <User className="w-5 h-5 text-white" />
               </button>
               {/* Dropdown Menu */}

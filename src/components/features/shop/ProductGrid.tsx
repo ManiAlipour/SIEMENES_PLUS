@@ -193,7 +193,7 @@ export default function ProductGrid({
                   <motion.button
                     whileHover={{ scale: 1.05 }}
                     whileTap={{ scale: 0.95 }}
-                    className="flex items-center gap-2 px-6 py-3 bg-gradient-to-r from-primary to-cyan-500 text-white rounded-2xl font-bold shadow-lg hover:shadow-xl transition-all duration-300 text-sm md:text-base"
+                    className="flex items-center gap-2 px-4 sm:px-5 md:px-6 py-2.5 sm:py-3 min-h-[44px] bg-gradient-to-r from-primary to-cyan-500 text-white rounded-xl sm:rounded-2xl font-bold shadow-lg hover:shadow-xl active:shadow-md active:scale-[0.98] transition-all duration-300 text-xs sm:text-sm md:text-base touch-manipulation"
                     onClick={() => router.push(productUrl)}
                   >
                     <FiShoppingCart className="w-5 h-5" />
@@ -210,7 +210,7 @@ export default function ProductGrid({
 
   // Grid Mode - Modern & Beautiful
   return (
-    <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-5 md:gap-6 lg:gap-8">
+    <div className="grid grid-cols-2 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-3 sm:gap-4 md:gap-5 lg:gap-6 xl:gap-8">
       {products.map((product, idx) => (
         <motion.div
           key={product._id}

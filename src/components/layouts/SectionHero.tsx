@@ -86,7 +86,7 @@ export default function HeroSectionMobileOptimized() {
 
   return (
     <section
-      className="relative w-full l h-[calc(100dvh-80px)] lg:h-[85vh] min-h-[500px] bg-slate-950 
+      className="relative w-full h-[calc(100dvh-70px)] sm:h-[calc(100dvh-80px)] lg:h-[85vh] min-h-[500px] sm:min-h-[600px] bg-slate-950 
       overflow-hidden font-vazir group"
       onMouseEnter={() => setIsPaused(true)}
       onMouseLeave={() => setIsPaused(false)}
@@ -115,7 +115,7 @@ export default function HeroSectionMobileOptimized() {
       </AnimatePresence>
 
       {/* === 2. Text Content === */}
-      <div className="absolute inset-0 container mx-auto px-5 sm:px-6 flex flex-col justify-end lg:justify-center pb-28 lg:pb-0 z-20">
+      <div className="absolute inset-0 container mx-auto px-4 sm:px-5 md:px-6 flex flex-col justify-end lg:justify-center pb-24 sm:pb-28 lg:pb-0 z-20">
         <div className="max-w-3xl w-full">
           <AnimatePresence mode="wait">
             <motion.div
@@ -138,7 +138,7 @@ export default function HeroSectionMobileOptimized() {
               <motion.h1
                 variants={textVariants}
                 transition={{ delay: 0.1 }}
-                className="text-3xl sm:text-4xl md:text-6xl lg:text-7xl font-black text-white leading-tight mb-4 drop-shadow-lg"
+                className="text-2xl xs:text-3xl sm:text-4xl md:text-5xl lg:text-6xl xl:text-7xl font-black text-white leading-tight mb-3 sm:mb-4 drop-shadow-lg"
               >
                 {currentSlide.title}
               </motion.h1>
@@ -147,7 +147,7 @@ export default function HeroSectionMobileOptimized() {
               <motion.p
                 variants={textVariants}
                 transition={{ delay: 0.2 }}
-                className="text-slate-300 text-sm sm:text-base lg:text-xl leading-relaxed mb-8 max-w-xl drop-shadow-md"
+                className="text-slate-300 text-sm sm:text-base lg:text-xl leading-relaxed mb-6 sm:mb-8 max-w-xl drop-shadow-md"
               >
                 {currentSlide.description}
               </motion.p>
@@ -156,15 +156,15 @@ export default function HeroSectionMobileOptimized() {
               <motion.div
                 variants={textVariants}
                 transition={{ delay: 0.3 }}
-                className="flex flex-col sm:flex-row items-center gap-3 w-full sm:w-auto"
+                className="flex flex-col sm:flex-row items-stretch sm:items-center gap-3 w-full sm:w-auto"
               >
                 <button
-                  className={`w-full sm:w-auto px-6 py-3 lg:px-8 lg:py-4 rounded-lg text-white font-bold transition-all shadow-lg flex justify-center items-center gap-2 ${currentSlide.btnColor}`}
+                  className={`w-full sm:w-auto px-6 py-3.5 sm:py-3 lg:px-8 lg:py-4 min-h-[48px] rounded-lg text-white text-base sm:text-sm lg:text-base font-bold transition-all shadow-lg flex justify-center items-center gap-2 active:scale-[0.98] touch-manipulation ${currentSlide.btnColor}`}
                 >
                   محصولات مرتبط
                   <FiArrowLeft />
                 </button>
-                <button className="w-full sm:w-auto px-6 py-3 lg:px-8 lg:py-4 rounded-lg text-white font-medium border border-white/20 bg-white/5 hover:bg-white/10 backdrop-blur-sm transition-all">
+                <button className="w-full sm:w-auto px-6 py-3.5 sm:py-3 lg:px-8 lg:py-4 min-h-[48px] rounded-lg text-white text-base sm:text-sm lg:text-base font-medium border border-white/20 bg-white/5 hover:bg-white/10 active:bg-white/15 active:scale-[0.98] backdrop-blur-sm transition-all touch-manipulation">
                   تماس با ما
                 </button>
               </motion.div>
@@ -195,17 +195,19 @@ export default function HeroSectionMobileOptimized() {
           </div>
 
           {/* Right: Navigation Arrows */}
-          <div className="flex items-center gap-3">
+          <div className="flex items-center gap-2 sm:gap-3">
             <button
               onClick={prevSlide}
-              className="w-10 h-10 lg:w-12 lg:h-12 flex items-center justify-center rounded-full border border-white/10 text-white active:bg-white active:text-black lg:hover:bg-white lg:hover:text-black transition-all"
+              className="w-11 h-11 sm:w-10 sm:h-10 lg:w-12 lg:h-12 flex items-center justify-center rounded-full border border-white/10 text-white active:bg-white active:text-black lg:hover:bg-white lg:hover:text-black transition-all touch-manipulation active:scale-95"
+              aria-label="اسلاید قبلی"
             >
               <FiChevronRight size={20} className="lg:hidden" />
               <FiChevronRight size={24} className="hidden lg:block" />
             </button>
             <button
               onClick={nextSlide}
-              className="w-10 h-10 lg:w-12 lg:h-12 flex items-center justify-center rounded-full border border-white/10 text-white active:bg-white active:text-black lg:hover:bg-white lg:hover:text-black transition-all"
+              className="w-11 h-11 sm:w-10 sm:h-10 lg:w-12 lg:h-12 flex items-center justify-center rounded-full border border-white/10 text-white active:bg-white active:text-black lg:hover:bg-white lg:hover:text-black transition-all touch-manipulation active:scale-95"
+              aria-label="اسلاید بعدی"
             >
               <FiChevronLeft size={20} className="lg:hidden" />
               <FiChevronLeft size={24} className="hidden lg:block" />

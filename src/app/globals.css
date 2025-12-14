@@ -33,6 +33,29 @@ body {
   background: var(--background);
   color: var(--foreground);
   font-family: Vazir, Arial, Helvetica, sans-serif;
+  /* بهبود UX موبایل */
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  text-rendering: optimizeLegibility;
+  /* جلوگیری از zoom در iOS هنگام focus روی input */
+  font-size: 16px;
+}
+
+/* بهبود touch targets برای موبایل */
+button,
+a,
+input[type="button"],
+input[type="submit"],
+input[type="checkbox"],
+input[type="radio"],
+label {
+  touch-action: manipulation;
+}
+
+/* بهبود scroll برای موبایل */
+html {
+  -webkit-overflow-scrolling: touch;
+  scroll-behavior: smooth;
 }
 
 ::-webkit-scrollbar {

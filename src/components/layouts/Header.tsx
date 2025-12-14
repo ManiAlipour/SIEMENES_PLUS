@@ -84,7 +84,7 @@ export default function Header() {
             : "bg-white border-transparent py-5"
         }`}
       >
-        <div className="max-w-7xl mx-auto px-4 lg:px-6 flex items-center justify-between gap-4">
+        <div className="max-w-7xl mx-auto px-3 sm:px-4 lg:px-6 flex items-center justify-between gap-2 sm:gap-4">
           {/* 1. Logo Section */}
           <Link href="/" className="flex items-center gap-3 shrink-0 group">
             <div className="relative w-10 h-10 overflow-hidden rounded-lg">
@@ -176,7 +176,7 @@ export default function Header() {
           </nav>
 
           {/* 3. Right Actions (Search + Auth + Cart) */}
-          <div className="flex items-center gap-2 sm:gap-3">
+          <div className="flex items-center gap-1.5 sm:gap-2 md:gap-3">
             {/* Compact Search Bar */}
             <HeaderSearchbar />
 
@@ -206,7 +206,8 @@ export default function Header() {
             {/* Mobile Menu Trigger */}
             <button
               onClick={() => setIsMobileOpen(true)}
-              className="lg:hidden p-2 text-slate-800 bg-slate-100 rounded-lg active:scale-95 transition"
+              className="lg:hidden p-2.5 sm:p-3 text-slate-800 bg-slate-100 rounded-lg active:scale-95 transition min-w-[44px] min-h-[44px] flex items-center justify-center touch-manipulation"
+              aria-label="باز کردن منو"
             >
               <FiMenu size={24} />
             </button>
@@ -242,7 +243,8 @@ export default function Header() {
                 </div>
                 <button
                   onClick={() => setIsMobileOpen(false)}
-                  className="p-2 hover:bg-red-50 text-slate-500 hover:text-red-500 rounded-full transition"
+                  className="p-2.5 hover:bg-red-50 text-slate-500 hover:text-red-500 rounded-full transition min-w-[44px] min-h-[44px] flex items-center justify-center touch-manipulation"
+                  aria-label="بستن منو"
                 >
                   <FiX size={24} />
                 </button>
@@ -260,10 +262,10 @@ export default function Header() {
                       key={link.href}
                       href={link.href}
                       onClick={() => setIsMobileOpen(false)}
-                      className={`px-4 py-3 rounded-xl text-sm font-medium transition ${
+                      className={`px-4 py-3.5 min-h-[48px] flex items-center rounded-xl text-base font-medium transition touch-manipulation ${
                         pathname === link.href
                           ? "bg-cyan-50 text-cyan-700"
-                          : "text-slate-600 hover:bg-slate-50"
+                          : "text-slate-600 hover:bg-slate-50 active:bg-slate-100"
                       }`}
                     >
                       {link.name}
@@ -276,7 +278,7 @@ export default function Header() {
                       onClick={() =>
                         setIsMobileServicesOpen(!isMobileServicesOpen)
                       }
-                      className="w-full flex items-center justify-between px-4 py-3 rounded-xl text-sm font-medium text-slate-600 hover:bg-slate-50 transition"
+                      className="w-full flex items-center justify-between px-4 py-3.5 min-h-[48px] rounded-xl text-base font-medium text-slate-600 hover:bg-slate-50 active:bg-slate-100 transition touch-manipulation"
                     >
                       <span>خدمات ما</span>
                       <FiChevronDown
@@ -300,7 +302,7 @@ export default function Header() {
                                 key={s.href}
                                 href={s.href}
                                 onClick={() => setIsMobileOpen(false)}
-                                className="block py-2 text-sm text-slate-500 hover:text-cyan-600 transition"
+                                className="block py-2.5 px-2 min-h-[44px] flex items-center text-base text-slate-500 hover:text-cyan-600 active:text-cyan-700 transition touch-manipulation"
                               >
                                 {s.name}
                               </Link>
@@ -318,13 +320,15 @@ export default function Header() {
                     <div className="grid grid-cols-2 gap-3">
                       <Link
                         href="/login"
-                        className="flex justify-center py-2.5 border border-slate-200 rounded-xl text-sm font-medium text-slate-700"
+                        onClick={() => setIsMobileOpen(false)}
+                        className="flex justify-center items-center py-3.5 min-h-[48px] border border-slate-200 rounded-xl text-base font-medium text-slate-700 hover:bg-slate-50 active:bg-slate-100 transition touch-manipulation"
                       >
                         ورود
                       </Link>
                       <Link
                         href="/register"
-                        className="flex justify-center py-2.5 bg-slate-900 text-white rounded-xl text-sm font-medium"
+                        onClick={() => setIsMobileOpen(false)}
+                        className="flex justify-center items-center py-3.5 min-h-[48px] bg-slate-900 text-white rounded-xl text-base font-medium hover:bg-slate-800 active:bg-slate-700 transition touch-manipulation"
                       >
                         ثبت نام
                       </Link>
@@ -332,7 +336,8 @@ export default function Header() {
                   ) : (
                     <Link
                       href="/dashboard"
-                      className="flex items-center justify-center gap-2 w-full py-3 bg-cyan-600 text-white rounded-xl text-sm font-medium"
+                      onClick={() => setIsMobileOpen(false)}
+                      className="flex items-center justify-center gap-2 w-full py-3.5 min-h-[48px] bg-cyan-600 text-white rounded-xl text-base font-medium hover:bg-cyan-700 active:bg-cyan-800 transition touch-manipulation"
                     >
                       <FiUser /> ورود به داشبورد
                     </Link>

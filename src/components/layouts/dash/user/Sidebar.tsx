@@ -99,7 +99,8 @@ export default function Sidebar({
             </div>
             <button
               onClick={onToggleSidebar}
-              className="lg:hidden p-2 hover:bg-white/10 rounded-lg transition-colors"
+              className="lg:hidden p-2.5 hover:bg-white/10 active:bg-white/20 rounded-lg transition-colors min-w-[44px] min-h-[44px] flex items-center justify-center touch-manipulation"
+              aria-label="بستن منو"
             >
               <span className="text-white text-xl">×</span>
             </button>
@@ -124,10 +125,10 @@ export default function Sidebar({
                   onClick={() => {
                     if (window.innerWidth < 1024) onToggleSidebar?.();
                   }}
-                  className={`group relative flex items-center gap-3 px-4 py-3 rounded-xl transition-all duration-300 ${
+                  className={`group relative flex items-center gap-3 px-4 py-3.5 min-h-[48px] rounded-xl transition-all duration-300 touch-manipulation ${
                     isActive
                       ? "bg-white/20 shadow-lg"
-                      : "hover:bg-white/10 hover:translate-x-1"
+                      : "hover:bg-white/10 active:bg-white/15 hover:translate-x-1"
                   }`}
                 >
                   {/* Active indicator */}
@@ -170,7 +171,7 @@ export default function Sidebar({
         <div className="p-4 border-t border-white/10">
           <button
             onClick={handleLogout}
-            className="w-full flex items-center gap-3 px-4 py-3 rounded-xl hover:bg-red-500/20 transition-colors group"
+            className="w-full flex items-center gap-3 px-4 py-3.5 min-h-[48px] rounded-xl hover:bg-red-500/20 active:bg-red-500/30 transition-colors group touch-manipulation"
           >
             <div className="p-2 rounded-lg bg-red-500/20 group-hover:bg-red-500/30 transition-colors">
               <LogOut className="w-5 h-5 text-red-400" />

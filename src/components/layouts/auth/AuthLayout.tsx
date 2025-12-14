@@ -29,7 +29,7 @@ export default function AuthLayout({
       <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-96 h-96 bg-white/5 rounded-full blur-3xl" />
 
       {/* Content */}
-      <div className="relative z-10 w-full max-w-md px-6 py-8">
+      <div className="relative z-10 w-full max-w-md px-4 sm:px-6 py-6 sm:py-8">
         {/* Logo & Back to Home */}
         <motion.div
           initial={{ opacity: 0, y: -20 }}
@@ -37,13 +37,13 @@ export default function AuthLayout({
           transition={{ duration: 0.5 }}
           className="mb-8"
         >
-          <Link
-            href="/"
-            className="inline-flex items-center gap-2 text-white/80 hover:text-white transition-colors mb-6 group"
-          >
-            <FiArrowRight className="w-4 h-4 group-hover:translate-x-1 transition-transform" />
-            <span className="text-sm">بازگشت به صفحه اصلی</span>
-          </Link>
+            <Link
+              href="/"
+              className="inline-flex items-center gap-2 text-white/80 hover:text-white transition-colors mb-6 group min-h-[44px] touch-manipulation"
+            >
+              <FiArrowRight className="w-4 h-4 sm:w-5 sm:h-5 group-hover:translate-x-1 transition-transform" />
+              <span className="text-sm sm:text-base">بازگشت به صفحه اصلی</span>
+            </Link>
           
           <div className="flex items-center justify-center mb-6">
             <div className="relative">
@@ -64,14 +64,14 @@ export default function AuthLayout({
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.5, delay: 0.2 }}
-          className="bg-white/95 backdrop-blur-xl rounded-3xl p-8 md:p-10 shadow-2xl border border-white/20"
+          className="bg-white/95 backdrop-blur-xl rounded-2xl sm:rounded-3xl p-6 sm:p-8 md:p-10 shadow-2xl border border-white/20"
         >
-          <div className="text-center mb-8">
-            <h1 className="text-3xl md:text-4xl font-bold text-gray-900 mb-2">
+          <div className="text-center mb-6 sm:mb-8">
+            <h1 className="text-2xl sm:text-3xl md:text-4xl font-bold text-gray-900 mb-2">
               {title}
             </h1>
             <div className="w-16 h-1 bg-gradient-to-r from-primary to-primary/60 rounded-full mx-auto" />
-            <p className="text-gray-600 mt-4 text-sm">
+            <p className="text-gray-600 mt-4 text-sm sm:text-base">
               {title === "ورود"
                 ? "به حساب کاربری خود وارد شوید"
                 : "حساب کاربری جدید ایجاد کنید"}
@@ -93,7 +93,7 @@ export default function AuthLayout({
               حساب کاربری ندارید؟{" "}
               <Link
                 href="/register"
-                className="text-white font-semibold hover:underline"
+                className="text-white font-semibold hover:underline min-h-[44px] inline-flex items-center touch-manipulation"
               >
                 ثبت نام کنید
               </Link>
@@ -103,7 +103,7 @@ export default function AuthLayout({
               قبلاً ثبت نام کرده‌اید؟{" "}
               <Link
                 href="/login"
-                className="text-white font-semibold hover:underline"
+                className="text-white font-semibold hover:underline min-h-[44px] inline-flex items-center touch-manipulation"
               >
                 وارد شوید
               </Link>

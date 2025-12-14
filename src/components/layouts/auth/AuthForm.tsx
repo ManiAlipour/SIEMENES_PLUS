@@ -466,14 +466,17 @@ export default function AuthForm({ mode }: Props) {
           transition={{ delay: 0.3 }}
           className="flex items-center justify-between text-sm"
         >
-          <label className="flex items-center gap-2 text-gray-600 cursor-pointer">
+          <label className="flex items-center gap-2.5 text-gray-600 cursor-pointer touch-manipulation">
             <input
               type="checkbox"
-              className="w-4 h-4 rounded border-gray-300"
+              className="w-5 h-5 sm:w-4 sm:h-4 rounded border-gray-300 cursor-pointer"
             />
-            <span>مرا به خاطر بسپار</span>
+            <span className="text-sm sm:text-base">مرا به خاطر بسپار</span>
           </label>
-          <Link href="#" className="text-primary hover:underline font-semibold">
+          <Link
+            href="#"
+            className="text-primary hover:underline font-semibold text-sm sm:text-base min-h-[44px] flex items-center touch-manipulation"
+          >
             رمز عبور را فراموش کرده‌اید؟
           </Link>
         </motion.div>
@@ -488,13 +491,14 @@ export default function AuthForm({ mode }: Props) {
         whileHover={{ scale: loading ? 1 : 1.02 }}
         whileTap={{ scale: loading ? 1 : 0.98 }}
         className={`
-          w-full py-4 rounded-xl font-bold text-white
+          w-full py-3.5 sm:py-4 min-h-[52px] rounded-xl font-bold text-white text-base sm:text-lg
           transition-all duration-300
           flex items-center justify-center gap-2
+          touch-manipulation active:scale-[0.98]
           ${
             loading
               ? "bg-gray-400 cursor-not-allowed"
-              : "bg-gradient-to-r from-primary to-primary/80 hover:from-primary/90 hover:to-primary/70 shadow-lg hover:shadow-xl"
+              : "bg-gradient-to-r from-primary to-primary/80 hover:from-primary/90 hover:to-primary/70 shadow-lg hover:shadow-xl active:shadow-md"
           }
         `}
       >
