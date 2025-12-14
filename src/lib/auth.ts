@@ -101,7 +101,14 @@ export async function verifyEmail({
   user.verificationCode = null;
   await user.save();
 
-  return { message: "Account verified successfully" };
+  // تولید توکن بعد از تأیید ایمیل
+  const token = generateToken(user._id!.toString(), user.role, user.email);
+
+  return {
+    message: "Account verified successfully",
+    token,
+    user: { id: user._id, name: user.name, email: user.email, role: user.role },
+  };
 }
 
 export function verifyToken(token: string) {
