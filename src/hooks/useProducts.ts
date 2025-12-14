@@ -1,6 +1,14 @@
 "use client";
 
-import { useState, useEffect, useCallback } from "react";
+import { useMemo } from "react";
+import { useFetch } from "iso-hooks";
+
+// --- Interfaces ---
+interface Product {
+  id: string;
+  name: string; // و سایر فیلدها...
+  // ...
+}
 
 interface UseProductsParams {
   search?: string;
@@ -8,6 +16,14 @@ interface UseProductsParams {
   sort?: string;
   page?: number;
   limit?: number;
+}
+
+interface ProductsApiResponse {
+  success: boolean;
+  message?: string;
+  items: Product[];
+  total: number;
+  pages: number;
 }
 
 interface UseProductsReturn {
@@ -27,53 +43,43 @@ export function useProducts({
   page = 1,
   limit = 12,
 }: UseProductsParams = {}): UseProductsReturn {
-  const [products, setProducts] = useState<Product[]>([]);
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState<string | null>(null);
-  const [total, setTotal] = useState(0);
-  const [pages, setPages] = useState(0);
+  // 1. Constructing the URL dynamically
+  // We use useMemo to create the query string.
+  // This ensures the URL string only changes when actual params change.
+  const url = useMemo(() => {
+    const params = new URLSearchParams();
+    if (search) params.append("search", search);
+    if (category) params.append("category", category);
+    if (sort) params.append("sort", sort);
+    params.append("page", page.toString());
+    params.append("limit", limit.toString());
 
-  const fetchProducts = useCallback(async () => {
-    try {
-      setLoading(true);
-      setError(null);
-
-      const params = new URLSearchParams();
-      if (search) params.append("search", search);
-      if (category) params.append("category", category);
-      if (sort) params.append("sort", sort);
-      params.append("page", page.toString());
-      params.append("limit", limit.toString());
-
-      const res = await fetch(`/api/products?${params.toString()}`);
-      const data = await res.json();
-
-      if (!res.ok || !data.success) {
-        throw new Error(data.message || "خطا در دریافت محصولات");
-      }
-
-      setProducts(data.items || []);
-      setTotal(data.total || 0);
-      setPages(data.pages || 0);
-    } catch (err: any) {
-      setError(err.message || "خطا در دریافت محصولات");
-      setProducts([]);
-    } finally {
-      setLoading(false);
-    }
+    return `/api/products?${params.toString()}`;
   }, [search, category, sort, page, limit]);
 
-  useEffect(() => {
-    fetchProducts();
-  }, [fetchProducts]);
+  // 2. Using useFetch
+  // Whenever 'url' changes, useFetch (if implemented correctly with dependency array) will auto-refetch.
+  const { data, loading, error, refetch } = useFetch<ProductsApiResponse>(url);
+
+  // 3. Data Extraction & Safety Checks
+  const products = data?.success ? data.items : [];
+  const total = data?.success ? data.total : 0;
+  const pages = data?.success ? data.pages : 0;
+
+  // Handle errors: If fetch failed OR API returned success:false
+  const finalError = error
+    ? error.message
+    : data && !data.success
+    ? data.message || "خطا در دریافت محصولات"
+    : null;
 
   return {
-    products,
+    products: products || [],
     loading,
-    error,
+    error: finalError,
     total,
     pages,
     currentPage: page,
-    refetch: fetchProducts,
+    refetch,
   };
 }

@@ -1,6 +1,4 @@
-"use client";
-
-import { useState, useEffect } from "react";
+import { useFetch } from "iso-hooks";
 
 interface Product {
   id: string;
@@ -15,6 +13,13 @@ interface HighlightedCategory {
   products: Product[];
 }
 
+// Standard API Response Wrapper
+interface ApiResponse<T> {
+  success: boolean;
+  message?: string;
+  data: T;
+}
+
 interface UseCategoryHighlightsReturn {
   categories: HighlightedCategory[];
   loading: boolean;
@@ -23,39 +28,26 @@ interface UseCategoryHighlightsReturn {
 }
 
 export function useCategoryHighlights(): UseCategoryHighlightsReturn {
-  const [categories, setCategories] = useState<HighlightedCategory[]>([]);
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState<string | null>(null);
+  // Use useFetch with the expected API response structure
+  const { data, loading, error, refetch } = useFetch<
+    ApiResponse<HighlightedCategory[]>
+  >("/api/categories/highlights", {
+    initialData: { data: [], success: true, message: "" },
+  });
 
-  const fetchCategories = async () => {
-    try {
-      setLoading(true);
-      setError(null);
+  // Derived state / Transformation logic
+  // We extract the actual list from the API wrapper
+  const categories = data?.success ? data.data : [];
 
-      const res = await fetch("/api/categories/highlights");
-      const data = await res.json();
-
-      if (!res.ok || !data.success) {
-        throw new Error(data.message || "خطا در دریافت هایلایت دسته‌بندی‌ها");
-      }
-
-      setCategories(data.data || []);
-    } catch (err) {
-      setError((err as Error).message || "خطا در دریافت هایلایت دسته‌بندی‌ها");
-      setCategories([]);
-    } finally {
-      setLoading(false);
-    }
-  };
-
-  useEffect(() => {
-    fetchCategories();
-  }, []);
+  // Handle application-level errors (API returns 200 but success: false)
+  const apiErrorMessage =
+    data && !data.success ? data.message || "API Error" : null;
+  const finalError = error ? error.message : apiErrorMessage;
 
   return {
-    categories,
+    categories: categories || [],
     loading,
-    error,
-    refetch: fetchCategories,
+    error: finalError,
+    refetch,
   };
 }
