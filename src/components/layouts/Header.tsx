@@ -19,17 +19,17 @@ import { useSelector } from "react-redux";
 import { RootState } from "@/store";
 import HeaderLikeBtn from "../features/HeaderLikeBtn";
 import HeaderSearchbar from "../features/HeaderSearchbar";
+import { useScrollLock, useToggle } from "iso-hooks";
 
 export default function Header() {
   const pathname = usePathname();
-  const router = useRouter();
   const { token } = useAuth();
 
   // State management
-  const [isMobileOpen, setIsMobileOpen] = useState(false);
-  const [isServicesOpen, setIsServicesOpen] = useState(false); // Desktop hover
-  const [isMobileServicesOpen, setIsMobileServicesOpen] = useState(false); // Mobile click
-  const [scrolled, setScrolled] = useState(false);
+  const [isMobileOpen, setIsMobileOpen] = useToggle(false);
+  const [isServicesOpen, setIsServicesOpen] = useToggle(false);
+  const [isMobileServicesOpen, setIsMobileServicesOpen] = useToggle(false); // Mobile click
+  const [scrolled, setScrolled] = useToggle(false);
   const [searchQuery, setSearchQuery] = useState("");
 
   // Handle Scroll Effect
@@ -39,13 +39,11 @@ export default function Header() {
     return () => window.removeEventListener("scroll", handleScroll);
   }, []);
 
+  const { lock, unlock } = useScrollLock();
+
   // Lock body scroll when mobile menu is open
   useEffect(() => {
-    if (isMobileOpen) {
-      document.body.style.overflow = "hidden";
-    } else {
-      document.body.style.overflow = "unset";
-    }
+    isMobileOpen ? lock() : unlock();
   }, [isMobileOpen]);
 
   // Navigation Data
