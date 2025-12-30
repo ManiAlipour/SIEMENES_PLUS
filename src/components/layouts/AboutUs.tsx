@@ -48,7 +48,7 @@ const AboutUs = () => {
           </p>
 
           <a
-            href="/about"
+            href="/about-us"
             className="inline-block mt-8 text-sm font-vazir-medium text-white bg-[#004c97] px-6 py-2.5 rounded-full hover:shadow-[0_0_18px_rgba(0,76,151,0.4)] hover:bg-[#003d7a] transition-all duration-300"
           >
             بیشتر بدانید
