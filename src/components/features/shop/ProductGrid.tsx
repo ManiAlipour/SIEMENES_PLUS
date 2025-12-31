@@ -8,7 +8,7 @@ import ListLikeButton from "./ListLikeButton";
 import { motion } from "framer-motion";
 
 interface ProductGridProps {
-  products: Product[];
+  products: ProductObject[];
   viewMode: "grid" | "list";
   loading?: boolean;
 }

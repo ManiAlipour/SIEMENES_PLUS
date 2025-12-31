@@ -154,7 +154,7 @@ export default function HeroSection() {
               max-w-2xl lg:max-w-3xl
               bg-white/5 backdrop-blur-xl border border-white/10
               shadow-2xl rounded-2xl
-              p-6 sm:p-8 md:p-10 lg:py-10 lg:px-10
+              p-6 px-4 sm:p-8 md:p-10 md:px-8 lg:py-10 lg:px-10
               mx-auto
               flex flex-col gap-2
               "
@@ -209,7 +209,8 @@ export default function HeroSection() {
             <motion.p
               variants={textVariants}
               transition={{ delay: 0.15 }}
-              className="mt-2 max-w-2xl text-slate-200 text-[1rem] sm:text-base md:text-lg lg:text-xl"
+              className="mt-2 max-w-2xl text-slate-200 text-[1rem]
+               sm:text-base md:text-lg lg:text-xl"
               style={{
                 fontWeight: 400,
                 letterSpacing: "0.01rem",

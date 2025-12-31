@@ -21,13 +21,13 @@ interface UseProductsParams {
 interface ProductsApiResponse {
   success: boolean;
   message?: string;
-  items: Product[];
+  items: ProductObject[];
   total: number;
   pages: number;
 }
 
 interface UseProductsReturn {
-  products: Product[];
+  products: ProductObject[];
   loading: boolean;
   error: string | null;
   total: number;
@@ -59,7 +59,15 @@ export function useProducts({
 
   // 2. Using useFetch
   // Whenever 'url' changes, useFetch (if implemented correctly with dependency array) will auto-refetch.
-  const { data, loading, error, refetch } = useFetch<ProductsApiResponse>(url);
+  const { data, loading, error, refetch } = useFetch<ProductsApiResponse>(url, {
+    initialData: {
+      items: [],
+      pages: 0,
+      success: true,
+      total: 0,
+      message: "Loading ...",
+    },
+  });
 
   // 3. Data Extraction & Safety Checks
   const products = data?.success ? data.items : [];
@@ -74,7 +82,7 @@ export function useProducts({
     : null;
 
   return {
-    products: products || [],
+    products: products || ([] as ProductObject[]),
     loading,
     error: finalError,
     total,
