@@ -1,24 +1,18 @@
 import { NextResponse } from "next/server";
-import { verify } from "jsonwebtoken";
 import { connectDB } from "@/lib/db";
 import User from "@/models/User";
 import Post from "@/models/Post";
-import Ticket from "@/models/Ticket";
+import Ticket from "@/models/Contact";
 import Product from "@/models/Product";
 import Comment from "@/models/Comment";
+import { adminOnly } from "@/lib/middlewares/adminOnly";
 
 export const runtime = "nodejs";
 
 export async function GET(request: Request) {
   try {
+    await adminOnly(request);
     await connectDB();
-
-    const token = request.headers.get("authorization")?.replace("Bearer ", "");
-    if (!token)
-      return NextResponse.json({ error: "Missing token" }, { status: 401 });
-    const decoded: any = verify(token, process.env.JWT_SECRET!);
-    if (decoded.role !== "admin")
-      return NextResponse.json({ error: "Forbidden" }, { status: 403 });
 
     const [totalUsers, totalPosts, totalTickets, totalProducts, totalComments] =
       await Promise.all([

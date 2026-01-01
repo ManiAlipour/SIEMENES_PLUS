@@ -9,6 +9,7 @@ import {
   FaMapMarkerAlt,
 } from "react-icons/fa";
 import { MdEmail, MdPhone, MdSend } from "react-icons/md";
+import ContactForm from "./ContactForm";
 
 export default function ContactUs() {
   return (
@@ -60,12 +61,12 @@ export default function ContactUs() {
 
             {/* Contact Info Cards */}
             <div className="grid sm:grid-cols-2 gap-4 mb-10">
-              {/* <ContactCard
+              <ContactCard
                 icon={<MdPhone />}
                 title="تماس تلفنی"
-                value="021-09199883772"
+                value="09199883772"
                 href="tel:09199883772"
-              /> */}
+              />
               <ContactCard
                 icon={<MdEmail />}
                 title="ایمیل سازمانی"
@@ -101,60 +102,7 @@ export default function ContactUs() {
           </motion.div>
 
           {/* ---------------- RIGHT SIDE: CONTACT FORM ---------------- */}
-          <motion.div
-            initial={{ opacity: 0, x: 30 }}
-            whileInView={{ opacity: 1, x: 0 }}
-            transition={{ duration: 0.6, delay: 0.2 }}
-            viewport={{ once: true }}
-            className="relative"
-          >
-            {/* Decorative Glow behind form */}
-            <div className="absolute -inset-1 bg-gradient-to-r from-cyan-500 to-blue-600 rounded-3xl blur opacity-20 group-hover:opacity-40 transition duration-1000" />
-
-            <form
-              onSubmit={(e) => e.preventDefault()}
-              className="relative bg-slate-900/80 backdrop-blur-xl rounded-2xl p-8 border border-slate-700 shadow-2xl"
-            >
-              <h3 className="text-2xl font-bold text-white mb-6">
-                ارسال پیام مستقیم
-              </h3>
-
-              <div className="space-y-5">
-                <div className="grid grid-cols-2 gap-5">
-                  <InputField label="نام" placeholder="علی" />
-                  <InputField label="نام خانوادگی" placeholder="محمدی" />
-                </div>
-
-                <InputField
-                  label="ایمیل"
-                  placeholder="example@mail.com"
-                  type="email"
-                />
-                <InputField label="موضوع پیام" placeholder="مشاوره فنی..." />
-
-                <div>
-                  <label className="block text-sm font-medium text-slate-400 mb-2">
-                    متن پیام
-                  </label>
-                  <textarea
-                    rows={4}
-                    className="w-full bg-slate-800/50 border border-slate-700 rounded-xl px-4 py-3 text-white focus:ring-2 focus:ring-cyan-500 focus:border-transparent outline-none transition-all resize-none placeholder-slate-600"
-                    placeholder="درخواست خود را اینجا بنویسید..."
-                  ></textarea>
-                </div>
-
-                <motion.button
-                  whileHover={{ scale: 1.02 }}
-                  whileTap={{ scale: 0.98 }}
-                  type="submit"
-                  className="w-full bg-gradient-to-r from-cyan-600 to-blue-600 hover:from-cyan-500 hover:to-blue-500 text-white font-bold py-4 rounded-xl flex items-center justify-center gap-2 shadow-lg shadow-cyan-500/20 transition-all"
-                >
-                  <span>ارسال پیام</span>
-                  <MdSend className="text-xl rtl:rotate-180" />
-                </motion.button>
-              </div>
-            </form>
-          </motion.div>
+          <ContactForm />
         </div>
       </div>
     </section>
@@ -205,28 +153,5 @@ function SocialBtn({ icon, href }: { icon: React.ReactNode; href: string }) {
     >
       {icon}
     </a>
-  );
-}
-
-function InputField({
-  label,
-  placeholder,
-  type = "text",
-}: {
-  label: string;
-  placeholder: string;
-  type?: string;
-}) {
-  return (
-    <div>
-      <label className="block text-sm font-medium text-slate-400 mb-2">
-        {label}
-      </label>
-      <input
-        type={type}
-        className="w-full bg-slate-800/50 border border-slate-700 rounded-xl px-4 py-3 text-white focus:ring-2 focus:ring-cyan-500 focus:border-transparent outline-none transition-all placeholder-slate-600"
-        placeholder={placeholder}
-      />
-    </div>
   );
 }

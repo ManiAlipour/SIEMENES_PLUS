@@ -1,7 +1,7 @@
 "use client";
 
 import Link from "next/link";
-import { IoIosClose, IoIosSettings, IoIosStats } from "react-icons/io";
+import { IoIosClose, IoIosMail, IoIosSettings, IoIosStats } from "react-icons/io";
 import {
   MdCategory,
   MdDashboardCustomize,
@@ -62,6 +62,12 @@ export default function AdminSideBar({ open, toggleOpen }: ISideBarProps) {
       href: "/admin/stats",
       icon: IoIosStats,
       color: "from-cyan-500 to-cyan-600",
+    },
+    {
+      title: "تماس ها",
+      href: "/admin/contacts",
+      icon: IoIosMail,
+      color: "from-teal-500 to-teal-600",
     },
   ];
 
@@ -159,7 +165,9 @@ export default function AdminSideBar({ open, toggleOpen }: ISideBarProps) {
 
                   {/* Icon */}
                   <div
-                    className={`p-2 rounded-lg bg-gradient-to-br ${link.color} shadow-md ${
+                    className={`p-2 rounded-lg bg-gradient-to-br ${
+                      link.color
+                    } shadow-md ${
                       isActive ? "scale-110" : "group-hover:scale-105"
                     } transition-transform`}
                   >

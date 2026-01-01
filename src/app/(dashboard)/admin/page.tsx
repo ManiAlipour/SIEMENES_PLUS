@@ -17,7 +17,7 @@ export default function AdminDashboardPage() {
   const [stats, setStats] = useState({
     users: 0,
     products: 0,
-    orders: 0,
+    posts: 0,
     tickets: 0,
   });
   const [loading, setLoading] = useState(true);
@@ -31,7 +31,7 @@ export default function AdminDashboardPage() {
           setStats({
             users: data.totalUsers || 0,
             products: data.totalProducts || 0,
-            orders: data.totalTickets || 0,
+            posts: data.totalPosts || 0,
             tickets: data.pendingTickets || 0,
           });
         }
@@ -94,9 +94,9 @@ export default function AdminDashboardPage() {
             icon={<FiPackage className="w-6 h-6 text-white" />}
           />
           <InfoCard
-            title="سفارشات"
+            title="پست‌ها"
             desc="در انتظار بررسی"
-            count={stats.orders}
+            count={stats.posts}
             color="warn"
             trend={-5}
             icon={<FiShoppingCart className="w-6 h-6 text-white" />}
