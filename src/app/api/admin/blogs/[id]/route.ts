@@ -2,53 +2,80 @@ import { NextResponse } from "next/server";
 import Post, { sanitizePost } from "@/models/Post";
 import { connectDB } from "@/lib/db";
 
-interface Params {
-  params: Promise<{ id: string }>;
+interface RouteParams {
+  params: { id: string };
 }
 
-// DELETE blog
-export async function DELETE(req: Request, { params }: Params) {
-  const { id } = await params;
+export async function DELETE(
+  req: Request,
+  { params }: RouteParams
+) {
+  const { id } = params;
   try {
     await connectDB();
     const deleted = await Post.findByIdAndDelete(id);
     if (!deleted) {
-      return NextResponse.json({ error: "Post not found" }, { status: 404 });
+      return NextResponse.json({ error: "پست پیدا نشد" }, { status: 404 });
     }
-    return NextResponse.json({ message: "Post deleted" });
+    return NextResponse.json({ message: "پست با موفقیت حذف شد" });
   } catch (err: any) {
     return NextResponse.json({ error: err.message }, { status: 500 });
   }
 }
 
-// PATCH blog (edit)
-export async function PATCH(req: Request, { params }: Params) {
-  const { id } = await params;
+export async function PATCH(
+  req: Request,
+  { params }: RouteParams
+) {
+  const { id } = params;
   try {
     await connectDB();
     const body = await req.json();
 
-    // Optional validation for mediaType
-    if (body.mediaType === "video") {
-      const aparatRegex = /^https?:\/\/(www\.)?aparat\.com\/.+/;
-      if (!aparatRegex.test(body.coverImage)) {
-        return NextResponse.json(
-          { error: "Video link must be an Aparat URL" },
-          { status: 400 }
-        );
-      }
-    }
+    const { title, video, status } = body;
 
-    if (body.mediaType === "image" && !body.coverImage) {
+    if (typeof title !== "string" || !title.trim()) {
       return NextResponse.json(
-        { error: "Image is required for mediaType=image" },
+        { error: "عنوان الزامی است" },
+        { status: 400 }
+      );
+    }
+    if (typeof video !== "string" || !video.trim()) {
+      return NextResponse.json(
+        { error: "ویدیو الزامی است" },
+        { status: 400 }
+      );
+    }
+    if (
+      status &&
+      status !== "draft" &&
+      status !== "published"
+    ) {
+      return NextResponse.json(
+        { error: "مقدار وضعیت نامعتبر است" },
         { status: 400 }
       );
     }
 
-    const updated = await Post.findByIdAndUpdate(id, body, { new: true });
+    const aparatRegex = /^https?:\/\/(www\.)?aparat\.com\/.+/;
+    if (!aparatRegex.test(video)) {
+      return NextResponse.json(
+        { error: "لینک ویدیو باید آدرس صحیح از Aparat باشد" },
+        { status: 400 }
+      );
+    }
+
+    const updated = await Post.findByIdAndUpdate(
+      id,
+      {
+        title,
+        video,
+        ...(status ? { status } : {})
+      },
+      { new: true }
+    );
     if (!updated) {
-      return NextResponse.json({ error: "Post not found" }, { status: 404 });
+      return NextResponse.json({ error: "پست پیدا نشد" }, { status: 404 });
     }
     return NextResponse.json({ data: sanitizePost(updated) });
   } catch (err: any) {

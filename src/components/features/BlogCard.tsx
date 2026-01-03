@@ -1,33 +1,37 @@
-import Link from "next/link";
-import Image from "next/image";
 import AparatPlayer from "./AparatPlayer";
-import { BlogPost } from "@/data/blog-data";
 
-export default function BlogCard({ post }: { post: BlogPost }) {
-  const { title, description, image, videoUrl, slug } = post;
+export interface PostCardModel {
+  _id: string;
+  title: string;
+  video: string;
+  status: "draft" | "published";
+  createdAt: string;
+}
+
+export default function BlogCard({ post }: { post: PostCardModel }) {
+  const { _id, title, video, createdAt } = post;
 
   return (
     <article
-      className="group flex flex-col overflow-hidden rounded-xl border border-gray-200 bg-[#f7f9fb] shadow-sm hover:border-primary/80 hover:shadow-lg hover:-translate-y-1 transition-all duration-300 focus-within:shadow-lg"
+      className="group flex flex-col overflow-hidden rounded-xl border
+       border-gray-200 bg-[#f7f9fb] shadow-sm hover:border-primary/80
+        hover:shadow-lg hover:-translate-y-1 transition-all duration-300 
+        focus-within:shadow-lg"
       aria-label={`مطلب: ${title}`}
     >
-      {/* Media (video or image) */}
+      {/* Media (aparat video only in new model) */}
       <div className="relative w-full aspect-video overflow-hidden">
-        {videoUrl ? (
+        {video ? (
           <div className="absolute inset-0">
-            <AparatPlayer videoUrl={videoUrl} />
+            <AparatPlayer videoUrl={video} />
           </div>
         ) : (
-          <Image
-            src={image || "/placeholder.jpg"}
-            alt={title}
-            fill
-            className="object-cover group-hover:scale-[1.03] transition-transform duration-300"
-            sizes="(max-width:768px) 100vw, 600px"
-            priority={false}
-          />
+          <div className="flex items-center justify-center w-full h-full 
+          bg-slate-200 text-slate-600 text-lg">
+            ویدیو ندارد
+          </div>
         )}
-        <div className="pointer-events-none absolute inset-0 bg-linear-to-t from-black/20 via-transparent to-transparent" />
+        <div className="pointer-events-none absolute inset-0 bg-gradient-to-t from-black/20 via-transparent to-transparent" />
       </div>
 
       {/* Content */}
@@ -35,15 +39,9 @@ export default function BlogCard({ post }: { post: BlogPost }) {
         <h3 className="text-lg md:text-xl font-bold text-gray-800 group-hover:text-primary transition-colors">
           {title}
         </h3>
-        <p className="text-sm text-gray-600 line-clamp-3">{description}</p>
-
-        <Link
-          href={`/blog/${slug}`}
-          className="mt-auto self-start px-4 py-2 border border-primary text-primary rounded-md font-vazir-medium hover:bg-primary hover:text-white transition-colors focus:outline-none focus:ring-2 focus:ring-primary/40 focus:ring-offset-2"
-          aria-label={`مطالعه بیشتر: ${title}`}
-        >
-          مطالعه بیشتر
-        </Link>
+        <div className="text-xs text-gray-400 pb-2">
+          {new Date(createdAt).toLocaleDateString("fa-IR")}
+        </div>
       </div>
     </article>
   );

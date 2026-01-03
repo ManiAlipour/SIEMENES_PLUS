@@ -1,7 +1,18 @@
 // components/blog/BlogSection.tsx
 import { blogPosts } from "@/data/blog-data";
-import BlogCard from "../features/BlogCard";
+import BlogCard, { PostCardModel } from "../features/BlogCard";
 import Link from "next/link";
+
+// تبدیل داده‌ها به مدل جدید پست سایت
+function toPostCardModel(post: any): PostCardModel {
+  return {
+    _id: post._id ?? post.id ?? "",
+    title: post.title,
+    video: post.video ?? "",
+    status: post.status ?? "draft",
+    createdAt: post.createdAt ?? "",
+  };
+}
 
 export default function BlogSection() {
   return (
@@ -14,9 +25,10 @@ export default function BlogSection() {
           تازه‌های وبلاگ
         </h2>
         <div className="grid gap-8 sm:grid-cols-2 lg:grid-cols-3">
-          {blogPosts.map((post) => (
-            <BlogCard key={post.id} post={post} />
-          ))}
+          {blogPosts.map((post) => {
+            const model = toPostCardModel(post);
+            return <BlogCard key={model._id} post={model} />;
+          })}
         </div>
         <div className="flex justify-center mt-10">
           <Link

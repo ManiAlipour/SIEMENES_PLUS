@@ -118,85 +118,7 @@ export default function ContactPage() {
           </motion.div>
 
           {/* Contact Form */}
-          <motion.div
-            initial={{ opacity: 0, x: 50 }}
-            whileInView={{ opacity: 1, x: 0 }}
-            viewport={{ once: true }}
-            transition={{ duration: 0.7 }}
-            className="bg-white rounded-3xl p-8 border-2 border-gray-200 shadow-xl"
-          >
-            <h2 className="text-2xl font-bold text-gray-900 mb-6 flex items-center gap-2">
-              <div className="w-1 h-6 bg-gradient-to-b from-primary to-primary/60 rounded-full" />
-              فرم تماس
-            </h2>
-
-            <form onSubmit={handleSubmit} className="space-y-5">
-              <div>
-                <label className="block text-sm font-semibold text-gray-700 mb-2">
-                  نام و نام خانوادگی
-                </label>
-                <input
-                  type="text"
-                  value={formData.name}
-                  onChange={(e) =>
-                    setFormData({ ...formData, name: e.target.value })
-                  }
-                  required
-                  placeholder="نام شما..."
-                  className="w-full px-4 py-3 rounded-xl border-2 border-gray-200 focus:border-primary focus:ring-2 focus:ring-primary/20 transition-all outline-none"
-                />
-              </div>
-
-              <div>
-                <label className="block text-sm font-semibold text-gray-700 mb-2">
-                  ایمیل
-                </label>
-                <input
-                  type="email"
-                  value={formData.email}
-                  onChange={(e) =>
-                    setFormData({ ...formData, email: e.target.value })
-                  }
-                  required
-                  placeholder="ایمیل شما..."
-                  className="w-full px-4 py-3 rounded-xl border-2 border-gray-200 focus:border-primary focus:ring-2 focus:ring-primary/20 transition-all outline-none"
-                />
-              </div>
-
-              <div>
-                <label className="block text-sm font-semibold text-gray-700 mb-2">
-                  پیام شما
-                </label>
-                <textarea
-                  rows={6}
-                  value={formData.message}
-                  onChange={(e) =>
-                    setFormData({ ...formData, message: e.target.value })
-                  }
-                  required
-                  placeholder="پیام خود را بنویسید..."
-                  className="w-full px-4 py-3 rounded-xl border-2 border-gray-200 focus:border-primary focus:ring-2 focus:ring-primary/20 transition-all outline-none resize-none"
-                />
-              </div>
-
-              <motion.button
-                type="submit"
-                disabled={loading}
-                whileHover={{ scale: 1.02 }}
-                whileTap={{ scale: 0.98 }}
-                className="w-full py-4 rounded-xl font-bold text-white bg-gradient-to-r from-primary to-primary/80 shadow-lg hover:shadow-xl transition-all duration-300 flex items-center justify-center gap-2 disabled:opacity-50"
-              >
-                {loading ? (
-                  "در حال ارسال..."
-                ) : (
-                  <>
-                    <Send className="w-5 h-5" />
-                    ارسال پیام
-                  </>
-                )}
-              </motion.button>
-            </form>
-          </motion.div>
+          <ContactUs />
         </div>
       </section>
 
@@ -225,3 +147,212 @@ export default function ContactPage() {
     </main>
   );
 }
+
+import { Formik, Form, Field, ErrorMessage } from "formik";
+import * as Yup from "yup";
+
+const ContactUs = () => {
+  const initialValues = {
+    firstName: "",
+    lastName: "",
+    email: "",
+    title: "",
+    message: "",
+  };
+
+  const validationSchema = Yup.object({
+    firstName: Yup.string().required("نام خود را وارد کنید"),
+    lastName: Yup.string().required("نام خانوادگی خود را وارد کنید"),
+    email: Yup.string()
+      .email("ایمیل معتبر نیست")
+      .required("ایمیل را وارد کنید"),
+    title: Yup.string().required("عنوان پیام را وارد کنید"),
+    message: Yup.string().required("پیام را وارد کنید"),
+  });
+
+  const [loading, setLoading] = useState(false);
+  const [successMsg, setSuccessMsg] = useState("");
+  const [errorMsg, setErrorMsg] = useState("");
+
+  const handleSubmit = async (values, { resetForm }) => {
+    setLoading(true);
+    setSuccessMsg("");
+    setErrorMsg("");
+    try {
+      const res = await fetch("/api/contact", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(values),
+      });
+      if (res.ok) {
+        setSuccessMsg("پیام شما با موفقیت ارسال شد.");
+        resetForm();
+      } else {
+        setErrorMsg("ارسال پیام با خطا مواجه شد. لطفا مجددا تلاش کنید.");
+      }
+    } catch (error) {
+      setErrorMsg("خطا در ارتباط با سرور. لطفا بعدا تلاش کنید.");
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  return (
+    <motion.div
+      initial={{ opacity: 0, x: 50 }}
+      whileInView={{ opacity: 1, x: 0 }}
+      viewport={{ once: true }}
+      transition={{ duration: 0.7 }}
+      className="bg-white rounded-3xl p-8 border-2 border-gray-200 shadow-xl"
+    >
+      <h2 className="text-2xl font-bold text-gray-900 mb-6 flex items-center gap-2">
+        <div className="w-1 h-6 bg-gradient-to-b from-primary to-primary/60 rounded-full" />
+        فرم تماس
+      </h2>
+
+      {successMsg && (
+        <div className="mb-4 text-green-600 border border-green-200 bg-green-50 rounded-xl px-4 py-3 text-sm">
+          {successMsg}
+        </div>
+      )}
+      {errorMsg && (
+        <div className="mb-4 text-red-600 border border-red-200 bg-red-50 rounded-xl px-4 py-3 text-sm">
+          {errorMsg}
+        </div>
+      )}
+
+      <Formik
+        initialValues={initialValues}
+        validationSchema={validationSchema}
+        onSubmit={handleSubmit}
+      >
+        {({ touched, errors }) => (
+          <Form className="space-y-5">
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+              <div>
+                <label className="block text-sm font-semibold text-gray-700 mb-2">
+                  نام
+                </label>
+                <Field
+                  type="text"
+                  name="firstName"
+                  required
+                  placeholder="نام شما..."
+                  className={`w-full px-4 py-3 rounded-xl border-2 border-gray-200 focus:border-primary focus:ring-2 focus:ring-primary/20 transition-all outline-none${
+                    touched.firstName && errors.firstName
+                      ? " border-red-400"
+                      : ""
+                  }`}
+                />
+                <ErrorMessage name="firstName">
+                  {(msg) => (
+                    <div className="text-xs text-red-500 mt-1">{msg}</div>
+                  )}
+                </ErrorMessage>
+              </div>
+              <div>
+                <label className="block text-sm font-semibold text-gray-700 mb-2">
+                  نام خانوادگی
+                </label>
+                <Field
+                  type="text"
+                  name="lastName"
+                  required
+                  placeholder="نام خانوادگی شما..."
+                  className={`w-full px-4 py-3 rounded-xl border-2 border-gray-200 focus:border-primary focus:ring-2 focus:ring-primary/20 transition-all outline-none${
+                    touched.lastName && errors.lastName ? " border-red-400" : ""
+                  }`}
+                />
+                <ErrorMessage name="lastName">
+                  {(msg) => (
+                    <div className="text-xs text-red-500 mt-1">{msg}</div>
+                  )}
+                </ErrorMessage>
+              </div>
+            </div>
+
+            <div>
+              <label className="block text-sm font-semibold text-gray-700 mb-2">
+                ایمیل
+              </label>
+              <Field
+                type="email"
+                name="email"
+                required
+                placeholder="ایمیل شما..."
+                className={`w-full px-4 py-3 rounded-xl border-2 border-gray-200 focus:border-primary focus:ring-2 focus:ring-primary/20 transition-all outline-none${
+                  touched.email && errors.email ? " border-red-400" : ""
+                }`}
+              />
+              <ErrorMessage name="email">
+                {(msg) => (
+                  <div className="text-xs text-red-500 mt-1">{msg}</div>
+                )}
+              </ErrorMessage>
+            </div>
+
+            <div>
+              <label className="block text-sm font-semibold text-gray-700 mb-2">
+                عنوان پیام
+              </label>
+              <Field
+                type="text"
+                name="title"
+                required
+                placeholder="عنوان پیام..."
+                className={`w-full px-4 py-3 rounded-xl border-2 border-gray-200 focus:border-primary focus:ring-2 focus:ring-primary/20 transition-all outline-none${
+                  touched.title && errors.title ? " border-red-400" : ""
+                }`}
+              />
+              <ErrorMessage name="title">
+                {(msg) => (
+                  <div className="text-xs text-red-500 mt-1">{msg}</div>
+                )}
+              </ErrorMessage>
+            </div>
+
+            <div>
+              <label className="block text-sm font-semibold text-gray-700 mb-2">
+                پیام شما
+              </label>
+              <Field
+                as="textarea"
+                name="message"
+                rows={6}
+                required
+                placeholder="پیام خود را بنویسید..."
+                className={`w-full px-4 py-3 rounded-xl border-2 border-gray-200 focus:border-primary focus:ring-2 focus:ring-primary/20 transition-all outline-none resize-none${
+                  touched.message && errors.message ? " border-red-400" : ""
+                }`}
+              />
+              <ErrorMessage name="message">
+                {(msg) => (
+                  <div className="text-xs text-red-500 mt-1">{msg}</div>
+                )}
+              </ErrorMessage>
+            </div>
+
+            <motion.button
+              type="submit"
+              disabled={loading}
+              whileHover={{ scale: 1.02 }}
+              whileTap={{ scale: 0.98 }}
+              className="w-full py-4 rounded-xl font-bold text-white bg-gradient-to-r from-primary to-primary/80 shadow-lg hover:shadow-xl transition-all duration-300 flex items-center justify-center gap-2 disabled:opacity-50"
+            >
+              {loading ? (
+                "در حال ارسال..."
+              ) : (
+                <>
+                  <Send className="w-5 h-5" />
+                  ارسال پیام
+                </>
+              )}
+            </motion.button>
+          </Form>
+        )}
+      </Formik>
+    </motion.div>
+  );
+};

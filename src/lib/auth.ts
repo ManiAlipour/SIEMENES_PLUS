@@ -4,7 +4,7 @@ import nodemailer from "nodemailer";
 import User from "@/models/User";
 import { connectDB } from "@/lib/db";
 
-const transporter = nodemailer.createTransport({
+export const transporter = nodemailer.createTransport({
   host: "smtp.gmail.com",
   port: 587,
   auth: {

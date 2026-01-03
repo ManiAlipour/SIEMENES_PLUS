@@ -1,6 +1,6 @@
 "use client";
-import { useState, useRef } from "react";
-import { FiX, FiCamera, FiLink, FiTrash2 } from "react-icons/fi";
+import { useState } from "react";
+import { FiX, FiLink } from "react-icons/fi";
 import toast from "react-hot-toast";
 
 const glass =
@@ -15,52 +15,27 @@ interface AddBlogModalProps {
 
 export default function AddBlogModal({ onClose, onAdd }: AddBlogModalProps) {
   const [title, setTitle] = useState("");
-  const [author, setAuthor] = useState("");
-  const [content, setContent] = useState("");
-  const [tags, setTags] = useState("");
-  const [status, setStatus] = useState("draft");
-  const [mediaType, setMediaType] = useState<"image" | "video">("image");
-  const [coverImage, setCoverImage] = useState<string>("");
-  const [preview, setPreview] = useState<string>("");
+  const [video, setVideo] = useState(""); // فقط لینک ویدیوی آپارات
+  const [status, setStatus] = useState<"draft" | "published">("draft");
   const [loading, setLoading] = useState(false);
-  const fileInputRef = useRef<HTMLInputElement>(null);
-
-  // --- Handle File Upload ---
-  const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    if (!e.target.files?.length) return;
-    const file = e.target.files[0];
-    const reader = new FileReader();
-    reader.onloadend = () => {
-      setPreview(reader.result as string);
-      setCoverImage(reader.result as string);
-    };
-    reader.readAsDataURL(file);
-  };
-
-  const handleDrop = (e: React.DragEvent<HTMLDivElement>) => {
-    e.preventDefault();
-    const file = e.dataTransfer.files[0];
-    if (!file) return;
-    const reader = new FileReader();
-    reader.onloadend = () => {
-      setPreview(reader.result as string);
-      setCoverImage(reader.result as string);
-    };
-    reader.readAsDataURL(file);
-  };
-
-  const clearImage = () => {
-    setPreview("");
-    setCoverImage("");
-  };
 
   // --- Submit Blog ---
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (mediaType === "image" && !coverImage)
-      return toast.error("تصویر الزامی است 📸");
-    if (mediaType === "video" && !coverImage)
-      return toast.error("لینک آپارات الزامی است 🎬");
+    if (!title.trim()) {
+      toast.error("عنوان الزامی است");
+      return;
+    }
+    if (!video.trim()) {
+      toast.error("لینک آپارات الزامی است");
+      return;
+    }
+    // Regex validation (client-side, like backend)
+    const aparatRegex = /^https?:\/\/(www\.)?aparat\.com\/.+/;
+    if (!aparatRegex.test(video)) {
+      toast.error("لینک ویدیو باید آدرس صحیح از Aparat باشد");
+      return;
+    }
 
     try {
       setLoading(true);
@@ -69,14 +44,7 @@ export default function AddBlogModal({ onClose, onAdd }: AddBlogModalProps) {
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
           title,
-          author,
-          content,
-          tags: tags
-            .split(",")
-            .map((t) => t.trim())
-            .filter(Boolean),
-          mediaType,
-          coverImage,
+          video,
           status,
         }),
       });
@@ -91,12 +59,12 @@ export default function AddBlogModal({ onClose, onAdd }: AddBlogModalProps) {
             entityName: title,
           }),
         });
-        toast.success("بلاگ افزوده شد ✨");
+        toast.success("پست افزوده شد ✨");
         onAdd();
         onClose();
       } else {
         const err = await res.json();
-        toast.error(err.error || "خطا در افزودن بلاگ");
+        toast.error(err.error || "خطا در افزودن پست");
       }
     } finally {
       setLoading(false);
@@ -115,7 +83,7 @@ export default function AddBlogModal({ onClose, onAdd }: AddBlogModalProps) {
       >
         {/* --- Header --- */}
         <div className="bg-gradient-to-r from-cyan-500 to-cyan-700 p-4 text-white font-bold text-lg flex justify-between items-center">
-          <span>افزودن بلاگ جدید</span>
+          <span>افزودن پست جدید</span>
           <button onClick={onClose}>
             <FiX size={20} />
           </button>
@@ -125,129 +93,35 @@ export default function AddBlogModal({ onClose, onAdd }: AddBlogModalProps) {
         <div
           className={`${glass} p-6 max-h-[90vh] overflow-y-auto scrollbar-thin scrollbar-thumb-cyan-400/40 scrollbar-track-transparent`}
         >
-          <form onSubmit={handleSubmit} className="space-y-4">
-            {/* Each field with small delay animation */}
+          <form onSubmit={handleSubmit} className="space-y-5">
+
             <div className="animate-fadeIn [animation-delay:0.05s]">
               <input
                 className={inputBase}
-                placeholder="عنوان بلاگ"
+                placeholder="عنوان پست"
                 value={title}
                 onChange={(e) => setTitle(e.target.value)}
                 required
+                maxLength={150}
               />
             </div>
 
             <div className="animate-fadeIn [animation-delay:0.1s]">
+              <div className="flex items-center gap-2 text-slate-700">
+                <FiLink className="text-cyan-600" />
+                <span className="text-sm">لینک ویدیوی آپارات</span>
+              </div>
               <input
-                className={inputBase}
-                placeholder="نویسنده"
-                value={author}
-                onChange={(e) => setAuthor(e.target.value)}
+                className={`${inputBase} mt-2`}
+                placeholder="https://www.aparat.com/v/..."
+                value={video}
+                onChange={(e) => setVideo(e.target.value)}
                 required
               />
-            </div>
-
-            <div className="animate-fadeIn [animation-delay:0.15s]">
-              <textarea
-                className={`${inputBase} min-h-[120px]`}
-                placeholder="محتوای بلاگ"
-                value={content}
-                onChange={(e) => setContent(e.target.value)}
-                required
-              />
-            </div>
-
-            <div className="animate-fadeIn [animation-delay:0.2s]">
-              <input
-                className={inputBase}
-                placeholder="تگ‌ها (با کاما جدا کنید)"
-                value={tags}
-                onChange={(e) => setTags(e.target.value)}
-              />
-            </div>
-
-            {/* --- Media Type --- */}
-            <div className="flex gap-6 mt-2 text-slate-700 animate-fadeIn [animation-delay:0.25s]">
-              <label className="flex items-center gap-2 cursor-pointer">
-                <input
-                  type="radio"
-                  checked={mediaType === "image"}
-                  onChange={() => setMediaType("image")}
-                />
-                <span>عکس</span>
-              </label>
-              <label className="flex items-center gap-2 cursor-pointer">
-                <input
-                  type="radio"
-                  checked={mediaType === "video"}
-                  onChange={() => {
-                    setMediaType("video");
-                    clearImage();
-                  }}
-                />
-                <span>ویدیو (آپارات)</span>
-              </label>
-            </div>
-
-            {/* --- Dropzone or Aparat Link --- */}
-            <div className="animate-fadeIn [animation-delay:0.3s]">
-              {mediaType === "image" ? (
-                <div
-                  onDrop={handleDrop}
-                  onDragOver={(e) => e.preventDefault()}
-                  onClick={() => fileInputRef.current?.click()}
-                  className={`group cursor-pointer rounded-xl border-2 border-dashed border-cyan-400/50 ${glass} h-44 flex flex-col items-center justify-center relative transition-all hover:scale-[1.02]`}
-                >
-                  {preview ? (
-                    <>
-                      <img
-                        src={preview}
-                        alt="preview"
-                        className="w-full h-full object-cover rounded-xl animate-fadeIn"
-                      />
-                      <button
-                        type="button"
-                        onClick={(e) => {
-                          e.stopPropagation();
-                          clearImage();
-                        }}
-                        className="absolute top-2 right-2 bg-white/70 hover:bg-white/90 text-red-500 p-1 rounded-full"
-                      >
-                        <FiTrash2 size={16} />
-                      </button>
-                    </>
-                  ) : (
-                    <div className="flex flex-col items-center gap-1 text-slate-700">
-                      <FiCamera className="text-cyan-600 text-2xl" />
-                      <span className="text-sm">کلیک یا درگ و دراپ</span>
-                    </div>
-                  )}
-                  <input
-                    ref={fileInputRef}
-                    type="file"
-                    accept="image/*"
-                    hidden
-                    onChange={handleFileChange}
-                  />
-                </div>
-              ) : (
-                <div>
-                  <div className="flex items-center gap-2 text-slate-700">
-                    <FiLink className="text-cyan-600" />
-                    <span className="text-sm">لینک ویدیوی آپارات</span>
-                  </div>
-                  <input
-                    className={`${inputBase} mt-2`}
-                    placeholder="https://www.aparat.com/v/..."
-                    value={coverImage}
-                    onChange={(e) => setCoverImage(e.target.value)}
-                  />
-                </div>
-              )}
             </div>
 
             {/* --- Status --- */}
-            <div className="flex gap-4 mt-4 text-slate-700 animate-fadeIn [animation-delay:0.35s]">
+            <div className="flex gap-4 mt-4 text-slate-700 animate-fadeIn [animation-delay:0.15s]">
               <label className="flex items-center gap-2 cursor-pointer">
                 <input
                   type="radio"
@@ -270,9 +144,9 @@ export default function AddBlogModal({ onClose, onAdd }: AddBlogModalProps) {
             <button
               disabled={loading}
               type="submit"
-              className="w-full mt-6 py-3 rounded-xl bg-gradient-to-r from-cyan-500 to-cyan-700 text-white font-semibold shadow-inner shadow-cyan-500/30 hover:shadow-cyan-500 transition-all active:scale-95 animate-fadeIn [animation-delay:0.4s]"
+              className="w-full mt-6 py-3 rounded-xl bg-gradient-to-r from-cyan-500 to-cyan-700 text-white font-semibold shadow-inner shadow-cyan-500/30 hover:shadow-cyan-500 transition-all active:scale-95 animate-fadeIn [animation-delay:0.2s]"
             >
-              {loading ? "در حال ارسال..." : "افزودن بلاگ"}
+              {loading ? "در حال ارسال..." : "افزودن پست"}
             </button>
           </form>
         </div>

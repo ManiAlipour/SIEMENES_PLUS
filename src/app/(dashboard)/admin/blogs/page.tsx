@@ -8,9 +8,8 @@ import AddBlogModal from "@/components/layouts/dash/admin/AddBlogModal";
 interface Blog {
   _id: string;
   title: string;
-  author: string;
-  category: string;
-  isPublished: boolean;
+  video: string;
+  status: "draft" | "published";
   createdAt: string;
 }
 
@@ -32,17 +31,16 @@ export default function AdminBlogsPage() {
       if (data?.data) setBlogs(data.data);
     } catch (err) {
       console.error("Error fetching blogs:", err);
-      toast.error("خطا در دریافت بلاگ‌ها");
+      toast.error("خطا در دریافت پست‌ها");
     } finally {
       setLoading(false);
     }
   };
 
-  // Delete blog handler
+  // Delete handler
   const handleDelete = async (id: string, title: string) => {
-    const confirmed = window.confirm(`آیا از حذف بلاگ "${title}" مطمئن هستید؟`);
+    const confirmed = window.confirm(`آیا از حذف پست "${title}" مطمئن هستید؟`);
     if (!confirmed) return;
-
     try {
       const res = await fetch(`/api/admin/blogs/${id}`, { method: "DELETE" });
       if (res.ok) {
@@ -55,10 +53,10 @@ export default function AdminBlogsPage() {
             entityName: title,
           }),
         });
-        toast.success("بلاگ حذف شد ✅", { className: "font-vazirmatn" });
+        toast.success("پست حذف شد ✅", { className: "font-vazirmatn" });
         fetchBlogs();
       } else {
-        toast.error("خطا در حذف بلاگ");
+        toast.error("خطا در حذف پست");
       }
     } catch (err) {
       console.error(err);
@@ -73,12 +71,12 @@ export default function AdminBlogsPage() {
     <div className="p-6 font-vazirmatn">
       {/* Header */}
       <div className="flex flex-col sm:flex-row justify-between items-center gap-3 mb-6 bg-gradient-to-r from-cyan-500 to-cyan-700 text-white rounded-2xl p-4 shadow-lg backdrop-blur-xl">
-        <h1 className="text-xl font-bold">مدیریت بلاگ‌ها</h1>
+        <h1 className="text-xl font-bold">مدیریت ویدیوها</h1>
         <button
           onClick={() => setIsModalOpen(true)}
           className="flex items-center gap-2 bg-white/20 hover:bg-white/30 text-white rounded-xl px-4 py-2 shadow-md transition-all duration-200 hover:scale-95"
         >
-          <FiPlus /> افزودن بلاگ جدید
+          <FiPlus /> افزودن ویدیو جدید
         </button>
       </div>
 
@@ -88,9 +86,8 @@ export default function AdminBlogsPage() {
           <thead>
             <tr className="bg-gradient-to-r from-cyan-50 via-cyan-100 to-cyan-200 text-slate-700 text-xs font-semibold border-b border-slate-200/50">
               <th className="py-3 px-4 text-left">عنوان</th>
-              <th className="py-3 px-4 text-left">نویسنده</th>
-              <th className="py-3 px-4 text-left">دسته‌بندی</th>
-              <th className="py-3 px-4 text-center">انتشار</th>
+              <th className="py-3 px-4 text-left">لینک ویدیو</th>
+              <th className="py-3 px-4 text-center">وضعیت</th>
               <th className="py-3 px-4 text-center">تاریخ</th>
               <th className="py-3 px-4 text-center pl-6">عملیات</th>
             </tr>
@@ -102,18 +99,21 @@ export default function AdminBlogsPage() {
                   key={blog._id}
                   className="hover:bg-white/90 transition border-b border-slate-200/70"
                 >
-                  <td className="px-4 py-3">{blog.title}</td>
-                  <td className="px-4 py-3">{blog.author}</td>
-                  <td className="px-4 py-3">{blog.category}</td>
+                  <td className="px-4 py-3 break-words max-w-xs">{blog.title}</td>
+                  <td className="px-4 py-3 max-w-xs break-all">
+                    <a href={blog.video} target="_blank" rel="noopener noreferrer" className="text-blue-700 underline text-xs">
+                      {blog.video}
+                    </a>
+                  </td>
                   <td className="px-4 py-3 text-center">
                     <span
                       className={`px-3 py-[3px] text-xs rounded-full font-semibold ${
-                        blog.isPublished
+                        blog.status === "published"
                           ? "bg-green-100 text-green-700"
                           : "bg-red-100 text-red-700"
                       }`}
                     >
-                      {blog.isPublished ? "منتشر شده" : "پیش‌نویس"}
+                      {blog.status === "published" ? "منتشر شده" : "پیش‌نویس"}
                     </span>
                   </td>
                   <td className="px-4 py-3 text-center text-xs text-slate-600">
@@ -142,10 +142,10 @@ export default function AdminBlogsPage() {
             ) : (
               <tr>
                 <td
-                  colSpan={6}
+                  colSpan={5}
                   className="text-center py-6 text-slate-500 text-sm"
                 >
-                  {loading ? "در حال بارگذاری..." : "هیچ بلاگی یافت نشد"}
+                  {loading ? "در حال بارگذاری..." : "هیچ محتوایی یافت نشد"}
                 </td>
               </tr>
             )}
@@ -171,16 +171,18 @@ export default function AdminBlogsPage() {
                 </h3>
                 <span
                   className={`px-2 py-[2px] text-[10px] rounded-full ${
-                    blog.isPublished
+                    blog.status === "published"
                       ? "bg-green-100 text-green-700"
                       : "bg-red-100 text-red-700"
                   }`}
                 >
-                  {blog.isPublished ? "منتشر" : "پیش‌نویس"}
+                  {blog.status === "published" ? "منتشر" : "پیش‌نویس"}
                 </span>
               </div>
-              <p className="text-xs text-slate-600 mb-1">
-                ✍🏻 {blog.author} | 🗂 {blog.category}
+              <p className="text-xs text-slate-600 mb-1 break-all">
+                <a href={blog.video} target="_blank" rel="noopener noreferrer" className="underline text-blue-700">
+                  مشاهده ویدیو
+                </a>
               </p>
               <p className="text-[11px] text-slate-500 mb-3">
                 📅 {new Date(blog.createdAt).toLocaleDateString("fa-IR")}
@@ -204,7 +206,7 @@ export default function AdminBlogsPage() {
           ))
         ) : (
           <div className="text-center text-slate-500 py-6 text-sm">
-            هیچ بلاگی یافت نشد
+            هیچ محتوایی یافت نشد
           </div>
         )}
       </div>

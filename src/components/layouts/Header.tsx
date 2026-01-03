@@ -51,6 +51,8 @@ export default function Header() {
     { name: "خانه", href: "/" },
     { name: "فروشگاه", href: "/shop" },
     { name: "وبلاگ", href: "/blog" },
+    { name: "درباره ما", href: "/about-us" },
+    { name: "تماس با ما", href: "/contact-us" },
   ];
 
   const services = [
