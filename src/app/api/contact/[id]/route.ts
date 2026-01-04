@@ -16,17 +16,15 @@ async function sendEmailToUser(to: string, subject: string, body: string) {
 
 export async function PATCH(
   req: Request,
-  { params }: { params: { id: string } }
+  { params }: { params: Promise<{ id: string }> }
 ) {
-  // صدا زدن adminOnly به صورت تابع و پاس دادن req
   await adminOnly(req);
 
   try {
     await connectDB();
-    const { id } = params;
+    const { id } = await params;
     const data = await req.json();
 
-    // فیلد الزامی برای پاسخ: answer (پاسخ ادمین)
     const { answer } = data;
     if (!answer) {
       return NextResponse.json(

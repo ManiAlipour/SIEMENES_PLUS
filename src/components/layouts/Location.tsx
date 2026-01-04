@@ -111,7 +111,7 @@ export default function LocationSection() {
                     {copied ? "کپی شد!" : "کپی آدرس"}
                   </button>
                   <a
-                    href="https://goo.gl/maps/YOUR_LINK_HERE"
+                    href="https://maps.app.goo.gl/o6YcJ5tgHwaNtraT6"
                     target="_blank"
                     rel="noopener noreferrer"
                     className="flex items-center gap-2 px-4 py-2 rounded-lg bg-cyan-50 text-cyan-700 text-xs font-medium hover:bg-cyan-100 transition-colors"

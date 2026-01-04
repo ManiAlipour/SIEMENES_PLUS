@@ -1,16 +1,13 @@
-import { NextResponse } from "next/server";
+import { NextResponse, NextRequest } from "next/server";
 import Post, { sanitizePost } from "@/models/Post";
 import { connectDB } from "@/lib/db";
 
-interface RouteParams {
-  params: { id: string };
-}
-
+// Make PATCH and DELETE compatible with Next.js RouteHandler signature
 export async function DELETE(
-  req: Request,
-  { params }: RouteParams
+  request: NextRequest,
+  context: { params: Promise<{ id: string }> }
 ) {
-  const { id } = params;
+  const { id } = await context.params;
   try {
     await connectDB();
     const deleted = await Post.findByIdAndDelete(id);
@@ -24,33 +21,23 @@ export async function DELETE(
 }
 
 export async function PATCH(
-  req: Request,
-  { params }: RouteParams
+  request: NextRequest,
+  context: { params: Promise<{ id: string }> }
 ) {
-  const { id } = params;
+  const { id } = await context.params;
   try {
     await connectDB();
-    const body = await req.json();
+    const body = await request.json();
 
     const { title, video, status } = body;
 
     if (typeof title !== "string" || !title.trim()) {
-      return NextResponse.json(
-        { error: "عنوان الزامی است" },
-        { status: 400 }
-      );
+      return NextResponse.json({ error: "عنوان الزامی است" }, { status: 400 });
     }
     if (typeof video !== "string" || !video.trim()) {
-      return NextResponse.json(
-        { error: "ویدیو الزامی است" },
-        { status: 400 }
-      );
+      return NextResponse.json({ error: "ویدیو الزامی است" }, { status: 400 });
     }
-    if (
-      status &&
-      status !== "draft" &&
-      status !== "published"
-    ) {
+    if (status && status !== "draft" && status !== "published") {
       return NextResponse.json(
         { error: "مقدار وضعیت نامعتبر است" },
         { status: 400 }
@@ -70,7 +57,7 @@ export async function PATCH(
       {
         title,
         video,
-        ...(status ? { status } : {})
+        ...(status ? { status } : {}),
       },
       { new: true }
     );
