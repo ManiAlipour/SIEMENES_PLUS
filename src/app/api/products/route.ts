@@ -1,6 +1,7 @@
 import { NextResponse } from "next/server";
 import { connectDB } from "@/lib/db";
 import Product from "@/models/Product";
+import Category from "@/models/Category";
 
 export const dynamic = "force-dynamic";
 export const runtime = "nodejs";
@@ -15,17 +16,31 @@ export async function GET(req: Request) {
     const limit = Number(searchParams.get("limit") || 10);
     const page = Number(searchParams.get("page") || 1);
     const modelNumber = searchParams.get("modelNumber");
-    const category = searchParams.get("category");
+    let category = searchParams.get("category");
     const isFeatured = searchParams.get("isFeatured");
     const sort = searchParams.get("sort") || "-createdAt";
 
     const filter: any = {};
+
+    if (category && /^[a-f\d]{24}$/i.test(category.trim())) {
+      const catDoc = await Category.findById(category.trim());
+      if (catDoc && catDoc.slug) {
+        category = catDoc.slug;
+      }
+    }
 
     if (search) {
       const searchRegex = new RegExp(
         search.replace(/[.*+?^${}()|[\]\\]/g, "\\$&"),
         "i"
       );
+
+      let idOrSlugConditions: any[] = [];
+      if (/^[a-f\d]{24}$/i.test(search.trim())) {
+        idOrSlugConditions.push({ _id: search.trim() });
+      }
+      idOrSlugConditions.push({ slug: search.trim() });
+
       filter.$or = [
         { name: { $regex: searchRegex } },
         { slug: { $regex: searchRegex } },
@@ -35,6 +50,7 @@ export async function GET(req: Request) {
         { "specifications.key": { $regex: searchRegex } },
         { "specifications.value": { $regex: searchRegex } },
         { category: { $regex: searchRegex } },
+        ...idOrSlugConditions,
       ];
     }
 

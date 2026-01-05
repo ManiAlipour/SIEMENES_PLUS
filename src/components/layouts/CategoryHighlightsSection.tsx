@@ -7,6 +7,14 @@ import Link from "next/link";
 import { FiArrowLeft, FiTrendingUp, FiLoader } from "react-icons/fi";
 import { motion } from "framer-motion";
 
+// Helper: returns shop URL only if category has products, otherwise undefined
+function getShopCategoryUrl(category: { id: string; products: Array<any> }) {
+  if (category.products && category.products.length > 0) {
+    return `/shop?category=${category.id}`;
+  }
+  return undefined;
+}
+
 export default function CategoryHighlightsSection() {
   const { categories, loading, error } = useCategoryHighlights();
 
@@ -147,83 +155,124 @@ export default function CategoryHighlightsSection() {
             </p>
           </motion.div>
         ) : (
-          categories.map((category, categoryIndex) => (
-            <motion.div
-              key={category.id}
-              initial={{ opacity: 0, y: 30 }}
-              whileInView={{ opacity: 1, y: 0 }}
-              viewport={{ once: true }}
-              transition={{ duration: 0.5, delay: categoryIndex * 0.1 }}
-              className="mb-16 md:mb-20 last:mb-0"
-            >
-              {/* Category header */}
-              <div className="flex flex-col xs:flex-row items-start xs:items-center justify-between mb-6 md:mb-8 gap-3 xs:gap-4">
-                <div className="min-w-0 flex-1">
-                  <h3 className="text-lg xs:text-xl md:text-2xl font-bold text-gray-900 mb-1 xs:mb-2 truncate">
-                    {category.title}
-                  </h3>
-                  <p className="text-xs xs:text-sm text-gray-600">
-                    {category.products.length} محصول در این دسته
-                  </p>
-                </div>
-                <Link
-                  href={`/shop?category=${category.id}`}
-                  className="inline-flex items-center gap-2 bg-gradient-to-r from-primary/10 to-primary/20 hover:from-primary hover:to-primary text-primary hover:text-white px-4 xs:px-5 py-2 xs:py-2.5 rounded-xl font-semibold transition-all duration-300 shadow-md hover:shadow-lg hover:scale-105 border border-primary/20 hover:border-primary text-sm xs:text-base whitespace-nowrap"
-                >
-                  <span>مشاهده همه</span>
-                  <FiArrowLeft className="w-3 h-3 xs:w-4 xs:h-4" />
-                </Link>
-              </div>
+          categories.map((category, categoryIndex) => {
+            const shopUrl = getShopCategoryUrl(category);
 
-              {/* Horizontal scrollable products list */}
-              <div className="relative">
-                <div
-                  className="flex gap-3 md:gap-4 items-stretch overflow-y-hidden overflow-x-auto 
-                my-auto snap-x snap-mandatory scroll-smooth pb-4 
-                scrollbar-thin scrollbar-thumb-primary scrollbar-track-gray-100"
-                >
-                  {category.products.length === 0 ? (
-                    <motion.div
-                      initial={{ opacity: 0, scale: 0.9 }}
-                      whileInView={{ opacity: 1, scale: 1 }}
-                      viewport={{ once: true }}
-                      transition={{ duration: 0.4 }}
-                      className="flex items-center justify-center min-w-[220px] md:min-w-[260px] h-80 bg-gray-50 rounded-2xl border border-gray-200"
+            // maximum 4 product preview for compactness and true "همه"
+            const previewCount = category.products.length > 4 ? 4 : category.products.length;
+            const previewProducts = category.products.slice(0, previewCount);
+
+            return (
+              <motion.div
+                key={category.id}
+                initial={{ opacity: 0, y: 30 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                viewport={{ once: true }}
+                transition={{ duration: 0.5, delay: categoryIndex * 0.1 }}
+                className="mb-16 md:mb-20 last:mb-0"
+              >
+                {/* Category header */}
+                <div className="flex flex-col xs:flex-row items-start xs:items-center justify-between mb-6 md:mb-8 gap-3 xs:gap-4">
+                  <div className="min-w-0 flex-1">
+                    <h3 className="text-lg xs:text-xl md:text-2xl font-bold text-gray-900 mb-1 xs:mb-2 truncate">
+                      {category.title}
+                    </h3>
+                    <p className="text-xs xs:text-sm text-gray-600 whitespace-nowrap">
+                      {category.products.length} محصول در این دسته
+                    </p>
+                  </div>
+                  {/* Better UX for mobile: Button is more touch-friendly and fixed for overflow, disabled clearly */}
+                  {shopUrl ? (
+                    <Link
+                      href={shopUrl}
+                      className="inline-flex items-center gap-2 bg-gradient-to-r from-primary/10 to-primary/20 hover:from-primary hover:to-primary text-primary hover:text-white px-4 xs:px-5 py-2 xs:py-2.5 rounded-xl font-semibold transition-all duration-300 shadow-md hover:shadow-lg hover:scale-105 border border-primary/20 hover:border-primary text-sm xs:text-base whitespace-nowrap
+                        focus:outline-none focus-visible:ring-2 focus-visible:ring-primary"
+                      tabIndex={0}
+                      aria-label={`مشاهده همه‌ی محصولات دسته ${category.title}`}
                     >
-                      <div className="text-center">
-                        <FiTrendingUp className="w-12 h-12 text-gray-400 mx-auto mb-4" />
-                        <p className="text-gray-500 font-medium">
-                          هیچ محصولی یافت نشد
-                        </p>
-                      </div>
-                    </motion.div>
+                      <span>مشاهده همه</span>
+                      <FiArrowLeft className="w-3 h-3 xs:w-4 xs:h-4" />
+                    </Link>
                   ) : (
-                    category.products.map((product, productIndex) => (
-                      <motion.div
-                        key={product.id}
-                        initial={{ opacity: 0, x: 50 }}
-                        whileInView={{ opacity: 1, x: 0 }}
-                        viewport={{ once: true }}
-                        transition={{
-                          duration: 0.4,
-                          delay: productIndex * 0.1,
-                        }}
-                        className="max-w-[150px] xs:max-w-[200px] md:max-w-[220px] lg:max-w-[240px] snap-start shrink-0"
-                      >
-                        <ProductCard
-                          id={product.id}
-                          name={product.name}
-                          image={product.image}
-                          price={product.price}
-                          className="h-full"
-                        />
-                      </motion.div>
-                    ))
+                    <span
+                      className="inline-flex items-center gap-2 bg-gray-100 text-gray-400 px-4 xs:px-5 py-2 xs:py-2.5 rounded-xl font-semibold text-sm xs:text-base cursor-not-allowed select-none"
+                      tabIndex={-1}
+                      aria-disabled="true"
+                      title="محصولی برای نمایش وجود ندارد"
+                    >
+                      <span>مشاهده همه</span>
+                      <FiArrowLeft className="w-3 h-3 xs:w-4 xs:h-4" />
+                    </span>
                   )}
                 </div>
-              </div>
-            </motion.div>
-          ))
+
+                {/* Horizontal scrollable products list */}
+                <div className="relative">
+                  <div
+                    className="flex gap-3 md:gap-4 items-stretch overflow-x-auto overscroll-x-contain
+                  snap-x snap-mandatory scroll-smooth pb-4 scrollbar-thin scrollbar-thumb-primary scrollbar-track-gray-100
+                  px-1 -mx-1"
+                  >
+                    {category.products.length === 0 ? (
+                      <motion.div
+                        initial={{ opacity: 0, scale: 0.9 }}
+                        whileInView={{ opacity: 1, scale: 1 }}
+                        viewport={{ once: true }}
+                        transition={{ duration: 0.4 }}
+                        className="flex items-center justify-center min-w-[220px] md:min-w-[260px] h-80 bg-gray-50 rounded-2xl border border-gray-200"
+                      >
+                        <div className="text-center">
+                          <FiTrendingUp className="w-12 h-12 text-gray-400 mx-auto mb-4" />
+                          <p className="text-gray-500 font-medium">
+                            هیچ محصولی یافت نشد
+                          </p>
+                        </div>
+                      </motion.div>
+                    ) : (
+                      <>
+                        {previewProducts.map((product, productIndex) => (
+                          <motion.div
+                            key={product.id}
+                            initial={{ opacity: 0, x: 50 }}
+                            whileInView={{ opacity: 1, x: 0 }}
+                            viewport={{ once: true }}
+                            transition={{
+                              duration: 0.4,
+                              delay: productIndex * 0.1,
+                            }}
+                            className="max-w-[150px] xs:max-w-[200px] md:max-w-[220px] lg:max-w-[240px] snap-start shrink-0 flex"
+                          >
+                            <ProductCard
+                              id={product.id}
+                              name={product.name}
+                              image={product.image}
+                              price={product.price}
+                              className="h-full"
+                            />
+                          </motion.div>
+                        ))}
+                        {category.products.length > previewCount && shopUrl && (
+                          // Show a large, visually distinct "مشاهده همه" block at the end of scrollable list for mobile UX
+                          <Link
+                            href={shopUrl}
+                            className="flex flex-col items-center justify-center min-w-[120px] xs:min-w-[150px] md:min-w-[160px] h-80 bg-primary/10 text-primary rounded-2xl font-bold text-base xs:text-lg transition-all duration-300 hover:bg-primary hover:text-white hover:scale-105 shadow group mx-1 snap-start shrink-0"
+                            tabIndex={0}
+                            aria-label={`نمایش همه محصولات دسته ${category.title}`}
+                          >
+                            <span className="mb-2 text-sm xs:text-base">+{category.products.length - previewCount} محصول بیشتر</span>
+                            <div className="flex items-center gap-2">
+                              <span>مشاهده همه</span>
+                              <FiArrowLeft className="w-4 h-4 transition-transform group-hover:translate-x-1" />
+                            </div>
+                          </Link>
+                        )}
+                      </>
+                    )}
+                  </div>
+                </div>
+              </motion.div>
+            );
+          })
         )}
       </div>
     </section>

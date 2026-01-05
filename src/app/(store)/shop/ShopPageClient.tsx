@@ -1,6 +1,6 @@
 "use client";
 
-import { Suspense, useState, useMemo } from "react";
+import { Suspense, useState, useMemo, useEffect, useRef } from "react";
 import { useSearchParams, useRouter } from "next/navigation";
 import dynamic from "next/dynamic";
 import { useProducts } from "@/hooks/useProducts";
@@ -47,6 +47,39 @@ export default function ShopPageClient() {
     page,
     limit: 12,
   });
+
+  // Avoid updating router in render: do it in useEffect
+  const didCategoryRedirect = useRef(false);
+  useEffect(() => {
+    // فقط اگر کتگوری هست و سرچ وجود ندارد و محصول یافت نشده و خطایی هم نیست
+    // و قبلا ریدایرکت نشده است (با کمک ref برای جلوگیری از loop)
+    if (
+      !loading &&
+      category &&
+      (!products || products.length === 0) &&
+      !search &&
+      !error &&
+      typeof window !== "undefined" &&
+      !didCategoryRedirect.current
+    ) {
+      didCategoryRedirect.current = true;
+      const params = new URLSearchParams(searchParams.toString());
+      params.delete("category");
+      router.replace(`/shop?${params.toString()}`, { scroll: false });
+    }
+    // بازنشانی ref برای زمانی که دسته تغییر کند (تا دفعات بعد کار کند)
+    if (!category) {
+      didCategoryRedirect.current = false;
+    }
+  }, [
+    loading,
+    category,
+    search,
+    error,
+    products,
+    searchParams,
+    router
+  ]);
 
   const updateParams = (updates: Record<string, any>) => {
     const params = new URLSearchParams(searchParams.toString());
@@ -303,7 +336,22 @@ export default function ShopPageClient() {
                           محصول موجود
                         </>
                       ) : (
-                        "محصولی یافت نشد"
+                        category && !search && !error ? (
+                          // وضعیت خاص: فیلتر کتگوری وجود دارد اما هیچ محصولی نیست، پیغام کاربرپسندتری نمایش بده
+                          <span>
+                            هیچ محصولی در این دسته یافت نشد.
+                            <br />
+                            <button
+                              className="underline text-primary font-bold mt-2"
+                              onClick={() => updateParams({ category: "" })}
+                              type="button"
+                            >
+                              مشاهده همه محصولات
+                            </button>
+                          </span>
+                        ) : (
+                          "محصولی یافت نشد"
+                        )
                       )}
                     </p>
                   </div>

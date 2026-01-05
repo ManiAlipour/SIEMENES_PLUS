@@ -4,7 +4,6 @@ import Contact from "@/models/Contact";
 import { adminOnly } from "@/lib/middlewares/adminOnly";
 import { transporter } from "@/lib/auth";
 
-// تابع واقعی ارسال ایمیل با nodemailer
 async function sendEmailToUser(to: string, subject: string, body: string) {
   await transporter.sendMail({
     from: `"Control Room" <${process.env.SMTP_USER}>`,
@@ -33,19 +32,16 @@ export async function PATCH(
       );
     }
 
-    // پیدا کردن پیام کاربر
     const contact = await Contact.findById(id);
     if (!contact) {
       return NextResponse.json({ error: "پیام پیدا نشد." }, { status: 404 });
     }
 
-    // تغییر وضعیت پیام به answered و ذخیره پاسخ
     contact.status = "answered";
     contact.answer = answer;
     contact.answeredAt = new Date();
     await contact.save();
 
-    // ایمیل زدن به کاربر
     const emailSubject = `پاسخ به پیام شما: ${contact.title}`;
     const emailBody = `
       <p>کاربر گرامی ${contact.firstName} ${contact.lastName},</p>
