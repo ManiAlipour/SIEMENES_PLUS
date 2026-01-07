@@ -9,7 +9,12 @@ export interface PostCardModel {
 }
 
 export default function BlogCard({ post }: { post: PostCardModel }) {
-  const { _id, title, video, createdAt } = post;
+  const { _id, title, video, status, createdAt } = post;
+
+  // پست‌های پیشنویس نمایش داده نشوند
+  if (status === "draft") {
+    return null;
+  }
 
   return (
     <article
@@ -26,8 +31,10 @@ export default function BlogCard({ post }: { post: PostCardModel }) {
             <AparatPlayer videoUrl={video} />
           </div>
         ) : (
-          <div className="flex items-center justify-center w-full h-full 
-          bg-slate-200 text-slate-600 text-lg">
+          <div
+            className="flex items-center justify-center w-full h-full 
+          bg-slate-200 text-slate-600 text-lg"
+          >
             ویدیو ندارد
           </div>
         )}

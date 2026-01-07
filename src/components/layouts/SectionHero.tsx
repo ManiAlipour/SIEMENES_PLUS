@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import Image from "next/image";
 import { motion, AnimatePresence, Variants } from "framer-motion";
 import { FiArrowLeft, FiChevronLeft, FiChevronRight } from "react-icons/fi";
@@ -58,7 +58,48 @@ const accentMap = {
   amber: "text-amber-400 bg-amber-600 hover:bg-amber-500 border-amber-500/30",
 };
 
-// For better laptop UX/UI, increase paddings, widen text area, add image card shadow, soften overlays, center content vertically with more space. Add step dots as indicators.
+// Fix for variable height: measure tallest slide once and apply its height
+function useMaxSlideHeight(slides: Slide[]) {
+  const containerRef = useRef<HTMLDivElement | null>(null);
+  const [maxHeight, setMaxHeight] = useState<number | undefined>(undefined);
+
+  useEffect(() => {
+    // Only run on client, measure all slides once
+    if (!containerRef.current) return;
+
+    // Create a hidden container to measure all slides and get their heights
+    const measurer = document.createElement("div");
+    measurer.style.position = "absolute";
+    measurer.style.visibility = "hidden";
+    measurer.style.pointerEvents = "none";
+    measurer.style.width = containerRef.current.offsetWidth + "px";
+    measurer.style.fontSize = getComputedStyle(containerRef.current).fontSize;
+    measurer.style.zIndex = "-9999";
+    document.body.appendChild(measurer);
+
+    let max = 0;
+    for (const slide of slides) {
+      const slideDiv = document.createElement("div");
+      slideDiv.style.display = "block";
+      slideDiv.style.padding = "24px 16px"; // match p-6 px-4 styles (sm/md/larger may slightly differ, but fallback)
+      slideDiv.style.boxSizing = "border-box";
+      // crude approximation of slide title and description for height calculation:
+      slideDiv.innerHTML = `
+        <span style="display:block;margin-bottom:0.8em;font-size:0.85em;font-weight:700">${slide.tag}</span>
+        <span style="display:block;margin-bottom:0.34em;font-size:2em;font-weight:900">${slide.title} <span style="font-weight:900">${slide.highlight}</span></span>
+        <span style="display:block;margin-bottom:0.7em;font-size:1.04em;font-weight:400;">${slide.description}</span>
+        <span style="display:block;height:44px"></span>
+      `;
+      measurer.appendChild(slideDiv);
+      max = Math.max(max, slideDiv.offsetHeight);
+    }
+    setMaxHeight(max === 0 ? undefined : max + 24); // extra padding
+    document.body.removeChild(measurer);
+  }, [slides]);
+
+  return { containerRef, maxHeight };
+}
+
 export default function HeroSection() {
   const [index, setIndex] = useState(0);
   const [paused, setPaused] = useToggle(false);
@@ -88,6 +129,9 @@ export default function HeroSection() {
       transition: { duration: 0.7, ease: [0.23, 1, 0.32, 1] },
     },
   };
+
+  // ---- Height fix ----
+  const { containerRef, maxHeight } = useMaxSlideHeight(SLIDES);
 
   return (
     <section
@@ -161,9 +205,11 @@ export default function HeroSection() {
             style={{
               boxShadow:
                 "0 8px 40px 0 rgba(18,32,86,0.14), 0 1.5px 7px 0 rgba(0,0,0,0.07)",
-              minHeight: "410px",
+              minHeight: maxHeight ? `${maxHeight}px` : "410px",
               backdropFilter: "blur(7px)",
+              transition: "min-height 0.26s cubic-bezier(.41,1.21,.54,1)", // fix jumpy effect
             }}
+            ref={containerRef}
           >
             {/* Tag */}
             <motion.div variants={textVariants} className="mb-4">
@@ -220,6 +266,31 @@ export default function HeroSection() {
               {slide.description}
             </motion.p>
 
+            {/* === Step Dots for Visual Feedback - FIXED: place inside content, with spacing === */}
+            <div className="flex justify-center w-full my-3 order-last">
+              <div className="flex gap-2">
+                {SLIDES.map((_, i) => (
+                  <button
+                    key={i}
+                    onClick={() => setIndex(i)}
+                    aria-label={`رفتن به اسلاید ${i + 1}`}
+                    tabIndex={i === index ? -1 : 0}
+                    className={`w-2.5 h-2.5 rounded-full border-2 transition
+                      ${
+                        i === index
+                          ? "bg-white border-white/80 shadow scale-110"
+                          : "bg-white/30 border-white/60 hover:bg-white/60"
+                      }
+                      focus:outline-none`}
+                    style={{
+                      outline: "none",
+                      transition: "all 0.16s cubic-bezier(.33,1.19,.63,1)",
+                    }}
+                  />
+                ))}
+              </div>
+            </div>
+
             {/* CTA: bigger, more contrast on laptop */}
             <motion.div
               variants={textVariants}
@@ -245,29 +316,6 @@ export default function HeroSection() {
             </motion.div>
           </motion.div>
         </AnimatePresence>
-      </div>
-
-      {/* === Step Dots for Visual Feedback on Laptop === */}
-      <div className="absolute bottom-20 left-0 right-0 z-20 flex justify-center">
-        <div className="flex gap-2">
-          {SLIDES.map((_, i) => (
-            <button
-              key={i}
-              onClick={() => setIndex(i)}
-              aria-label={`رفتن به اسلاید ${i + 1}`}
-              className={`w-3 h-3 my-6 rounded-full border-2 transition
-                ${
-                  i === index
-                    ? "bg-white border-white/80 shadow-md scale-110"
-                    : "bg-white/30 border-white/60 hover:bg-white/60"
-                }
-                `}
-              style={{
-                outline: "none",
-              }}
-            />
-          ))}
-        </div>
       </div>
 
       {/* === Controls: larger, floating a bit higher on laptop === */}

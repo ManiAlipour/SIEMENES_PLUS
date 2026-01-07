@@ -4,6 +4,8 @@ import { useEffect, useState } from "react";
 import { FiEdit2, FiTrash2, FiPlus } from "react-icons/fi";
 import toast from "react-hot-toast";
 import AddBlogModal from "@/components/layouts/dash/admin/AddBlogModal";
+import EditBlogCard from "@/components/layouts/dash/admin/EditBlogCard";
+import DeleteBlogConfirmModal from "@/components/layouts/dash/admin/DeleteBlogConfirmModal"; // اضافه شد
 
 interface Blog {
   _id: string;
@@ -16,7 +18,14 @@ interface Blog {
 export default function AdminBlogsPage() {
   const [blogs, setBlogs] = useState<Blog[]>([]);
   const [isModalOpen, setIsModalOpen] = useState(false);
+  const [isEditOpen, setIsEditOpen] = useState(false);
+  const [editBlog, setEditBlog] = useState<Blog | null>(null);
   const [loading, setLoading] = useState(true);
+
+  // For Delete Modal
+  const [deleteBlogId, setDeleteBlogId] = useState<string | null>(null);
+  const [deleteBlogTitle, setDeleteBlogTitle] = useState<string | null>(null);
+  const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
 
   // Fetch blogs on mount
   useEffect(() => {
@@ -26,7 +35,7 @@ export default function AdminBlogsPage() {
   const fetchBlogs = async () => {
     try {
       setLoading(true);
-      const res = await fetch("/api/admin/blogs");
+      const res = await fetch("/api/blogs");
       const data = await res.json();
       if (data?.data) setBlogs(data.data);
     } catch (err) {
@@ -37,31 +46,36 @@ export default function AdminBlogsPage() {
     }
   };
 
-  // Delete handler
-  const handleDelete = async (id: string, title: string) => {
-    const confirmed = window.confirm(`آیا از حذف پست "${title}" مطمئن هستید؟`);
-    if (!confirmed) return;
-    try {
-      const res = await fetch(`/api/admin/blogs/${id}`, { method: "DELETE" });
-      if (res.ok) {
-        await fetch("/api/admin/actions", {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({
-            action: "DELETE_BLOG",
-            entity: "blog",
-            entityName: title,
-          }),
-        });
-        toast.success("پست حذف شد ✅", { className: "font-vazirmatn" });
-        fetchBlogs();
-      } else {
-        toast.error("خطا در حذف پست");
-      }
-    } catch (err) {
-      console.error(err);
-      toast.error("خطا در ارتباط با سرور");
-    }
+  // use DeleteBlogConfirmModal instead of inline delete
+  const openDeleteModal = (id: string, title: string) => {
+    setDeleteBlogId(id);
+    setDeleteBlogTitle(title);
+    setIsDeleteModalOpen(true);
+  };
+  const closeDeleteModal = () => {
+    setIsDeleteModalOpen(false);
+    setDeleteBlogId(null);
+    setDeleteBlogTitle(null);
+  };
+  const handleDeleted = () => {
+    fetchBlogs();
+    closeDeleteModal();
+  };
+
+  // Edit handlers
+  const handleEditClick = (blog: Blog) => {
+    setEditBlog(blog);
+    setIsEditOpen(true);
+  };
+
+  const handleEditClose = () => {
+    setIsEditOpen(false);
+    setEditBlog(null);
+  };
+
+  const handleEdited = () => {
+    fetchBlogs();
+    handleEditClose();
   };
 
   // ----------------------------
@@ -85,8 +99,8 @@ export default function AdminBlogsPage() {
         <table className="min-w-full border border-slate-200 rounded-xl overflow-hidden bg-white/70 backdrop-blur-md shadow-[0_4px_18px_rgba(0,0,0,0.05)] text-slate-700">
           <thead>
             <tr className="bg-gradient-to-r from-cyan-50 via-cyan-100 to-cyan-200 text-slate-700 text-xs font-semibold border-b border-slate-200/50">
-              <th className="py-3 px-4 text-left">عنوان</th>
-              <th className="py-3 px-4 text-left">لینک ویدیو</th>
+              <th className="py-3 px-4 text-right">عنوان</th>
+              <th className="py-3 px-4 text-right">لینک ویدیو</th>
               <th className="py-3 px-4 text-center">وضعیت</th>
               <th className="py-3 px-4 text-center">تاریخ</th>
               <th className="py-3 px-4 text-center pl-6">عملیات</th>
@@ -99,9 +113,16 @@ export default function AdminBlogsPage() {
                   key={blog._id}
                   className="hover:bg-white/90 transition border-b border-slate-200/70"
                 >
-                  <td className="px-4 py-3 break-words max-w-xs">{blog.title}</td>
+                  <td className="px-4 py-3 break-words max-w-xs">
+                    {blog.title}
+                  </td>
                   <td className="px-4 py-3 max-w-xs break-all">
-                    <a href={blog.video} target="_blank" rel="noopener noreferrer" className="text-blue-700 underline text-xs">
+                    <a
+                      href={blog.video}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="text-blue-700 underline text-xs"
+                    >
                       {blog.video}
                     </a>
                   </td>
@@ -121,17 +142,13 @@ export default function AdminBlogsPage() {
                   </td>
                   <td className="px-4 py-3 flex justify-center gap-2">
                     <button
-                      onClick={() =>
-                        toast("ویرایش در آینده فعال میشود", {
-                          className: "font-vazirmatn",
-                        })
-                      }
+                      onClick={() => handleEditClick(blog)}
                       className="p-2 text-cyan-600 rounded-lg hover:bg-cyan-50 transition-all duration-200 hover:scale-95 hover:opacity-80"
                     >
                       <FiEdit2 size={16} />
                     </button>
                     <button
-                      onClick={() => handleDelete(blog._id, blog.title)}
+                      onClick={() => openDeleteModal(blog._id, blog.title)}
                       className="p-2 text-red-500 rounded-lg hover:bg-red-50 transition-all duration-200 hover:scale-95 hover:opacity-80"
                     >
                       <FiTrash2 size={16} />
@@ -180,7 +197,12 @@ export default function AdminBlogsPage() {
                 </span>
               </div>
               <p className="text-xs text-slate-600 mb-1 break-all">
-                <a href={blog.video} target="_blank" rel="noopener noreferrer" className="underline text-blue-700">
+                <a
+                  href={blog.video}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="underline text-blue-700"
+                >
                   مشاهده ویدیو
                 </a>
               </p>
@@ -190,13 +212,13 @@ export default function AdminBlogsPage() {
 
               <div className="flex justify-end gap-3">
                 <button
-                  onClick={() => toast("ویرایش در آینده فعال میشود")}
+                  onClick={() => handleEditClick(blog)}
                   className="p-2 text-cyan-600 rounded-lg hover:bg-cyan-50 transition-all duration-200"
                 >
                   <FiEdit2 size={15} />
                 </button>
                 <button
-                  onClick={() => handleDelete(blog._id, blog.title)}
+                  onClick={() => openDeleteModal(blog._id, blog.title)}
                   className="p-2 text-red-500 rounded-lg hover:bg-red-50 transition-all duration-200"
                 >
                   <FiTrash2 size={15} />
@@ -216,6 +238,25 @@ export default function AdminBlogsPage() {
         <AddBlogModal
           onClose={() => setIsModalOpen(false)}
           onAdd={fetchBlogs}
+        />
+      )}
+
+      {isEditOpen && editBlog && (
+        <div className="fixed inset-0 z-50 bg-black/40 flex items-center justify-center">
+          <EditBlogCard
+            blog={editBlog}
+            onClose={handleEditClose}
+            onEdit={handleEdited}
+          />
+        </div>
+      )}
+
+      {isDeleteModalOpen && deleteBlogId && deleteBlogTitle && (
+        <DeleteBlogConfirmModal
+          blogId={deleteBlogId}
+          blogTitle={deleteBlogTitle}
+          onClose={closeDeleteModal}
+          onDeleted={handleDeleted}
         />
       )}
     </div>

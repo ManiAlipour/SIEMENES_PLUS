@@ -1,41 +1,42 @@
 "use client";
-import { useEffect, useRef } from "react";
+function extractAparatVideoId(url: string): string | null {
+  const match = url.match(/aparat\.com\/v\/([a-zA-Z0-9_-]+)/i);
+  return match ? match[1] : null;
+}
 
-// Aparat player component with default controls
+function toAparatIframeUrl(videoOrEmbedUrl: string): string | null {
+  if (!videoOrEmbedUrl) return null;
+  if (videoOrEmbedUrl.includes("/v/")) {
+    const vid = extractAparatVideoId(videoOrEmbedUrl);
+    if (vid)
+      return `https://www.aparat.com/video/video/embed/videohash/${vid}/vt/frame`;
+  }
+  if (
+    videoOrEmbedUrl.includes("aparat.com/video/video/embed/videohash/")
+  ) {
+    return videoOrEmbedUrl;
+  }
+
+  return null;
+}
+
 export default function AparatPlayer({
   videoUrl,
-  // thumbnail,
+  thumbnail,
 }: {
   videoUrl: string;
   thumbnail?: string;
 }) {
-  const containerRef = useRef<HTMLDivElement>(null);
-  const iframeRef = useRef<HTMLIFrameElement>(null);
+  const embedUrl = toAparatIframeUrl(videoUrl);
 
-  useEffect(() => {
-    // Mount iframe only on client after first interaction
-    const container = containerRef.current;
-    if (!container) return;
-
-    const handleClick = () => {
-      // Create iframe if it doesn't exist yet
-      if (!iframeRef.current) {
-        const iframe = document.createElement("iframe");
-        iframe.src = videoUrl;
-        iframe.title = "ویدیو آپارات";
-        iframe.allow = "autoplay; fullscreen";
-        iframe.loading = "lazy";
-        iframe.className =
-          "w-full h-full rounded-lg border border-gray-200 bg-[#f7f9fb]";
-        iframeRef.current = iframe;
-        container.innerHTML = ""; // clear placeholder
-        container.appendChild(iframe);
-      }
-    };
-
-    container.addEventListener("click", handleClick);
-    return () => container.removeEventListener("click", handleClick);
-  }, [videoUrl]);
+  if (!embedUrl) {
+    // اگر نتونستیم لینک را بسازیم/استخراج کنیم
+    return (
+      <div className="flex items-center justify-center w-full h-full bg-slate-200 text-red-600 text-sm rounded-lg border border-gray-200">
+        لینک ویدیوی آپارات معتبر نیست
+      </div>
+    );
+  }
 
   return (
     <div
@@ -43,11 +44,12 @@ export default function AparatPlayer({
              border border-gray-200 hover:shadow-md transition-all duration-300"
     >
       <iframe
-        src={videoUrl}
+        src={embedUrl}
         title="ویدیو آپارات"
         loading="lazy"
         allow="autoplay; fullscreen"
         className="absolute inset-0 w-full h-full rounded-lg"
+        allowFullScreen
       />
     </div>
   );

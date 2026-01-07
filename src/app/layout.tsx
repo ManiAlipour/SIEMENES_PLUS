@@ -14,6 +14,7 @@ export const metadata: Metadata = {
   title: "زیمنس پلاس | اتوماسیون و قطعات صنعتی",
   description:
     "فروش و پشتیبانی تخصصی تجهیزات اتوماسیون صنعتی زیمنس و ارائه راهکارهای مهندسی. PLC، اینورتر، HMI و قطعات صنعتی.",
+
   keywords: [
     "زیمنس",
     "PLC",
@@ -29,7 +30,7 @@ export const metadata: Metadata = {
   openGraph: {
     type: "website",
     locale: "fa_IR",
-    url: "https://site-mohandesi.ir",
+    url: "https://siemenes-plus.ir",
     siteName: "زیمنس پلاس",
     title: "زیمنس پلاس | اتوماسیون و قطعات صنعتی",
     description:
@@ -40,6 +41,14 @@ export const metadata: Metadata = {
         width: 1200,
         height: 630,
         alt: "زیمنس پلاس",
+      },
+    ],
+  },
+  icons: {
+    icon: [
+      {
+        url: "/images/logo.jpg",
+        href: "/images/logo.jpg",
       },
     ],
   },

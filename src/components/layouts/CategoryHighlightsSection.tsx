@@ -206,12 +206,18 @@ export default function CategoryHighlightsSection() {
                   )}
                 </div>
 
-                {/* Horizontal scrollable products list */}
+                {/* Horizontal static products list: NO vertical scroll */}
                 <div className="relative">
                   <div
-                    className="flex gap-3 md:gap-4 items-stretch overflow-x-auto overscroll-x-contain
-                  snap-x snap-mandatory scroll-smooth pb-4 scrollbar-thin scrollbar-thumb-primary scrollbar-track-gray-100
-                  px-1 -mx-1"
+                    className="
+                      flex gap-3 md:gap-4 items-stretch
+                      flex-nowrap
+                      overflow-x-auto overscroll-x-contain
+                      snap-x snap-mandatory scroll-smooth pb-4 scrollbar-thin scrollbar-thumb-primary scrollbar-track-gray-100
+                      px-1 -mx-1
+                      [&>*]:flex-shrink-0
+                      "
+                    style={{ overflowY: 'hidden' }} // This disables vertical scroll!
                   >
                     {category.products.length === 0 ? (
                       <motion.div
@@ -241,6 +247,7 @@ export default function CategoryHighlightsSection() {
                               delay: productIndex * 0.1,
                             }}
                             className="max-w-[150px] xs:max-w-[200px] md:max-w-[220px] lg:max-w-[240px] snap-start shrink-0 flex"
+                            style={{ overflowY: 'hidden' }} // Prevent vertical scroll on card
                           >
                             <ProductCard
                               id={product.id}
@@ -258,6 +265,7 @@ export default function CategoryHighlightsSection() {
                             className="flex flex-col items-center justify-center min-w-[120px] xs:min-w-[150px] md:min-w-[160px] h-80 bg-primary/10 text-primary rounded-2xl font-bold text-base xs:text-lg transition-all duration-300 hover:bg-primary hover:text-white hover:scale-105 shadow group mx-1 snap-start shrink-0"
                             tabIndex={0}
                             aria-label={`نمایش همه محصولات دسته ${category.title}`}
+                            style={{ overflowY: 'hidden' }} // Prevent vertical scroll on "show all" block
                           >
                             <span className="mb-2 text-sm xs:text-base">+{category.products.length - previewCount} محصول بیشتر</span>
                             <div className="flex items-center gap-2">
