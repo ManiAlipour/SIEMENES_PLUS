@@ -121,7 +121,7 @@ export async function getAdminAnalytics() {
   const topSearches = await SearchQuery.aggregate([
     {
       $group: {
-        _id: "$query",
+        _id: { $ifNull: ["$normalizedQuery", "$query"] },
         total: { $sum: 1 },
       },
     },

@@ -2,6 +2,9 @@ import { NextResponse } from "next/server";
 import { connectDB } from "@/lib/db";
 import Product from "@/models/Product";
 import Category from "@/models/Category";
+import { cookies } from "next/headers";
+import { verifyToken } from "@/lib/auth";
+import { escapeRegex, logSearchQuery, normalizeSearchQuery } from "@/lib/analytics/search";
 
 export const dynamic = "force-dynamic";
 export const runtime = "nodejs";
@@ -12,7 +15,7 @@ export async function GET(req: Request) {
 
     const { searchParams } = new URL(req.url);
 
-    const search = searchParams.get("search") || "";
+    const search = (searchParams.get("search") || "").trim();
     const limit = Number(searchParams.get("limit") || 10);
     const page = Number(searchParams.get("page") || 1);
     const modelNumber = searchParams.get("modelNumber");
@@ -30,10 +33,7 @@ export async function GET(req: Request) {
     }
 
     if (search) {
-      const searchRegex = new RegExp(
-        search.replace(/[.*+?^${}()|[\]\\]/g, "\\$&"),
-        "i"
-      );
+      const searchRegex = new RegExp(escapeRegex(search), "i");
 
       let idOrSlugConditions: any[] = [];
       if (/^[a-f\d]{24}$/i.test(search.trim())) {
@@ -76,6 +76,37 @@ export async function GET(req: Request) {
         .lean(),
       Product.countDocuments(filter),
     ]);
+
+    // لاگ سرچ فقط برای صفحه اول (برای جلوگیری از شمارش چندباره در pagination)
+    if (search && page === 1) {
+      try {
+        const tokenValue = cookies().get("token")?.value;
+        let userId: string | null = null;
+        if (tokenValue) {
+          try {
+            userId = verifyToken(tokenValue).id;
+          } catch {
+            userId = null;
+          }
+        }
+
+        await logSearchQuery({
+          query: search,
+          normalizedQuery: normalizeSearchQuery(search),
+          totalResults: total,
+          source: "products",
+          userId,
+          meta: {
+            category,
+            modelNumber,
+            isFeatured,
+            sort: safeSort,
+          },
+        });
+      } catch (err) {
+        console.error("SearchQuery log failed (products):", err);
+      }
+    }
 
     return NextResponse.json({
       success: true,

@@ -102,7 +102,7 @@ export async function GET(req: Request) {
         const topSearches = await SearchQuery.aggregate([
           {
             $group: {
-              _id: "$query",
+              _id: { $ifNull: ["$normalizedQuery", "$query"] },
               count: { $sum: 1 },
             },
           },
