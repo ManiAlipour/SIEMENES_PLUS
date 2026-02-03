@@ -233,7 +233,7 @@ export default function AdminBlogsPage() {
         )}
       </div>
 
-      {/* ⚙️ Modal */}
+      {/* Modal */}
       {isModalOpen && (
         <AddBlogModal
           onClose={() => setIsModalOpen(false)}

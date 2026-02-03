@@ -10,6 +10,7 @@ import {
   FiCheck,
 } from "react-icons/fi";
 import { motion } from "framer-motion";
+import Link from "next/link";
 
 export default function LocationSection() {
   const [copied, setCopied] = useState(false);
@@ -133,13 +134,13 @@ export default function LocationSection() {
                   </div>
                   <div>
                     <h4 className="text-sm font-bold text-slate-800 mb-1">
-                      تلفن تماس
+                      شماره تماس
                     </h4>
                     <p
                       dir="ltr"
                       className="text-slate-600 font-mono text-sm sm:text-base text-right"
                     >
-                      028 - 3224 5678
+                      09199883772
                     </p>
                     <p className="text-xs text-slate-400 mt-1">
                       پاسخگویی در ساعات اداری
@@ -178,12 +179,13 @@ export default function LocationSection() {
               <p className="text-sm text-slate-300 mb-2">
                 نیاز به هماهنگی قبل از بازدید دارید؟
               </p>
-              <button
+              <Link
+                href="/contact-us"
                 className="text-sm font-bold text-cyan-400 hover:text-cyan-300 transition
                flex items-center gap-2"
               >
                 تماس با واحد فروش <span className="text-lg">←</span>
-              </button>
+              </Link>
             </div>
           </motion.div>
 

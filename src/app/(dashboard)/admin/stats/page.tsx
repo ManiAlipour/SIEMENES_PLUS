@@ -1,231 +1,666 @@
 "use client";
 
-import { useEffect, useState } from "react";
-import { Line } from "react-chartjs-2";
 import {
   Chart as ChartJS,
-  LineElement,
-  PointElement,
   CategoryScale,
   LinearScale,
+  PointElement,
+  LineElement,
+  BarElement,
+  ArcElement,
   Tooltip,
   Filler,
-  Legend,
   ChartOptions,
 } from "chart.js";
+import { Line, Bar, Doughnut } from "react-chartjs-2";
+import { useEffect, useState } from "react";
 
 ChartJS.register(
-  LineElement,
-  PointElement,
   CategoryScale,
   LinearScale,
+  PointElement,
+  LineElement,
+  BarElement,
+  ArcElement,
   Tooltip,
-  Filler,
-  Legend
+  Filler
 );
 
+/* =====================
+   Types
+===================== */
+
+type MonthlyView = {
+  month: string;
+  views: number;
+};
+
+type TopItem = {
+  _id: string;
+  total: number;
+};
+
+type OverviewStats = {
+  totalViews: number;
+  totalProductViews: number;
+  totalSearches: number;
+  totalInteractions: number;
+  activeUsersDaily: number;
+  activeUsersMonthly: number;
+};
+
+type TrendStats = {
+  viewsGrowth: string;
+  activeUsersGrowth: string;
+};
+
+type AdminAnalyticsData = {
+  monthlyViews: MonthlyView[];
+  topSearches: TopItem[];
+  eventStats: TopItem[];
+  overview: OverviewStats;
+  trendStats: TrendStats;
+  topPages?: TopItem[];
+};
+
+/* =====================
+   Fake Data
+===================== */
+
+function generateFakeMonthlyData(): MonthlyView[] {
+  const months = [
+    "فروردین",
+    "اردیبهشت",
+    "خرداد",
+    "تیر",
+    "مرداد",
+    "شهریور",
+    "مهر",
+    "آبان",
+    "آذر",
+    "دی",
+    "بهمن",
+    "اسفند",
+  ];
+
+  return months.map((m) => ({
+    month: m,
+    views: Math.floor(800 + Math.random() * 3000),
+  }));
+}
+
+/* =====================
+   Helpers
+===================== */
+
+function isValidMonthlyData(data?: MonthlyView[]) {
+  if (!data || data.length === 0) return false;
+  return data.some((i) => i.views > 0);
+}
+
+const formatFa = (v: number) =>
+  v.toLocaleString("fa-IR");
+
+/* =====================
+   Base Chart Options
+===================== */
+
+const baseLineOptions: ChartOptions<"line"> = {
+  responsive: true,
+  maintainAspectRatio: false,
+  interaction: {
+    mode: "index",
+    intersect: false,
+  },
+  animation: {
+    duration: 800,
+    easing: "easeOutQuart",
+  },
+  plugins: {
+    legend: {
+      display: false,
+    },
+    tooltip: {
+      backgroundColor: "#111827",
+      padding: 12,
+      cornerRadius: 8,
+      titleColor: "#fff",
+      bodyColor: "#e5e7eb",
+      callbacks: {
+        title: (items) => items[0].label ?? "",
+        label: (item) =>
+          `بازدید: ${formatFa(Number(item.raw))}`,
+      },
+    },
+  },
+  scales: {
+    x: {
+      grid: { display: false },
+      ticks: {
+        color: "#6b7280",
+      },
+    },
+    y: {
+      grid: {
+        color: "rgba(0,0,0,0.05)",
+      },
+      border: {
+        display: false,
+      },
+      ticks: {
+        color: "#6b7280",
+        callback: (v) => formatFa(Number(v)),
+      },
+    },
+  },
+};
+
+const baseBarOptions: ChartOptions<"bar"> = {
+  responsive: true,
+  maintainAspectRatio: false,
+  interaction: {
+    mode: "index",
+    intersect: false,
+  },
+  animation: {
+    duration: 800,
+    easing: "easeOutQuart",
+  },
+  plugins: {
+    legend: {
+      display: false,
+    },
+    tooltip: {
+      backgroundColor: "#111827",
+      padding: 12,
+      cornerRadius: 8,
+      titleColor: "#fff",
+      bodyColor: "#e5e7eb",
+      callbacks: {
+        title: (items) => items[0].label ?? "",
+        label: (item) => `بازدید: ${formatFa(Number(item.raw))}`,
+      },
+    },
+  },
+  scales: {
+    x: {
+      grid: { display: false },
+      ticks: {
+        color: "#6b7280",
+      },
+    },
+    y: {
+      grid: {
+        color: "rgba(0,0,0,0.05)",
+      },
+      border: {
+        display: false,
+      },
+      ticks: {
+        color: "#6b7280",
+        callback: (v) => formatFa(Number(v)),
+      },
+    },
+  },
+};
+
+/* =====================
+   Charts
+===================== */
+
+function BeautifulLineChart({ data }: { data: MonthlyView[] }) {
+  return (
+    <Line
+      options={baseLineOptions}
+      data={{
+        labels: data.map((d) => d.month),
+        datasets: [
+          {
+            data: data.map((d) => d.views),
+            borderColor: "#3b82f6",
+            borderWidth: 3,
+            pointRadius: 0,
+            tension: 0.4,
+            fill: true,
+            backgroundColor: (ctx) => {
+              const g = ctx.chart.ctx.createLinearGradient(0, 0, 0, 300);
+              g.addColorStop(0, "rgba(59,130,246,0.25)");
+              g.addColorStop(1, "rgba(59,130,246,0)");
+              return g;
+            },
+          },
+        ],
+      }}
+    />
+  );
+}
+
+function DualLineChart({ data }: { data: MonthlyView[] }) {
+  return (
+    <Line
+      options={baseLineOptions}
+      data={{
+        labels: data.map((d) => d.month),
+        datasets: [
+          {
+            label: "امسال",
+            data: data.map((d) => d.views),
+            borderColor: "#22c55e",
+            borderWidth: 3,
+            tension: 0.4,
+            pointRadius: 0,
+          },
+          {
+            label: "سال قبل",
+            data: data.map((d) => Math.floor(d.views * 0.7)),
+            borderColor: "#94a3b8",
+            borderDash: [6, 4],
+            borderWidth: 2,
+            tension: 0.4,
+            pointRadius: 0,
+          },
+        ],
+      }}
+    />
+  );
+}
+
+function BarChart({ data }: { data: MonthlyView[] }) {
+  return (
+    <Bar
+      options={baseBarOptions}
+      data={{
+        labels: data.map((d) => d.month),
+        datasets: [
+          {
+            data: data.map((d) => d.views),
+            backgroundColor: "#6366f1",
+            hoverBackgroundColor: "#4f46e5",
+            borderRadius: 10,
+            barThickness: 22,
+          },
+        ],
+      }}
+    />
+  );
+}
+
+function DonutChart({ data }: { data: MonthlyView[] }) {
+  const total = data.reduce((sum, item) => sum + item.views, 0);
+
+  const donutOptions: ChartOptions<"doughnut"> = {
+    responsive: true,
+    maintainAspectRatio: false,
+    cutout: "70%",
+    plugins: {
+      legend: {
+        display: false,
+      },
+      tooltip: {
+        backgroundColor: "#111827",
+        padding: 10,
+        cornerRadius: 8,
+        titleColor: "#fff",
+        bodyColor: "#e5e7eb",
+        callbacks: {
+          label: (item) => {
+            const value = Number(item.raw);
+            const percent =
+              total > 0 ? Math.round((value / total) * 100) : 0;
+            return ` ${item.label}: ${formatFa(value)} بازدید (${formatFa(
+              percent
+            )}٪)`;
+          },
+        },
+      },
+    },
+  };
+
+  return (
+    <Doughnut
+      options={donutOptions}
+      data={{
+        labels: data.map((d) => d.month),
+        datasets: [
+          {
+            data: data.map((d) => d.views),
+            backgroundColor: [
+              "#4f46e5",
+              "#0ea5e9",
+              "#22c55e",
+              "#f97316",
+              "#e11d48",
+              "#8b5cf6",
+              "#06b6d4",
+              "#84cc16",
+              "#facc15",
+              "#f97316",
+              "#ec4899",
+              "#6366f1",
+            ],
+            borderWidth: 0,
+            hoverOffset: 4,
+          },
+        ],
+      }}
+    />
+  );
+}
+
+/* =====================
+   Page
+===================== */
+
 export default function AdminStatPage() {
-  const [data, setData] = useState<any>(null);
+  const [data, setData] = useState<MonthlyView[]>([]);
+  const [isMock, setIsMock] = useState(false);
+  const [isLoading, setIsLoading] = useState(true);
+  const [analytics, setAnalytics] = useState<AdminAnalyticsData | null>(null);
 
   useEffect(() => {
     fetch("/api/admin/analytics")
       .then((r) => r.json())
-      .then(({ data }) => setData(data))
-      .catch((e) => console.error(e));
+      .then(({ data }: { data: AdminAnalyticsData }) => {
+        setAnalytics(data);
+
+        if (!isValidMonthlyData(data?.monthlyViews)) {
+          setIsMock(true);
+          setData(generateFakeMonthlyData());
+        } else {
+          setIsMock(false);
+          setData(data.monthlyViews);
+        }
+      })
+      .catch(() => {
+        setIsMock(true);
+        setData(generateFakeMonthlyData());
+        setAnalytics(null);
+      })
+      .finally(() => {
+        setIsLoading(false);
+      });
   }, []);
 
-  if (!data)
+  const totalViews = data.reduce((sum, item) => sum + item.views, 0);
+  const averageViews = data.length ? Math.round(totalViews / data.length) : 0;
+  const thisMonth = data[data.length - 1]?.views ?? 0;
+  const prevMonth = data[data.length - 2]?.views ?? 0;
+  const monthChange =
+    prevMonth > 0 ? Math.round(((thisMonth - prevMonth) / prevMonth) * 100) : 0;
+
+  const StatSkeleton = () => (
+    <div className="space-y-8 animate-pulse">
+      <div className="h-8 w-40 rounded-lg bg-gray-200 dark:bg-gray-800" />
+      <div className="grid grid-cols-1 gap-4 md:grid-cols-3">
+        <div className="h-24 rounded-2xl bg-gray-100 dark:bg-gray-900/60" />
+        <div className="h-24 rounded-2xl bg-gray-100 dark:bg-gray-900/60" />
+        <div className="h-24 rounded-2xl bg-gray-100 dark:bg-gray-900/60" />
+      </div>
+      <div className="grid grid-cols-1 gap-6 lg:grid-cols-3">
+        <div className="h-72 rounded-2xl bg-gray-100 dark:bg-gray-900/60" />
+        <div className="h-72 rounded-2xl bg-gray-100 dark:bg-gray-900/60" />
+        <div className="h-72 rounded-2xl bg-gray-100 dark:bg-gray-900/60" />
+      </div>
+    </div>
+  );
+
+  if (isLoading) {
     return (
-      <div className="p-6 text-center text-slate-600">در حال بارگذاری...</div>
+      <div className="space-y-6">
+        <StatSkeleton />
+      </div>
     );
+  }
+
+  if (!data.length) {
+    return (
+      <div className="rounded-2xl border border-dashed border-gray-200 bg-white/60 p-8 text-center text-sm text-gray-500 shadow-sm dark:border-gray-800 dark:bg-gray-900/70">
+        در حال حاضر داده‌ای برای نمایش آمار وجود ندارد.
+      </div>
+    );
+  }
 
   return (
-    <div className="p-6 font-vazirmatn space-y-8 animate-fadeIn">
-      {/* ===== Header ===== */}
-      <div className="bg-gradient-to-r from-cyan-500 to-cyan-700 text-white p-5 rounded-2xl shadow-lg flex justify-between items-center">
-        <h1 className="text-xl font-bold tracking-tight">داشبورد آمار</h1>
-        <p className="text-sm text-white/80">نگاه جامع به عملکرد سامانه</p>
+    <div className="space-y-10">
+      <div className="flex flex-col gap-2 md:flex-row md:items-center md:justify-between">
+        <div>
+          <h1 className="text-xl font-bold tracking-tight text-gray-900 dark:text-gray-100">
+            آمار بازدید سایت
+          </h1>
+          <p className="mt-1 text-xs text-gray-500 md:text-sm dark:text-gray-400">
+            نمای کلی از وضعیت بازدید صفحات در ۱۲ ماه اخیر؛ برای تحلیل روند رشد و
+            رفتار کاربران.
+          </p>
+        </div>
+        {isMock && (
+          <span className="inline-flex items-center gap-1 rounded-full border border-amber-300/70 bg-amber-50 px-3 py-1 text-[11px] font-medium text-amber-700 shadow-sm dark:border-amber-500/40 dark:bg-amber-500/10 dark:text-amber-300">
+            <span className="h-1.5 w-1.5 rounded-full bg-amber-500" />
+            داده‌ها نمونه هستند
+          </span>
+        )}
       </div>
 
-      {/* ===== Line Chart – Monthly Views ===== */}
-      <ChartCard title="بازدیدهای ماهانه" gradient="from-cyan-100 to-cyan-50">
-        <BeautifulLineChart dataPoints={data.monthlyViews} />
-      </ChartCard>
+      <div className="grid grid-cols-1 gap-4 md:grid-cols-3">
+        <div className="relative overflow-hidden rounded-2xl border border-gray-200 bg-gray-50 dark:bg-gray-900/80 p-5 shadow-sm transition hover:-translate-y-0.5 hover:shadow-md">
+          <div className="flex items-center justify-between gap-4">
+            <div>
+              <p className="text-xs font-medium text-blue-600 dark:text-blue-400">
+                مجموع بازدید سال
+              </p>
+              <p className="mt-2 text-lg font-semibold text-gray-900 dark:text-gray-100">
+                {formatFa(totalViews)}
+              </p>
+            </div>
+            <div className="h-10 w-10 rounded-2xl bg-white/70 p-2.5 shadow-sm ring-1 ring-white/40 backdrop-blur dark:bg-white/5 dark:ring-white/10">
+              <div className="h-full w-full rounded-xl bg-linear-to-br from-primary to-primary/70" />
+            </div>
+          </div>
+          <p className="mt-2 text-[11px] text-blue-700/70 dark:text-blue-300/80">
+            مجموع بازدید ثبت شده در تمام ماه‌های سال جاری.
+          </p>
+        </div>
 
-      {/* ===== Dual Line Chart – Product vs Search ===== */}
-      <ChartCard
-        title="مقایسه بازدید محصول و جستجوها"
-        gradient="from-amber-50 to-white"
-      >
-        <DualLineChart
-          products={data.monthlyViews.map((m: any) => m.views * 0.8)}
-          searches={data.monthlyViews.map((m: any) => m.views * 0.6)}
-          labels={data.monthlyViews.map((m: any) => m.month)}
-        />
-      </ChartCard>
+        <div className="relative overflow-hidden rounded-2xl border border-gray-200 bg-gray-50 dark:bg-gray-900/80 p-5 shadow-sm transition hover:-translate-y-0.5 hover:shadow-md">
+          <div className="flex items-center justify-between gap-4">
+            <div>
+              <p className="text-xs font-medium text-emerald-600 dark:text-emerald-400">
+                میانگین بازدید ماهانه
+              </p>
+              <p className="mt-2 text-lg font-semibold text-gray-900 dark:text-gray-100">
+                {formatFa(averageViews)}
+              </p>
+            </div>
+            <div className="h-10 w-10 rounded-2xl bg-emerald-50 p-2.5 shadow-sm ring-1 ring-emerald-100 dark:bg-emerald-500/10 dark:ring-emerald-500/30">
+              <div className="h-full w-full rounded-xl bg-linear-to-br from-emerald-500 to-teal-500" />
+            </div>
+          </div>
+          <p className="mt-2 text-[11px] text-gray-500 dark:text-gray-400">
+            متوسط بازدید در هر ماه بر اساس ۱۲ ماه اخیر.
+          </p>
+        </div>
 
-      {/* ===== Mini Charts (Active Users + Interactions) ===== */}
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-        <ChartCard
-          title="کاربران فعال روزانه"
-          gradient="from-cyan-50 via-white to-white"
-        >
-          <MiniAreaChart
-            data={data.monthlyViews.map((v: any) => v.views * 0.3)}
-          />
-        </ChartCard>
-
-        <ChartCard title="نمودار تعاملات" gradient="from-blue-50 to-white">
-          <SparklineChart
-            data={data.monthlyViews.map((v: any) => v.views * 0.15)}
-          />
-        </ChartCard>
+        <div className="relative overflow-hidden rounded-2xl border border-gray-200 bg-gray-50 dark:bg-gray-900/80 p-5 shadow-sm transition hover:-translate-y-0.5 hover:shadow-md">
+          <div className="flex items-center justify-between gap-4">
+            <div>
+              <p className="text-xs font-medium text-purple-600 dark:text-purple-400">
+                تغییر ماه جاری
+              </p>
+              <p className="mt-2 flex items-baseline gap-1 text-lg font-semibold text-gray-900 dark:text-gray-100">
+                <span>
+                  {monthChange > 0 ? "+" : ""}
+                  {formatFa(Math.abs(monthChange))}
+                </span>
+                <span className="text-xs text-gray-400 dark:text-gray-500">
+                  درصد نسبت به ماه قبل
+                </span>
+              </p>
+            </div>
+            <div className="h-10 w-10 rounded-2xl bg-purple-50 p-2.5 shadow-sm ring-1 ring-purple-100 dark:bg-purple-500/10 dark:ring-purple-500/30">
+              <div className="h-full w-full rounded-xl bg-linear-to-br from-purple-500 to-fuchsia-500" />
+            </div>
+          </div>
+          <p
+            className={`mt-2 text-[11px] ${
+              monthChange > 0
+                ? "text-emerald-600 dark:text-emerald-400"
+                : monthChange < 0
+                ? "text-rose-600 dark:text-rose-400"
+                : "text-gray-500 dark:text-gray-400"
+            }`}
+          >
+            {monthChange > 0 &&
+              "روند صعودی؛ بازدید این ماه نسبت به ماه قبل افزایش داشته است."}
+            {monthChange < 0 &&
+              "روند نزولی؛ بازدید این ماه نسبت به ماه قبل کاهش داشته است."}
+            {monthChange === 0 &&
+              "تغییر محسوسی بین این ماه و ماه قبل مشاهده نشده است."}
+          </p>
+        </div>
       </div>
+
+      <div className="grid grid-cols-1 gap-6 lg:grid-cols-3">
+        <div className="lg:col-span-2 rounded-2xl border border-gray-200 bg-gray-50 dark:bg-gray-900/80 p-4 shadow-sm transition hover:-translate-y-0.5 hover:shadow-md">
+          <div className="mb-3 flex items-center justify-between gap-2">
+            <div>
+              <p className="text-xs font-medium text-gray-500 dark:text-gray-400">
+                روند بازدید سالانه
+              </p>
+              <p className="text-[11px] text-gray-400 dark:text-gray-500">
+                نمایش جزئیات رشد و فراز و فرود بازدید در طول سال.
+              </p>
+            </div>
+          </div>
+          <div className="h-72">
+            <BeautifulLineChart data={data} />
+          </div>
+        </div>
+
+        <div className="rounded-2xl border border-gray-200 bg-gray-50 dark:bg-gray-900/80 p-4 shadow-sm transition hover:-translate-y-0.5 hover:shadow-md">
+          <div className="mb-3 flex items-center justify-between gap-2">
+            <div>
+              <p className="text-xs font-medium text-gray-500 dark:text-gray-400">
+                مقایسه با سال قبل
+              </p>
+              <p className="text-[11px] text-gray-400 dark:text-gray-500">
+                بررسی وضعیت امسال نسبت به سال گذشته در هر ماه.
+              </p>
+            </div>
+          </div>
+          <div className="h-72">
+            <DualLineChart data={data} />
+          </div>
+        </div>
+      </div>
+
+      <div className="grid grid-cols-1 gap-6 lg:grid-cols-2">
+        <div className="rounded-2xl border border-gray-200 bg-gray-50 dark:bg-gray-900/80 p-4 shadow-sm transition hover:-translate-y-0.5 hover:shadow-md">
+          <div className="mb-3 flex items-center justify-between gap-2">
+            <div>
+              <p className="text-xs font-medium text-gray-500 dark:text-gray-400">
+                سهم هر ماه از بازدید سال (ستونی)
+              </p>
+              <p className="text-[11px] text-gray-400 dark:text-gray-500">
+                توزیع بازدید بین ماه‌های مختلف به‌صورت نمودار میله‌ای.
+              </p>
+            </div>
+          </div>
+          <div className="h-72">
+            <BarChart data={data} />
+          </div>
+        </div>
+
+        <div className="rounded-2xl border border-gray-200 bg-gray-50 dark:bg-gray-900/80 p-4 shadow-sm transition hover:-translate-y-0.5 hover:shadow-md">
+          <div className="mb-3 flex items-center justify-between gap-2">
+            <div>
+              <p className="text-xs font-medium text-gray-500 dark:text-gray-400">
+                سهم ماه‌ها به‌صورت دایره‌ای
+              </p>
+              <p className="text-[11px] text-gray-400 dark:text-gray-500">
+                نمایش درصد سهم هر ماه از کل بازدید سال در قالب چارت دایره‌ای.
+              </p>
+            </div>
+          </div>
+          <div className="h-72">
+            <DonutChart data={data} />
+          </div>
+        </div>
+      </div>
+
+      {analytics && (
+        <div className="grid grid-cols-1 gap-6 lg:grid-cols-3">
+          <div className="rounded-2xl border border-gray-200 bg-gray-50 dark:bg-gray-900/80 p-4 shadow-sm">
+            <p className="mb-3 text-xs font-medium text-gray-500 dark:text-gray-400">
+              صفحات پربازدید
+            </p>
+            <ul className="space-y-2 text-xs md:text-sm text-gray-600 dark:text-gray-300">
+              {(analytics.topPages ?? []).map((item) => (
+                <li
+                  key={item._id}
+                  className="flex items-center justify-between gap-2 rounded-lg bg-gray-50 px-2 py-1.5 text-[11px] md:text-xs dark:bg-gray-800"
+                >
+                  <span className="max-w-[70%] truncate">{item._id}</span>
+                  <span className="font-semibold tabular-nums text-gray-900 dark:text-gray-50">
+                    {formatFa(item.total)}
+                  </span>
+                </li>
+              ))}
+              {!analytics.topPages?.length && (
+                <li className="text-[11px] text-gray-400 dark:text-gray-500">
+                  دیتایی برای نمایش صفحات پربازدید موجود نیست.
+                </li>
+              )}
+            </ul>
+          </div>
+
+          <div className="rounded-2xl border border-gray-200 bg-gray-50 dark:bg-gray-900/80 p-4 shadow-sm">
+            <p className="mb-3 text-xs font-medium text-gray-500 dark:text-gray-400">
+              جستجوهای پرتکرار
+            </p>
+            <ul className="space-y-2 text-xs md:text-sm text-gray-600 dark:text-gray-300">
+              {analytics.topSearches.map((item) => (
+                <li
+                  key={item._id}
+                  className="flex items-center justify-between gap-2 rounded-lg bg-gray-50 px-2 py-1.5 text-[11px] md:text-xs dark:bg-gray-800"
+                >
+                  <span className="max-w-[70%] truncate">{item._id}</span>
+                  <span className="font-semibold tabular-nums text-gray-900 dark:text-gray-50">
+                    {formatFa(item.total)}
+                  </span>
+                </li>
+              ))}
+              {!analytics.topSearches.length && (
+                <li className="text-[11px] text-gray-400 dark:text-gray-500">
+                  دیتایی برای نمایش جستجوها موجود نیست.
+                </li>
+              )}
+            </ul>
+          </div>
+
+          <div className="rounded-2xl border border-gray-200 bg-gray-50 dark:bg-gray-900/80 p-4 shadow-sm">
+            <p className="mb-3 text-xs font-medium text-gray-500 dark:text-gray-400">
+              رویدادهای پرتکرار
+            </p>
+            <ul className="space-y-2 text-xs md:text-sm text-gray-600 dark:text-gray-300">
+              {analytics.eventStats.map((item) => (
+                <li
+                  key={item._id}
+                  className="flex items-center justify-between gap-2 rounded-lg bg-gray-50 px-2 py-1.5 text-[11px] md:text-xs dark:bg-gray-800"
+                >
+                  <span className="max-w-[70%] truncate">{item._id}</span>
+                  <span className="font-semibold tabular-nums text-gray-900 dark:text-gray-50">
+                    {formatFa(item.total)}
+                  </span>
+                </li>
+              ))}
+              {!analytics.eventStats.length && (
+                <li className="text-[11px] text-gray-400 dark:text-gray-500">
+                  دیتایی برای نمایش رویدادها موجود نیست.
+                </li>
+              )}
+            </ul>
+          </div>
+        </div>
+      )}
     </div>
   );
-}
-
-/* ============ ChartCard Base ============ */
-function ChartCard({
-  title,
-  gradient,
-  children,
-}: {
-  title: string;
-  gradient: string;
-  children: React.ReactNode;
-}) {
-  return (
-    <div
-      className={`bg-gradient-to-b ${gradient} p-6 rounded-2xl border border-slate-200/60 backdrop-blur-md shadow-[0_4px_14px_rgba(0,0,0,0.05)] transition-all duration-200 hover:scale-[0.99]`}
-    >
-      <h2 className="text-sm font-semibold mb-4 text-slate-700">{title}</h2>
-      {children}
-    </div>
-  );
-}
-
-/* ============ Main Line Chart ============ */
-function BeautifulLineChart({ dataPoints }: { dataPoints: any[] }) {
-  const chartData = {
-    labels: dataPoints.map((m) => m.month),
-    datasets: [
-      {
-        label: "بازدیدها",
-        data: dataPoints.map((m) => m.views),
-        fill: true,
-        borderColor: "#06b6d4",
-        backgroundColor: (ctx: any) => {
-          const g = ctx.chart.ctx.createLinearGradient(0, 0, 0, 300);
-          g.addColorStop(0, "rgba(6,182,212,0.35)");
-          g.addColorStop(1, "rgba(255,255,255,0)");
-          return g;
-        },
-        pointBackgroundColor: "#06b6d4",
-        pointHoverBackgroundColor: "#ffffff",
-        tension: 0.4,
-      },
-    ],
-  };
-
-  const options: ChartOptions<"line"> = {
-    responsive: true,
-    plugins: { legend: { display: false } },
-    animation: { duration: 1200, easing: "easeInOutCubic" as const },
-    scales: {
-      x: { grid: { display: false }, ticks: { color: "#64748b" } },
-      y: { grid: { color: "rgba(0,0,0,0.05)" }, ticks: { color: "#94a3b8" } },
-    },
-  };
-
-  return <Line data={chartData} options={options} height={100} />;
-}
-
-/* ============ Dual Line Chart ============ */
-function DualLineChart({
-  products,
-  searches,
-  labels,
-}: {
-  products: number[];
-  searches: number[];
-  labels: string[];
-}) {
-  const data = {
-    labels,
-    datasets: [
-      {
-        label: "محصولات",
-        data: products,
-        borderColor: "#06b6d4",
-        backgroundColor: "transparent",
-        tension: 0.4,
-        pointRadius: 0,
-      },
-      {
-        label: "جستجوها",
-        data: searches,
-        borderColor: "#fbbf24",
-        backgroundColor: "transparent",
-        tension: 0.4,
-        pointRadius: 0,
-      },
-    ],
-  };
-
-  const options: ChartOptions<"line"> = {
-    plugins: { legend: { display: false } },
-    scales: { x: { display: false }, y: { display: false } },
-    elements: { line: { borderWidth: 2 } },
-  };
-
-  return <Line data={data} options={options} height={70} />;
-}
-
-/* ============ Mini Area Chart ============ */
-function MiniAreaChart({ data }: { data: number[] }) {
-  const dataset = {
-    labels: data.map((_: any, i: number) => i + 1),
-    datasets: [
-      {
-        data,
-        fill: true,
-        borderColor: "#06b6d4",
-        backgroundColor: "rgba(6,182,212,0.15)",
-        tension: 0.4,
-        pointRadius: 0,
-      },
-    ],
-  };
-
-  const options: ChartOptions<"line"> = {
-    scales: { x: { display: false }, y: { display: false } },
-    plugins: { legend: { display: false } },
-  };
-
-  return <Line data={dataset} options={options} height={70} />;
-}
-
-/* ============ Sparkline Chart ============ */
-function SparklineChart({ data }: { data: number[] }) {
-  const dataset = {
-    labels: data.map((_: any, i: number) => i + 1),
-    datasets: [
-      {
-        data,
-        borderColor: "#0ea5e9",
-        backgroundColor: "transparent",
-        tension: 0.45,
-        pointRadius: 0,
-      },
-    ],
-  };
-
-  const options: ChartOptions<"line"> = {
-    scales: { x: { display: false }, y: { display: false } },
-    plugins: { legend: { display: false }, tooltip: { enabled: false } },
-    animation: { duration: 800, easing: "easeOutCubic" as const },
-  };
-
-  return <Line data={dataset} options={options} height={60} />;
 }

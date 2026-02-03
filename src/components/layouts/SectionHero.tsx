@@ -320,7 +320,7 @@ export default function HeroSection() {
 
       {/* === Controls: larger, floating a bit higher on laptop === */}
       <div
-        className="absolute left-0 right-0 z-30 flex justify-center lg:justify-end pointer-events-none"
+        className="absolute lg:mx-4 left-0 right-0 z-30 flex justify-center lg:justify-end pointer-events-none"
         style={{ bottom: "46px" }}
       >
         <div className="container w-full flex justify-center lg:justify-end">

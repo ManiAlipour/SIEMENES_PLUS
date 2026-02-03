@@ -12,7 +12,7 @@ const productSchema = new Schema(
     description: { type: String },
     specifications: {
       type: Map,
-      of: String, // مثلا {"ولتاژ": "220V", "جنس": "آلومینیوم"}
+      of: String,
     },
     isFeatured: { type: Boolean, default: false },
     createdBy: { type: Schema.Types.ObjectId, ref: "User" },

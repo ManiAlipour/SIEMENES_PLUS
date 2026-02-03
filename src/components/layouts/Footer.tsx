@@ -1,16 +1,34 @@
+import { useFetch } from "iso-hooks";
 import Link from "next/link";
 import {
-  FaLinkedinIn,
   FaInstagram,
-  FaYoutube,
   FaWhatsapp,
   FaMapMarkerAlt,
   FaPhoneAlt,
   FaEnvelope,
-  FaArrowLeft,
+  FaTelegram,
 } from "react-icons/fa";
 
+interface ICategories {
+  message: string;
+  data: ICategory[];
+}
+
+interface ICategory {
+  _id: string;
+  name: string;
+  slug: string;
+  parent: null;
+}
+
 export default function Footer() {
+  const { data, error, loading, refetch } = useFetch<ICategories>(
+    "/api/categories",
+    {
+      initialData: { data: [], message: "در حال انتظار" },
+    }
+  );
+
   return (
     // Main Footer Container with a deep, rich gradient background
     <footer className="w-full bg-gradient-to-b from-slate-900 to-slate-950 text-slate-300 pt-16 pb-8 border-t border-slate-800">
@@ -90,47 +108,43 @@ export default function Footer() {
               <span className="absolute -bottom-2 right-0 w-1/2 h-0.5 bg-cyan-500 rounded-full"></span>
             </h3>
             <ul className="space-y-3 text-sm font-medium">
-              {[
-                "PLC & Automation",
-                "Drives & Motors",
-                "HMI Panels",
-                "LV Boards",
-                "Sensors",
-              ].map((cat) => (
-                <li
-                  key={cat}
-                  className="block hover:text-cyan-400 cursor-pointer transition-colors duration-200"
-                >
-                  {cat}
-                </li>
-              ))}
+              {loading ? (
+                <div>درحال دریافت</div>
+              ) : error ? (
+                <div className="text-sm flex flex-col justify-start items-start gap-2 text-warn/90">
+                  <p>خطا در دریافت اطلاعات...</p>
+                  <button
+                    className="text-white/90 bg-meuted/65 px-2 py-1 rounded-lg cursor-pointer"
+                    onClick={() => refetch()}
+                  >
+                    بارگزاری مجدد
+                  </button>
+                </div>
+              ) : (
+                data?.data.map((cat) => (
+                  <li
+                    key={cat._id}
+                    className="block hover:text-cyan-400 cursor-pointer transition-colors duration-200"
+                  >
+                    <Link href={`/shop?category=${cat.slug}`}>{cat.name}</Link>
+                  </li>
+                ))
+              )}
             </ul>
           </div>
 
           {/* Column 4: Newsletter (Spans 4 cols) */}
           <div className="lg:col-span-4 bg-slate-800/30 rounded-2xl p-6 border border-white/5 backdrop-blur-sm">
             <h3 className="font-bold text-white text-lg mb-2">
-              عضویت در خبرنامه
+              مارا دنبال کنید.
             </h3>
             <p className="text-xs text-slate-400 mb-4">
-              از آخرین تخفیف‌ها و مقالات فنی ما باخبر شوید.
+              مارا در صفحات مجازی دنبال کنید.
             </p>
 
-            <div className="flex gap-2 mb-6">
-              <input
-                type="email"
-                placeholder="ایمیل شما..."
-                className="flex-1 bg-slate-900/50 border border-slate-700 rounded-lg px-4 py-3 text-sm text-white focus:outline-none focus:border-cyan-500 focus:ring-1 focus:ring-cyan-500 transition-all placeholder:text-slate-600"
-              />
-              <button className="bg-cyan-600 hover:bg-cyan-500 text-white px-4 py-2 rounded-lg transition-colors duration-300 flex items-center justify-center">
-                <FaArrowLeft />
-              </button>
-            </div>
-
             <div className="flex items-center gap-4">
-              <SocialLink href="#" icon={<FaLinkedinIn />} label="LinkedIn" />
               <SocialLink href="#" icon={<FaInstagram />} label="Instagram" />
-              <SocialLink href="#" icon={<FaYoutube />} label="YouTube" />
+              <SocialLink href="#" icon={<FaTelegram />} label="Telegram" />
               <SocialLink href="#" icon={<FaWhatsapp />} label="WhatsApp" />
             </div>
           </div>
@@ -139,9 +153,10 @@ export default function Footer() {
         {/* Bottom Section: Copyright */}
         <div className="border-t border-slate-800/60 pt-8 flex flex-col md:flex-row justify-between items-center gap-4">
           <p className="text-xs text-slate-500 text-center md:text-right">
+            {" "}
             © 2025{" "}
-            <span className="text-slate-300 font-bold">SIEMENS PLUS</span> —
-            تمامی حقوق محفوظ است.
+            <span className="text-slate-300 font-bold"> SIEMENS PLUS </span> —
+            تمامی حقوق محفوظ است.{" "}
           </p>
           <div className="flex gap-6 text-xs text-slate-500">
             <Link href="#" className="hover:text-cyan-400 transition-colors">

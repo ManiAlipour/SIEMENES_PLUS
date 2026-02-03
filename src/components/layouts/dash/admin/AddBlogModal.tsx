@@ -1,7 +1,8 @@
 "use client";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { FiX, FiLink } from "react-icons/fi";
 import toast from "react-hot-toast";
+import { useScrollLock } from "iso-hooks";
 
 const glass =
   "bg-white/40 backdrop-blur-lg border border-white/30 shadow-cyan-500/20";
@@ -18,6 +19,15 @@ export default function AddBlogModal({ onClose, onAdd }: AddBlogModalProps) {
   const [video, setVideo] = useState(""); // فقط لینک ویدیوی آپارات
   const [status, setStatus] = useState<"draft" | "published">("draft");
   const [loading, setLoading] = useState(false);
+
+  const { lock, unlock } = useScrollLock();
+
+  useEffect(() => {
+    lock();
+    return () => {
+      unlock();
+    };
+  }, []);
 
   // --- Submit Blog ---
   const handleSubmit = async (e: React.FormEvent) => {
@@ -94,7 +104,6 @@ export default function AddBlogModal({ onClose, onAdd }: AddBlogModalProps) {
           className={`${glass} p-6 max-h-[90vh] overflow-y-auto scrollbar-thin scrollbar-thumb-cyan-400/40 scrollbar-track-transparent`}
         >
           <form onSubmit={handleSubmit} className="space-y-5">
-
             <div className="animate-fadeIn [animation-delay:0.05s]">
               <input
                 className={inputBase}

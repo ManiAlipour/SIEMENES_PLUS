@@ -14,7 +14,7 @@ export default function Header({
   const [notifications] = useState(3);
 
   return (
-    <header className="sticky top-0 z-20 w-full bg-white/80 backdrop-blur-xl border-b border-gray-200/50 shadow-sm">
+    <header className="sticky top-0 z-10 w-full bg-white/80 backdrop-blur-xl border-b border-gray-200/50 shadow-sm">
       <div className="flex items-center justify-between px-6 py-4">
         {/* Left Section */}
         <div className="flex items-center gap-4">

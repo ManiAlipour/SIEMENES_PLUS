@@ -5,6 +5,7 @@ import { usePathname } from "next/navigation";
 import ReduxProvider from "@/store";
 import { AuthProvider } from "./AuthProvider";
 import { useEffect } from "react";
+import toast from "react-hot-toast";
 
 const Providers = ({ children }: { children: React.ReactNode }) => {
   const notHeaderAndFooterPaths = [

@@ -6,8 +6,9 @@ import * as Yup from "yup";
 import Image from "next/image";
 import toast from "react-hot-toast";
 import { FiX, FiTrash2, FiCamera } from "react-icons/fi";
+import { useScrollLock } from "iso-hooks";
 
-// ✅ Validation Schema for product form
+// Validation Schema for product form
 const ProductSchema = Yup.object().shape({
   name: Yup.string().required("نام محصول الزامی است"),
   slug: Yup.string().required("شناسه لازم است").lowercase(),
@@ -25,7 +26,7 @@ const ProductSchema = Yup.object().shape({
   isFeatured: Yup.boolean(),
 });
 
-// ✅ Small wrapper component for consistent input and label styling
+// Small wrapper component for consistent input and label styling
 const InputField = ({
   label,
   error,
@@ -44,7 +45,7 @@ const InputField = ({
   </div>
 );
 
-// ✅ Main Modal component
+// Main Modal component
 export default function AddProductModal({
   onClose,
   onAdd,
@@ -57,7 +58,9 @@ export default function AddProductModal({
     { name: string; slug: string }[]
   >([]);
 
-  // ✅ Fetch categories once on mount
+  const { lock, unlock } = useScrollLock();
+
+  // Fetch categories once on mount
   useEffect(() => {
     fetch("/api/categories")
       .then((res) => res.json())
@@ -67,7 +70,7 @@ export default function AddProductModal({
       .catch((err) => console.error("خطا در دریافت کتگوری‌ها:", err));
   }, []);
 
-  // ✅ Submit logic
+  // Submit logic
   const handleSubmit = async (values: any, { resetForm }: any) => {
     try {
       const fd = new FormData();
@@ -124,23 +127,23 @@ export default function AddProductModal({
     }
   };
 
-  // ✅ Memory cleanup for preview URL
   useEffect(() => {
+    lock();
     return () => {
       if (preview) URL.revokeObjectURL(preview);
+      unlock();
     };
   }, [preview]);
 
-  // ✅ Main JSX
   return (
     <div
       onClick={(e) => e.target === e.currentTarget && onClose()}
-      className="fixed inset-0 z-50 flex items-center justify-center bg-black/40 backdrop-blur-xl animate-fadeIn"
+      className="fixed inset-0 mt-12 lg:mt-5 z-50 flex items-center justify-center bg-black/50 backdrop-blur-xl animate-fadeIn"
     >
-      <div className="w-[90%] md:w-[650px] rounded-2xl bg-white/80 backdrop-blur-2xl shadow-[0_8px_24px_rgba(0,0,0,0.08)] border border-slate-200 p-6 animate-scaleIn overflow-y-auto max-h-[90vh]">
+      <div className="w-[90%] md:w-[650px] rounded-2xl  bg-white/80 backdrop-blur-2xl shadow-[0_8px_24px_rgba(0,0,0,0.08)] border border-slate-200 p-6 animate-scaleIn overflow-y-auto max-h-[90vh]">
         {/*  Header */}
-        <div className="flex justify-between items-center mb-5 pb-3 border-b border-slate-200/60 bg-gradient-to-r from-white/80 via-white/60 to-white/80 backdrop-blur-lg">
-          <h2 className="text-xl font-bold text-slate-800 font-vazirmatn">
+        <div className="flex justify-between items-center my-5 py-3 px-2 border-b border-slate-200/60 bg-gradient-to-r from-white/80 via-white/60 to-white/80 backdrop-blur-lg">
+          <h2 className="text-lg md:text-xl font-bold text-slate-800 font-vazirmatn">
             افزودن محصول جدید
           </h2>
           <button
@@ -151,7 +154,7 @@ export default function AddProductModal({
           </button>
         </div>
 
-        {/* ⚙️ Form */}
+        {/* Form */}
         <Formik
           initialValues={{
             name: "",

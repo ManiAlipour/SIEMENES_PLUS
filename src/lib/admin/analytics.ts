@@ -21,6 +21,24 @@ const MONTH_NAMES = [
   "اسفند",
 ];
 
+// نگاشت تقریبی ماه میلادی (۱–۱۲) به ایندکس ماه شمسی در MONTH_NAMES (۰–۱۱)
+// این نگاشت بر اساس شروع سال شمسی در حوالی ۱ فروردین (۲۱/۲۲ مارس) تنظیم شده است
+// 1 → دی، 2 → بهمن، 3 → اسفند، 4 → فروردین، ... ، 12 → آذر
+const GREGORIAN_TO_JALALI_MONTH_INDEX: number[] = [
+  9, // Jan  -> دی
+  10, // Feb -> بهمن
+  11, // Mar -> اسفند
+  0, // Apr -> فروردین
+  1, // May -> اردیبهشت
+  2, // Jun -> خرداد
+  3, // Jul -> تیر
+  4, // Aug -> مرداد
+  5, // Sep -> شهریور
+  6, // Oct -> مهر
+  7, // Nov -> آبان
+  8, // Dec -> آذر
+];
+
 const currentMonthIndex = new Date().getMonth();
 
 export async function getAdminAnalytics() {
@@ -39,10 +57,16 @@ export async function getAdminAnalytics() {
     { $sort: { "_id.month": 1 } },
   ]);
 
-  const monthlyViews = pageViewsMonthly.map((item) => ({
-    month: MONTH_NAMES[item._id.month - 1],
-    views: item.total,
-  }));
+  const monthlyViews = pageViewsMonthly.map((item) => {
+    const gregMonth: number = item._id.month; // 1..12
+    const jalaliIndex =
+      GREGORIAN_TO_JALALI_MONTH_INDEX[gregMonth - 1] ?? gregMonth - 1;
+
+    return {
+      month: MONTH_NAMES[jalaliIndex],
+      views: item.total,
+    };
+  });
 
   // --------------------------
   // 2) Product Views
@@ -56,6 +80,20 @@ export async function getAdminAnalytics() {
     },
     { $sort: { views: -1 } },
     { $limit: 10 },
+  ]);
+
+  // --------------------------
+  // 2.1) Top Pages
+  // --------------------------
+  const topPages = await PageView.aggregate([
+    {
+      $group: {
+        _id: "$url",
+        total: { $sum: 1 },
+      },
+    },
+    { $sort: { total: -1 } },
+    { $limit: 8 },
   ]);
 
   // --------------------------
@@ -160,5 +198,6 @@ export async function getAdminAnalytics() {
     eventStats, // تعاملات
     overview, // آمار کلی
     trendStats, // روند
+    topPages, // صفحات پربازدید
   };
 }

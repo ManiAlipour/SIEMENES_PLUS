@@ -24,9 +24,7 @@ export default function ProductsPage() {
     const fetchProducts = async () => {
       try {
         setLoading(true);
-        const res = await fetch(
-          `${process.env.NEXT_PUBLIC_SITE_URL}/api/products?limit=15`
-        );
+        const res = await fetch(`/api/products?limit=15`);
         const { items } = await res.json();
         setProducts(items);
         setLoading(false);

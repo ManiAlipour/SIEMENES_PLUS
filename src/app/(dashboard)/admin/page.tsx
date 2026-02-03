@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState, useEffect, useMemo } from "react";
 import AdminChartSection from "@/components/layouts/dash/admin/AdminChartSection";
 import RecentActionsWidget from "@/components/layouts/dash/admin/RecentActionsWidget";
 import InfoCard from "@/components/ui/admin/InfoCard";
@@ -20,6 +20,10 @@ export default function AdminDashboardPage() {
     posts: 0,
     tickets: 0,
   });
+  const [progressStats, setProgressStats] = useState({
+    totalUsersView: 0,
+    totalCallForPurchases: 0,
+  });
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
@@ -34,6 +38,14 @@ export default function AdminDashboardPage() {
             posts: data.totalPosts || 0,
             tickets: data.pendingTickets || 0,
           });
+
+          const progressRes = await fetch("/api/admin/analytics");
+          const pres = await progressRes.json();
+
+          setProgressStats((prev) => ({
+            ...prev,
+            totalUsersView: pres.data.monthlyViews.at(-1)?.views ?? 0,
+          }));
         }
       } catch (err) {
         console.error("خطا در دریافت آمار:", err);
@@ -43,6 +55,12 @@ export default function AdminDashboardPage() {
     };
     fetchStats();
   }, []);
+
+  const monthlyViewPercent = useMemo(() => {
+    const MAX = 2500;
+    const tv = Number(progressStats?.totalUsersView ?? 0);
+    return `${Math.min((tv / MAX) * 100, 100).toFixed(0)}%`;
+  }, [progressStats.totalUsersView]);
 
   return (
     <div
@@ -68,9 +86,7 @@ export default function AdminDashboardPage() {
             </div>
             <div className="hidden md:flex items-center gap-2 px-4 py-2 bg-primary/10 rounded-xl">
               <FiActivity className="w-5 h-5 text-primary" />
-              <span className="text-sm font-semibold text-primary">
-                سیستم آنلاین
-              </span>
+              <span className="text-sm font-semibold text-primary">آنلاین</span>
             </div>
           </div>
         </motion.header>
@@ -95,15 +111,15 @@ export default function AdminDashboardPage() {
           />
           <InfoCard
             title="پست‌ها"
-            desc="در انتظار بررسی"
+            desc="پست های ثبت شده"
             count={stats.posts}
             color="warn"
             trend={-5}
             icon={<FiShoppingCart className="w-6 h-6 text-white" />}
           />
           <InfoCard
-            title="تیکت‌ها"
-            desc="در حال بررسی"
+            title="پیام ها"
+            desc="پیام های کاربران"
             count={stats.tickets}
             color="danger"
             trend={3}
@@ -128,14 +144,18 @@ export default function AdminDashboardPage() {
             <div>
               <div className="flex justify-between items-center mb-2">
                 <span className="text-sm font-semibold text-gray-700">
-                  نرخ تعامل کاربران
+                  نرخ بازدید کاربران {"(ماهانه)"}
                 </span>
-                <span className="text-lg font-bold text-primary">۷۸٪</span>
+                <span className="text-lg font-bold text-primary">
+                  {monthlyViewPercent}
+                </span>
               </div>
               <div className="h-3 w-full rounded-full bg-gray-200 overflow-hidden">
                 <motion.div
                   initial={{ width: 0 }}
-                  animate={{ width: "78%" }}
+                  animate={{
+                    width: monthlyViewPercent,
+                  }}
                   transition={{ duration: 1, delay: 0.3 }}
                   className="h-full bg-gradient-to-r from-primary to-primary/80 rounded-full shadow-md"
                 />

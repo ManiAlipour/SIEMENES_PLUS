@@ -10,6 +10,8 @@ import {
   DesktopTopActions,
   DesktopFloatingActions,
 } from "./CardActions";
+import { useDispatch } from "react-redux";
+import { addProduct } from "@/store/slices/likedPosts";
 
 interface ProductCardProps {
   id: string;
@@ -39,16 +41,17 @@ export default function ProductCard({
 
   const handleNavigate = () => router.push(productUrl);
 
+  const dispatch = useDispatch();
+
   const handleAddToCart = (e: React.MouseEvent) => {
     e.stopPropagation();
     console.log("Add to cart", id);
-    // Add your logic here
+    dispatch(addProduct(id));
   };
 
   const handleQuickView = (e: React.MouseEvent) => {
     e.stopPropagation();
     console.log("Quick view", id);
-    // Add your logic here
   };
 
   // JSON-LD Schema
