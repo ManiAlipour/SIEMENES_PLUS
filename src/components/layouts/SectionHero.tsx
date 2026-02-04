@@ -93,7 +93,7 @@ function useMaxSlideHeight(slides: Slide[]) {
       measurer.appendChild(slideDiv);
       max = Math.max(max, slideDiv.offsetHeight);
     }
-    setMaxHeight(max === 0 ? undefined : max + 24); // extra padding
+    setMaxHeight(max === 0 ? undefined : max + 24);
     document.body.removeChild(measurer);
   }, [slides]);
 

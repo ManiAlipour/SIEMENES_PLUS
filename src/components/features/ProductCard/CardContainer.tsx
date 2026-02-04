@@ -44,7 +44,7 @@ export default function ProductCardContainer({
       aria-label={`کارت محصول ${name}`}
       className={`
         group relative flex flex-col
-        min-w-48
+        min-w-44
         bg-white rounded-2xl sm:rounded-3xl
         border border-gray-100 sm:border-cyan-100/80
         shadow-lg sm:shadow-xl
