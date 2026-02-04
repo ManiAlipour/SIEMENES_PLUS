@@ -77,10 +77,10 @@ export async function GET(req: Request) {
       Product.countDocuments(filter),
     ]);
 
-    // لاگ سرچ فقط برای صفحه اول (برای جلوگیری از شمارش چندباره در pagination)
     if (search && page === 1) {
       try {
-        const tokenValue = cookies().get("token")?.value;
+        const cookie = await cookies()
+        const tokenValue = cookie.get("token")?.value;
         let userId: string | null = null;
         if (tokenValue) {
           try {
