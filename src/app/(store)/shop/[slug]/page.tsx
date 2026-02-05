@@ -5,6 +5,7 @@ import { Suspense } from "react";
 import LikeButton from "./LikeButton";
 import { FaWhatsapp, FaTelegramPlane, FaInstagram } from "react-icons/fa";
 import { FiPhone } from "react-icons/fi";
+import CommentsSection from "@/components/features/CommentsSection";
 
 // --- Types ---
 type ProductObject = {
@@ -31,7 +32,6 @@ const TELEGRAM_LINK = "https://t.me/yourstore";
 const WHATSAPP_LINK = "https://wa.me/989123456789";
 const INSTAGRAM_LINK = "https://instagram.com/yourstore";
 
-// Fix: openGraph.type باید یکی از مقادیر معتبر (مثلاً 'website' یا 'article') باشد و نه 'product'
 export async function generateMetadata({
   params,
 }: {
@@ -43,7 +43,7 @@ export async function generateMetadata({
   try {
     const res = await fetch(
       `${process.env.NEXT_PUBLIC_SITE_URL}/api/products/${decodedSlug}`,
-      { cache: "no-store" }
+      { cache: "no-store" },
     );
     if (!res.ok)
       return {
@@ -167,7 +167,7 @@ export default async function ProductPage({ params }: IProductProps) {
     // fetch only essential field, edge cache for performance on SSG
     const res = await fetch(
       `${process.env.NEXT_PUBLIC_SITE_URL}/api/products/${decodedSlug}`,
-      { cache: "force-cache", next: { tags: ["product", decodedSlug] } }
+      { cache: "force-cache", next: { tags: ["product", decodedSlug] } },
     );
     if (!res.ok) {
       errorMsg = "محصول پیدا نشد!";
@@ -380,6 +380,8 @@ export default async function ProductPage({ params }: IProductProps) {
             </nav>
           </div>
         </section>
+
+        <CommentsSection targetId={product._id} targetType="product" />
 
         {/* ~~ SIMILAR PRODUCTS ~~ */}
         {product.similarProducts && product.similarProducts.length > 0 && (
