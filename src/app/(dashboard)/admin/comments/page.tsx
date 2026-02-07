@@ -29,7 +29,6 @@ export default function AdminCommentsPage() {
     "all" | "approved" | "pending"
   >("all");
 
-  /** 🩶 دریافت لیست کامنت‌ها از API */
   const fetchComments = async () => {
     try {
       setLoading(true);
@@ -49,28 +48,27 @@ export default function AdminCommentsPage() {
     fetchComments();
   }, []);
 
-  /** 🧊 فیلتر و جستجو */
   useEffect(() => {
     let temp = [...comments];
     if (statusFilter !== "all") {
       temp = temp.filter((c) =>
-        statusFilter === "approved" ? c.approved : !c.approved
+        statusFilter === "approved" ? c.approved : !c.approved,
       );
     }
     if (search.trim()) {
       temp = temp.filter(
         (c) =>
           c.user?.name?.toLowerCase().includes(search.toLowerCase()) ||
-          c.user?.email?.toLowerCase().includes(search.toLowerCase())
+          c.user?.email?.toLowerCase().includes(search.toLowerCase()),
       );
     }
     setFiltered(temp);
   }, [comments, statusFilter, search]);
 
-  /** ✅ تأیید / رد */
   const handleStatusChange = async (id: string, approve: boolean) => {
     try {
-      const res = await fetch(`/api/admin/comments/${id}`, {
+      console.log(`/api/admin/comments?commentId=${id}`);
+      const res = await fetch(`/api/admin/comments?commentId=${id}`, {
         method: "PATCH",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ approved: approve }),
@@ -78,19 +76,20 @@ export default function AdminCommentsPage() {
       if (res.ok) {
         toast.success(
           approve ? "کامنت تایید شد ✅" : "کامنت به حالت انتظار برگشت 🚫",
-          { className: "font-vazirmatn" }
+          { className: "font-vazirmatn" },
         );
 
-        await fetch("/api/admin/actions", {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({
-            user: "مانی ایمانی",
-            action: approve ? "APPROVE_COMMENT" : "REVERT_COMMENT",
-            entity: "comment",
-            entityName: id,
-          }),
-        });
+        // TODO: ADD ACTION LOG
+        // await fetch("/api/admin/actions", {
+        //   method: "POST",
+        //   headers: { "Content-Type": "application/json" },
+        //   body: JSON.stringify({
+        //     user: user.name,
+        //     action: approve ? "APPROVE_COMMENT" : "REVERT_COMMENT",
+        //     entity: "comment",
+        //     entityName: id,
+        //   }),
+        // });
 
         fetchComments();
       } else toast.error("بروزرسانی ناموفق بود");
@@ -100,7 +99,6 @@ export default function AdminCommentsPage() {
     }
   };
 
-  /** 🗑 حذف کامنت */
   const handleDelete = async (id: string) => {
     if (!window.confirm("آیا از حذف کامنت مطمئن هستید؟")) return;
 

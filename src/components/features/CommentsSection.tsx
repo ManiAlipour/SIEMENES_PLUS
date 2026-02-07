@@ -40,9 +40,9 @@ export default function CommentsSection({
       const response = await fetch(
         `/api/comments?targetType=${targetType}&targetId=${targetId}`,
       );
-      const data = await response.json();
+      const { data } = await response.json();
       if (response.ok) {
-        setComments(data.comments);
+        setComments(data);
       } else {
         setError(data.error || "خطا در بارگذاری کامنت‌ها");
       }
