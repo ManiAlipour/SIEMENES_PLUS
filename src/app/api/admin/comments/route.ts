@@ -1,4 +1,4 @@
-import { NextResponse } from "next/server";
+import { NextRequest, NextResponse } from "next/server";
 import { connectDB } from "@/lib/db";
 import Comment from "@/models/Comment";
 import { adminOnly } from "@/lib/middlewares/adminOnly";
@@ -20,17 +20,17 @@ export async function GET(request: Request) {
   }
 }
 
-export async function PATCH(request: Request) {
+export async function PATCH(request: NextRequest) {
   try {
     await connectDB();
 
-    adminOnly(request);
+    await adminOnly(request);
 
     const { commentId, approved } = await request.json();
     const updatedComment = await Comment.findByIdAndUpdate(
       commentId,
       { approved },
-      { new: true }
+      { new: true },
     );
     return NextResponse.json({ comment: updatedComment });
   } catch (err: any) {

@@ -1,16 +1,18 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useEffect, useState } from "react";
+import { FaPaperPlane, FaSpinner } from "react-icons/fa";
 import { useAuth } from "@/components/providers/AuthProvider";
-import { FaUser, FaPaperPlane, FaSpinner } from "react-icons/fa";
+
+/* ---------- Types ---------- */
 
 interface Comment {
   _id: string;
   text: string;
   createdAt: string;
-  user: {
-    name: string;
-    email: string;
+  user?: {
+    name?: string;
+    email?: string;
   };
 }
 
@@ -19,52 +21,93 @@ interface CommentsSectionProps {
   targetId: string;
 }
 
+/* ---------- Constants ---------- */
+
+const COMMENTS_PER_PAGE = 5;
+
+/* ---------- Helpers ---------- */
+
+const avatarColor = (name?: string) => {
+  const colors = [
+    "bg-blue-500",
+    "bg-emerald-500",
+    "bg-violet-500",
+    "bg-rose-500",
+    "bg-amber-500",
+  ];
+
+  if (!name || typeof name !== "string") {
+    return "bg-gray-400";
+  }
+
+  return colors[name.charCodeAt(0) % colors.length];
+};
+
+const getInitial = (name?: string) => {
+  if (!name || typeof name !== "string") return "?";
+  return name.trim().charAt(0).toUpperCase();
+};
+
+const formatDate = (date: string) =>
+  new Date(date).toLocaleDateString("fa-IR", {
+    year: "numeric",
+    month: "long",
+    day: "numeric",
+  });
+
+/* ---------- Component ---------- */
+
 export default function CommentsSection({
   targetType,
   targetId,
 }: CommentsSectionProps) {
   const { isAuthenticated } = useAuth();
+
   const [comments, setComments] = useState<Comment[]>([]);
+  const [visibleCount, setVisibleCount] = useState(COMMENTS_PER_PAGE);
   const [newComment, setNewComment] = useState("");
-  const [loading, setLoading] = useState(false);
+  const [loading, setLoading] = useState(true);
   const [submitting, setSubmitting] = useState(false);
   const [error, setError] = useState("");
+  const [success, setSuccess] = useState("");
+
+  /* ---------- Fetch Comments ---------- */
 
   useEffect(() => {
     fetchComments();
   }, [targetId]);
 
   const fetchComments = async () => {
-    setLoading(true);
     try {
-      const response = await fetch(
+      setLoading(true);
+      const res = await fetch(
         `/api/comments?targetType=${targetType}&targetId=${targetId}`,
       );
-      const { data } = await response.json();
-      if (response.ok) {
-        setComments(data);
-      } else {
-        setError(data.error || "خطا در بارگذاری کامنت‌ها");
-      }
-    } catch (err) {
-      setError("خطا در اتصال به سرور");
+      const { data, error } = await res.json();
+
+      if (!res.ok) throw new Error(error);
+      setComments(data);
+      setVisibleCount(COMMENTS_PER_PAGE);
+    } catch {
+      setError("خطا در دریافت نظرات");
     } finally {
       setLoading(false);
     }
   };
 
+  /* ---------- Submit Comment ---------- */
+
   const submitComment = async () => {
     if (!newComment.trim()) return;
 
-    setSubmitting(true);
-    setError("");
-
     try {
-      const response = await fetch("/api/comments", {
+      setSubmitting(true);
+      setError("");
+      setSuccess("");
+
+      const res = await fetch("/api/comments", {
         method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
+        headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
           targetType,
           targetId,
@@ -72,120 +115,134 @@ export default function CommentsSection({
         }),
       });
 
-      const data = await response.json();
+      const data = await res.json();
+      if (!res.ok) throw new Error(data.error);
 
-      if (response.ok) {
-        setNewComment("");
-        // کامنت جدید هنوز تایید نشده، پس لیست را رفرش نمی‌کنیم
-        alert("کامنت شما ارسال شد و پس از تایید نمایش داده خواهد شد.");
-      } else {
-        setError(data.error || "خطا در ارسال کامنت");
-      }
-    } catch (err) {
-      setError("خطا در اتصال به سرور");
+      setNewComment("");
+      setSuccess("✅ نظر شما ثبت شد و پس از تأیید نمایش داده می‌شود.");
+    } catch {
+      setError("خطا در ارسال نظر");
     } finally {
       setSubmitting(false);
     }
   };
 
-  const formatDate = (dateString: string) => {
-    return new Date(dateString).toLocaleDateString("fa-IR", {
-      year: "numeric",
-      month: "long",
-      day: "numeric",
-    });
-  };
+  const visibleComments = comments.slice(0, visibleCount);
+
+  /* ---------- Render ---------- */
 
   return (
-    <div className="mt-12 bg-white rounded-3xl p-6 shadow-sm border border-gray-100">
-      <h3 className="text-xl font-bold text-gray-900 mb-6 flex items-center gap-2">
-        <FaUser />
-        نظرات کاربران
-      </h3>
+    <section className="mt-14">
+      {/* Header */}
+      <div className="mb-6 flex items-center justify-between">
+        <h3 className="text-lg font-bold text-gray-900">💬 نظرات کاربران</h3>
+        <span className="text-sm text-gray-500">{comments.length} نظر</span>
+      </div>
 
       {/* Comment Form */}
       {isAuthenticated ? (
-        <div className="mb-8">
-          <div className="flex gap-3">
-            <textarea
-              value={newComment}
-              onChange={(e) => setNewComment(e.target.value)}
-              placeholder="نظر خود را بنویسید..."
-              className="flex-1 p-4 border border-gray-200 rounded-2xl resize-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-              rows={3}
-              maxLength={2000}
-            />
+        <div className="mb-10 rounded-2xl border border-gray-200 bg-gray-50 p-4">
+          <textarea
+            value={newComment}
+            onChange={(e) => setNewComment(e.target.value)}
+            placeholder="نظر شما درباره این محتوا..."
+            rows={4}
+            maxLength={2000}
+            className="w-full resize-none bg-transparent text-sm leading-7 placeholder:text-gray-400 focus:outline-none"
+          />
+
+          <div className="mt-3 flex items-center justify-between">
+            <span className="text-xs text-gray-400">
+              {newComment.length} / 2000
+            </span>
+
             <button
               onClick={submitComment}
               disabled={submitting || !newComment.trim()}
-              className="px-6 py-4 bg-blue-600 text-white rounded-2xl hover:bg-blue-700 disabled:bg-gray-300 disabled:cursor-not-allowed transition-colors flex items-center gap-2"
+              className="flex items-center gap-2 rounded-xl bg-gray-900 px-4 py-2 text-sm text-white hover:bg-gray-800 disabled:bg-gray-300"
             >
               {submitting ? (
                 <FaSpinner className="animate-spin" />
               ) : (
                 <FaPaperPlane />
               )}
-              ارسال
+              ارسال نظر
             </button>
           </div>
-          <div className="text-xs text-gray-500 mt-2">
-            {newComment.length}/2000 کاراکتر
-          </div>
-          {error && <p className="text-red-500 text-sm mt-2">{error}</p>}
+
+          {error && <p className="mt-3 text-sm text-red-500">{error}</p>}
+          {success && (
+            <p className="mt-3 text-sm text-emerald-600">{success}</p>
+          )}
         </div>
       ) : (
-        <div className="mb-8 p-4 bg-gray-50 rounded-2xl text-center">
-          <p className="text-gray-600">
-            برای ارسال نظر ابتدا{" "}
-            <a href="/auth/login" className="text-blue-600 hover:underline">
-              وارد شوید
-            </a>
-          </p>
+        <div className="mb-10 rounded-2xl bg-gray-50 p-6 text-center text-sm text-gray-600">
+          برای ارسال نظر ابتدا{" "}
+          <a href="/auth/login" className="font-medium text-blue-600">
+            وارد شوید
+          </a>
         </div>
       )}
 
       {/* Comments List */}
-      <div className="space-y-6">
-        {loading ? (
-          <div className="text-center py-8">
-            <FaSpinner
-              className="animate-spin mx-auto text-gray-400"
-              size={24}
-            />
-            <p className="text-gray-500 mt-2">در حال بارگذاری...</p>
-          </div>
-        ) : comments.length === 0 ? (
-          <div className="text-center py-8 text-gray-500">
-            هنوز نظری ثبت نشده است.
-          </div>
-        ) : (
-          comments.map((comment) => (
-            <div
-              key={comment._id}
-              className="border-b border-gray-100 pb-6 last:border-b-0 last:pb-0"
-            >
-              <div className="flex items-start gap-3">
-                <div className="w-10 h-10 bg-gray-200 rounded-full flex items-center justify-center flex-shrink-0">
-                  <FaUser className="text-gray-500" />
-                </div>
-                <div className="flex-1">
-                  <div className="flex items-center gap-2 mb-2">
-                    <span className="font-semibold text-gray-900">
-                      {comment.user.name}
-                    </span>
-                    <span className="text-xs text-gray-500">
-                      {formatDate(comment.createdAt)}
-                    </span>
+      {loading ? (
+        <div className="py-12 text-center text-gray-400">
+          <FaSpinner className="mx-auto mb-3 animate-spin" size={22} />
+          در حال بارگذاری نظرات...
+        </div>
+      ) : comments.length === 0 ? (
+        <div className="py-14 text-center text-gray-400">
+          💭 هنوز نظری ثبت نشده <br />
+          اولین نفر باشید
+        </div>
+      ) : (
+        <>
+          <div className="space-y-6">
+            {visibleComments.map((comment) => (
+              <div
+                key={comment._id}
+                className="group rounded-2xl p-4 transition hover:bg-gray-50"
+              >
+                <div className="mb-2 flex items-center gap-3">
+                  <div
+                    className={`flex h-10 w-10 items-center justify-center rounded-full text-sm font-bold text-white ${avatarColor(
+                      comment.user?.name,
+                    )}`}
+                  >
+                    {getInitial(comment.user?.name)}
                   </div>
-                  <p className="text-gray-700 leading-relaxed">
-                    {comment.text}
-                  </p>
+
+                  <div>
+                    <p className="text-sm font-semibold text-gray-900">
+                      {comment.user?.name ?? "کاربر ناشناس"}
+                    </p>
+                    <p className="text-xs text-gray-400">
+                      {formatDate(comment.createdAt)}
+                    </p>
+                  </div>
                 </div>
+
+                <p className="pr-13 text-sm leading-7 text-gray-700">
+                  {comment.text}
+                </p>
               </div>
+            ))}
+          </div>
+
+          {visibleCount < comments.length && (
+            <div className="pt-6 text-center">
+              <button
+                onClick={() =>
+                  setVisibleCount((prev) => prev + COMMENTS_PER_PAGE)
+                }
+                className="rounded-xl border border-gray-200 px-6 py-2 text-sm text-gray-600 hover:bg-gray-50"
+              >
+                نمایش نظرات بیشتر
+              </button>
             </div>
-          ))
-        )}
-      </div>
-    </div>
+          )}
+        </>
+      )}
+    </section>
   );
 }

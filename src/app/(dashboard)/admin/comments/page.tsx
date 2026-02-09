@@ -67,11 +67,12 @@ export default function AdminCommentsPage() {
 
   const handleStatusChange = async (id: string, approve: boolean) => {
     try {
+
       console.log(`/api/admin/comments?commentId=${id}`);
-      const res = await fetch(`/api/admin/comments?commentId=${id}`, {
+      const res = await fetch(`/api/admin/comments`, {
         method: "PATCH",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ approved: approve }),
+        body: JSON.stringify({ commentId: id, approved: approve }),
       });
       if (res.ok) {
         toast.success(
