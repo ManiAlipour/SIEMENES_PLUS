@@ -5,8 +5,13 @@ export interface IUser extends Document {
   email: string;
   password: string;
   role: "user" | "admin";
+
   verified: boolean;
   verificationCode?: string | null;
+
+  active: boolean;
+  isDeleted: boolean;
+
   createdAt: Date;
   updatedAt: Date;
 }
@@ -34,6 +39,8 @@ const UserSchema = new Schema<IUser>(
       enum: ["user", "admin"],
       default: "user",
     },
+
+    // ✅ Email verification
     verified: {
       type: Boolean,
       default: false,
@@ -42,11 +49,21 @@ const UserSchema = new Schema<IUser>(
       type: String,
       default: null,
     },
+
+    // ✅ Account status
+    active: {
+      type: Boolean,
+      default: true,
+    },
+    isDeleted: {
+      type: Boolean,
+      default: false,
+    },
   },
   {
-    timestamps: true, //  adds createdAt & updatedAt
-    versionKey: false, // removes __v
-  }
+    timestamps: true,
+    versionKey: false,
+  },
 );
 
 const User: Model<IUser> =

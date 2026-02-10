@@ -3,6 +3,16 @@ import jwt from "jsonwebtoken";
 import nodemailer from "nodemailer";
 import User from "@/models/User";
 import { connectDB } from "@/lib/db";
+import { redirect } from "next/dist/server/api-utils";
+
+interface ITokenData {
+  _id: string;
+  email: string;
+  role: "user" | "admin";
+  verified: boolean;
+  active: boolean;
+  isDeleted: boolean;
+}
 
 export const transporter = nodemailer.createTransport({
   host: "smtp.gmail.com",
@@ -13,10 +23,19 @@ export const transporter = nodemailer.createTransport({
   },
 });
 
-function generateToken(id: string, role: "user" | "admin", email: string) {
-  return jwt.sign({ id, role: role, email: email }, process.env.JWT_SECRET!, {
-    expiresIn: "30d",
-  });
+export function generateToken(user: ITokenData) {
+  return jwt.sign(
+    {
+      id: user._id,
+      email: user.email,
+      role: user.role,
+      verified: user.verified,
+      active: user.active,
+      isDeleted: user.isDeleted,
+    },
+    process.env.JWT_SECRET!,
+    { expiresIn: "30d" },
+  );
 }
 
 export async function signup({
@@ -36,7 +55,7 @@ export async function signup({
   const hashed = await bcrypt.hash(password, 10);
 
   const verificationCode = Math.floor(
-    100000 + Math.random() * 900000
+    100000 + Math.random() * 900000,
   ).toString();
 
   const user = await User.create({
@@ -69,16 +88,21 @@ export async function login({
 
   const user = await User.findOne({ email });
   if (!user) throw new Error("User not found");
+
+  if (!user.active)
+    throw new Error(
+      "حساب کاربری شما مسدود شده است. لطفا با پشتیبانی تماس بگیرید.",
+    );
   if (!user.verified) throw new Error("Account not verified");
 
   const isMatch = await bcrypt.compare(password, user.password);
   if (!isMatch) throw new Error("Invalid credentials");
 
-  const token = generateToken(user._id!.toString(), user.role, user.email);
+  const token = generateToken(user as ITokenData);
 
   return {
     token,
-    user: { id: user._id, name: user.name, email: user.email, role: user.role },
+    user: mapUserToTokenData(user),
   };
 }
 
@@ -101,49 +125,59 @@ export async function verifyEmail({
   user.verificationCode = null;
   await user.save();
 
-  // تولید توکن بعد از تأیید ایمیل
-  const token = generateToken(user._id!.toString(), user.role, user.email);
+  const token = generateToken(user as ITokenData);
 
   return {
     message: "Account verified successfully",
     token,
-    user: { id: user._id, name: user.name, email: user.email, role: user.role },
+    user: mapUserToTokenData(user),
   };
 }
 
 export function verifyToken(token: string) {
   return jwt.verify(token, process.env.JWT_SECRET!) as {
     id: string;
-    role: "admin" | "user";
     email: string;
+    role: "admin" | "user";
+    verified: boolean;
+    active: boolean;
+    isDeleted: boolean;
   };
 }
 
-interface IUser {
-  _id: string;
+export interface SafeUser {
+  id: string;
   name: string;
   email: string;
-  password: string;
-  role: string;
+  role: "user" | "admin";
+  active: boolean;
   verified: boolean;
-  verificationCode: null | string;
-  createdAt: string;
-  updatedAt: string;
+  createdAt: Date;
+  updatedAt: Date;
 }
 
-/**
- * فیلتر کردن فیلدهای حساس کاربر قبل از ارسال به کلاینت
- */
-export function sanitizeUser(user: User) {
-  const { _id, name, email, role, verified, createdAt, updatedAt } = user;
-
+export function mapUserToTokenData(user: any): ITokenData {
   return {
-    id: _id,
-    name,
-    email,
-    role,
-    verified,
-    createdAt,
-    updatedAt,
+    _id: user._id.toString(),
+    email: user.email,
+    role: user.role,
+    verified: user.verified,
+    active: user.active,
+    isDeleted: user.isDeleted,
+  };
+}
+
+import { IUser } from "@/models/User";
+
+export function sanitizeUser(user: IUser): SafeUser {
+  return {
+    id: user._id?.toString() as string,
+    name: user.name,
+    email: user.email,
+    role: user.role,
+    verified: user.verified,
+    active: user.active,
+    createdAt: user.createdAt,
+    updatedAt: user.updatedAt,
   };
 }

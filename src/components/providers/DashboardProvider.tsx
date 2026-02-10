@@ -17,9 +17,7 @@ export default function DashboardProvider({
   useEffect(() => {
     const fetchUserData = async () => {
       try {
-        const baseUrl =
-          process.env.NEXT_PUBLIC_SITE_URL || "http://localhost:3000";
-        const res = await fetch(`${baseUrl}/api/users/get-one`, {
+        const res = await fetch(`/api/users/get-one`, {
           method: "GET",
           credentials: "include",
         });
@@ -43,7 +41,9 @@ export default function DashboardProvider({
       {/* Main Content Container */}
       <div className="flex flex-col flex-1 w-full lg:w-[calc(100%-18rem)] lg:mr-72 transition-all duration-300">
         <Header onToggleSidebar={() => setOpen(!open)} />
-        <main className="flex-1 w-full px-3 sm:px-4 md:px-6 py-4 sm:py-6">{children}</main>
+        <main className="flex-1 w-full px-3 sm:px-4 md:px-6 py-4 sm:py-6">
+          {children}
+        </main>
       </div>
     </div>
   );

@@ -26,7 +26,6 @@ export default function AuthForm({ mode }: Props) {
   const router = useRouter();
   const searchParams = useSearchParams();
 
-  // گرفتن email از query parameter برای حالت verify
   const emailFromQuery =
     mode === "verify" ? searchParams.get("email") || "" : "";
 
@@ -65,14 +64,12 @@ export default function AuthForm({ mode }: Props) {
   const [loading, setLoading] = useState(false);
   const [serverError, setServerError] = useState<string | null>(null);
 
-  // تنظیم ایمیل خودکار برای حالت verify
   useEffect(() => {
     if (mode === "verify" && emailFromQuery) {
       setValue("email", emailFromQuery);
     }
   }, [mode, emailFromQuery, setValue]);
 
-  // تابع تبدیل خطاهای انگلیسی به فارسی
   const translateError = (errorMessage: string): string => {
     const error = errorMessage.trim();
 
@@ -137,40 +134,37 @@ export default function AuthForm({ mode }: Props) {
       }
     }
 
-    // اگر ترجمه‌ای پیدا نشد، پیام اصلی را برگردان
     return error;
   };
 
   const getErrorMessage = (error: any): string => {
-    // اگر خطا یک رشته باشد
     if (typeof error === "string") {
+      console.log("str :", error);
       return translateError(error);
     }
 
-    // اگر خطا یک آبجکت با message باشد
     if (error?.message) {
+      console.log(error);
       return translateError(error.message);
     }
 
-    // خطای پیش‌فرض
     return "خطایی رخ داد. لطفاً دوباره تلاش کنید.";
   };
 
   const extractServerError = async (res: Response): Promise<string> => {
     const contentType = res.headers.get("content-type");
 
-    // اگر پاسخ JSON نباشد
     if (!contentType?.includes("application/json")) {
       const statusText =
         res.status === 401
           ? "احراز هویت نامعتبر است"
           : res.status === 403
-          ? "دسترسی غیرمجاز"
-          : res.status === 404
-          ? "یافت نشد"
-          : res.status === 500
-          ? "خطای سرور"
-          : res.statusText || "خطای نامشخص";
+            ? "دسترسی غیرمجاز"
+            : res.status === 404
+              ? "یافت نشد"
+              : res.status === 500
+                ? "خطای سرور"
+                : res.statusText || "خطای نامشخص";
 
       return `خطای سرور (${res.status}): ${statusText}`;
     }
@@ -178,7 +172,6 @@ export default function AuthForm({ mode }: Props) {
     try {
       const json = await res.json();
 
-      // بررسی فرمت‌های مختلف خطا و ترجمه به فارسی
       let errorMessage = "";
 
       if (json.error) {
@@ -186,7 +179,6 @@ export default function AuthForm({ mode }: Props) {
       } else if (json.message && !json.success) {
         errorMessage = translateError(json.message);
       } else if (json.errors) {
-        // برای خطاهای validation که ممکن است آرایه باشد
         if (Array.isArray(json.errors)) {
           errorMessage = json.errors
             .map((err: any) => translateError(String(err)))
@@ -199,7 +191,6 @@ export default function AuthForm({ mode }: Props) {
           errorMessage = translateError(String(json.errors));
         }
       } else {
-        // اگر هیچ خطایی در JSON نبود، بر اساس status code پیام مناسب بده
         if (res.status === 401) {
           errorMessage = "ایمیل یا رمز عبور اشتباه است";
         } else if (res.status === 403) {
@@ -215,17 +206,16 @@ export default function AuthForm({ mode }: Props) {
 
       return errorMessage || "خطایی رخ داد. لطفاً دوباره تلاش کنید.";
     } catch (parseError) {
-      // اگر نتوانستیم JSON را parse کنیم
       const statusText =
         res.status === 401
           ? "احراز هویت نامعتبر است"
           : res.status === 403
-          ? "دسترسی غیرمجاز"
-          : res.status === 404
-          ? "یافت نشد"
-          : res.status === 500
-          ? "خطای سرور"
-          : res.statusText || "خطای نامشخص";
+            ? "دسترسی غیرمجاز"
+            : res.status === 404
+              ? "یافت نشد"
+              : res.status === 500
+                ? "خطای سرور"
+                : res.statusText || "خطای نامشخص";
 
       return `خطای سرور (${res.status}): ${statusText}`;
     }
@@ -233,23 +223,21 @@ export default function AuthForm({ mode }: Props) {
 
   const onSubmit = async (data: FormData) => {
     setLoading(true);
-    setServerError(null); // پاک کردن خطای قبلی
+    setServerError(null);
 
-    // بررسی وجود email برای حالت verify
     if (mode === "verify" && !emailFromQuery) {
       setServerError("ایمیل یافت نشد. لطفاً از صفحه ثبت‌نام وارد شوید.");
       setLoading(false);
       return;
     }
 
-    // استفاده از email از query parameter برای verify
     const submitData =
       mode === "verify" ? { ...data, email: emailFromQuery } : data;
 
     try {
       let res: Response;
       const controller = new AbortController();
-      const timeoutId = setTimeout(() => controller.abort(), 30000); // 30 ثانیه timeout
+      const timeoutId = setTimeout(() => controller.abort(), 30000);
 
       try {
         res = await fetch(
@@ -259,12 +247,12 @@ export default function AuthForm({ mode }: Props) {
             headers: { "Content-Type": "application/json" },
             body: JSON.stringify(submitData),
             signal: controller.signal,
-          }
+          },
         );
         clearTimeout(timeoutId);
       } catch (fetchError: any) {
         clearTimeout(timeoutId);
-        // خطاهای شبکه یا timeout
+
         const isNetworkError =
           fetchError.name === "TypeError" ||
           fetchError.name === "NetworkError" ||
@@ -284,14 +272,12 @@ export default function AuthForm({ mode }: Props) {
           return;
         }
 
-        // سایر خطاها
         const errorMsg = getErrorMessage(fetchError);
         setServerError(errorMsg);
         toast.error(errorMsg, { duration: 5000 });
         return;
       }
 
-      // اگر پاسخ موفقیت‌آمیز نبود
       if (!res.ok) {
         const errorMessage = await extractServerError(res);
         setServerError(errorMessage);
@@ -299,13 +285,11 @@ export default function AuthForm({ mode }: Props) {
         return;
       }
 
-      // parse پاسخ موفقیت‌آمیز
       try {
         const json = await res.json();
         toast.success(json.message || "عملیات موفقیت‌آمیز بود");
 
         if (mode === "register") {
-          // پاس دادن email به صفحه verify
           const email = (data as any).email;
           router.push(`/verify?email=${encodeURIComponent(email)}`);
         } else if (mode === "login") {
@@ -316,7 +300,6 @@ export default function AuthForm({ mode }: Props) {
           router.push("/");
         }
       } catch (parseError) {
-        // اگر پاسخ خالی باشد یا JSON نباشد (که غیرعادی است برای پاسخ موفق)
         toast.success("عملیات موفقیت‌آمیز بود");
         if (mode === "register") {
           router.push("/verify");
@@ -326,7 +309,6 @@ export default function AuthForm({ mode }: Props) {
         }
       }
     } catch (err: any) {
-      // خطاهای غیرمنتظره
       const errorMessage = getErrorMessage(err);
       setServerError(errorMessage);
       toast.error(errorMessage, { duration: 5000 });
@@ -337,7 +319,6 @@ export default function AuthForm({ mode }: Props) {
 
   return (
     <form onSubmit={handleSubmit(onSubmit)} className="space-y-6">
-      {/* نمایش خطای سرور در UI - مناسب برای موبایل */}
       <AnimatePresence>
         {serverError && (
           <motion.div
@@ -377,7 +358,6 @@ export default function AuthForm({ mode }: Props) {
         </motion.div>
       )}
 
-      {/* نمایش فیلد ایمیل فقط برای register و login */}
       {mode !== "verify" && (
         <motion.div
           initial={{ opacity: 0, x: -20 }}
