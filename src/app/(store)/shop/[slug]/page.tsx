@@ -27,10 +27,10 @@ type Product = ProductObject & {
   similarProducts: ProductObject[];
 };
 
-const OFFICE_PHONE = "021-12345678";
+const OFFICE_PHONE = "09199883772";
 const TELEGRAM_LINK = "https://t.me/yourstore";
-const WHATSAPP_LINK = "https://wa.me/989123456789";
-const INSTAGRAM_LINK = "https://instagram.com/yourstore";
+const WHATSAPP_LINK = "https://wa.me/989199883772";
+const INSTAGRAM_LINK = "https://instagram.com/siemenes.plus1";
 
 export async function generateMetadata({
   params,

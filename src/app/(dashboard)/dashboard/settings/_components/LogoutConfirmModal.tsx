@@ -14,7 +14,7 @@ export default function LogoutConfirmModal({ open, onClose }: Props) {
   const handleLogout = async () => {
     try {
       setLoading(true);
-      await fetch("/api/logout", { method: "POST" });
+      await fetch("/api/auth/logout", { method: "POST" });
       window.location.href = "/login";
     } catch {
       alert("خطا در خروج از حساب");

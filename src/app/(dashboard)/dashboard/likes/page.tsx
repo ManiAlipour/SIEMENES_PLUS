@@ -15,7 +15,7 @@ export default function FavoritePage() {
         <div className="w-20 h-20 rounded-full bg-primary/10 flex items-center justify-center mb-4">
           <span className="text-4xl">💙</span>
         </div>
-        <h1 className="text-lg font-semibold">هنوز چیزی لایک نکردید!</h1>
+        <h1 className="text-lg font-semibold">هنوز محصولی رو لایک نکردید!</h1>
         <p className="mt-1 text-sm text-gray-500">
           محصولات لایک شده توسط شما اینجا نمایش داده خواهد شد ...
         </p>

@@ -28,7 +28,7 @@ export default function ResetPasswordModal({ open, onClose }: Props) {
 
     try {
       setLoading(true);
-      const res = await fetch("/api/user/change-password", {
+      const res = await fetch("/api/auth/change-password", {
         method: "PATCH",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ currentPassword, newPassword, confirmPassword }),
