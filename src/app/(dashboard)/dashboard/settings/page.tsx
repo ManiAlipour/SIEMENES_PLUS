@@ -1,114 +1,88 @@
 "use client";
 
 import { useState } from "react";
-import { useDispatch, useSelector } from "react-redux";
+import { useSelector } from "react-redux";
 import { RootState } from "@/store";
-import { LogOut, Shield, Mail, Key, SunMoon } from "lucide-react";
+import { Shield, Mail, Key, LogOut } from "lucide-react";
+import ChangeEmailModal from "./_components/ChangeEmailModal";
+import ResetPasswordModal from "./_components/ResetPasswordModal";
+import LogoutConfirmModal from "./_components/LogoutConfirmModal";
 
 export default function SettingsPage() {
   const user = useSelector((state: RootState) => state.user);
 
-  const [email, setEmail] = useState(user?.email ?? "");
-  const [oldPassword, setOldPassword] = useState("");
-  const [newPassword, setNewPassword] = useState("");
-
-  const handleEmailChange = async () => {
-    alert(`📧 درخواست تغییر ایمیل به: ${email}`);
-    // TODO: اتصال به API => /api/users/update-email
-  };
-
-  const handlePasswordChange = async () => {
-    alert(`🔐 تغییر رمز از "${oldPassword}" به "${newPassword}"`);
-    // TODO: اتصال به API => /api/users/update-password
-  };
-
-  const handleLogout = () => {
-    alert("🚪 خروج از حساب انجام شد!");
-    // TODO: اتصال به AuthContext یا /api/logout
-  };
+  const [emailModal, setEmailModal] = useState(false);
+  const [passwordModal, setPasswordModal] = useState(false);
+  const [logoutModal, setLogoutModal] = useState(false);
 
   return (
-    <div className="min-h-screen flex flex-col items-center bg-[#f9fafc] px-4 pt-8 pb-16 font-[Vazirmatn] text-meuted">
-      <div className="w-full max-w-2xl flex flex-col gap-8">
+    <main className="min-h-screen bg-[#f9fafc] px-4 py-10 font-vazir text-gray-800">
+      <div className="mx-auto w-full max-w-2xl space-y-8">
         {/* Header */}
-        <div className="flex items-center gap-3">
-          <Shield className="h-6 w-6 text-primary" />
+        <header className="flex items-center gap-3">
+          <Shield className="w-6 h-6 text-cyan-500" />
           <h1 className="text-xl sm:text-2xl font-bold">تنظیمات حساب کاربری</h1>
-        </div>
+        </header>
 
-        {/* تغییر ایمیل */}
-        <div className="bg-white/70 backdrop-blur-lg border border-gray-200 shadow-sm rounded-2xl p-5 sm:p-6 flex flex-col gap-4">
+        {/* Change Email */}
+        <section className="card">
           <div className="flex items-center gap-2">
-            <Mail className="h-5 w-5 text-primary" />
+            <Mail className="w-5 h-5 text-cyan-500" />
             <h2 className="font-semibold">تغییر ایمیل</h2>
           </div>
-          <input
-            type="email"
-            placeholder="ایمیل جدید را وارد کنید"
-            value={email}
-            onChange={(e) => setEmail(e.target.value)}
-            className="rounded-lg border border-gray-300 bg-white/50 px-3 py-2 focus:outline-none focus:ring-2 focus:ring-primary"
-          />
+          <p className="text-sm text-gray-500 mt-1">
+            ایمیل فعلی: <span className="font-medium">{user?.email}</span>
+          </p>
           <button
-            onClick={handleEmailChange}
-            className="bg-primary hover:bg-[#0891b2] text-white rounded-lg py-2 transition-all duration-300"
+            onClick={() => setEmailModal(true)}
+            className="btn-primary mt-4"
           >
-            ذخیره تغییرات
+            تغییر ایمیل
           </button>
-        </div>
+        </section>
 
-        {/* تغییر رمز عبور */}
-        <div className="bg-white/70 backdrop-blur-lg border border-gray-200 shadow-sm rounded-2xl p-5 sm:p-6 flex flex-col gap-4">
+        {/* Change Password */}
+        <section className="card">
           <div className="flex items-center gap-2">
-            <Key className="h-5 w-5 text-primary" />
-            <h2 className="font-semibold">تغییر رمز عبور</h2>
+            <Key className="w-5 h-5 text-cyan-500" />
+            <h2 className="font-semibold">امنیت حساب</h2>
           </div>
-          <input
-            type="password"
-            placeholder="رمز فعلی"
-            value={oldPassword}
-            onChange={(e) => setOldPassword(e.target.value)}
-            className="rounded-lg border border-gray-300 bg-white/50 px-3 py-2 focus:outline-none focus:ring-2 focus:ring-primary"
-          />
-          <input
-            type="password"
-            placeholder="رمز جدید"
-            value={newPassword}
-            onChange={(e) => setNewPassword(e.target.value)}
-            className="rounded-lg border border-gray-300 bg-white/50 px-3 py-2 focus:outline-none focus:ring-2 focus:ring-primary"
-          />
+          <p className="text-sm text-gray-500 mt-1">
+            رمز عبور خود را دوره‌ای تغییر دهید تا امنیت حساب افزایش یابد.
+          </p>
           <button
-            onClick={handlePasswordChange}
-            className="bg-primary hover:bg-[#0891b2] text-white rounded-lg py-2 transition-all duration-300"
+            onClick={() => setPasswordModal(true)}
+            className="btn-primary mt-4"
           >
-            ذخیره رمز جدید
+            تغییر رمز عبور
           </button>
-        </div>
+        </section>
 
-        {/* تغییر تم */}
-        {/* <div className="bg-white/70 backdrop-blur-lg border border-gray-200 shadow-sm rounded-2xl p-5 sm:p-6 flex items-center justify-between">
-          <span className="flex items-center gap-2 font-semibold">
-            <SunMoon className="h-5 w-5 text-primary" /> حالت نمایش
-          </span>
+        {/* Logout */}
+        <section className="card border-red-300">
           <button
-            onClick={handleThemeSwitch}
-            className="text-sm rounded-lg border border-gray-300 px-4 py-2 hover:bg-primary/10 transition-all"
+            onClick={() => setLogoutModal(true)}
+            className="flex items-center gap-2 text-red-600 font-semibold"
           >
-            {themeMode === "light" ? "تیره" : "روشن"}
-          </button>
-        </div> */}
-
-        {/* خروج از حساب */}
-        <div className="bg-white/70 backdrop-blur-lg border border-gray-200 shadow-sm rounded-2xl p-5 sm:p-6 flex flex-col items-center gap-3">
-          <LogOut className="h-6 w-6 text-red-500" />
-          <button
-            onClick={handleLogout}
-            className="text-red-600 hover:text-red-700 font-semibold"
-          >
+            <LogOut className="w-5 h-5" />
             خروج از حساب
           </button>
-        </div>
+        </section>
       </div>
-    </div>
+
+      {/* Modals */}
+      <ChangeEmailModal
+        open={emailModal}
+        onClose={() => setEmailModal(false)}
+      />
+      <ResetPasswordModal
+        open={passwordModal}
+        onClose={() => setPasswordModal(false)}
+      />
+      <LogoutConfirmModal
+        open={logoutModal}
+        onClose={() => setLogoutModal(false)}
+      />
+    </main>
   );
 }

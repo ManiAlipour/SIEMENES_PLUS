@@ -23,6 +23,83 @@ export const transporter = nodemailer.createTransport({
   },
 });
 
+export const sendVerificationCode = async (
+  verificationCode: string,
+  email: string,
+  name: string,
+) => {
+  await transporter.sendMail({
+    from: `"Control Room Auth" <${process.env.SMTP_USER}>`,
+    to: email,
+    subject: "تأیید ایمیل حساب کاربری",
+    text: `
+  ${name} عزیز،
+  
+   خوش آمدید 
+  
+  کد تأیید حساب کاربری شما:
+  ${verificationCode}
+  
+  اگر این درخواست توسط شما انجام نشده، لطفاً این ایمیل را نادیده بگیرید.
+  
+  با احترام
+  تیم Control Room
+    `,
+    html: `
+    <div style="
+      font-family: Tahoma, Arial, sans-serif;
+      background-color: #f6f7f9;
+      padding: 24px;
+      direction: rtl;
+    ">
+      <div style="
+        max-width: 520px;
+        margin: auto;
+        background-color: #ffffff;
+        border-radius: 12px;
+        padding: 32px;
+        box-shadow: 0 4px 12px rgba(0,0,0,0.08);
+      ">
+        <h2 style="margin-top: 0; color: #111827;">
+          👋 ${name} عزیز، خوش آمدید
+        </h2>
+  
+        <p style="color: #374151; font-size: 15px; line-height: 1.8;">
+          برای تکمیل فرایند تأیید حساب کاربری خود در <strong>ثبت نام</strong>،
+          لطفاً از کد زیر استفاده کنید:
+        </p>
+  
+        <div style="
+          margin: 24px 0;
+          padding: 16px;
+          background-color: #f3f4f6;
+          border-radius: 8px;
+          text-align: center;
+          font-size: 24px;
+          letter-spacing: 4px;
+          font-weight: bold;
+          color: #111827;
+        ">
+          ${verificationCode}
+        </div>
+  
+        <p style="color: #6b7280; font-size: 14px; line-height: 1.7;">
+          اگر این درخواست توسط شما انجام نشده است،
+          می‌توانید این ایمیل را نادیده بگیرید.
+        </p>
+  
+        <hr style="border: none; border-top: 1px solid #e5e7eb; margin: 24px 0;" />
+  
+        <p style="color: #9ca3af; font-size: 13px;">
+          با احترام <br />
+          تیم <strong>زیمنس پلاس</strong>
+        </p>
+      </div>
+    </div>
+    `,
+  });
+};
+
 export function generateToken(user: ITokenData) {
   return jwt.sign(
     {
@@ -65,12 +142,7 @@ export async function signup({
     verificationCode,
   });
 
-  await transporter.sendMail({
-    from: `"Control Room Auth" <${process.env.SMTP_USER}>`,
-    to: email,
-    subject: "Verify your account",
-    text: `Welcome, ${name}! Your verification code is ${verificationCode}.`,
-  });
+  await sendVerificationCode(verificationCode, email, name);
 
   return {
     message: "Signup successful, check your email for verification code",
