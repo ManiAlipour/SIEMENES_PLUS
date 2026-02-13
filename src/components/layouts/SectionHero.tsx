@@ -5,6 +5,7 @@ import Image from "next/image";
 import { motion, AnimatePresence, Variants } from "framer-motion";
 import { FiArrowLeft, FiChevronLeft, FiChevronRight } from "react-icons/fi";
 import { useToggle } from "iso-hooks";
+import Link from "next/link";
 
 type Slide = {
   id: number;
@@ -221,7 +222,7 @@ export default function HeroSection() {
               </span>
             </motion.div>
 
-            {/* Title big, max: 2 lines */}
+            {/* Title */}
             <motion.h1
               variants={textVariants}
               transition={{ delay: 0.07 }}
@@ -243,8 +244,8 @@ export default function HeroSection() {
                   slide.accent === "cyan"
                     ? "text-cyan-400"
                     : slide.accent === "emerald"
-                    ? "text-emerald-400"
-                    : "text-amber-400"
+                      ? "text-emerald-400"
+                      : "text-amber-400"
                 }`}
               >
                 {slide.highlight}
@@ -266,7 +267,7 @@ export default function HeroSection() {
               {slide.description}
             </motion.p>
 
-            {/* === Step Dots for Visual Feedback - FIXED: place inside content, with spacing === */}
+            {/* === Step Dots for Visual Feedback === */}
             <div className="flex justify-center w-full my-3 order-last">
               <div className="flex gap-2">
                 {SLIDES.map((_, i) => (
@@ -291,13 +292,14 @@ export default function HeroSection() {
               </div>
             </div>
 
-            {/* CTA: bigger, more contrast on laptop */}
+            {/* CTA */}
             <motion.div
               variants={textVariants}
               transition={{ delay: 0.22 }}
               className="mt-8 flex flex-col lg:flex-row gap-2 md:gap-4"
             >
-              <button
+              <Link
+                href="/shop"
                 className={`inline-flex justify-center items-center gap-2 px-7 py-3.5 rounded-lg font-bold text-base md:text-lg text-white shadow-2xl transition
                 focus:outline-none focus:ring-2 focus:ring-offset-2 ${
                   accentMap[slide.accent]
@@ -308,11 +310,11 @@ export default function HeroSection() {
               >
                 مشاهده محصولات صنعتی
                 <FiArrowLeft />
-              </button>
+              </Link>
 
-              <button className="inline-flex justify-center items-center px-7 py-3.5 rounded-lg border border-white/30 bg-white/10 text-white/90 font-bold text-base md:text-lg backdrop-blur-lg hover:bg-white/20 hover:text-blue-900 hover:shadow-xl transition focus:outline-none focus:ring-2 focus:ring-white/70">
+              <Link href="/contact-us" className="inline-flex justify-center items-center px-7 py-3.5 rounded-lg border border-white/30 bg-white/10 text-white/90 font-bold text-base md:text-lg backdrop-blur-lg hover:bg-white/20 hover:text-blue-900 hover:shadow-xl transition focus:outline-none focus:ring-2 focus:ring-white/70">
                 مشاوره تخصصی
-              </button>
+              </Link>
             </motion.div>
           </motion.div>
         </AnimatePresence>
