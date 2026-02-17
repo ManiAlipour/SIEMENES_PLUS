@@ -1,5 +1,6 @@
 "use client";
 
+import { memo } from "react";
 import { useRouter } from "next/navigation";
 import ProductCardContainer from "./CardContainer";
 import ProductBadge from "./FeaturedBadge";
@@ -25,7 +26,7 @@ interface ProductCardProps {
   className?: string;
 }
 
-export default function ProductCard({
+function ProductCard({
   id,
   name,
   image,
@@ -54,30 +55,8 @@ export default function ProductCard({
     console.log("Quick view", id);
   };
 
-  // JSON-LD Schema
-  const productJsonLd = {
-    "@context": "https://schema.org/",
-    "@type": "Product",
-    name,
-    image,
-    brand: { "@type": "Brand", name: brand || "Siemens" },
-    offers: {
-      "@type": "Offer",
-      priceCurrency: "IRR",
-      price: price,
-      availability: inStock
-        ? "https://schema.org/InStock"
-        : "https://schema.org/OutOfStock",
-    },
-  };
-
   return (
     <ProductCardContainer name={name} className={className}>
-      {/* JSON-LD for SEO */}
-      <script type="application/ld+json">
-        {JSON.stringify(productJsonLd)}
-      </script>
-
       <ProductBadge isFeatured={isFeatured} />
 
       {/* Action Buttons Layer */}
@@ -104,3 +83,5 @@ export default function ProductCard({
     </ProductCardContainer>
   );
 }
+
+export default memo(ProductCard);

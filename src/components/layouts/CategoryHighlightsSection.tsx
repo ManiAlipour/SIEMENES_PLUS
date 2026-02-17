@@ -5,7 +5,6 @@ import ProductCard from "../features/ProductCard";
 import { useCategoryHighlights } from "@/hooks/useCategoryHighlights";
 import Link from "next/link";
 import { FiArrowLeft, FiTrendingUp, FiLoader } from "react-icons/fi";
-import { motion } from "framer-motion";
 
 // Helper: returns shop URL only if category has products, otherwise undefined
 function getShopCategoryUrl(category: { id: string; products: Array<any> }) {
@@ -23,13 +22,7 @@ export default function CategoryHighlightsSection() {
       <section className="pt-16 md:pt-20 pb-12 md:pb-16 w-full bg-gradient-to-b from-gray-50/50 via-white to-gray-50/30">
         <div className="container mx-auto px-4 md:px-6 max-w-7xl">
           {/* Header */}
-          <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true }}
-            transition={{ duration: 0.5 }}
-            className="text-center mb-12 md:mb-16"
-          >
+          <div className="text-center mb-12 md:mb-16">
             <div className="inline-flex items-center gap-2 mb-4">
               <div className="p-2 bg-primary/10 rounded-xl">
                 <FiLoader className="w-6 h-6 text-primary animate-spin" />
@@ -41,18 +34,10 @@ export default function CategoryHighlightsSection() {
             <p className="text-gray-600 max-w-2xl mx-auto">
               در حال بارگذاری دسته‌بندی‌ها...
             </p>
-          </motion.div>
+          </div>
 
-          {/* Loading skeleton */}
           {[1, 2, 3].map((index) => (
-            <motion.div
-              key={index}
-              initial={{ opacity: 0, y: 30 }}
-              whileInView={{ opacity: 1, y: 0 }}
-              viewport={{ once: true }}
-              transition={{ duration: 0.5, delay: index * 0.1 }}
-              className="mb-16 md:mb-20 last:mb-0"
-            >
+            <div key={index} className="mb-16 md:mb-20 last:mb-0">
               {/* Category header skeleton */}
               <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between mb-6 md:mb-8 gap-4">
                 <div>
@@ -71,7 +56,7 @@ export default function CategoryHighlightsSection() {
                   ></div>
                 ))}
               </div>
-            </motion.div>
+            </div>
           ))}
         </div>
       </section>
@@ -82,13 +67,7 @@ export default function CategoryHighlightsSection() {
     return (
       <section className="pt-16 md:pt-20 pb-12 md:pb-16 w-full bg-gradient-to-b from-gray-50/50 via-white to-gray-50/30">
         <div className="container mx-auto px-4 md:px-6 max-w-7xl">
-          <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true }}
-            transition={{ duration: 0.5 }}
-            className="text-center py-16"
-          >
+          <div className="text-center py-16">
             <div className="inline-flex items-center gap-2 mb-4">
               <div className="p-2 bg-red-100 rounded-xl">
                 <FiTrendingUp className="w-6 h-6 text-red-500" />
@@ -104,7 +83,7 @@ export default function CategoryHighlightsSection() {
             >
               تلاش مجدد
             </button>
-          </motion.div>
+          </div>
         </div>
       </section>
     );
@@ -114,13 +93,7 @@ export default function CategoryHighlightsSection() {
     <section className="pt-16 md:pt-20 pb-12 md:pb-16 w-full bg-gradient-to-b from-gray-50/50 via-white to-gray-50/30">
       <div className="container mx-auto px-4 md:px-6 max-w-7xl">
         {/* Header */}
-        <motion.div
-          initial={{ opacity: 0, y: 20 }}
-          whileInView={{ opacity: 1, y: 0 }}
-          viewport={{ once: true }}
-          transition={{ duration: 0.5 }}
-          className="text-center mb-8 xs:mb-12 md:mb-16 px-2"
-        >
+        <div className="text-center mb-8 xs:mb-12 md:mb-16 px-2">
           <div className="inline-flex items-center gap-2 mb-3 xs:mb-4">
             <div className="p-2 bg-primary/10 rounded-xl">
               <FiTrendingUp className="w-5 h-5 xs:w-6 xs:h-6 text-primary" />
@@ -132,16 +105,10 @@ export default function CategoryHighlightsSection() {
           <p className="text-sm xs:text-base text-gray-600 max-w-2xl mx-auto leading-relaxed">
             بهترین محصولات از هر دسته‌بندی را در یک نگاه ببینید
           </p>
-        </motion.div>
+        </div>
 
         {categories.length === 0 ? (
-          <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true }}
-            transition={{ duration: 0.5 }}
-            className="text-center py-16"
-          >
+          <div className="text-center py-16">
             <div className="inline-flex items-center gap-2 mb-4">
               <div className="p-2 bg-gray-100 rounded-xl">
                 <FiTrendingUp className="w-6 h-6 text-gray-400" />
@@ -153,7 +120,7 @@ export default function CategoryHighlightsSection() {
             <p className="text-gray-500 max-w-md mx-auto">
               در حال حاضر هیچ دسته‌بندی منتخبی موجود نیست.
             </p>
-          </motion.div>
+          </div>
         ) : (
           categories.map((category, categoryIndex) => {
             const shopUrl = getShopCategoryUrl(category);
@@ -163,14 +130,7 @@ export default function CategoryHighlightsSection() {
             const previewProducts = category.products.slice(0, previewCount);
 
             return (
-              <motion.div
-                key={category.id}
-                initial={{ opacity: 0, y: 30 }}
-                whileInView={{ opacity: 1, y: 0 }}
-                viewport={{ once: true }}
-                transition={{ duration: 0.5, delay: categoryIndex * 0.1 }}
-                className="mb-16 md:mb-20 last:mb-0"
-              >
+              <div key={category.id} className="mb-16 md:mb-20 last:mb-0">
                 {/* Category header */}
                 <div className="flex flex-col xs:flex-row items-start xs:items-center justify-between mb-6 md:mb-8 gap-3 xs:gap-4">
                   <div className="min-w-0 flex-1">
@@ -220,34 +180,21 @@ export default function CategoryHighlightsSection() {
                     style={{ overflowY: 'hidden' }} // This disables vertical scroll!
                   >
                     {category.products.length === 0 ? (
-                      <motion.div
-                        initial={{ opacity: 0, scale: 0.9 }}
-                        whileInView={{ opacity: 1, scale: 1 }}
-                        viewport={{ once: true }}
-                        transition={{ duration: 0.4 }}
-                        className="flex items-center justify-center min-w-[220px] md:min-w-[260px] h-80 bg-gray-50 rounded-2xl border border-gray-200"
-                      >
+                      <div className="flex items-center justify-center min-w-[220px] md:min-w-[260px] h-80 bg-gray-50 rounded-2xl border border-gray-200">
                         <div className="text-center">
                           <FiTrendingUp className="w-12 h-12 text-gray-400 mx-auto mb-4" />
                           <p className="text-gray-500 font-medium">
                             هیچ محصولی یافت نشد
                           </p>
                         </div>
-                      </motion.div>
+                      </div>
                     ) : (
                       <>
-                        {previewProducts.map((product, productIndex) => (
-                          <motion.div
+                        {previewProducts.map((product) => (
+                          <div
                             key={product.id}
-                            initial={{ opacity: 0, x: 50 }}
-                            whileInView={{ opacity: 1, x: 0 }}
-                            viewport={{ once: true }}
-                            transition={{
-                              duration: 0.4,
-                              delay: productIndex * 0.1,
-                            }}
                             className="max-w-[150px] xs:max-w-[200px] md:max-w-[220px] lg:max-w-[240px] snap-start shrink-0 flex"
-                            style={{ overflowY: 'hidden' }} // Prevent vertical scroll on card
+                            style={{ overflowY: 'hidden' }}
                           >
                             <ProductCard
                               id={product.id}
@@ -256,7 +203,7 @@ export default function CategoryHighlightsSection() {
                               price={product.price}
                               className="h-full"
                             />
-                          </motion.div>
+                          </div>
                         ))}
                         {category.products.length > previewCount && shopUrl && (
                           // Show a large, visually distinct "مشاهده همه" block at the end of scrollable list for mobile UX
@@ -278,7 +225,7 @@ export default function CategoryHighlightsSection() {
                     )}
                   </div>
                 </div>
-              </motion.div>
+              </div>
             );
           })
         )}

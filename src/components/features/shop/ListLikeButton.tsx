@@ -1,7 +1,6 @@
 "use client";
 
 import { useState } from "react";
-import { motion } from "framer-motion"; // اگر انیمیشن نرم بخوای
 
 interface LikeButtonProps {
   productId: string;
@@ -24,13 +23,13 @@ export default function ListLikeButton({
   };
 
   return (
-    <motion.button
-      whileTap={{ scale: 0.85 }}
+    <button
+      type="button"
       onClick={handleClick}
       aria-label={liked ? "حذف از علاقه‌مندی‌ها" : "افزودن به علاقه‌مندی‌ها"}
       className="flex items-center justify-center w-10 h-10 rounded-full 
                  border border-slate-300/60 bg-gradient-to-br from-white/40 to-slate-100
-                 hover:shadow-md hover:shadow-cyan-500/20 transition-all"
+                 hover:shadow-md hover:shadow-cyan-500/20 active:scale-90 transition-transform duration-150"
     >
       <svg
         xmlns="http://www.w3.org/2000/svg"
@@ -52,6 +51,6 @@ export default function ListLikeButton({
           d="M21 8.25c0-2.485-2.025-4.5-4.5-4.5-1.74 0-3.255 1.005-4 2.475C12.255 4.755 10.74 3.75 9 3.75 6.525 3.75 4.5 5.765 4.5 8.25c0 7.198 7.5 11.25 7.5 11.25s7.5-4.052 7.5-11.25z"
         />
       </svg>
-    </motion.button>
+    </button>
   );
 }

@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef, useCallback } from "react";
 import {
   FiSearch,
   FiX,
@@ -42,6 +42,37 @@ export default function ProductFilters({
     { _id: string; name: string; slug: string }[]
   >([]);
   const [isDesktop, setIsDesktop] = useState(false);
+  const [localSearch, setLocalSearch] = useState(search);
+  const debounceRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+
+  useEffect(() => {
+    setLocalSearch(search);
+  }, [search]);
+
+  const handleSearchChange = useCallback(
+    (value: string, immediate = false) => {
+      setLocalSearch(value);
+      if (debounceRef.current) {
+        clearTimeout(debounceRef.current);
+        debounceRef.current = null;
+      }
+      if (immediate) {
+        onSearchChange(value);
+      } else {
+        debounceRef.current = setTimeout(() => {
+          onSearchChange(value);
+          debounceRef.current = null;
+        }, 350);
+      }
+    },
+    [onSearchChange]
+  );
+
+  useEffect(() => {
+    return () => {
+      if (debounceRef.current) clearTimeout(debounceRef.current);
+    };
+  }, []);
 
   useEffect(() => {
     const fetchCategories = async () => {
@@ -75,54 +106,36 @@ export default function ProductFilters({
   return (
     <div className="w-full space-y-4">
       {/* Main Search Bar - Prominent */}
-      <motion.div
-        initial={{ opacity: 0, y: -10 }}
-        animate={{ opacity: 1, y: 0 }}
-        transition={{ duration: 0.4 }}
-        className="relative"
-      >
+      <div className="relative">
         <div className="relative group">
-          {/* Glow Effect */}
-          <div className="absolute inset-0 bg-gradient-to-r from-primary/30 via-cyan-400/30 to-primary/30 rounded-3xl blur-2xl opacity-0 group-hover:opacity-100 group-focus-within:opacity-100 transition-opacity duration-500" />
-          
-          {/* Search Input */}
-          <div className="relative bg-white/90 backdrop-blur-xl border-2 border-gray-200 focus-within:border-primary rounded-3xl shadow-xl hover:shadow-2xl transition-all duration-300 overflow-hidden">
+          <div className="absolute inset-0 bg-gradient-to-r from-primary/20 via-cyan-400/20 to-primary/20 rounded-3xl blur-xl opacity-0 group-hover:opacity-100 group-focus-within:opacity-100 transition-opacity duration-300" />
+          <div className="relative bg-white border-2 border-gray-200 focus-within:border-primary rounded-3xl shadow-lg hover:shadow-xl transition-all duration-200 overflow-hidden">
             <div className="absolute right-5 top-1/2 -translate-y-1/2 z-10">
-              <FiSearch className="w-6 h-6 text-gray-400 group-focus-within:text-primary transition-colors duration-300" />
+              <FiSearch className="w-6 h-6 text-gray-400 group-focus-within:text-primary transition-colors duration-200" />
             </div>
             <input
               type="text"
-              value={search}
-              onChange={(e) => onSearchChange(e.target.value)}
+              value={localSearch}
+              onChange={(e) => handleSearchChange(e.target.value)}
               placeholder="جستجوی محصولات، برند، مدل..."
               className="w-full pr-14 pl-5 py-5 md:py-6 text-base md:text-lg bg-transparent border-0 focus:ring-0 focus:outline-none placeholder:text-gray-400 text-gray-900 font-medium"
               aria-label="جستجوی محصولات"
             />
-            <AnimatePresence>
-              {search && (
-                <motion.button
-                  initial={{ scale: 0, opacity: 0 }}
-                  animate={{ scale: 1, opacity: 1 }}
-                  exit={{ scale: 0, opacity: 0 }}
-                  onClick={() => onSearchChange("")}
-                  className="absolute left-5 top-1/2 -translate-y-1/2 text-gray-400 hover:text-red-500 transition-colors p-2 hover:bg-red-50 rounded-xl"
-                  aria-label="پاک کردن جستجو"
-                >
-                  <FiX className="w-5 h-5" />
-                </motion.button>
-              )}
-            </AnimatePresence>
+            {localSearch && (
+                <button
+                    onClick={() => handleSearchChange("", true)}
+                    className="absolute left-5 top-1/2 -translate-y-1/2 text-gray-400 hover:text-red-500 transition-colors p-2 hover:bg-red-50 rounded-xl"
+                    aria-label="پاک کردن جستجو"
+                  >
+                    <FiX className="w-5 h-5" />
+                  </button>
+                )}
           </div>
         </div>
-      </motion.div>
+      </div>
 
       {/* Quick Filters Bar */}
-      <motion.div
-        initial={{ opacity: 0, y: -10 }}
-        animate={{ opacity: 1, y: 0 }}
-        transition={{ duration: 0.3, delay: 0.1 }}
-        className="flex flex-wrap items-center gap-3"
-      >
+      <div className="flex flex-wrap items-center gap-3">
         {/* Mobile Filter Toggle */}
         {onToggleFilters && (
           <button
@@ -131,21 +144,19 @@ export default function ProductFilters({
           >
             <FiFilter className="w-5 h-5 text-primary" />
             <span>فیلترها</span>
-            <motion.div
-              animate={{ rotate: showFilters ? 180 : 0 }}
-              transition={{ duration: 0.3 }}
+            <span
+              className={`inline-block transition-transform duration-200 ${showFilters ? "rotate-180" : ""}`}
             >
               <FiChevronDown className="w-4 h-4" />
-            </motion.div>
+            </span>
           </button>
         )}
 
         {/* View Mode Toggle */}
         <div className="flex items-center gap-2 border-2 border-gray-200 rounded-2xl p-1 bg-white shadow-md">
-          <motion.button
-            whileTap={{ scale: 0.95 }}
+          <button
             onClick={() => onViewModeChange("grid")}
-            className={`p-2.5 rounded-xl transition-all duration-300 ${
+            className={`p-2.5 rounded-xl transition-all duration-200 active:scale-95 ${
               viewMode === "grid"
                 ? "bg-gradient-to-r from-primary to-cyan-500 text-white shadow-lg"
                 : "text-gray-600 hover:bg-gray-100"
@@ -154,11 +165,10 @@ export default function ProductFilters({
             aria-pressed={viewMode === "grid"}
           >
             <IoGridOutline className="w-5 h-5" />
-          </motion.button>
-          <motion.button
-            whileTap={{ scale: 0.95 }}
+          </button>
+          <button
             onClick={() => onViewModeChange("list")}
-            className={`p-2.5 rounded-xl transition-all duration-300 ${
+            className={`p-2.5 rounded-xl transition-all duration-200 active:scale-95 ${
               viewMode === "list"
                 ? "bg-gradient-to-r from-primary to-cyan-500 text-white shadow-lg"
                 : "text-gray-600 hover:bg-gray-100"
@@ -167,7 +177,7 @@ export default function ProductFilters({
             aria-pressed={viewMode === "list"}
           >
             <IoListOutline className="w-5 h-5" />
-          </motion.button>
+          </button>
         </div>
 
         {/* Results Count */}
@@ -179,7 +189,7 @@ export default function ProductFilters({
             محصول
           </span>
         </div>
-      </motion.div>
+      </div>
 
       {/* Filters Panel - Mobile & Desktop */}
       <AnimatePresence>
@@ -191,12 +201,7 @@ export default function ProductFilters({
             transition={{ duration: 0.3, ease: "easeInOut" }}
             className="overflow-hidden"
           >
-            <motion.div
-              initial={{ y: -10 }}
-              animate={{ y: 0 }}
-              transition={{ duration: 0.3, delay: 0.1 }}
-              className="grid grid-cols-1 md:grid-cols-2 gap-4 p-6 bg-white/80 backdrop-blur-xl rounded-3xl border-2 border-gray-200 shadow-xl"
-            >
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4 p-6 bg-white rounded-3xl border-2 border-gray-200 shadow-lg">
               {/* Category Filter */}
               <div className="w-full">
                 <label className="block text-sm font-bold text-gray-700 mb-3 flex items-center gap-2">
@@ -245,7 +250,7 @@ export default function ProductFilters({
                   ))}
                 </select>
               </div>
-            </motion.div>
+            </div>
           </motion.div>
         )}
       </AnimatePresence>
