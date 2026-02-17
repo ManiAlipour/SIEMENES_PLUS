@@ -9,7 +9,6 @@ import {
   FiCopy,
   FiCheck,
 } from "react-icons/fi";
-import { motion } from "framer-motion";
 import Link from "next/link";
 
 export default function LocationSection() {
@@ -55,37 +54,18 @@ export default function LocationSection() {
       ></div>
 
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
-        {/* Section Header */}
         <div className="text-center mb-12 lg:mb-16">
-          <motion.h2
-            initial={{ opacity: 0, y: 20 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true }}
-            className="text-3xl md:text-4xl font-bold text-slate-900 mb-4"
-          >
+          <h2 className="text-3xl md:text-4xl font-bold text-slate-900 mb-4">
             دفتر مرکزی <span className="text-cyan-600">زیمنس</span>
-          </motion.h2>
-          <motion.p
-            initial={{ opacity: 0, y: 20 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true }}
-            transition={{ delay: 0.1 }}
-            className="text-slate-500 max-w-2xl mx-auto"
-          >
+          </h2>
+          <p className="text-slate-500 max-w-2xl mx-auto">
             برای مشاوره حضوری و بازدید از جدیدترین تجهیزات اتوماسیون صنعتی،
             مشتاق دیدار شما هستیم.
-          </motion.p>
+          </p>
         </div>
 
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 lg:gap-12 items-start">
-          {/* Left Column: Information Card */}
-          <motion.div
-            initial={{ opacity: 0, x: -30 }}
-            whileInView={{ opacity: 1, x: 0 }}
-            viewport={{ once: true }}
-            transition={{ duration: 0.5 }}
-            className="lg:col-span-5 flex flex-col gap-6"
-          >
+          <div className="lg:col-span-5 flex flex-col gap-6">
             <div className="bg-white rounded-3xl p-6 sm:p-8 shadow-xl shadow-slate-200/50 border border-slate-100">
               {/* Address Box */}
               <div className="mb-8">
@@ -187,16 +167,9 @@ export default function LocationSection() {
                 تماس با واحد فروش <span className="text-lg">←</span>
               </Link>
             </div>
-          </motion.div>
+          </div>
 
-          {/* Right Column: Map Display */}
-          <motion.div
-            initial={{ opacity: 0, x: 30 }}
-            whileInView={{ opacity: 1, x: 0 }}
-            viewport={{ once: true }}
-            transition={{ duration: 0.5, delay: 0.2 }}
-            className="lg:col-span-7 h-full min-h-[400px] lg:min-h-[500px] relative"
-          >
+          <div className="lg:col-span-7 h-full min-h-[400px] lg:min-h-[500px] relative">
             {/* Map Container */}
             <div className="absolute inset-0 bg-white p-2 rounded-[2rem] shadow-2xl shadow-slate-200/60 border border-slate-100">
               <div className="w-full h-full rounded-[1.5rem] overflow-hidden relative bg-slate-200">
@@ -209,16 +182,16 @@ export default function LocationSection() {
                   referrerPolicy="no-referrer-when-downgrade"
                 ></iframe>
 
-                <div className="absolute bottom-4 right-4 z-20 bg-white/90 backdrop-blur-md px-4 py-2 rounded-xl shadow-lg border border-white/50 text-xs font-bold text-slate-800 hidden sm:block">
+                <div className="absolute bottom-4 right-4 z-20 bg-white/95 px-4 py-2 rounded-xl shadow-lg border border-slate-200 text-xs font-bold text-slate-800 hidden sm:block">
                   زیمنس پلاس | Siemens Plus
                 </div>
               </div>
             </div>
 
             {/* Decorative elements */}
-            <div className="absolute -top-10 -right-10 w-32 h-32 bg-cyan-500/10 rounded-full blur-3xl -z-10" />
-            <div className="absolute -bottom-10 -left-10 w-40 h-40 bg-blue-500/10 rounded-full blur-3xl -z-10" />
-          </motion.div>
+            <div className="absolute -top-10 -right-10 w-32 h-32 bg-cyan-500/10 rounded-full blur-2xl -z-10" />
+            <div className="absolute -bottom-10 -left-10 w-40 h-40 bg-blue-500/10 rounded-full blur-2xl -z-10" />
+          </div>
         </div>
       </div>
     </section>

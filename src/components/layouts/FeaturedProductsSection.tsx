@@ -4,7 +4,6 @@ import { useState, useEffect } from "react";
 import ProductCard from "../features/ProductCard";
 import Link from "next/link";
 import { FiArrowLeft } from "react-icons/fi";
-import { motion } from "framer-motion";
 import { FaWandMagicSparkles } from "react-icons/fa6";
 
 export default function FeaturedProductsSection() {
@@ -71,14 +70,7 @@ export default function FeaturedProductsSection() {
       aria-labelledby="featured-products-heading"
     >
       <div className="max-w-7xl mx-auto px-2 md:px-6">
-        {/* Header */}
-        <motion.div
-          initial={{ opacity: 0, y: 20 }}
-          whileInView={{ opacity: 1, y: 0 }}
-          viewport={{ once: true }}
-          transition={{ duration: 0.5 }}
-          className="flex items-center justify-between mb-8 md:mb-12"
-        >
+        <div className="flex items-center justify-between mb-8 md:mb-12">
           <div className="flex items-center gap-3">
             <div className="p-2 bg-primary/10 rounded-xl">
               <FaWandMagicSparkles className="w-6 h-6 text-primary" />
@@ -102,18 +94,11 @@ export default function FeaturedProductsSection() {
             مشاهده همه
             <FiArrowLeft className="w-4 h-4" />
           </Link>
-        </motion.div>
+        </div>
 
-        {/* Products Grid */}
         <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-2 md:gap-6">
-          {products.map((product, index) => (
-            <motion.div
-              key={product._id}
-              initial={{ opacity: 0, y: 20 }}
-              whileInView={{ opacity: 1, y: 0 }}
-              viewport={{ once: true }}
-              transition={{ duration: 0.4, delay: index * 0.1 }}
-            >
+          {products.map((product) => (
+            <div key={product._id}>
               <ProductCard
                 id={product._id}
                 name={product.name}
@@ -123,18 +108,11 @@ export default function FeaturedProductsSection() {
                 slug={product.slug}
                 className="h-full"
               />
-            </motion.div>
+            </div>
           ))}
         </div>
 
-        {/* View All Button */}
-        <motion.div
-          initial={{ opacity: 0 }}
-          whileInView={{ opacity: 1 }}
-          viewport={{ once: true }}
-          transition={{ duration: 0.5, delay: 0.3 }}
-          className="mt-8 md:mt-12 text-center"
-        >
+        <div className="mt-8 md:mt-12 text-center">
           <Link
             href="/shop"
             className="inline-flex items-center gap-2 bg-primary text-white px-8 md:px-10 py-3 md:py-3.5 rounded-xl font-semibold hover:bg-primary/90 transition-all duration-300 shadow-md hover:shadow-lg hover:-translate-y-0.5"
@@ -143,7 +121,7 @@ export default function FeaturedProductsSection() {
             مشاهده همه محصولات
             <FiArrowLeft className="w-4 h-4" />
           </Link>
-        </motion.div>
+        </div>
       </div>
     </section>
   );

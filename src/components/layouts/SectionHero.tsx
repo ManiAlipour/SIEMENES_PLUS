@@ -2,7 +2,6 @@
 
 import { useEffect, useState } from "react";
 import Image from "next/image";
-import { motion } from "framer-motion";
 import { FiArrowLeft, FiChevronLeft, FiChevronRight } from "react-icons/fi";
 import Link from "next/link";
 
@@ -92,20 +91,17 @@ export default function HeroSection() {
 
       {/* === Content === */}
       <div className="relative z-10 h-full container mx-auto px-6 lg:px-24 flex items-center">
-        <motion.div
+        <div
           key={slide.id}
-          initial={{ opacity: 0, y: 28 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.55, ease: "easeOut" }}
           className="
             max-w-3xl w-full
             rounded-2xl
-            bg-white/5
+            bg-black/40
             border border-white/10
-            backdrop-blur-lg
             shadow-[0_20px_60px_rgba(0,0,0,0.45)]
             p-6 sm:p-8 lg:p-10
             min-h-[400px]
+            animate-fadeIn
           "
         >
           {/* Tag */}
@@ -170,7 +166,7 @@ export default function HeroSection() {
               مشاوره تخصصی
             </Link>
           </div>
-        </motion.div>
+        </div>
       </div>
 
       {/* === Controls === */}

@@ -1,6 +1,4 @@
 "use client";
-
-import { motion } from "framer-motion";
 import {
   FaInstagram,
   FaTelegramPlane,
@@ -28,19 +26,12 @@ export default function ContactUs() {
         }}
       />
 
-      {/* Ambient Glow Orbs */}
-      <div className="absolute top-0 left-0 w-[500px] h-[500px] bg-cyan-500/10 rounded-full blur-[120px] -translate-x-1/2 -translate-y-1/2 pointer-events-none" />
-      <div className="absolute bottom-0 right-0 w-[500px] h-[500px] bg-blue-600/10 rounded-full blur-[120px] translate-x-1/2 translate-y-1/2 pointer-events-none" />
+      <div className="absolute top-0 left-0 w-[400px] h-[400px] bg-cyan-500/8 rounded-full blur-[80px] -translate-x-1/2 -translate-y-1/2 pointer-events-none" />
+      <div className="absolute bottom-0 right-0 w-[400px] h-[400px] bg-blue-600/8 rounded-full blur-[80px] translate-x-1/2 translate-y-1/2 pointer-events-none" />
 
       <div className="relative container mx-auto px-6 max-w-7xl z-10">
         <div className="grid lg:grid-cols-2 gap-16 lg:gap-12 items-center">
-          {/* ---------------- LEFT SIDE: INFO & CONTENT ---------------- */}
-          <motion.div
-            initial={{ opacity: 0, x: -30 }}
-            whileInView={{ opacity: 1, x: 0 }}
-            transition={{ duration: 0.6 }}
-            viewport={{ once: true }}
-          >
+          <div>
             {/* Section Badge */}
             <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-cyan-500/10 border border-cyan-500/20 text-cyan-400 text-xs font-bold mb-6">
               <span className="w-2 h-2 rounded-full bg-cyan-400 animate-pulse" />
@@ -99,7 +90,7 @@ export default function ContactUs() {
               <SocialBtn icon={<FaTelegramPlane />} href="#" />
               <SocialBtn icon={<FaLinkedinIn />} href="#" />
             </div>
-          </motion.div>
+          </div>
 
           {/* ---------------- RIGHT SIDE: CONTACT FORM ---------------- */}
           <ContactForm />

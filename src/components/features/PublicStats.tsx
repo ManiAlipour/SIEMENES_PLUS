@@ -9,7 +9,6 @@ import {
   FiSearch,
   FiFileText,
 } from "react-icons/fi";
-import { motion } from "framer-motion";
 
 interface StatsData {
   totalProducts: number;
@@ -115,38 +114,26 @@ export default function PublicStats() {
   return (
     <section className="py-10 md:py-16 bg-gradient-to-br from-primary/5 via-white to-primary/5 overflow-hidden">
       <div className="container mx-auto px-4 md:px-6 max-w-7xl">
-        <motion.div
-          initial={{ opacity: 0, y: 20 }}
-          whileInView={{ opacity: 1, y: 0 }}
-          viewport={{ once: true }}
-          transition={{ duration: 0.5 }}
-          className="text-center mb-8 md:mb-12"
-        >
+        <div className="text-center mb-8 md:mb-12">
           <h2 className="text-2xl md:text-3xl lg:text-4xl font-bold text-gray-900 mb-3 tracking-tight">
             آمار و اطلاعات سایت
           </h2>
           <p className="text-gray-500 text-sm md:text-base max-w-2xl mx-auto">
             نگاهی به رشد و فعالیت‌های اخیر در پلتفرم ما
           </p>
-        </motion.div>
+        </div>
 
         <div className="grid grid-cols-2 lg:grid-cols-6 gap-3 md:gap-6">
-          {statItems.map((item, index) => {
+          {statItems.map((item) => {
             const Icon = item.icon;
             return (
-              <motion.div
+              <div
                 key={item.label}
-                initial={{ opacity: 0, y: 20 }}
-                whileInView={{ opacity: 1, y: 0 }}
-                viewport={{ once: true }}
-                transition={{ duration: 0.4, delay: index * 0.1 }}
-                whileHover={{ y: -5 }}
-                whileTap={{ scale: 0.98 }}
                 className="
                   relative overflow-hidden group
                   bg-white rounded-2xl border border-gray-100
                   p-3 md:p-6
-                  hover:shadow-xl hover:shadow-gray-200/50 transition-all duration-300
+                  hover:shadow-xl hover:shadow-gray-200/50 hover:-translate-y-1 transition-all duration-200
                 "
               >
                 {/* Layout Container: Row on Mobile, Col on Desktop */}
@@ -176,9 +163,8 @@ export default function PublicStats() {
                   </div>
                 </div>
 
-                {/* Decorative Background Blob (Desktop Only) */}
                 <div className="absolute -top-4 -right-4 w-16 h-16 bg-gradient-to-br from-gray-50 to-gray-100 rounded-full -z-10 opacity-0 md:group-hover:opacity-100 transition-opacity duration-300" />
-              </motion.div>
+              </div>
             );
           })}
         </div>

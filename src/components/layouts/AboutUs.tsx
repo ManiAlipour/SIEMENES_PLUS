@@ -21,7 +21,7 @@ const AboutUs = () => {
               width={900}
               height={600}
               className="object-cover w-full h-full"
-              priority
+              loading="lazy"
             />
           </div>
         </div>
