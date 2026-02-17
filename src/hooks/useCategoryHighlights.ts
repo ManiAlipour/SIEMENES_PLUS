@@ -9,7 +9,9 @@ interface Product {
 
 interface HighlightedCategory {
   id: string;
+  slug?: string;
   title: string;
+  image?: string | null;
   products: Product[];
 }
 

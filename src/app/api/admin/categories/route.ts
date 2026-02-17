@@ -2,14 +2,47 @@ import { NextRequest, NextResponse } from "next/server";
 import { connectDB } from "@/lib/db";
 import { adminOnly } from "@/lib/middlewares/adminOnly";
 import Category from "@/models/Category";
+import { uploadToLiara } from "@/lib/uploadToLiara";
 
 export async function POST(request: NextRequest) {
   await adminOnly(request);
   await connectDB();
 
   try {
-    const body = await request.json();
-    const { name, slug, parent, description } = body;
+    const contentType = request.headers.get("content-type") || "";
+    let name = "";
+    let slug = "";
+    let parent: string | null = null;
+    let description = "";
+    let imageUrl: string | null = null;
+
+    if (contentType.includes("multipart/form-data")) {
+      const formData = await request.formData();
+      const file = formData.get("image") as File | null;
+
+      name = (formData.get("name") as string) || "";
+      slug = (formData.get("slug") as string) || "";
+      parent = (formData.get("parent") as string) || null;
+      description = (formData.get("description") as string) || "";
+
+      if (file && file.size > 0) {
+        const { url } = await uploadToLiara(file, "categories");
+        imageUrl = url;
+      }
+    } else {
+      const body = await request.json();
+      name = body.name || "";
+      slug = body.slug || "";
+      parent = body.parent || null;
+      description = body.description || "";
+    }
+
+    if (!name || !slug) {
+      return NextResponse.json(
+        { success: false, message: "نام و شناسه الزامی هستند" },
+        { status: 400 }
+      );
+    }
 
     const exists = await Category.findOne({ slug });
     if (exists)
@@ -18,7 +51,13 @@ export async function POST(request: NextRequest) {
         { status: 400 }
       );
 
-    const cat = new Category({ name, slug, parent, description });
+    const cat = new Category({
+      name,
+      slug,
+      parent: parent || undefined,
+      description: description || undefined,
+      image: imageUrl || undefined,
+    });
     await cat.save();
 
     return NextResponse.json({ success: true, data: cat }, { status: 201 });

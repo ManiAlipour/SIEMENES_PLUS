@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect, useState, useRef } from "react";
 import { Formik, Form, Field } from "formik";
 import * as Yup from "yup";
 
@@ -12,8 +12,9 @@ const CategorySchema = Yup.object().shape({
 
 export default function AdminCategoriesPage() {
   const [categories, setCategories] = useState<
-    { _id: string; name: string; slug: string; description?: string }[]
+    { _id: string; name: string; slug: string; description?: string; image?: string }[]
   >([]);
+  const imageInputRef = useRef<HTMLInputElement>(null);
   const [loading, setLoading] = useState(false);
   const [errorMsg, setErrorMsg] = useState("");
 
@@ -85,14 +86,33 @@ export default function AdminCategoriesPage() {
             initialValues={{ name: "", slug: "", description: "" }}
             validationSchema={CategorySchema}
             onSubmit={async (values, { resetForm }) => {
-              const res = await fetch("/api/admin/categories", {
-                method: "POST",
-                headers: { "Content-Type": "application/json" },
-                body: JSON.stringify(values),
-              });
+              const file = imageInputRef.current?.files?.[0];
+              let res: Response;
+
+              if (file) {
+                const formData = new FormData();
+                formData.append("name", values.name);
+                formData.append("slug", values.slug);
+                if (values.description) formData.append("description", values.description);
+                formData.append("image", file);
+                res = await fetch("/api/admin/categories", {
+                  method: "POST",
+                  body: formData,
+                });
+              } else {
+                res = await fetch("/api/admin/categories", {
+                  method: "POST",
+                  headers: { "Content-Type": "application/json" },
+                  body: JSON.stringify(values),
+                });
+              }
               if (res.ok) {
                 resetForm();
+                if (imageInputRef.current) imageInputRef.current.value = "";
                 fetchCats();
+              } else {
+                const data = await res.json();
+                alert(data.message || "خطا در ثبت دسته");
               }
             }}
           >
@@ -155,6 +175,25 @@ export default function AdminCategoriesPage() {
                   />
                 </div>
 
+                {/* Image */}
+                <div>
+                  <label className="text-sm font-medium text-gray-700">
+                    تصویر دسته (اختیاری)
+                  </label>
+                  <input
+                    ref={imageInputRef}
+                    type="file"
+                    accept="image/*"
+                    className="mt-1 w-full rounded-xl border border-slate-300
+                               bg-white/70 px-3 py-2 text-sm focus:outline-none focus:ring-2
+                               focus:ring-cyan-500"
+                    aria-label="انتخاب تصویر دسته"
+                  />
+                  <p className="text-xs text-slate-500 mt-1">
+                    تصویر در بخش دسته‌های منتخب نمایش داده می‌شود
+                  </p>
+                </div>
+
                 <button
                   type="submit"
                   className="w-full py-2.5 bg-gradient-to-r from-cyan-500 to-cyan-700
@@ -191,6 +230,7 @@ export default function AdminCategoriesPage() {
                 <tr className="border-b border-slate-300">
                   <th className="py-2 text-right">نام</th>
                   <th className="py-2 text-right">شناسه</th>
+                  <th className="py-2 text-center">تصویر</th>
                   <th className="py-2 text-right">عملیات</th>
                 </tr>
               </thead>
@@ -202,6 +242,15 @@ export default function AdminCategoriesPage() {
                   >
                     <td className="py-2">{cat.name}</td>
                     <td className="py-2">{cat.slug}</td>
+                    <td className="py-2 text-center">
+                      {cat.image ? (
+                        <a href={cat.image} target="_blank" rel="noopener noreferrer" className="inline-block">
+                          <img src={cat.image} alt={cat.name} className="w-10 h-10 object-cover rounded-lg" />
+                        </a>
+                      ) : (
+                        <span className="text-slate-400 text-xs">—</span>
+                      )}
+                    </td>
                     <td className="py-2 text-right">
                       <button
                         type="button"

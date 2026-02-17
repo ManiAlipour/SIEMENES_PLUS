@@ -8,7 +8,7 @@ export async function GET() {
     await connectDB();
 
     // Find top categories (6 for example) -- customize as needed
-    const topCategories = await Category.find({})
+    const topCategories = await Category.find({}, "name slug image")
       .sort({ createdAt: -1 })
       .limit(3)
       .lean();
@@ -35,7 +35,9 @@ export async function GET() {
 
         return {
           id: (category._id as string).toString(),
+          slug: category.slug,
           title: category.name,
+          image: category.image || null,
           products: productsFormatted,
         };
       })

@@ -1,15 +1,16 @@
 "use client";
 
 import React from "react";
+import Image from "next/image";
 import ProductCard from "../features/ProductCard";
 import { useCategoryHighlights } from "@/hooks/useCategoryHighlights";
 import Link from "next/link";
 import { FiArrowLeft, FiTrendingUp, FiLoader } from "react-icons/fi";
 
-// Helper: returns shop URL only if category has products, otherwise undefined
-function getShopCategoryUrl(category: { id: string; products: Array<any> }) {
-  if (category.products && category.products.length > 0) {
-    return `/shop?category=${category.id}`;
+// Returns shop URL only if category has products
+function getShopCategoryUrl(category: { slug?: string; products: Array<any> }) {
+  if (category.products && category.products.length > 0 && category.slug) {
+    return `/shop?category=${category.slug}`;
   }
   return undefined;
 }
@@ -131,15 +132,28 @@ export default function CategoryHighlightsSection() {
 
             return (
               <div key={category.id} className="mb-16 md:mb-20 last:mb-0">
-                {/* Category header */}
+                {/* Category header with optional image */}
                 <div className="flex flex-col xs:flex-row items-start xs:items-center justify-between mb-6 md:mb-8 gap-3 xs:gap-4">
-                  <div className="min-w-0 flex-1">
-                    <h3 className="text-lg xs:text-xl md:text-2xl font-bold text-gray-900 mb-1 xs:mb-2 truncate">
-                      {category.title}
-                    </h3>
-                    <p className="text-xs xs:text-sm text-gray-600 whitespace-nowrap">
-                      {category.products.length} محصول در این دسته
-                    </p>
+                  <div className="flex items-center gap-4 min-w-0 flex-1">
+                    {category.image && (
+                      <div className="relative w-14 h-14 xs:w-16 xs:h-16 rounded-xl overflow-hidden flex-shrink-0 bg-gray-100 border border-gray-200">
+                        <Image
+                          src={category.image}
+                          alt={category.title}
+                          fill
+                          className="object-cover"
+                          sizes="64px"
+                        />
+                      </div>
+                    )}
+                    <div className="min-w-0">
+                      <h3 className="text-lg xs:text-xl md:text-2xl font-bold text-gray-900 mb-1 xs:mb-2 truncate">
+                        {category.title}
+                      </h3>
+                      <p className="text-xs xs:text-sm text-gray-600 whitespace-nowrap">
+                        {category.products.length} محصول در این دسته
+                      </p>
+                    </div>
                   </div>
                   {/* Better UX for mobile: Button is more touch-friendly and fixed for overflow, disabled clearly */}
                   {shopUrl ? (

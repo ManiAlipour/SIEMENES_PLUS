@@ -6,7 +6,7 @@ export async function GET(req: NextRequest) {
   try {
     await connectDB();
 
-    const categories = await Category.find({}, "name slug parent").sort({
+    const categories = await Category.find({}, "name slug parent image description").sort({
       createdAt: -1,
     });
 

@@ -6,7 +6,12 @@ const nextConfig: NextConfig = {
       {
         protocol: "https",
         hostname: "storage.c2.liara.space",
-        pathname: "**", // همه مسیرها مجازه
+        pathname: "**",
+      },
+      {
+        protocol: "https",
+        hostname: "storage.liara.space",
+        pathname: "**",
       },
     ],
   },
