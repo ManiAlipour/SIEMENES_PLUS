@@ -13,20 +13,20 @@ export async function middleware(request: NextRequest) {
   const { pathname } = request.nextUrl;
   const token = request.cookies.get("token")?.value;
 
-  // جلوگیری از ورود کاربران لاگین‌کرده به صفحات ثبت‌نام یا ورود
+  // Redirect logged-in users away from auth pages (login, register, verify)
   if (authPaths.some((path) => pathname.startsWith(path))) {
     if (token) {
       return NextResponse.redirect(new URL("/", request.url));
     }
-    return NextResponse.next(); // اجازه بده صفحه لاگین کار کنه
+    return NextResponse.next();
   }
 
-  // مسیرهای عمومی مثل API‌های ثبت‌نام و لاگین آزادند
+  // Public API routes (auth, etc.) are allowed
   if (publicPaths.some((path) => pathname.startsWith(path))) {
     return NextResponse.next();
   }
 
-  // صفحات محافظت‌شده نیاز به توکن دارند
+  // Protected pages require a valid token
   if (!token) {
     return NextResponse.redirect(new URL("/login", request.url));
   }
@@ -34,7 +34,7 @@ export async function middleware(request: NextRequest) {
   try {
     const decoded = verifyToken(token);
 
-    // کنترل سطح دسترسی ادمین
+    // Admin route access control
     if (adminPaths.some((path) => pathname.startsWith(path))) {
       if (decoded.role !== "admin") {
         console.warn(`🚫 ${decoded.email} tried to access admin route`);
@@ -42,7 +42,7 @@ export async function middleware(request: NextRequest) {
       }
     }
 
-    // مسیر داشبورد کاربر معمولی
+    // User dashboard route
     if (pathname.startsWith(dashboardPath)) {
       if (decoded.role === "admin")
         return NextResponse.redirect(new URL("/admin", request.url));
@@ -50,7 +50,7 @@ export async function middleware(request: NextRequest) {
         return NextResponse.redirect(new URL("/", request.url));
     }
 
-    // ادامه اجرای درخواست
+    // Continue request with user headers
     const res = NextResponse.next();
     res.headers.set("x-user-id", decoded.id);
     res.headers.set("x-user-role", decoded.role);

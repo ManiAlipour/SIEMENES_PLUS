@@ -44,11 +44,11 @@ body {
   background: var(--background);
   color: var(--foreground);
   font-family: Vazir, Arial, Helvetica, sans-serif;
-  /* بهبود UX موبایل */
+  /* Better mobile UX */
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
   text-rendering: optimizeLegibility;
-  /* جلوگیری از zoom در iOS هنگام focus روی input */
+  /* Prevent zoom on iOS when focusing input */
   font-size: 16px;
 }
 
@@ -152,7 +152,7 @@ html {
     transition-all duration-200;
 }
 
-/* حالت بلور شیشه‌ای */
+/* Glass blur style */
 .input-glass {
   @apply bg-white/40 backdrop-blur-xl border border-slate-200
     shadow-[inset_0_1px_1px_rgba(255,255,255,0.6)] hover:bg-white/50
@@ -160,12 +160,12 @@ html {
     transition-all;
 }
 
-/* حالت غیر فعال */
+/* Disabled state */
 .input-disabled {
   @apply bg-slate-100 text-slate-500 border-slate-200 cursor-not-allowed;
 }
 
-/* حالت تاریک ادمین */
+/* Dark admin theme */
 .input-dark {
   @apply bg-slate-900/60 text-slate-100 border border-slate-600
     placeholder:text-slate-400 focus:ring-primary/60 focus:border-primary/40;

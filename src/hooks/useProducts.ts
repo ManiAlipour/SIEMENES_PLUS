@@ -6,7 +6,7 @@ import { useFetch } from "iso-hooks";
 // --- Interfaces ---
 interface Product {
   id: string;
-  name: string; // و سایر فیلدها...
+  name: string;
   // ...
 }
 

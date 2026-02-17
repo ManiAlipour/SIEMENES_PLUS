@@ -125,7 +125,7 @@ export default function CategoryHighlightsSection() {
           categories.map((category, categoryIndex) => {
             const shopUrl = getShopCategoryUrl(category);
 
-            // maximum 4 product preview for compactness and true "همه"
+            // Maximum 4 product previews for compactness
             const previewCount = category.products.length > 4 ? 4 : category.products.length;
             const previewProducts = category.products.slice(0, previewCount);
 
@@ -206,7 +206,7 @@ export default function CategoryHighlightsSection() {
                           </div>
                         ))}
                         {category.products.length > previewCount && shopUrl && (
-                          // Show a large, visually distinct "مشاهده همه" block at the end of scrollable list for mobile UX
+                          // "View all" block at end of scrollable list for mobile UX
                           <Link
                             href={shopUrl}
                             className="flex flex-col items-center justify-center min-w-[120px] xs:min-w-[150px] md:min-w-[160px] h-80 bg-primary/10 text-primary rounded-2xl font-bold text-base xs:text-lg transition-all duration-300 hover:bg-primary hover:text-white hover:scale-105 shadow group mx-1 snap-start shrink-0"

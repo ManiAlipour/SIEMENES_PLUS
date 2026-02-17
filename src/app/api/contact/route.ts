@@ -9,7 +9,7 @@ export async function POST(req: Request) {
     await connectDB();
     const data = await req.json();
 
-    // مقادیر ضروری: firstName, lastName, email, title, message
+    // Required: firstName, lastName, email, title, message
     const { firstName, lastName, email, title, message } = data;
 
     if (!firstName || !lastName || !email || !title || !message) {
@@ -29,8 +29,7 @@ export async function POST(req: Request) {
       createdAt: new Date(),
     };
 
-    // اگر مدل user بصورت required تعریف شده باید فیلد user را ست کنیم (مثلا مقدار پیشفرض یا null)
-    // فرض می‌گیریم مهمان ارسال می‌کند پس user را null می‌گذاریم
+    // Assume guest submission; set user to null if User is required
     if (Contact.schema?.paths?.user?.isRequired) {
       contactData.user = null;
     }
@@ -53,10 +52,10 @@ export async function POST(req: Request) {
     });
   } catch (err: any) {
     let message = "Server error";
-    // اگر ValidationError اومد پیغام درست رو نشون بده
+    // Return proper message for ValidationError
     if (err?.name === "ValidationError" && err?.message) {
       message = err.message;
-      // اگر پیام فارسی سازی لازم دارد می‌توان این مرحله را انجام داد
+      // Add localization here if needed
       if (message.includes("user: Path `user` is required")) {
         message = "ثبت فرم تماس فقط برای کاربران وارد شده مجاز است.";
       }

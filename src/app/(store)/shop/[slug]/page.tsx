@@ -202,7 +202,7 @@ export default async function ProductPage({ params }: IProductProps) {
     );
   }
 
-  // خرید از طریق پیام‌رسان یا تلفن (زیبا و موبایل)
+  // Purchase via messenger or phone (mobile-friendly)
   const buyOptions = [
     {
       href: WHATSAPP_LINK,

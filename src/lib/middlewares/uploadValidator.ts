@@ -7,9 +7,9 @@ export interface UploadOptions {
 }
 
 /**
- * ✅ uploadValidator — Middleware برای اعتبارسنجی فایل‌ها قبل از آپلود
- * @param req - درخواست Next.js شامل FormData
- * @param options - تنظیمات مجاز برای حجم و نوع فایل
+ * uploadValidator — Validate files before upload
+ * @param req - Next.js request containing FormData
+ * @param options - Allowed size and file type settings
  * @returns {Promise<{ valid: boolean; error?: string; files?: File[] }>}
  */
 export async function uploadValidator(
@@ -17,8 +17,8 @@ export async function uploadValidator(
   options?: UploadOptions
 ): Promise<{ valid: boolean; error?: string; files?: File[] }> {
   try {
-    // ۱. تنظیمات پیش‌فرض
-    const maxSize = (options?.maxSizeMB ?? 10) * 1024 * 1024; // ۱۰ مگابایت پیش‌فرض
+    // 1. Default settings
+    const maxSize = (options?.maxSizeMB ?? 10) * 1024 * 1024; // 10MB default
     const allowed = options?.allowedTypes ?? [
       "image/jpeg",
       "image/png",
@@ -26,11 +26,11 @@ export async function uploadValidator(
     ];
     const maxFiles = options?.maxFiles ?? 3;
 
-    // ۲. چک کردن وجود FormData
+    // 2. Check FormData exists
     const formData = await req.formData();
     const files: File[] = [];
 
-    // ۳. استخراج فایل‌ها از فرم (field name = "file" یا "files")
+    // 3. Extract files from form (field name = "file" or "files")
     for (const [key, value] of formData.entries()) {
       if (value instanceof File) files.push(value);
     }
@@ -39,7 +39,7 @@ export async function uploadValidator(
       return { valid: false, error: "هیچ فایلی برای آپلود ارسال نشده است." };
     }
 
-    // ۴. چک تعداد فایل‌ها
+    // 4. Validate file count
     if (files.length > maxFiles) {
       return {
         valid: false,
@@ -47,7 +47,7 @@ export async function uploadValidator(
       };
     }
 
-    // ۵. اعتبارسنجی هر فایل
+    // 5. Validate each file
     for (const file of files) {
       if (!allowed.includes(file.type)) {
         return {
@@ -69,7 +69,7 @@ export async function uploadValidator(
       }
     }
 
-    // ۶. همه چیز اوکی ✅
+    // 6. All validations passed
     return { valid: true, files };
   } catch (error) {
     console.error("Upload Validation Error:", error);

@@ -5,7 +5,7 @@ import { cookies } from "next/headers";
 import { verifyToken } from "@/lib/auth";
 import { escapeRegex, logSearchQuery, normalizeSearchQuery } from "@/lib/analytics/search";
 
-// دریافت همه پست‌ها با امکان فیلتر و جستجو
+// GET: Fetch all blog posts with optional filter and search
 export async function GET(req: Request) {
   try {
     await connectDB();
@@ -19,7 +19,7 @@ export async function GET(req: Request) {
     let query: any = {};
     if (status) query.status = status;
     if (search) {
-      // جلوگیری از regex injection
+      // Sanitize to prevent regex injection
       query.title = { $regex: new RegExp(escapeRegex(search), "i") };
     }
 
@@ -34,7 +34,7 @@ export async function GET(req: Request) {
 
     const [posts, total] = await Promise.all([postsPromise, countPromise]);
 
-    // لاگ سرچ فقط برای صفحه اول (برای جلوگیری از شمارش چندباره در pagination)
+    // Log search only on first page (avoid duplicate counts on pagination)
     if (search && page === 1) {
       try {
         const cookie =await cookies()

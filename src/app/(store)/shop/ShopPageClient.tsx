@@ -244,7 +244,7 @@ export default function ShopPageClient() {
                           محصول موجود
                         </>
                       ) : category && !search && !error ? (
-                        // وضعیت خاص: فیلتر کتگوری وجود دارد اما هیچ محصولی نیست، پیغام کاربرپسندتری نمایش بده
+                        // Empty category: show user-friendly message and link to all products
                         <span>
                           هیچ محصولی در این دسته یافت نشد.
                           <br />

@@ -73,9 +73,9 @@ export default function AuthForm({ mode }: Props) {
   const translateError = (errorMessage: string): string => {
     const error = errorMessage.trim();
 
-    // دیکشنری ترجمه خطاهای رایج
+    // Error translation dictionary (API messages → user-facing Persian)
     const errorTranslations: Record<string, string> = {
-      // خطاهای عمومی
+      // General errors
       "all fields are required": "لطفاً تمام فیلدها را پر کنید",
       "email and password are required": "لطفاً ایمیل و رمز عبور را وارد کنید",
       "email and code are required": "لطفاً ایمیل و کد تأیید را وارد کنید",
@@ -84,7 +84,7 @@ export default function AuthForm({ mode }: Props) {
       "verification failed":
         "تأیید حساب با خطا مواجه شد. لطفاً دوباره تلاش کنید",
 
-      // خطاهای احراز هویت
+      // Auth errors
       "user already exists":
         "این ایمیل قبلاً ثبت‌نام کرده است. لطفاً وارد شوید یا از صفحه فراموشی رمز عبور استفاده کنید",
       "user not found":
@@ -102,7 +102,7 @@ export default function AuthForm({ mode }: Props) {
       "email already registered": "این ایمیل قبلاً ثبت‌نام کرده است",
       "email not registered": "این ایمیل ثبت‌نام نکرده است",
 
-      // خطاهای سرور
+      // Server errors
       "internal server error": "خطای داخلی سرور. لطفاً بعداً تلاش کنید",
       "server error": "خطای سرور. لطفاً بعداً تلاش کنید",
       unauthorized: "احراز هویت نامعتبر است. لطفاً دوباره وارد شوید",
@@ -114,20 +114,20 @@ export default function AuthForm({ mode }: Props) {
       "service unavailable":
         "سرویس موقتاً در دسترس نیست. لطفاً بعداً تلاش کنید",
 
-      // خطاهای شبکه و اتصال
+      // Network errors
       "network error":
         "خطا در اتصال به سرور. لطفاً اتصال اینترنت خود را بررسی کنید",
       "connection timeout": "اتصال به سرور برقرار نشد. لطفاً دوباره تلاش کنید",
       "failed to fetch": "خطا در برقراری ارتباط با سرور",
     };
 
-    // جستجوی دقیق
+    // Exact match
     const lowerError = error.toLowerCase();
     if (errorTranslations[lowerError]) {
       return errorTranslations[lowerError];
     }
 
-    // جستجوی جزئی (برای خطاهایی که ممکن است متن اضافه داشته باشند)
+    // Partial match (for errors that may include extra text)
     for (const [key, value] of Object.entries(errorTranslations)) {
       if (lowerError.includes(key)) {
         return value;
@@ -373,7 +373,7 @@ export default function AuthForm({ mode }: Props) {
         </motion.div>
       )}
 
-      {/* نمایش ایمیل به صورت فقط خواندنی برای verify */}
+      {/* Read-only email display for verify mode */}
       {mode === "verify" && emailFromQuery && (
         <motion.div
           initial={{ opacity: 0, x: -20 }}
@@ -391,7 +391,7 @@ export default function AuthForm({ mode }: Props) {
         </motion.div>
       )}
 
-      {/* اگر email در query parameter نباشد */}
+      {/* When email is not in query params */}
       {mode === "verify" && !emailFromQuery && (
         <motion.div
           initial={{ opacity: 0 }}

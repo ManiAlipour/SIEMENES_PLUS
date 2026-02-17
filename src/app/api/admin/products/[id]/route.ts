@@ -110,7 +110,7 @@ export async function PUT(
       isFeatured,
     });
 
-    //  آپدیت تصویر در Liara
+    // Update image in Liara storage
     if (image && image.size > 0) {
       try {
         if (existingProduct.image) {

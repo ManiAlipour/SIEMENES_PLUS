@@ -18,7 +18,7 @@ export async function adminOnly(req: Request) {
       return NextResponse.json({ error: "Forbidden" }, { status: 403 });
     }
 
-    // اگه همه‌چی اوکیه، بفرست برای handler
+    // All checks passed, forward to handler
     return null;
   } catch (err) {
     return NextResponse.json({ error: "Invalid token" }, { status: 401 });

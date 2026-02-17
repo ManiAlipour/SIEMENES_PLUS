@@ -5,7 +5,7 @@ import { FiEdit2, FiTrash2, FiPlus } from "react-icons/fi";
 import toast from "react-hot-toast";
 import AddBlogModal from "@/components/layouts/dash/admin/AddBlogModal";
 import EditBlogCard from "@/components/layouts/dash/admin/EditBlogCard";
-import DeleteBlogConfirmModal from "@/components/layouts/dash/admin/DeleteBlogConfirmModal"; // اضافه شد
+import DeleteBlogConfirmModal from "@/components/layouts/dash/admin/DeleteBlogConfirmModal";
 
 interface Blog {
   _id: string;

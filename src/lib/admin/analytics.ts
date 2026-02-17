@@ -21,22 +21,21 @@ const MONTH_NAMES = [
   "اسفند",
 ];
 
-// نگاشت تقریبی ماه میلادی (۱–۱۲) به ایندکس ماه شمسی در MONTH_NAMES (۰–۱۱)
-// این نگاشت بر اساس شروع سال شمسی در حوالی ۱ فروردین (۲۱/۲۲ مارس) تنظیم شده است
-// 1 → دی، 2 → بهمن، 3 → اسفند، 4 → فروردین، ... ، 12 → آذر
+// Map Gregorian month (1–12) to Persian month index in MONTH_NAMES (0–11)
+// Persian year starts around March 21st (1st of Farvardin)
 const GREGORIAN_TO_JALALI_MONTH_INDEX: number[] = [
-  9, // Jan  -> دی
-  10, // Feb -> بهمن
-  11, // Mar -> اسفند
-  0, // Apr -> فروردین
-  1, // May -> اردیبهشت
-  2, // Jun -> خرداد
-  3, // Jul -> تیر
-  4, // Aug -> مرداد
-  5, // Sep -> شهریور
-  6, // Oct -> مهر
-  7, // Nov -> آبان
-  8, // Dec -> آذر
+  9,  // Jan -> Dey
+  10, // Feb -> Bahman
+  11, // Mar -> Esfand
+  0,  // Apr -> Farvardin
+  1,  // May -> Ordibehesht
+  2,  // Jun -> Khordad
+  3,  // Jul -> Tir
+  4,  // Aug -> Mordad
+  5,  // Sep -> Shahrivar
+  6,  // Oct -> Mehr
+  7,  // Nov -> Aban
+  8,  // Dec -> Azar
 ];
 
 const currentMonthIndex = new Date().getMonth();
@@ -162,7 +161,7 @@ export async function getAdminAnalytics() {
   // --------------------------
   // 8) Trend Stats
   // --------------------------
-  // استخراج مقدار ماه فعلی و ماه قبلی
+  // Extract current and previous month values
   const thisMonthViews =
     pageViewsMonthly.find((x) => x._id.month - 1 === currentMonthIndex)
       ?.total || 0;
@@ -192,12 +191,12 @@ export async function getAdminAnalytics() {
   // Return Data
   // --------------------------
   return {
-    monthlyViews, // نمودار ماهانه
-    popularProducts, // محصولات محبوب
-    topSearches, // جستجوهای برتر
-    eventStats, // تعاملات
-    overview, // آمار کلی
-    trendStats, // روند
-    topPages, // صفحات پربازدید
+    monthlyViews,
+    popularProducts,
+    topSearches,
+    eventStats,
+    overview,
+    trendStats,
+    topPages,
   };
 }

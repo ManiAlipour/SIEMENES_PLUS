@@ -7,15 +7,15 @@ export const monthlyStats = [
   { month: "شهریور", users: 742, products: 104, orders: 39, tickets: 8 },
 ];
 
-// داده خلاصه برای کارت‌های Trend (رشد نسبت به ماه گذشته)
+// Trend card data (growth vs previous month)
 export const adminTrendStats = {
-  usersGrowth: (((742 - 615) / 615) * 100).toFixed(1), // درصد رشد کاربران
-  productGrowth: (((104 - 88) / 88) * 100).toFixed(1), // رشد محصولات
-  orderGrowth: (((39 - 34) / 34) * 100).toFixed(1), // رشد سفارشات
-  ticketGrowth: (((8 - 7) / 7) * 100).toFixed(1), // رشد تیکت‌ها
+  usersGrowth: (((742 - 615) / 615) * 100).toFixed(1),
+  productGrowth: (((104 - 88) / 88) * 100).toFixed(1),
+  orderGrowth: (((39 - 34) / 34) * 100).toFixed(1),
+  ticketGrowth: (((8 - 7) / 7) * 100).toFixed(1),
 };
 
-// داده آماری کلی (برای InfoCardها)
+// Overview stats for InfoCards
 export const adminOverview = {
   totalUsers: 742,
   totalProducts: 128,

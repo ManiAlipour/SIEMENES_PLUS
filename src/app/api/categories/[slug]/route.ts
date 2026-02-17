@@ -34,7 +34,7 @@ export async function GET(
       products = await Product.find({ category: category.slug });
     } else products = await Product.find({ category: slug });
 
-    // اگر محصول برای کتگوری پیدا نشد
+    // No products found for category
     if (!products || products.length === 0) {
       return NextResponse.json({
         data: [],

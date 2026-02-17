@@ -5,7 +5,7 @@ import Product from "@/models/Product";
 export const dynamic = "force-dynamic";
 export const runtime = "nodejs";
 
-// GET /api/products/similar?productId=xxx یا ?slug=yyy
+// GET /api/products/similar?productId=xxx | ?slug=yyy
 export async function GET(req: NextRequest) {
   try {
     await connectDB();

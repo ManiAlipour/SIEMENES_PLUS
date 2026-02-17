@@ -19,7 +19,7 @@ export default function ListLikeButton({
     const newState = !liked;
     setLiked(newState);
     onToggle?.(productId, newState);
-    // TODO: اتصال به API لایک در backend
+    // TODO: Connect to like API in backend
   };
 
   return (

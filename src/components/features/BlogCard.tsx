@@ -11,7 +11,7 @@ export interface PostCardModel {
 export default function BlogCard({ post }: { post: PostCardModel }) {
   const { _id, title, video, status, createdAt } = post;
 
-  // پست‌های پیشنویس نمایش داده نشوند
+  // Draft posts should not be displayed
   if (status === "draft") {
     return null;
   }

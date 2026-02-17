@@ -169,7 +169,7 @@ function MessageModal({
               {contact.message}
             </div>
           </div>
-          {/* پاسخ ـ اگر پیام pending است */}
+          {/* Reply button - when message is pending */}
           {contact.status === "pending" && (
             <form
               onSubmit={handleSubmit}
@@ -211,7 +211,7 @@ function MessageModal({
               </div>
             </form>
           )}
-          {/* اگر پاسخ قبلاً داده شده */}
+          {/* When reply already sent */}
           {contact.status === "answered" && contact.answer && (
             <div className="bg-green-50 border border-green-100 mt-3 rounded-xl px-2 sm:px-4 py-2 sm:py-3">
               <div className="flex items-center gap-2 text-green-700 font-bold mb-2 text-sm sm:text-base">
@@ -231,7 +231,7 @@ function MessageModal({
               </div>
             </div>
           )}
-          {/* دکمه بستن */}
+          {/* Close button */}
           <div className="mt-4 flex justify-end">
             <button
               onClick={onClose}

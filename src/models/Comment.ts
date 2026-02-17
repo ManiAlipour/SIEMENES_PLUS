@@ -1,20 +1,20 @@
 import mongoose, { Schema, Document, Types } from "mongoose";
 
 /**
- * Interface مدل کامنت‌ها
+ * Comment model interface
  */
 export interface IComment extends Document {
-  user: Types.ObjectId; // آی‌دی کاربری که کامنت گذاشته
-  targetType: "post" | "product"; // نوع کامنت (پست یا محصول)
-  targetId: Types.ObjectId; // آی‌دی پست یا محصول هدف
-  text: string; // متن کامنت
-  approved: boolean; // تایید شده توسط ادمین یا نه
-  createdAt: Date; // زمان ایجاد
-  updatedAt: Date; // آخرین ویرایش
+  user: Types.ObjectId;
+  targetType: "post" | "product";
+  targetId: Types.ObjectId;
+  text: string;
+  approved: boolean;
+  createdAt: Date;
+  updatedAt: Date;
 }
 
 /**
- * Schema اصلی کامنت
+ * Comment schema
  */
 const CommentSchema = new Schema<IComment>(
   {
@@ -31,7 +31,7 @@ const CommentSchema = new Schema<IComment>(
     targetId: {
       type: Schema.Types.ObjectId,
       required: true,
-      refPath: "targetType", // این نکته باعث میشه بسته به نوع، به پست یا محصول وصل بشه
+      refPath: "targetType", // Dynamic ref: resolves to Post or Product based on targetType
     },
     text: {
       type: String,
@@ -45,7 +45,7 @@ const CommentSchema = new Schema<IComment>(
     },
   },
   {
-    timestamps: true, // ایجاد createdAt و updatedAt خودکار
+    timestamps: true, // Auto-generates createdAt and updatedAt
   }
 );
 

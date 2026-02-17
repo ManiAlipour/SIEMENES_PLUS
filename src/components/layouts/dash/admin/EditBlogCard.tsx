@@ -25,7 +25,7 @@ export default function EditBlogCard({
   onEdit,
 }: EditBlogCardProps) {
   const [title, setTitle] = useState(blog.title);
-  const [video, setVideo] = useState(blog.video); // فقط لینک ویدیوی آپارات
+  const [video, setVideo] = useState(blog.video); // Aparat video link only
   const [status, setStatus] = useState<"draft" | "published">(blog.status);
   const [loading, setLoading] = useState(false);
 

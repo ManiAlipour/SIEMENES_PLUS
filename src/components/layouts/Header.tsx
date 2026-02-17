@@ -2,21 +2,11 @@
 
 import Link from "next/link";
 import Image from "next/image";
-import { usePathname, useRouter } from "next/navigation";
-import { useState, useEffect } from "react";
-import {
-  FiMenu,
-  FiX,
-  FiSearch,
-  FiChevronDown,
-  FiUser,
-  FiShoppingBag,
-} from "react-icons/fi";
+import { usePathname } from "next/navigation";
+import { useEffect } from "react";
+import { FiMenu, FiX, FiUser } from "react-icons/fi";
 import { motion, AnimatePresence } from "framer-motion";
 import { useAuth } from "@/components/providers/AuthProvider";
-import { BsBagHeart } from "react-icons/bs";
-import { useSelector } from "react-redux";
-import { RootState } from "@/store";
 import HeaderLikeBtn from "../features/HeaderLikeBtn";
 import HeaderSearchbar from "../features/HeaderSearchbar";
 import { useScrollLock, useToggle } from "iso-hooks";
@@ -27,10 +17,7 @@ export default function Header() {
 
   // State management
   const [isMobileOpen, setIsMobileOpen] = useToggle(false);
-  const [isServicesOpen, setIsServicesOpen] = useToggle(false);
-  const [isMobileServicesOpen, setIsMobileServicesOpen] = useToggle(false); // Mobile click
   const [scrolled, setScrolled] = useToggle(false);
-  const [searchQuery, setSearchQuery] = useState("");
 
   // Handle Scroll Effect
   useEffect(() => {
@@ -46,32 +33,11 @@ export default function Header() {
     isMobileOpen ? lock() : unlock();
   }, [isMobileOpen]);
 
-  // Navigation Data
   const links = [
     { name: "خانه", href: "/" },
     { name: "فروشگاه", href: "/shop" },
-    { name: "وبلاگ", href: "/blog" },
     { name: "درباره ما", href: "/about-us" },
     { name: "تماس با ما", href: "/contact-us" },
-  ];
-
-  const services = [
-    {
-      name: "اتوماسیون صنعتی",
-      href: "/services/automation",
-      desc: "PLC, HMI, SCADA",
-    },
-    {
-      name: "درایو و موتور",
-      href: "/services/drives",
-      desc: "Sinamics, Simotics",
-    },
-    {
-      name: "فشار ضعیف",
-      href: "/services/low-voltage",
-      desc: "Sirius, Sentron",
-    },
-    { name: "مشاوره فنی", href: "/services/consulting", desc: "طراحی و اجرا" },
   ];
 
   return (
@@ -120,59 +86,6 @@ export default function Header() {
                 {link.name}
               </Link>
             ))}
-
-            {/* Services Dropdown Trigger */}
-            <div
-              className="relative"
-              onMouseEnter={() => setIsServicesOpen(true)}
-              onMouseLeave={() => setIsServicesOpen(false)}
-            >
-              <button
-                className={`flex items-center gap-1 px-4 py-2 rounded-full text-sm font-medium transition-all ${
-                  isServicesOpen
-                    ? "text-cyan-600 bg-slate-100/50"
-                    : "text-slate-600 hover:text-cyan-600"
-                }`}
-              >
-                خدمات
-                <FiChevronDown
-                  className={`transition-transform duration-300 ${
-                    isServicesOpen ? "rotate-180" : ""
-                  }`}
-                />
-              </button>
-
-              {/* Services Mega Menu */}
-              <AnimatePresence>
-                {isServicesOpen && (
-                  <motion.div
-                    initial={{ opacity: 0, y: 15, scale: 0.98 }}
-                    animate={{ opacity: 1, y: 0, scale: 1 }}
-                    exit={{ opacity: 0, y: 15, scale: 0.98 }}
-                    transition={{ duration: 0.2 }}
-                    className="absolute top-full right-0 mt-2 w-72 bg-white border border-slate-100 rounded-2xl shadow-xl p-2 grid gap-1 overflow-hidden"
-                  >
-                    {/* Decorative gradient line at top */}
-                    <div className="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-cyan-500 to-blue-600" />
-
-                    {services.map((service) => (
-                      <Link
-                        key={service.href}
-                        href={service.href}
-                        className="flex flex-col px-4 py-3 rounded-xl hover:bg-slate-50 transition group"
-                      >
-                        <span className="text-sm font-bold text-slate-800 group-hover:text-cyan-600 transition-colors">
-                          {service.name}
-                        </span>
-                        <span className="text-xs text-slate-400 mt-0.5">
-                          {service.desc}
-                        </span>
-                      </Link>
-                    ))}
-                  </motion.div>
-                )}
-              </AnimatePresence>
-            </div>
           </nav>
 
           {/* 3. Right Actions (Search + Auth + Cart) */}
@@ -271,47 +184,6 @@ export default function Header() {
                       {link.name}
                     </Link>
                   ))}
-
-                  {/* Mobile Services Dropdown */}
-                  <div className="border-t border-slate-100 my-2 pt-2">
-                    <button
-                      onClick={() =>
-                        setIsMobileServicesOpen(!isMobileServicesOpen)
-                      }
-                      className="w-full flex items-center justify-between px-4 py-3.5 min-h-[48px] rounded-xl text-base font-medium text-slate-600 hover:bg-slate-50 active:bg-slate-100 transition touch-manipulation"
-                    >
-                      <span>خدمات ما</span>
-                      <FiChevronDown
-                        className={`transition-transform ${
-                          isMobileServicesOpen ? "rotate-180" : ""
-                        }`}
-                      />
-                    </button>
-
-                    <AnimatePresence>
-                      {isMobileServicesOpen && (
-                        <motion.div
-                          initial={{ height: 0, opacity: 0 }}
-                          animate={{ height: "auto", opacity: 1 }}
-                          exit={{ height: 0, opacity: 0 }}
-                          className="overflow-hidden pr-4"
-                        >
-                          <div className="border-r-2 border-slate-100 pr-4 py-2 space-y-1">
-                            {services.map((s) => (
-                              <Link
-                                key={s.href}
-                                href={s.href}
-                                onClick={() => setIsMobileOpen(false)}
-                                className="block py-2.5 px-2 min-h-[44px] flex items-center text-base text-slate-500 hover:text-cyan-600 active:text-cyan-700 transition touch-manipulation"
-                              >
-                                {s.name}
-                              </Link>
-                            ))}
-                          </div>
-                        </motion.div>
-                      )}
-                    </AnimatePresence>
-                  </div>
                 </div>
 
                 {/* Mobile Auth Buttons */}

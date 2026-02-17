@@ -6,7 +6,7 @@ import { adminOnly } from "@/lib/middlewares/adminOnly";
 
 export const runtime = "nodejs";
 
-// GET: لیست کاربران
+// GET: List users
 export async function GET(request: NextRequest) {
   try {
     await connectDB();
@@ -26,7 +26,7 @@ export async function GET(request: NextRequest) {
   }
 }
 
-// DELETE: حذف کاربر با آیدی
+// DELETE: Remove user by ID
 export async function DELETE(request: Request) {
   try {
     await connectDB();

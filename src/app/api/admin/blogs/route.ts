@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
 import Post, { sanitizePost } from "@/models/Post";
-import { connectDB } from "@/lib/db"; // اتصال به MongoDB
+import { connectDB } from "@/lib/db";
 import { adminOnly } from "@/lib/middlewares/adminOnly";
 
 export async function GET() {

@@ -10,11 +10,11 @@ import {
   BsTrash,
   BsCartPlus,
 } from "react-icons/bs";
-import ProductCard from "@/components/features/ProductCard"; // کارت اصلی (گرید)
+import ProductCard from "@/components/features/ProductCard";
 import Link from "next/link";
 import Image from "next/image";
 import { motion, AnimatePresence } from "framer-motion";
-import { toggleLike } from "@/store/slices/likedPosts"; // فرض بر این است که این اکشن را دارید
+import { toggleLike } from "@/store/slices/likedPosts";
 
 // --- 1. Skeleton Loading (Mobile & Desktop) ---
 const SkeletonGrid = () => (
@@ -67,7 +67,7 @@ const MobileListItem = ({ product }: { product: Product }) => {
       layout
       initial={{ opacity: 0, x: -20 }}
       animate={{ opacity: 1, x: 0 }}
-      exit={{ opacity: 0, x: -100 }} // افکت حذف شدن به چپ
+      exit={{ opacity: 0, x: -100 }}
       className="bg-white rounded-xl p-3 flex gap-3 border border-gray-100 shadow-sm mb-3 relative overflow-hidden group"
     >
       {/* Image */}

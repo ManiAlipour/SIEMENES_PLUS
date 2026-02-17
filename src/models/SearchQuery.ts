@@ -3,31 +3,29 @@ import mongoose, { Schema, model, models } from "mongoose";
 /**
  * SearchQuery
  * -----------
- * این کالکشن برای ثبت «سرچ‌های واقعی» کاربران استفاده می‌شود تا در پنل ادمین
- * بتوان top-searches و ترندها را استخراج کرد.
- *
- * نکته: `query` متن خام کاربر است و `normalizedQuery` نسخه نرمال‌شده برای group/aggregation است.
+ * Stores real user searches for admin analytics (top searches, trends).
+ * `query` is raw user input; `normalizedQuery` is normalized for grouping/aggregation.
  */
 const SearchQuerySchema = new Schema({
-  /** متن خام جستجو (trim شده) */
+  /** Raw search text (trimmed) */
   query: { type: String, required: true },
 
-  /** متن نرمال‌شده (برای group شدن بهتر). اگر مقدار نداشت، در گزارش‌ها fallback به query انجام می‌شود. */
+  /** Normalized text for grouping. Falls back to query in reports if empty. */
   normalizedQuery: { type: String, default: null },
 
-  /** منبع سرچ (مثلاً products / blogs) */
+  /** Search source (e.g. products, blogs) */
   source: { type: String, default: "other" },
 
-  /** شناسه کاربر (در صورت وجود توکن معتبر) */
+  /** User ID (if valid token present) */
   userId: { type: mongoose.Types.ObjectId, ref: "User", default: null },
 
-  /** تعداد نتایج پیدا شده برای این سرچ */
+  /** Number of results found for this search */
   totalResults: { type: Number, default: 0 },
 
-  /** اطلاعات اختیاری (فیلترها/سورت/...) */
+  /** Optional metadata (filters, sort, etc.) */
   meta: { type: Schema.Types.Mixed, default: null },
 
-  /** زمان ثبت */
+  /** Timestamp */
   timestamp: { type: Date, default: Date.now },
 });
 

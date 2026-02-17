@@ -16,7 +16,7 @@ interface AddBlogModalProps {
 
 export default function AddBlogModal({ onClose, onAdd }: AddBlogModalProps) {
   const [title, setTitle] = useState("");
-  const [video, setVideo] = useState(""); // فقط لینک ویدیوی آپارات
+  const [video, setVideo] = useState(""); // Aparat video link only
   const [status, setStatus] = useState<"draft" | "published">("draft");
   const [loading, setLoading] = useState(false);
 

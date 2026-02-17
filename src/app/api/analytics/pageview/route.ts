@@ -5,12 +5,12 @@ import { verifyToken } from "@/lib/auth";
 
 export const runtime = "nodejs";
 
-// ثبت بازدید صفحه (POST)
+// POST: Log page view
 export async function POST(req: NextRequest) {
   try {
     await connectDB();
 
-    // دریافت توکن کاربر (در صورت وجود)
+    // Get user token if present
     const tokenValue = req.cookies.get("token")?.value;
     let userId: string | null = null;
 
@@ -19,11 +19,11 @@ export async function POST(req: NextRequest) {
         const decoded = verifyToken(tokenValue);
         userId = decoded?.id || null;
       } catch (err) {
-        userId = null; // اگر توکن نامعتبر بود
+        userId = null; // Invalid token
       }
     }
 
-    // دریافت اطلاعات صفحه
+    // Get page info
     let body;
     try {
       body = await req.json();
@@ -42,14 +42,14 @@ export async function POST(req: NextRequest) {
       );
     }
 
-    // استخراج IP (سازگار با انواع پروکسی)
+    // Extract IP (proxy-aware)
     let ip =
       req.headers.get("x-forwarded-for")?.split(",")[0]?.trim() ||
       req.headers.get("x-real-ip") ||
       (req as any).ip ||
       null;
 
-    // ذخیره بازدید
+    // Save page view
     await PageView.create({
       url,
       userAgent,
@@ -60,7 +60,7 @@ export async function POST(req: NextRequest) {
 
     return NextResponse.json({ ok: true });
   } catch (err: any) {
-    // ارسال خطا در پاسخ
+    // Return error response
     return NextResponse.json(
       { ok: false, error: err?.message || "خطای سرور" },
       { status: 500 }
@@ -68,26 +68,26 @@ export async function POST(req: NextRequest) {
   }
 }
 
-// نمایش خلاصه آمار بازدیدهای جمع‌بندی‌شده (GET)
+// GET: Aggregated page view stats summary
 export async function GET(req: NextRequest) {
   try {
     await connectDB();
 
-    // فقط آمار بازدید ۱۲ ماه اخیر را جمع بزند
+    // Aggregate views for last 12 months
     const today = new Date();
     today.setHours(0, 0, 0, 0);
 
-    // ماه فعلی/امسال
+    // Current month/year
     let year = today.getFullYear();
     let month = today.getMonth(); // 0-based
 
-    // تعریف نوع report
+    // Report type
     type ReportRange = { label: string; year: number; month: number };
 
-    // تولید لیست بازه‌های ۱۲ ماه اخیر
+    // Generate last 12 months range list
     const reports: ReportRange[] = [];
     for (let i = 11; i >= 0; i--) {
-      // محاسبه سال/ماه با توجه به تغییر سال
+      // Handle year rollover
       let m = month - i;
       let y = year;
       while (m < 0) {
@@ -104,7 +104,7 @@ export async function GET(req: NextRequest) {
       });
     }
 
-    // جمع آوری بازدیدهای هر ماه
+    // Aggregate views per month
     const viewsByMonth = await Promise.all(
       reports.map(async (r) => {
         const monthStart = new Date(r.year, r.month, 1, 0, 0, 0, 0);
@@ -113,7 +113,7 @@ export async function GET(req: NextRequest) {
             ? new Date(r.year + 1, 0, 1, 0, 0, 0, 0)
             : new Date(r.year, r.month + 1, 1, 0, 0, 0, 0);
 
-        // برخی مدل‌ها ممکن است "createdAt" یا "timestamp" باشند
+        // Some models use createdAt or timestamp
         let count = 0;
         try {
           count = await PageView.countDocuments({

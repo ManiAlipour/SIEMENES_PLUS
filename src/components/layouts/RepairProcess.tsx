@@ -32,7 +32,7 @@ export default function RepairProcess() {
 
   return (
     <section className="relative overflow-hidden py-16 md:py-20 bg-[#0b1730] text-white">
-      {/* لایه رنگ صنعتی نیمه‌تیره برای عمق */}
+      {/* Dark overlay for depth */}
       <div className="absolute inset-0 bg-[#002b59]/80" />
 
       <div className="absolute inset-0 z-0 opacity-30">
@@ -53,7 +53,7 @@ export default function RepairProcess() {
         </svg>
       </div>
 
-      {/* عنوان سکشن */}
+      {/* Section title */}
       <div className="relative z-10 text-center mb-12">
         <h2 className="text-2xl sm:text-3xl font-bold text-[#00A9E0]">
           فرآیند تعمیرات گروه مهندسی{" "}
@@ -62,7 +62,7 @@ export default function RepairProcess() {
         <div className="mt-3 w-28 h-1 bg-[#00A9E0] mx-auto rounded-full shadow-[0_0_14px_#00A9E0]" />
       </div>
 
-      {/* مراحل */}
+      {/* Process steps */}
       <div className="relative z-10 max-w-6xl mx-auto grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-6 px-4 text-center items-start">
         {steps.map((item, i) => (
           <div

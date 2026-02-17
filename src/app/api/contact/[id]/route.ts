@@ -57,7 +57,7 @@ export async function PATCH(
     try {
       await sendEmailToUser(contact.email, emailSubject, emailBody);
     } catch (e) {
-      // در صورت اشکال در ارسال ایمیل، لاگ شود اما ادامه پاسخ انجام شود
+      // Log email send failure but continue with response
       console.error("خطا در ارسال ایمیل پاسخ:", e);
     }
 

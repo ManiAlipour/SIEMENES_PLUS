@@ -12,7 +12,7 @@ export default function Loading() {
         در حال بارگذاری اطلاعات کاربری...
       </p>
 
-      {/* زیرنویس نرم */}
+      {/* Loading subtitle */}
       <p className="mt-2 text-primary/70 text-xs sm:text-sm font-[Vazirmatn]">
         لطفاً چند لحظه صبر کنید
       </p>

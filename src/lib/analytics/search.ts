@@ -7,16 +7,16 @@ export function normalizeSearchQuery(raw: string): string {
   const s = (raw ?? "")
     .trim()
     .replace(/\s+/g, " ")
-    // یکسان‌سازی حروف عربی/فارسی
+    // Normalize Arabic/Persian characters
     .replace(/ي/g, "ی")
     .replace(/ك/g, "ک")
-    // حذف کاراکترهای نامرئی رایج
+    // Remove common invisible characters
     .replace(/[\u200C\u200D\u200E\u200F]/g, "");
 
-  // برای حروف لاتین هم یکدست‌تر
+  // Lowercase for consistency
   const lower = s.toLowerCase();
 
-  // محدودیت طول برای جلوگیری از spam/DB bloat
+  // Length limit to prevent spam/DB bloat
   return lower.slice(0, 200);
 }
 
@@ -34,8 +34,8 @@ type LogSearchParams = {
 };
 
 /**
- * ثبت سرچ در DB
- * - خطاها را به caller پاس می‌دهد (caller بهتر است swallow کند تا سرچ fail نشود)
+ * Log search to DB.
+ * Passes errors to caller; caller should swallow to avoid failing the search flow.
  */
 export async function logSearchQuery({
   query,

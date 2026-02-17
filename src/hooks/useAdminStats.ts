@@ -15,7 +15,7 @@ type UseAdminStatsReturn = {
 };
 
 /**
- * هوک برای دریافت و مدیریت داده‌های آماری از API
+ * Hook to fetch and manage stats data from API
  */
 export function useAdminStats(): UseAdminStatsReturn {
   const [data, setData] = useState<MonthlyView[]>([]);
@@ -41,7 +41,7 @@ export function useAdminStats(): UseAdminStatsReturn {
 
         setAnalytics(analyticsData);
 
-        // بررسی اعتبار داده‌های ماهانه
+        // Validate monthly data
         if (!isValidMonthlyData(analyticsData?.monthlyViews)) {
           setIsMock(true);
           setData(generateFakeMonthlyData());

@@ -28,9 +28,9 @@ export default function ProductFilterBar({
 
   return (
     <div className="w-full rounded-2xl backdrop-blur-lg bg-white/70 border border-[#e5e7eb]/60 shadow-sm p-4 flex flex-col gap-3 mb-6 transition-all duration-300">
-      {/* نوار اصلی سرچ */}
+      {/* Main search bar */}
       <div className="flex flex-wrap items-center justify-between gap-3">
-        {/* باکس سرچ */}
+        {/* Search box */}
         <div className="flex items-center gap-2 bg-white/40 backdrop-blur-md border border-[#e5e7eb]/60 rounded-xl px-3 py-2 w-full sm:w-1/3 shadow-inner">
           <FiSearch size={20} className="text-[#6b7280]" />
           <input
@@ -43,7 +43,7 @@ export default function ProductFilterBar({
           />
         </div>
 
-        {/* دکمه باز شدن فیلترها */}
+        {/* Filter toggle button */}
         <button
           onClick={() => setShowAdvanced(!showAdvanced)}
           className="flex items-center gap-2 px-4 py-2 rounded-xl text-sm font-semibold bg-linear-to-r from-primary to-[#0e7490] text-white hover:brightness-110 shadow-[0_2px_10px_rgba(6,182,212,0.3)] transition duration-300"
@@ -59,10 +59,10 @@ export default function ProductFilterBar({
         </button>
       </div>
 
-      {/* فیلترهای پیشرفته */}
+      {/* Advanced filters */}
       {showAdvanced && (
         <div className="flex flex-wrap gap-4 mt-3 animate-fadeIn">
-          {/* فیلتر وضعیت */}
+          {/* Status filter */}
           <div className="flex flex-col gap-1 w-full sm:w-auto">
             <label className="text-sm text-[#6b7280] font-medium">
               وضعیت محصول
@@ -82,7 +82,7 @@ export default function ProductFilterBar({
             </select>
           </div>
 
-          {/* فیلتر دسته‌بندی */}
+          {/* Category filter */}
           <div className="flex flex-col gap-1 w-full sm:w-auto">
             <label className="text-sm text-[#6b7280] font-medium">
               دسته‌بندی
