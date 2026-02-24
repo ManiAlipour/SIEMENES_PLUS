@@ -43,6 +43,18 @@ interface Overview {
   activeUsersMonthly: number;
 }
 
+declare interface Category {
+  _id: string;
+  name: string;
+  slug: string;
+  parent?: string | null;
+  description?: string;
+  image?: string;
+  isFeatured?: boolean;
+  createdAt?: string;
+  updatedAt?: string;
+}
+
 declare interface ProductObject {
   _id: string;
   name: string;

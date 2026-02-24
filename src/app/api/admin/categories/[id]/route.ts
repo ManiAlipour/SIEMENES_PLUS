@@ -133,10 +133,23 @@ export async function PATCH(
 
     await category.save();
 
+    const { toCategoryDTO } = await import("@/types/category");
+    const data = toCategoryDTO({
+      _id: category._id,
+      name: category.name,
+      slug: category.slug,
+      parent: category.parent,
+      description: category.description,
+      image: category.image,
+      isFeatured: category.isFeatured,
+      createdAt: category.createdAt,
+      updatedAt: category.updatedAt,
+    });
+
     return NextResponse.json({
       success: true,
       message: "دسته‌بندی با موفقیت به‌روزرسانی شد",
-      data: category,
+      data,
     });
   } catch (error: unknown) {
     console.error("PATCH Category error:", error);

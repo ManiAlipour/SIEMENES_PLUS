@@ -64,7 +64,20 @@ export async function POST(request: NextRequest) {
     });
     await cat.save();
 
-    return NextResponse.json({ success: true, data: cat }, { status: 201 });
+    const { toCategoryDTO } = await import("@/types/category");
+    const data = toCategoryDTO({
+      _id: cat._id,
+      name: cat.name,
+      slug: cat.slug,
+      parent: cat.parent,
+      description: cat.description,
+      image: cat.image,
+      isFeatured: cat.isFeatured,
+      createdAt: cat.createdAt,
+      updatedAt: cat.updatedAt,
+    });
+
+    return NextResponse.json({ success: true, data }, { status: 201 });
   } catch (err: any) {
     console.error(err);
     return NextResponse.json(

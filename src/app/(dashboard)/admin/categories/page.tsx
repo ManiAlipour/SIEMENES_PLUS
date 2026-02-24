@@ -1,51 +1,20 @@
 "use client";
 
 /**
- * Admin categories page: list categories, add new, delete by id.
- * Data: GET /api/categories, POST /api/admin/categories, DELETE /api/admin/categories/[id].
+ * Admin categories: list, add, delete.
+ * API: GET /api/categories, POST/DELETE /api/admin/categories.
  */
-import { useEffect, useState, useCallback } from "react";
-import type { Category } from "./_components/types";
+import { useCallback } from "react";
+import { useCategories } from "@/hooks/useCategories";
 import CategoryForm from "./_components/CategoryForm";
 import CategoriesList, { getParentNameFromList } from "./_components/CategoriesList";
 
 export default function AdminCategoriesPage() {
-  const [categories, setCategories] = useState<Category[]>([]);
-  const [loading, setLoading] = useState(false);
-  const [errorMsg, setErrorMsg] = useState("");
-
-  const fetchCategories = useCallback(async () => {
-    try {
-      setLoading(true);
-      setErrorMsg("");
-      const res = await fetch("/api/categories");
-      const data = await res.json();
-      setCategories(data.data ?? []);
-    } catch (err) {
-      console.error(err);
-      setErrorMsg("خطا در دریافت دسته‌ها!");
-    } finally {
-      setLoading(false);
-    }
-  }, []);
-
-  useEffect(() => {
-    fetchCategories();
-  }, [fetchCategories]);
-
-  const handleDelete = useCallback(async (id: string) => {
-    if (!confirm("آیا از حذف این دسته مطمئن هستید؟")) return;
-    try {
-      await fetch(`/api/admin/categories/${id}`, { method: "DELETE" });
-      fetchCategories();
-    } catch (err) {
-      console.error(err);
-      alert("حذف دسته با خطا مواجه شد!");
-    }
-  }, [fetchCategories]);
+  const { categories, loading, error, refetch, deleteCategory } = useCategories();
 
   const getParentName = useCallback(
-    (parentId: string | null | undefined) => getParentNameFromList(parentId, categories),
+    (parentId: string | null | undefined) =>
+      getParentNameFromList(parentId, categories),
     [categories]
   );
 
@@ -61,12 +30,12 @@ export default function AdminCategoriesPage() {
       </header>
 
       <div className="grid grid-cols-1 md:grid-cols-2 gap-4 md:gap-8">
-        <CategoryForm categories={categories} onSuccess={fetchCategories} />
+        <CategoryForm categories={categories} onSuccess={refetch} />
         <CategoriesList
           categories={categories}
           loading={loading}
-          errorMsg={errorMsg}
-          onDelete={handleDelete}
+          errorMsg={error}
+          onDelete={deleteCategory}
           getParentName={getParentName}
         />
       </div>

@@ -5,13 +5,7 @@ import CategoryCard from "../features/CategoryCard";
 import Link from "next/link";
 import { FiArrowLeft } from "react-icons/fi";
 import { motion } from "framer-motion";
-
-interface Category {
-  _id: string;
-  name: string;
-  slug: string;
-  image?: string;
-}
+import type { Category } from "@/types/category";
 
 const defaultCategories = [
   { title: "اتوماسیون صنعتی", image: "/images/categories/automation.png" },

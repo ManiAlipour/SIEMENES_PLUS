@@ -4,14 +4,7 @@ import { useState, useEffect } from "react";
 import Link from "next/link";
 import Image from "next/image";
 import { FiArrowLeft, FiTrendingUp } from "react-icons/fi";
-
-interface Category {
-  _id: string;
-  name: string;
-  slug: string;
-  description?: string;
-  image?: string;
-}
+import type { Category } from "@/types/category";
 
 export default function TopCategoriesSection() {
   const [categories, setCategories] = useState<Category[]>([]);
