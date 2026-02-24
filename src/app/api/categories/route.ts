@@ -15,13 +15,7 @@ export async function GET() {
       .lean();
 
     const data = docs.map((doc) =>
-      toCategoryDTO({
-        ...doc,
-        _id: doc._id,
-        parent: doc.parent,
-        createdAt: doc.createdAt,
-        updatedAt: doc.updatedAt,
-      })
+      toCategoryDTO(doc as unknown as Parameters<typeof toCategoryDTO>[0])
     );
 
     return NextResponse.json({

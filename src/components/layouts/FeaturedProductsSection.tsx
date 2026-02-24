@@ -117,7 +117,7 @@ export default function FeaturedProductsSection(props?: Props) {
               <ProductCard
                 id={product._id}
                 name={product.name}
-                image={product.image}
+                image={product.image ?? ""}
                 brand={product.brand}
                 isFeatured={product.isFeatured}
                 slug={product.slug}
