@@ -6,11 +6,27 @@ import Link from "next/link";
 import { FiArrowLeft } from "react-icons/fi";
 import { FaWandMagicSparkles } from "react-icons/fa6";
 
-export default function FeaturedProductsSection() {
-  const [products, setProducts] = useState<Product[]>([]);
-  const [loading, setLoading] = useState(true);
+type Product = {
+  _id: string;
+  name: string;
+  image?: string;
+  brand?: string;
+  isFeatured?: boolean;
+  slug?: string;
+};
+
+type Props = { initialProducts?: Product[] };
+
+export default function FeaturedProductsSection(props?: Props) {
+  const initialProducts = props?.initialProducts;
+  const [products, setProducts] = useState<Product[]>(initialProducts ?? []);
+  const [loading, setLoading] = useState(!initialProducts?.length);
 
   useEffect(() => {
+    if (initialProducts?.length) {
+      setLoading(false);
+      return;
+    }
     const fetchFeatured = async () => {
       try {
         const res = await fetch("/api/products?isFeatured=true&limit=8");
@@ -18,7 +34,6 @@ export default function FeaturedProductsSection() {
         if (data.success && data.items?.length > 0) {
           setProducts(data.items);
         } else {
-          // Fallback to default products if no featured products
           const allRes = await fetch("/api/products?limit=6");
           const allData = await allRes.json();
           if (allData.success) {
@@ -32,7 +47,7 @@ export default function FeaturedProductsSection() {
       }
     };
     fetchFeatured();
-  }, []);
+  }, [initialProducts]);
 
   if (loading) {
     return (

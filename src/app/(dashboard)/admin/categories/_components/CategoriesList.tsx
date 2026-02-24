@@ -1,5 +1,6 @@
 "use client";
 
+import Image from "next/image";
 import type { Category } from "./types";
 
 const CARD_STYLES =
@@ -53,8 +54,8 @@ function CategoryTableRow({
       <td className="py-2">{getParentName(category.parent)}</td>
       <td className="py-2 text-center">
         {category.image ? (
-          <a href={category.image} target="_blank" rel="noopener noreferrer" className="inline-block">
-            <img src={category.image} alt={category.name} className="w-10 h-10 object-cover rounded-lg mx-auto" />
+          <a href={category.image} target="_blank" rel="noopener noreferrer" className="inline-block relative w-10 h-10 rounded-lg overflow-hidden mx-auto">
+            <Image src={category.image} alt={category.name} fill className="object-cover" sizes="40px" />
           </a>
         ) : (
           <span className="text-slate-400 text-xs">—</span>

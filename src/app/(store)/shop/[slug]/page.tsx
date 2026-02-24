@@ -183,7 +183,7 @@ export default async function ProductPage({ params }: IProductProps) {
   if (errorMsg || !product) {
     return (
       <main className="min-h-screen flex items-center justify-center bg-gradient-to-tr from-gray-50 to-white">
-        <div className="bg-white/95 border rounded-xl shadow-xl p-7 و-full max-w-md mx-auto animate-fade-in text-center">
+        <div className="bg-white/95 border rounded-xl shadow-xl p-7 w-full max-w-md mx-auto animate-fade-in text-center">
           <h1 className="text-red-600 text-2xl font-bold mb-2">{errorMsg}</h1>
           <p className="text-gray-600 mb-5 text-base">
             متاسفانه محصول موردنظر پیدا نشد. لطفا{" "}

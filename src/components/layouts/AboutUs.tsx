@@ -22,6 +22,7 @@ const AboutUs = () => {
               height={600}
               className="object-cover w-full h-full"
               loading="lazy"
+              sizes="(max-width: 768px) 100vw, 500px"
             />
           </div>
         </div>
