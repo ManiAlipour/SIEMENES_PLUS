@@ -21,8 +21,8 @@ const SLIDES: Slide[] = [
   {
     id: 1,
     tag: "Industrial Automation",
-    title: "هوشمندی واقعی در",
-    highlight: "اتوماسیون صنعتی",
+    title: "هوشمندی در تعمیر و نگهداری",
+    highlight: "ماشین آلات CNC",
     description:
       "کنترل دقیق خطوط تولید با تجهیزات اورجینال زیمنس. پایدار، سریع و قابل‌اعتماد.",
     image: "/images/hero-industrial-solder.jpg",

@@ -27,7 +27,7 @@ export default function RepairProcess() {
       step: 4,
     },
     { icon: <FaThumbsUp />, title: "تست محصول تعمیر شده", step: 5 },
-    { icon: <FaShippingFast />, title: "ارسال رایگان", step: 6 },
+    { icon: <FaShippingFast />, title: "ارسال مطمئن", step: 6 },
   ];
 
   return (

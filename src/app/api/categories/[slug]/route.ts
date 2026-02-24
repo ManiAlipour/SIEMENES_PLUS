@@ -30,9 +30,17 @@ export async function GET(
 
     if (isMongoId) {
       const category = await Category.findById(slug);
-
+      if (!category) {
+        return NextResponse.json({
+          data: [],
+          success: true,
+          message: "دسته‌بندی یافت نشد",
+        });
+      }
       products = await Product.find({ category: category.slug });
-    } else products = await Product.find({ category: slug });
+    } else {
+      products = await Product.find({ category: slug });
+    }
 
     // No products found for category
     if (!products || products.length === 0) {

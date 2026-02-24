@@ -15,6 +15,7 @@ export async function POST(request: NextRequest) {
     let parent: string | null = null;
     let description = "";
     let imageUrl: string | null = null;
+    let isFeatured = false;
 
     if (contentType.includes("multipart/form-data")) {
       const formData = await request.formData();
@@ -24,6 +25,7 @@ export async function POST(request: NextRequest) {
       slug = (formData.get("slug") as string) || "";
       parent = (formData.get("parent") as string) || null;
       description = (formData.get("description") as string) || "";
+      isFeatured = (formData.get("isFeatured") as string) === "true";
 
       if (file && file.size > 0) {
         const { url } = await uploadToLiara(file, "categories");
@@ -35,6 +37,7 @@ export async function POST(request: NextRequest) {
       slug = body.slug || "";
       parent = body.parent || null;
       description = body.description || "";
+      isFeatured = body.isFeatured === true;
     }
 
     if (!name || !slug) {
@@ -57,6 +60,7 @@ export async function POST(request: NextRequest) {
       parent: parent || undefined,
       description: description || undefined,
       image: imageUrl || undefined,
+      isFeatured,
     });
     await cat.save();
 

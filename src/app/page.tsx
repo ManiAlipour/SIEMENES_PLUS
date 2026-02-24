@@ -6,21 +6,18 @@ import FeaturedProductsSection from "@/components/layouts/FeaturedProductsSectio
 
 const CategoryHighlightsSection = dynamic(
   () => import("@/components/layouts/CategoryHighlightsSection"),
-  { ssr: true }
+  { ssr: true },
 );
-const PublicStats = dynamic(() => import("@/components/features/PublicStats"), {
-  ssr: true,
-});
 const ServiceFeatures = dynamic(
   () => import("@/components/layouts/ServiceFeatures"),
-  { ssr: true }
+  { ssr: true },
 );
 const BlogSection = dynamic(() => import("@/components/layouts/BlogSection"), {
   ssr: true,
 });
 const RepairProcess = dynamic(
   () => import("@/components/layouts/RepairProcess"),
-  { ssr: true }
+  { ssr: true },
 );
 const AboutUs = dynamic(() => import("@/components/layouts/AboutUs"), {
   ssr: true,
@@ -28,10 +25,9 @@ const AboutUs = dynamic(() => import("@/components/layouts/AboutUs"), {
 const ContactUs = dynamic(() => import("@/components/layouts/ContactUs"), {
   ssr: true,
 });
-const LocationSection = dynamic(
-  () => import("@/components/layouts/Location"),
-  { ssr: true }
-);
+const LocationSection = dynamic(() => import("@/components/layouts/Location"), {
+  ssr: true,
+});
 
 function SectionPlaceholder({ h = 200 }: { h?: number }) {
   return (
@@ -55,11 +51,6 @@ export default function Home() {
         </Suspense>
       </div>
       <div style={{ contentVisibility: "auto" }}>
-        <Suspense fallback={<SectionPlaceholder h={180} />}>
-          <PublicStats />
-        </Suspense>
-      </div>
-      <div style={{ contentVisibility: "auto" }}>
         <ServiceFeatures />
       </div>
       <div style={{ contentVisibility: "auto" }}>
@@ -72,6 +63,14 @@ export default function Home() {
       </div>
       <div style={{ contentVisibility: "auto" }}>
         <AboutUs />
+      </div>
+      {/* ContactCTA section added here */}
+      <div style={{ contentVisibility: "auto" }}>
+        {/** Dynamically import ContactCTA if desired, or static import if always included */}
+        {(() => {
+          const ContactCTA = require('@/components/layouts/ContactCTA').default;
+          return <ContactCTA />;
+        })()}
       </div>
       <div style={{ contentVisibility: "auto" }}>
         <ContactUs />

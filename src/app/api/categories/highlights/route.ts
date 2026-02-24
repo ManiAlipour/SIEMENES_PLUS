@@ -7,10 +7,13 @@ export async function GET() {
   try {
     await connectDB();
 
-    // Find top categories (6 for example) -- customize as needed
-    const topCategories = await Category.find({}, "name slug image")
-      .sort({ createdAt: -1 })
-      .limit(3)
+    // دسته‌های منتخب (isFeatured) یا در غیر این صورت آخرین دسته‌ها
+    const topCategories = await Category.find(
+      {},
+      "name slug image isFeatured"
+    )
+      .sort({ isFeatured: -1, createdAt: -1 })
+      .limit(6)
       .lean();
 
     // For each category, find highlighted products (top 5 for example)

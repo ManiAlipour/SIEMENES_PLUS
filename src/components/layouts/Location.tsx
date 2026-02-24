@@ -91,15 +91,34 @@ export default function LocationSection() {
                     )}
                     {copied ? "کپی شد!" : "کپی آدرس"}
                   </button>
-                  <a
-                    href="https://maps.app.goo.gl/o6YcJ5tgHwaNtraT6"
-                    target="_blank"
-                    rel="noopener noreferrer"
+
+                  <button
+                    type="button"
+                    onClick={() => {
+                      const destination = "36.201758, 50.088333";
+                      if (navigator.geolocation) {
+                        navigator.geolocation.getCurrentPosition(
+                          (position) => {
+                            const { latitude, longitude } = position.coords;
+
+                            const url = `https://www.google.com/maps/dir/?api=1&origin=${latitude},${longitude}&destination=${destination}&travelmode=driving`;
+                            window.open(url, "_blank", "noopener,noreferrer");
+                          },
+                          () => {
+                            const url = `https://www.google.com/maps/dir/?api=1&destination=${destination}&travelmode=driving`;
+                            window.open(url, "_blank", "noopener,noreferrer");
+                          },
+                        );
+                      } else {
+                        const url = `https://www.google.com/maps/dir/?api=1&destination=${destination}&travelmode=driving`;
+                        window.open(url, "_blank", "noopener,noreferrer");
+                      }
+                    }}
                     className="flex items-center gap-2 px-4 py-2 rounded-lg bg-cyan-50 text-cyan-700 text-xs font-medium hover:bg-cyan-100 transition-colors"
                   >
                     <FiNavigation />
                     مسیریابی
-                  </a>
+                  </button>
                 </div>
               </div>
 
@@ -140,13 +159,13 @@ export default function LocationSection() {
                     <p className="text-slate-600 text-sm">
                       شنبه تا چهارشنبه:{" "}
                       <span className="font-bold text-slate-800">
-                        ۹:۰۰ تا ۱۷:۰۰
+                        ۸:۰۰ تا ۱۸:۰۰
                       </span>
                     </p>
                     <p className="text-slate-600 text-sm mt-1">
                       پنج‌شنبه‌ها:{" "}
                       <span className="font-bold text-slate-800">
-                        ۹:۰۰ تا ۱۳:۰۰
+                        ۸:۰۰ تا ۱۴:۰۰
                       </span>
                     </p>
                   </div>
@@ -159,13 +178,12 @@ export default function LocationSection() {
               <p className="text-sm text-slate-300 mb-2">
                 نیاز به هماهنگی قبل از بازدید دارید؟
               </p>
-              <Link
-                href="/contact-us"
-                className="text-sm font-bold text-cyan-400 hover:text-cyan-300 transition
-               flex items-center gap-2"
+              <a
+                href="tel:09199883772"
+                className="text-sm font-bold text-cyan-400 hover:text-cyan-300 transition flex items-center gap-2"
               >
                 تماس با واحد فروش <span className="text-lg">←</span>
-              </Link>
+              </a>
             </div>
           </div>
 
