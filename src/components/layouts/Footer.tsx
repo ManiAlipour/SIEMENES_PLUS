@@ -1,5 +1,6 @@
 import { useFetch } from "iso-hooks";
 import Link from "next/link";
+import Image from "next/image";
 import {
   FaInstagram,
   FaWhatsapp,
@@ -37,15 +38,20 @@ export default function Footer() {
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-12 gap-10 lg:gap-8 mb-12">
           {/* Column 1: Brand & Contact (Spans 4 cols on desktop) */}
           <div className="lg:col-span-4 space-y-6">
-            <div className="flex items-center gap-2">
-              {/* Placeholder for Logo */}
-              <div className="w-10 h-10 bg-cyan-500 rounded-lg flex items-center justify-center text-white font-bold text-xl">
-                S
+            <Link href="/" className="flex items-center gap-2 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-cyan-400 focus-visible:ring-offset-2 focus-visible:ring-offset-slate-900 rounded-lg">
+              <div className="relative w-10 h-10 rounded-lg overflow-hidden shrink-0">
+                <Image
+                  src="/images/logo.jpg"
+                  alt=""
+                  fill
+                  className="object-cover"
+                  sizes="40px"
+                />
               </div>
               <span className="text-2xl font-bold text-white tracking-tight">
                 SIEMENS <span className="text-cyan-400">PLUS</span>
               </span>
-            </div>
+            </Link>
             <p className="text-slate-400 text-sm leading-relaxed max-w-sm">
               ارائه دهنده پیشرفته‌ترین تجهیزات اتوماسیون صنعتی زیمنس و راهکارهای
               مهندسی دقیق برای صنایع کشور.
@@ -79,9 +85,9 @@ export default function Footer() {
           <div className="lg:col-span-2 lg:pl-4">
             <h3 className="font-bold text-white text-lg mb-6 relative inline-block">
               لینک‌های سریع
-              <span className="absolute -bottom-2 right-0 w-1/2 h-0.5 bg-cyan-500 rounded-full"></span>
+              <span className="absolute -bottom-2 right-0 w-1/2 h-0.5 bg-cyan-500 rounded-full" aria-hidden />
             </h3>
-            <ul className="space-y-3 text-sm">
+            <ul className="space-y-3 text-sm" role="list">
               {[
                 { name: "درباره ما", href: "/about-us" },
                 { name: "محصولات", href: "/shop" },
@@ -91,7 +97,7 @@ export default function Footer() {
                 <li key={item.name}>
                   <Link
                     href={item.href}
-                    className="flex items-center gap-2 hover:text-cyan-400 hover:translate-x-[-4px] transition-all duration-300"
+                    className="flex items-center gap-2 hover:text-cyan-400 hover:translate-x-[-4px] transition-all duration-300 focus-visible:text-cyan-400"
                   >
                     <span className="w-1.5 h-1.5 rounded-full bg-slate-600"></span>
                     {item.name}

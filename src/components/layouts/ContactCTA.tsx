@@ -2,7 +2,7 @@ import { Instagram, PhoneCall } from "lucide-react";
 
 export default function ContactCTA() {
   return (
-    <section className="relative w-full py-16 lg:py-20 bg-slate-50 overflow-hidden">
+    <section className="relative w-full py-16 lg:py-20 bg-slate-50 overflow-hidden" aria-labelledby="contact-cta-heading">
       {/* Decorative background */}
       <div
         className="absolute inset-0 opacity-[0.02] pointer-events-none"
@@ -16,9 +16,9 @@ export default function ContactCTA() {
 
       <div className="mx-auto max-w-3xl rounded-3xl border border-slate-100 bg-white px-4 py-10 md:py-16 shadow-2xl shadow-slate-200/50 flex flex-col items-center text-center gap-6 relative z-10">
         {/* Headline */}
-        <h2 className="text-2xl md:text-3xl font-extrabold text-slate-900 mb-2 leading-relaxed">
+        <h2 id="contact-cta-heading" className="text-2xl md:text-3xl font-extrabold text-slate-900 mb-2 leading-relaxed">
           برای اطلاع از قیمت‌ها،{" "}
-          <span className="text-cyan-600 font-black">با ما در تماس باشید</span>
+          <span className="text-primary font-black">با ما در تماس باشید</span>
         </h2>
         {/* Subline */}
         <p className="text-slate-500 text-base mb-6 max-w-xl mx-auto">
@@ -31,22 +31,23 @@ export default function ContactCTA() {
           {/* Phone */}
           <a
             href="tel:09199883772"
-            className="flex items-center gap-2 rounded-xl bg-cyan-600 hover:bg-cyan-700 px-7 py-3 text-base font-bold text-white shadow transition duration-150 outline-none ring-cyan-500/50 focus-visible:ring-4"
+            className="flex items-center gap-2 rounded-xl bg-primary hover:bg-primary/90 px-7 py-3 text-base font-bold text-white shadow transition duration-150 focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-2"
             style={{ direction: "ltr" }}
+            aria-label="تماس تلفنی: ۰۹۱۹۹۸۸۳۷۷۲"
           >
-            <PhoneCall size={18} />
+            <PhoneCall size={18} aria-hidden />
             <span className="font-mono">0919 988 3772</span>
             <span className="hidden sm:inline">| تماس تلفنی</span>
           </a>
 
-          {/* Instagram */}
           <a
             href="https://instagram.com/siemens.plus1"
             target="_blank"
             rel="noopener noreferrer"
-            className="flex items-center gap-2 rounded-xl border border-cyan-200 px-7 py-3 text-base font-bold text-cyan-700 bg-cyan-50 hover:bg-cyan-100 transition duration-150 shadow"
+            className="flex items-center gap-2 rounded-xl border border-primary/30 px-7 py-3 text-base font-bold text-primary bg-primary/5 hover:bg-primary/10 transition duration-150 shadow focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-2"
+            aria-label="صفحه اینستاگرام زیمنس پلاس"
           >
-            <Instagram size={18} className="text-cyan-600" />
+            <Instagram size={18} className="text-primary" aria-hidden />
             @siemens.plus1
           </a>
         </div>

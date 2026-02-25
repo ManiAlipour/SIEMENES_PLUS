@@ -4,16 +4,12 @@ import Image from "next/image";
 // About Us section with brand accent, image, and brief description
 const AboutUs = () => {
   return (
-    <section className="relative overflow-hidden py-24 md:py-28 bg-[#f6f8fa] border-t border-[#004c97]/10">
-      {/* Vertical brand accent on the right */}
-      <div className="absolute right-0 top-0 bottom-0 w-2 bg-[#004c97]/80 rounded-l-lg"></div>
-
+    <section className="relative overflow-hidden py-24 md:py-28 bg-slate-50 border-t border-primary/10" aria-labelledby="about-us-heading">
+      <div className="absolute right-0 top-0 bottom-0 w-2 bg-primary/80 rounded-l-lg" aria-hidden />
       <div className="container mx-auto grid md:grid-cols-2 gap-14 items-center px-6 md:px-10">
-        {/* Technical team image */}
         <div className="flex justify-center md:justify-start order-1 md:order-2">
           <div
-            className="rounded-xl overflow-hidden shadow-[0_8px_25px_rgba(0,76,151,0.1)] border border-[#004c97]/20 w-full max-w-[500px]
-           aspect-4/3 ring-1 ring-[#004c97]/10"
+            className="rounded-xl overflow-hidden shadow-lg border border-primary/20 w-full max-w-[500px] aspect-4/3 ring-1 ring-primary/10"
           >
             <Image
               src="/images/team-industrial.png"
@@ -27,12 +23,11 @@ const AboutUs = () => {
           </div>
         </div>
 
-        {/* About content (RTL text) */}
         <div className="order-2 md:order-1 text-right">
-          <span className="text-sm font-vazir-medium text-[#004c97] tracking-wide uppercase border-b border-[#004c97]/30 pb-1">
+          <span className="text-sm font-vazir-medium text-primary tracking-wide uppercase border-b border-primary/30 pb-1">
             درباره ما
           </span>
-          <h2 className="text-3xl md:text-4xl font-bold text-[#004c97] mt-3 mb-5">
+          <h2 id="about-us-heading" className="text-3xl md:text-4xl font-bold text-primary mt-3 mb-5">
             زیمنس پلاس{" "}
             <span className="block text-gray-500 text-lg">SIEMENS PLUS</span>
           </h2>
@@ -50,7 +45,8 @@ const AboutUs = () => {
 
           <a
             href="/about-us"
-            className="inline-block mt-8 text-sm font-vazir-medium text-white bg-[#004c97] px-6 py-2.5 rounded-full hover:shadow-[0_0_18px_rgba(0,76,151,0.4)] hover:bg-[#003d7a] transition-all duration-300"
+            className="inline-block mt-8 text-sm font-vazir-medium text-white bg-primary px-6 py-2.5 rounded-full hover:shadow-lg hover:bg-primary/90 transition-all duration-300 focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-2"
+            aria-label="مطالعه بیشتر درباره زیمنس پلاس"
           >
             بیشتر بدانید
           </a>

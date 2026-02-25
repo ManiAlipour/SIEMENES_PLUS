@@ -63,7 +63,7 @@ export default function Header() {
             </div>
             <div className="hidden sm:flex flex-col font-vazir">
               <span className="text-xl font-bold text-slate-900 leading-none">
-                زیمِنس <span className="text-cyan-600">پلاس</span>
+                زیمِنس <span className="text-primary">پلاس</span>
               </span>
               <span className="text-[10px] text-slate-500 tracking-wider mt-1">
                 INDUSTRIAL AUTOMATION
@@ -79,8 +79,8 @@ export default function Header() {
                 href={link.href}
                 className={`px-4 py-2 rounded-full text-sm font-medium transition-all ${
                   pathname === link.href
-                    ? "bg-white text-cyan-700 shadow-sm border border-slate-100"
-                    : "text-slate-600 hover:text-cyan-600 hover:bg-slate-100/50"
+                    ? "bg-white text-primary shadow-sm border border-slate-100"
+                    : "text-slate-600 hover:text-primary hover:bg-slate-100/50"
                 }`}
               >
                 {link.name}
@@ -102,7 +102,7 @@ export default function Header() {
             {token ? (
               <Link
                 href="/dashboard"
-                className="hidden sm:flex items-center gap-2 px-4 py-2 bg-cyan-600 hover:bg-cyan-700 text-white rounded-full text-sm font-medium transition shadow-sm shadow-cyan-200"
+                className="hidden sm:flex items-center gap-2 px-4 py-2 bg-primary hover:bg-primary/90 text-white rounded-full text-sm font-medium transition shadow-sm shadow-primary/20"
               >
                 <FiUser />
                 <span>داشبورد</span>
@@ -177,7 +177,7 @@ export default function Header() {
                       onClick={() => setIsMobileOpen(false)}
                       className={`px-4 py-3.5 min-h-[48px] flex items-center rounded-xl text-base font-medium transition touch-manipulation ${
                         pathname === link.href
-                          ? "bg-cyan-50 text-cyan-700"
+                          ? "bg-primary/10 text-primary"
                           : "text-slate-600 hover:bg-slate-50 active:bg-slate-100"
                       }`}
                     >
@@ -209,7 +209,7 @@ export default function Header() {
                     <Link
                       href="/dashboard"
                       onClick={() => setIsMobileOpen(false)}
-                      className="flex items-center justify-center gap-2 w-full py-3.5 min-h-[48px] bg-cyan-600 text-white rounded-xl text-base font-medium hover:bg-cyan-700 active:bg-cyan-800 transition touch-manipulation"
+                      className="flex items-center justify-center gap-2 w-full py-3.5 min-h-[48px] bg-primary text-white rounded-xl text-base font-medium hover:bg-primary/90 active:bg-primary/80 transition touch-manipulation"
                     >
                       <FiUser /> ورود به داشبورد
                     </Link>

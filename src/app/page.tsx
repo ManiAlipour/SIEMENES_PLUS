@@ -59,6 +59,9 @@ const ContactUs = dynamic(() => import("@/components/layouts/ContactUs"), {
 const LocationSection = dynamic(() => import("@/components/layouts/Location"), {
   ssr: true,
 });
+const ContactCTA = dynamic(() => import("@/components/layouts/ContactCTA"), {
+  ssr: true,
+});
 
 function SectionPlaceholder({ h = 200 }: { h?: number }) {
   return (
@@ -96,13 +99,8 @@ export default async function Home() {
       <div style={{ contentVisibility: "auto" }}>
         <AboutUs />
       </div>
-      {/* ContactCTA section added here */}
       <div style={{ contentVisibility: "auto" }}>
-        {/** Dynamically import ContactCTA if desired, or static import if always included */}
-        {(() => {
-          const ContactCTA = require('@/components/layouts/ContactCTA').default;
-          return <ContactCTA />;
-        })()}
+        <ContactCTA />
       </div>
       <div style={{ contentVisibility: "auto" }}>
         <ContactUs />
