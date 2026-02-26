@@ -6,9 +6,10 @@ import {
   MdCategory,
   MdDashboardCustomize,
   MdOutlineMessage,
+  MdVideoLibrary,
+  MdArticle,
 } from "react-icons/md";
 import { IoCartSharp } from "react-icons/io5";
-import { FcDocument } from "react-icons/fc";
 import { usePathname } from "next/navigation";
 import { FaUsersGear } from "react-icons/fa6";
 import { motion, AnimatePresence } from "framer-motion";
@@ -40,10 +41,16 @@ export default function AdminSideBar({ open, toggleOpen }: ISideBarProps) {
       color: "from-purple-500 to-purple-600",
     },
     {
-      title: "بلاگ ها",
+      title: "ویدیوها",
       href: "/admin/blogs",
-      icon: FcDocument,
+      icon: MdVideoLibrary,
       color: "from-orange-500 to-orange-600",
+    },
+    {
+      title: "وبلاگ",
+      href: "/admin/blog",
+      icon: MdArticle,
+      color: "from-cyan-500 to-cyan-600",
     },
     {
       title: "کاربران",

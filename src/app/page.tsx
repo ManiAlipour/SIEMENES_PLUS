@@ -43,6 +43,10 @@ const ServiceFeatures = dynamic(
   () => import("@/components/layouts/ServiceFeatures"),
   { ssr: true },
 );
+const VideosSection = dynamic(
+  () => import("@/components/layouts/VideosSection"),
+  { ssr: true },
+);
 const BlogSection = dynamic(() => import("@/components/layouts/BlogSection"), {
   ssr: true,
 });
@@ -87,6 +91,11 @@ export default async function Home() {
       </div>
       <div style={{ contentVisibility: "auto" }}>
         <ServiceFeatures />
+      </div>
+      <div style={{ contentVisibility: "auto" }}>
+        <Suspense fallback={<SectionPlaceholder h={320} />}>
+          <VideosSection />
+        </Suspense>
       </div>
       <div style={{ contentVisibility: "auto" }}>
         <Suspense fallback={<SectionPlaceholder h={400} />}>

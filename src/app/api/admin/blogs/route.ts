@@ -17,21 +17,17 @@ export async function GET() {
 
 export async function POST(req: NextRequest) {
   try {
+    const authResult = await adminOnly(req);
+    if (authResult) return authResult;
     await connectDB();
 
-    await adminOnly(req);
-
     const body = await req.json();
-    const {
-      title,
-      video,
-      status = "draft"
-    } = body;
+    const { title, video, status = "draft" } = body;
 
     if (!title || !video) {
       return NextResponse.json(
         { error: "عنوان و ویدیو الزامی هستند" },
-        { status: 400 }
+        { status: 400 },
       );
     }
 
@@ -39,14 +35,14 @@ export async function POST(req: NextRequest) {
     if (!aparatRegex.test(video)) {
       return NextResponse.json(
         { error: "لینک ویدیو باید آدرس صحیح از Aparat باشد" },
-        { status: 400 }
+        { status: 400 },
       );
     }
 
     const postDoc = await Post.create({
       title,
       video,
-      status
+      status,
     });
 
     return NextResponse.json({ data: sanitizePost(postDoc) }, { status: 201 });
