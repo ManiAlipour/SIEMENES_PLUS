@@ -18,7 +18,9 @@ export async function GET(
       return NextResponse.json({ error: "اسلاگ مشخص نیست" }, { status: 400 });
     }
 
-    const post = await BlogPost.findOne({ slug: slug.trim().toLowerCase() }).lean();
+    const post = (await BlogPost.findOne({
+      slug: slug.trim().toLowerCase(),
+    }).lean()) as any;
     if (!post) {
       return NextResponse.json({ error: "مطلب یافت نشد" }, { status: 404 });
     }

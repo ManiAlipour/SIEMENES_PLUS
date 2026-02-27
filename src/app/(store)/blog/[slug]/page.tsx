@@ -11,10 +11,10 @@ type Props = { params: Promise<{ slug: string }> };
 export async function generateMetadata({ params }: Props): Promise<Metadata> {
   const { slug } = await params;
   await connectDB();
-  const post = await BlogPost.findOne({
+  const post = (await BlogPost.findOne({
     slug: slug.toLowerCase(),
     status: "published",
-  }).lean();
+  }).lean()) as any;
 
   if (!post) return { title: "مطلب یافت نشد" };
 
@@ -59,10 +59,10 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
 export default async function BlogPostPage({ params }: Props) {
   const { slug } = await params;
   await connectDB();
-  const post = await BlogPost.findOne({
+  const post = (await BlogPost.findOne({
     slug: slug.toLowerCase(),
     status: "published",
-  }).lean();
+  }).lean()) as any;
 
   if (!post) notFound();
 

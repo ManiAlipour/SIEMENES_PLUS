@@ -1,4 +1,5 @@
 import type { Metadata } from "next";
+import { Suspense } from "react";
 import BlogListClient from "./BlogListClient";
 
 const siteUrl = process.env.NEXT_PUBLIC_SITE_URL || "https://site-mohandesi.ir";
@@ -32,7 +33,9 @@ export const metadata: Metadata = {
 export default function BlogPage() {
   return (
     <main className="min-h-screen bg-gray-50/70">
-      <BlogListClient />
+      <Suspense fallback={<div className="container mx-auto px-4 py-12">در حال بارگذاری مطالب...</div>}>
+        <BlogListClient />
+      </Suspense>
     </main>
   );
 }

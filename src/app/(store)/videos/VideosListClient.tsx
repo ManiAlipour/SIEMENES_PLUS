@@ -9,7 +9,7 @@ interface Video {
   _id: string;
   title: string;
   video: string;
-  status: string;
+  status: "draft" | "published";
   createdAt: string;
 }
 

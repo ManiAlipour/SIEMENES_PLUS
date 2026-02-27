@@ -14,7 +14,7 @@ interface BlogSummary {
   coverImage?: string;
   video?: string;
   tags?: string[];
-  status: string;
+  status: "draft" | "published";
   createdAt: string;
 }
 
