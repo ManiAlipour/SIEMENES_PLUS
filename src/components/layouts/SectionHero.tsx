@@ -135,10 +135,10 @@ export default function HeroSection() {
           fill
           priority={index === 0}
           sizes="100vw"
-          className="object-cover brightness-[0.78] transition-opacity duration-500"
+          className="object-cover brightness-[0.9] transition-opacity duration-500"
           fetchPriority={index === 0 ? "high" : "auto"}
         />
-        <div className="absolute inset-0 bg-gradient-to-br from-black/85 via-black/60 to-transparent" />
+        <div className="absolute inset-0 bg-gradient-to-br from-black/70 via-black/40 to-transparent" />
       </div>
 
       {/* Content */}
