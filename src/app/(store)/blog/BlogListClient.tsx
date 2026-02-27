@@ -5,6 +5,7 @@ import Link from "next/link";
 import { useSearchParams } from "next/navigation";
 import { FiSearch } from "react-icons/fi";
 import BlogCard from "@/components/features/BlogCard";
+import BlogNotFound from "@/components/blog/BlogNotFound";
 
 interface BlogSummary {
   _id: string;
@@ -121,15 +122,19 @@ export default function BlogListClient() {
           ))}
         </div>
       ) : posts.length === 0 ? (
-        <div className="text-center py-20 px-4">
-          <div className="inline-flex w-16 h-16 rounded-2xl bg-slate-100 items-center justify-center text-slate-400 mb-4">
-            <FiSearch size={28} />
+        search || tag ? (
+          <div className="text-center py-20 px-4">
+            <div className="mb-4 inline-flex h-16 w-16 items-center justify-center rounded-2xl bg-slate-100 text-slate-400">
+              <FiSearch size={28} />
+            </div>
+            <p className="mb-1 text-lg font-medium text-slate-600">مطلبی یافت نشد</p>
+            <p className="text-sm text-slate-500">
+              عبارت جستجو یا تگ را تغییر دهید.
+            </p>
           </div>
-          <p className="text-slate-600 font-medium text-lg mb-1">مطلبی یافت نشد</p>
-          <p className="text-slate-500 text-sm">
-            {search || tag ? "عبارت جستجو یا تگ را تغییر دهید." : "هنوز مطلبی منتشر نشده است."}
-          </p>
-        </div>
+        ) : (
+          <BlogNotFound />
+        )
       ) : (
         <>
           <section className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3" aria-label="لیست مطالب وبلاگ">

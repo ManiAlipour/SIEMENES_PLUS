@@ -1,8 +1,9 @@
 "use client";
 
-import BlogCard from "../features/BlogCard";
 import Link from "next/link";
 import { useFetch } from "iso-hooks";
+import BlogCard from "../features/BlogCard";
+import BlogNotFound from "@/components/blog/BlogNotFound";
 
 interface IBlogPostsResponse {
   data: IBlogPost[];
@@ -32,26 +33,22 @@ export default function BlogSection() {
     <section className="bg-gray-50/70 pt-16 md:pt-20 pb-12 md:pb-16">
       <div className="container mx-auto px-4">
         <h2
-          className="relative text-2xl md:text-3xl font-vazir-bold text-gray-800 text-center mb-12
-          after:absolute after:left-1/2 after:-bottom-2 after:-translate-x-1/2 after:w-24 after:h-[2px] after:bg-primary"
+          className="relative mb-12 text-center text-2xl font-vazir-bold text-gray-800 md:text-3xl
+          after:absolute after:left-1/2 after:-bottom-2 after:h-[2px] after:w-24 after:-translate-x-1/2 after:bg-primary"
         >
           تازه‌های وبلاگ
         </h2>
 
         {loading ? (
-          <div className="flex justify-center my-12 text-gray-500 animate-pulse font-vazirmatn">
+          <div className="my-12 flex justify-center text-gray-500 font-vazirmatn animate-pulse">
             در حال بارگذاری...
           </div>
         ) : error ? (
-          <div className="flex justify-center my-12 text-red-600 font-vazirmatn">
+          <div className="my-12 flex justify-center text-red-600 font-vazirmatn">
             خطا در دریافت مطالب وبلاگ
           </div>
         ) : noBlogs ? (
-          <div className="flex flex-col items-center justify-center my-12">
-            <div className="text-gray-500 font-vazirmatn text-lg">
-              مطلبی یافت نشد
-            </div>
-          </div>
+          <BlogNotFound />
         ) : (
           <div className="grid gap-8 sm:grid-cols-2 lg:grid-cols-3">
             {posts.map((post) => (
@@ -60,10 +57,10 @@ export default function BlogSection() {
           </div>
         )}
 
-        <div className="flex justify-center mt-10">
+        <div className="mt-10 flex justify-center">
           <Link
             href="/blog"
-            className="px-6 py-2 border border-primary text-primary rounded-md hover:bg-primary hover:text-white transition-colors"
+            className="rounded-md border border-primary px-6 py-2 text-primary transition-colors hover:bg-primary hover:text-white"
           >
             مشاهده همه مقالات
           </Link>
@@ -72,3 +69,4 @@ export default function BlogSection() {
     </section>
   );
 }
+
