@@ -1,6 +1,13 @@
 "use client";
 
-import { Suspense, useState, useMemo, useEffect, useRef, useCallback } from "react";
+import {
+  Suspense,
+  useState,
+  useMemo,
+  useEffect,
+  useRef,
+  useCallback,
+} from "react";
 import { useSearchParams, useRouter } from "next/navigation";
 import dynamic from "next/dynamic";
 import { useProducts } from "@/hooks/useProducts";
@@ -47,7 +54,6 @@ export default function ShopPageClient() {
     limit: 12,
   });
 
-  // Avoid updating router in render: do it in useEffect
   const didCategoryRedirect = useRef(false);
   useEffect(() => {
     if (
@@ -78,7 +84,7 @@ export default function ShopPageClient() {
       });
       router.push(`/shop?${params.toString()}`, { scroll: false });
     },
-    [searchParams, router]
+    [searchParams, router],
   );
 
   const breadcrumbJsonLd = useMemo(
@@ -168,8 +174,12 @@ export default function ShopPageClient() {
               <p className="text-lg md:text-xl lg:text-2xl text-gray-700 max-w-3xl mx-auto leading-relaxed font-medium">
                 کامل‌ترین مرجع فروش تجهیزات اتوماسیون صنعتی
                 <br />
-                <span className="text-primary font-bold">ارسال فوری</span> و{" "}
-                <span className="text-cyan-600 font-bold">مشاوره رایگان فنی</span>
+                <span className="text-primary font-bold">
+                  ارسال فوری
+                </span> و{" "}
+                <span className="text-cyan-600 font-bold">
+                  مشاوره رایگان فنی
+                </span>
               </p>
             </div>
 
@@ -191,29 +201,15 @@ export default function ShopPageClient() {
           </div>
         </section>
 
-        <section className="py-12 md:py-16 bg-white/80" style={{ contentVisibility: "auto" }}>
-          <div className="container max-w-7xl mx-auto px-4 md:px-6">
-            <Suspense fallback={<LoadingFallback />}>
-              <FeaturedProductsSection />
-            </Suspense>
-          </div>
-        </section>
-
-        <section className="py-12 md:py-16 bg-gradient-to-br from-slate-50 via-white to-cyan-50/40" style={{ contentVisibility: "auto" }}>
+        <section
+          className="py-12 md:py-16 bg-gradient-to-br from-slate-50 via-white to-cyan-50/40"
+          style={{ contentVisibility: "auto" }}
+        >
           <div className="container max-w-7xl mx-auto px-4 md:px-6">
             <TopCategoriesSection />
           </div>
         </section>
 
-        <section className="py-12 md:py-16 bg-white" style={{ contentVisibility: "auto" }}>
-          <div className="container max-w-7xl mx-auto px-4 md:px-6">
-            <Suspense fallback={<LoadingFallback />}>
-              <CategoryHighlightsSection />
-            </Suspense>
-          </div>
-        </section>
-
-        {/* Main Products Section */}
         <section
           id="shop-products-list"
           className="py-16 md:py-24 bg-gradient-to-b from-white via-slate-50/50 to-white"

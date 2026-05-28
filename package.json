@@ -10,6 +10,7 @@
   },
   "dependencies": {
     "@aws-sdk/client-s3": "^3.922.0",
+    "@clerk/nextjs": "^7.4.1",
     "@headlessui/react": "^2.2.9",
     "@hookform/resolvers": "^5.2.2",
     "@reduxjs/toolkit": "^2.9.2",
@@ -33,6 +34,7 @@
     "next-client-cookies": "^2.1.0",
     "next-connect": "^1.0.0",
     "nodemailer": "^7.0.10",
+    "nprogress": "^0.2.0",
     "react": "19.2.0",
     "react-chartjs-2": "^5.3.1",
     "react-dom": "19.2.0",

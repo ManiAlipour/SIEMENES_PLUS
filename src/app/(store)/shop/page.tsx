@@ -70,7 +70,7 @@ function generateJsonLd(products: any[] = []) {
     description:
       "فروشگاه تخصصی تجهیزات اتوماسیون صنعتی، PLC، اینورتر، HMI و قطعات زیمنس",
     url: `${
-      process.env.NEXT_PUBLIC_SITE_URL || "https://site-mohandesi.ir"
+      process.env.NEXT_PUBLIC_SITE_URL || "https://siemensplus1.ir"
     }/shop`,
     mainEntity: {
       "@type": "ItemList",
@@ -79,7 +79,7 @@ function generateJsonLd(products: any[] = []) {
         position: index + 1,
         name: product.title,
         url: `${
-          process.env.NEXT_PUBLIC_SITE_URL || "https://site-mohandesi.ir"
+          process.env.NEXT_PUBLIC_SITE_URL || "https://siemensplus1.ir"
         }/product/${product.slug}`,
       })),
     },
@@ -91,14 +91,13 @@ export default function ShopPage() {
 
   return (
     <>
-      {/* Structured data (for SEO parsers) */}
+      {/* Structured data */}
       <Script
         id="shop-jsonld-schema"
         type="application/ld+json"
         dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
         strategy="beforeInteractive"
       />
-      {/* Suspense allows lazy hydration for subloads */}
       <Suspense fallback={<LoadingFallback />}>
         <ShopPageClient />
       </Suspense>

@@ -4,13 +4,17 @@ import Image from "next/image";
 // About Us section with brand accent, image, and brief description
 const AboutUs = () => {
   return (
-    <section className="relative overflow-hidden py-24 md:py-28 bg-slate-50 border-t border-primary/10" aria-labelledby="about-us-heading">
-      <div className="absolute right-0 top-0 bottom-0 w-2 bg-primary/80 rounded-l-lg" aria-hidden />
+    <section
+      className="relative overflow-hidden py-24 md:py-28 bg-slate-50 border-t border-primary/10"
+      aria-labelledby="about-us-heading"
+    >
+      <div
+        className="absolute right-0 top-0 bottom-0 w-2 bg-primary/80 rounded-l-lg"
+        aria-hidden
+      />
       <div className="container mx-auto grid md:grid-cols-2 gap-14 items-center px-6 md:px-10">
         <div className="flex justify-center md:justify-start order-1 md:order-2">
-          <div
-            className="rounded-xl overflow-hidden shadow-lg border border-primary/20 w-full max-w-[500px] aspect-4/3 ring-1 ring-primary/10"
-          >
+          <div className="rounded-xl overflow-hidden shadow-lg border border-primary/20 w-full max-w-[500px] aspect-4/3 ring-1 ring-primary/10">
             <Image
               src="/images/team-industrial.png"
               alt="تیم فنی زیمنس پلاس | SIEMENS PLUS"
@@ -27,12 +31,15 @@ const AboutUs = () => {
           <span className="text-sm font-vazir-medium text-primary tracking-wide uppercase border-b border-primary/30 pb-1">
             درباره ما
           </span>
-          <h2 id="about-us-heading" className="text-3xl md:text-4xl font-bold text-primary mt-3 mb-5">
+          <h2
+            id="about-us-heading"
+            className="text-3xl md:text-4xl font-bold text-primary mt-3 mb-5"
+          >
             زیمنس پلاس{" "}
             <span className="block text-gray-500 text-lg">SIEMENS PLUS</span>
           </h2>
           <p className="text-gray-700 leading-relaxed mb-4 text-[15px]">
-            مجموعه‌ی فنی مهندسی زیمنس پلاس در سال ۱۴۰۳ تحت مدیریت مهندس مرتضی
+            مجموعه‌ی فنی مهندسی زیمنس پلاس در سال ۱۳۹۵ تحت مدیریت مهندس مرتضی
             مجیدی فعالیت خود را اغاز نموده. این مجموعه با بهره‌گیری از دانش فنی
             به‌روز و تیمی متخصص، در زمینه‌هایی مانند فروش وتعمیرات تخصصی قطعات
             زیمنس از جمله سیستم‌ کنترل ها و درایوها ،انکودرها وخط کش ها ...

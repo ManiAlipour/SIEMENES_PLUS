@@ -125,7 +125,6 @@ html {
 }
 
 /* Blog post content: ensure bold/italic and typography display */
-/* متن آمیخته فارسی و انگلیسی: جهت خودکار و جداسازی دوطرفه */
 .blog-post-content {
   font-family: inherit;
   line-height: 1.75;
@@ -191,7 +190,6 @@ html {
   margin: 0.75em 0;
 }
 
-/* جدول در محتوای بلاگ */
 .blog-post-content table.blog-post-table,
 .blog-post-content .blog-post-table {
   width: 100%;
@@ -311,7 +309,7 @@ button:focus-visible {
   animation: shimmer 3s infinite;
 }
 
-/* --- INPUTS (Lux Industrial White Refined Edition) --- */
+/* --- INPUTS --- */
 .input {
   @apply w-full rounded-xl px-3.5 py-2.5 text-sm font-vazir text-meuted
     bg-white/70 border border-slate-300 shadow-sm

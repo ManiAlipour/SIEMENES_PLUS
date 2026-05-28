@@ -6,6 +6,7 @@ import ReduxProvider from "@/store";
 import { AuthProvider } from "./AuthProvider";
 import { useEffect } from "react";
 import toast from "react-hot-toast";
+import { ProgressBar } from "./NProgress";
 
 const Providers = ({ children }: { children: React.ReactNode }) => {
   const notHeaderAndFooterPaths = [
@@ -19,7 +20,7 @@ const Providers = ({ children }: { children: React.ReactNode }) => {
   const pathname = usePathname();
 
   const isNotHeaderAndFooter = notHeaderAndFooterPaths.some((path) =>
-    pathname.startsWith(path)
+    pathname.startsWith(path),
   );
 
   useEffect(() => {
@@ -41,6 +42,7 @@ const Providers = ({ children }: { children: React.ReactNode }) => {
       <AuthProvider>
         <div className="font-vazir">
           {!isNotHeaderAndFooter && <Header />}
+          <ProgressBar />
           {children}
           {!isNotHeaderAndFooter && <Footer />}
         </div>

@@ -27,14 +27,11 @@ interface AuthFormProps {
   mode: AuthMode;
 }
 
-/**
- * Auth form for register, login, or verify. Uses react-hook-form + zod schema per mode.
- * On success: register → verify page; login/verify → home + auth-changed event.
- */
 export default function AuthForm({ mode }: AuthFormProps) {
   const router = useRouter();
   const searchParams = useSearchParams();
-  const emailFromQuery = mode === "verify" ? searchParams.get("email") || "" : "";
+  const emailFromQuery =
+    mode === "verify" ? searchParams.get("email") || "" : "";
 
   const schema = getAuthSchema(mode);
   type ModeFormData = z.infer<typeof schema>;
@@ -56,7 +53,8 @@ export default function AuthForm({ mode }: AuthFormProps) {
   const [serverError, setServerError] = useState<string | null>(null);
 
   useEffect(() => {
-    if (mode === "verify" && emailFromQuery) setValue("email", emailFromQuery as never);
+    if (mode === "verify" && emailFromQuery)
+      setValue("email", emailFromQuery as never);
   }, [mode, emailFromQuery, setValue]);
 
   const onSubmit = async (data: ModeFormData) => {
@@ -69,7 +67,8 @@ export default function AuthForm({ mode }: AuthFormProps) {
       return;
     }
 
-    const submitData = mode === "verify" ? { ...data, email: emailFromQuery } : data;
+    const submitData =
+      mode === "verify" ? { ...data, email: emailFromQuery } : data;
     const url = `/api/auth/${mode === "register" ? "signup" : mode}`;
 
     try {
@@ -111,6 +110,33 @@ export default function AuthForm({ mode }: AuthFormProps) {
 
       if (!res.ok) {
         const errorMessage = await extractAuthErrorFromResponse(res);
+
+        // تشخیص حالت "اکانت وریفای نشده" (هم با متن انگلیسی، هم با ترجمه فارسی)
+        const lower = errorMessage.toLowerCase();
+        const isNotVerified =
+          lower.includes("account not verified") ||
+          errorMessage.includes("حساب شما تأیید نشده است");
+
+        // ایمیل را از فرم بردار (در login ایمیل داریم)
+        const email = (data as any)?.email as string | undefined;
+
+        if (mode === "login" && isNotVerified && email) {
+          try {
+            await fetch("/api/auth/resend-verification", {
+              method: "POST",
+              headers: { "Content-Type": "application/json" },
+              body: JSON.stringify({ email }),
+            });
+            toast.success("کد تأیید برای شما ارسال شد");
+          } catch {
+            toast.error("ارسال کد با خطا مواجه شد. لطفاً دوباره تلاش کنید");
+          }
+
+          router.push(`/verify?email=${encodeURIComponent(email)}`);
+          setLoading(false);
+          return;
+        }
+
         setServerError(errorMessage);
         toast.error(errorMessage, { duration: 5000 });
         setLoading(false);
@@ -153,7 +179,9 @@ export default function AuthForm({ mode }: AuthFormProps) {
             <FiAlertCircle className="w-5 h-5 text-red-600 shrink-0 mt-0.5" />
             <div className="flex-1 min-w-0">
               <p className="text-sm font-semibold text-red-800 mb-1">خطا</p>
-              <p className="text-sm text-red-700 wrap-break-word">{serverError}</p>
+              <p className="text-sm text-red-700 wrap-break-word">
+                {serverError}
+              </p>
             </div>
             <button
               type="button"
@@ -168,7 +196,11 @@ export default function AuthForm({ mode }: AuthFormProps) {
       </AnimatePresence>
 
       {mode === "register" && (
-        <motion.div initial={{ opacity: 0, x: -20 }} animate={{ opacity: 1, x: 0 }} transition={{ delay: 0.1 }}>
+        <motion.div
+          initial={{ opacity: 0, x: -20 }}
+          animate={{ opacity: 1, x: 0 }}
+          transition={{ delay: 0.1 }}
+        >
           <InputField
             label="نام کامل"
             register={register("name" as never)}
@@ -199,11 +231,17 @@ export default function AuthForm({ mode }: AuthFormProps) {
           transition={{ delay: 0.1 }}
           className="mb-4"
         >
-          <label className="block mb-2 text-sm font-semibold text-gray-700">ایمیل</label>
+          <label className="block mb-2 text-sm font-semibold text-gray-700">
+            ایمیل
+          </label>
           <div className="w-full px-4 py-3.5 rounded-xl bg-gray-100 border-2 border-gray-200 text-gray-600">
             {emailFromQuery}
           </div>
-          <input type="hidden" {...register("email" as never)} value={emailFromQuery} />
+          <input
+            type="hidden"
+            {...register("email" as never)}
+            value={emailFromQuery}
+          />
         </motion.div>
       )}
 
@@ -213,8 +251,13 @@ export default function AuthForm({ mode }: AuthFormProps) {
           animate={{ opacity: 1 }}
           className="bg-yellow-50 border-2 border-yellow-200 rounded-xl p-4 mb-4"
         >
-          <p className="text-sm text-yellow-800">لطفاً از طریق صفحه ثبت‌نام وارد شوید.</p>
-          <Link href="/register" className="text-sm text-yellow-700 underline mt-2 inline-block">
+          <p className="text-sm text-yellow-800">
+            لطفاً از طریق صفحه ثبت‌نام وارد شوید.
+          </p>
+          <Link
+            href="/register"
+            className="text-sm text-yellow-700 underline mt-2 inline-block"
+          >
             بازگشت به صفحه ثبت‌نام
           </Link>
         </motion.div>
@@ -230,7 +273,9 @@ export default function AuthForm({ mode }: AuthFormProps) {
             label="رمز عبور"
             type="password"
             register={register("password" as never)}
-            error={(errors as { password?: { message?: string } }).password?.message}
+            error={
+              (errors as { password?: { message?: string } }).password?.message
+            }
           />
         </motion.div>
       )}

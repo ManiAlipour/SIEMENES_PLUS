@@ -253,3 +253,32 @@ export function sanitizeUser(user: IUser): SafeUser {
     updatedAt: user.updatedAt,
   };
 }
+
+export async function resendVerificationCode({ email }: { email: string }) {
+  await connectDB();
+
+  const user = await User.findOne({ email });
+  if (!user) throw new Error("User not found");
+
+  if (!user.active)
+    throw new Error(
+      "حساب کاربری شما مسدود شده است. لطفا با پشتیبانی تماس بگیرید.",
+    );
+
+  if (user.verified) {
+    return { message: "Account is already verified" };
+  }
+
+  const verificationCode = Math.floor(
+    100000 + Math.random() * 900000,
+  ).toString();
+
+  user.verificationCode = verificationCode;
+  await user.save();
+
+  await sendVerificationCode(verificationCode, user.email, user.name);
+
+  return {
+    message: "Verification code sent, check your email",
+  };
+}

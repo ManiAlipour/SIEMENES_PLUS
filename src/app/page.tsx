@@ -2,8 +2,8 @@ import dynamic from "next/dynamic";
 import { Suspense } from "react";
 import type { Metadata } from "next";
 import HeroSection from "@/components/layouts/SectionHero";
-import TopCategoriesSection from "@/components/features/shop/TopCategoriesSection";
-import FeaturedProductsSection from "@/components/layouts/FeaturedProductsSection";
+import CategoriesSection from "@/components/features/shop/TopCategoriesSection";
+import CategoryHighlightsSection from "@/components/layouts/CategoryHighlightsSection";
 
 export const metadata: Metadata = {
   title: "زیمنس پلاس | اتوماسیون و قطعات صنعتی | فروش و تعمیرات تخصصی",
@@ -11,7 +11,8 @@ export const metadata: Metadata = {
     "فروش و پشتیبانی تخصصی تجهیزات اتوماسیون صنعتی زیمنس. PLC، اینورتر، HMI، درایو و قطعات صنعتی با بهترین قیمت و گارانتی.",
   openGraph: {
     title: "زیمنس پلاس | اتوماسیون و قطعات صنعتی",
-    description: "فروش و تعمیرات تخصصی تجهیزات زیمنس. PLC، اینورتر، HMI و قطعات صنعتی.",
+    description:
+      "فروش و تعمیرات تخصصی تجهیزات زیمنس. PLC، اینورتر، HMI و قطعات صنعتی.",
     url: "/",
   },
   alternates: { canonical: "/" },
@@ -35,10 +36,6 @@ async function getFeaturedProducts() {
   }
 }
 
-const CategoryHighlightsSection = dynamic(
-  () => import("@/components/layouts/CategoryHighlightsSection"),
-  { ssr: true },
-);
 const ServiceFeatures = dynamic(
   () => import("@/components/layouts/ServiceFeatures"),
   { ssr: true },
@@ -78,12 +75,11 @@ function SectionPlaceholder({ h = 200 }: { h?: number }) {
 }
 
 export default async function Home() {
-  const featuredProducts = await getFeaturedProducts();
   return (
     <div>
       <HeroSection />
-      <TopCategoriesSection />
-      <FeaturedProductsSection initialProducts={featuredProducts} />
+      {/* <CategoriesSection /> */}
+      {/* <FeaturedProductsSection initialProducts={featuredProducts} /> */}
       <div style={{ contentVisibility: "auto" }}>
         <Suspense fallback={<SectionPlaceholder h={320} />}>
           <CategoryHighlightsSection />

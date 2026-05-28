@@ -15,10 +15,10 @@ export default function RepairProcess() {
       title: "برآورد هزینه قبل از شروع تعمیرات",
       step: 1,
     },
-    { icon: <FaTools />, title: "تعمیرات به‌صورت روشمند و علمی", step: 2 },
+    { icon: <FaTools />, title: "تعمیرات به‌صورت تخصصی و علمی", step: 2 },
     {
       icon: <FaUmbrella />,
-      title: "سرویس و تمیز نمودن تجهیزات الکترونیک",
+      title: "سرویس اولیه و شستشوی تجهیزات الکترونیکی",
       step: 3,
     },
     {

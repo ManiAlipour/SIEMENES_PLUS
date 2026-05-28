@@ -2,7 +2,10 @@ import { Instagram, PhoneCall } from "lucide-react";
 
 export default function ContactCTA() {
   return (
-    <section className="relative w-full py-16 lg:py-20 bg-slate-50 overflow-hidden" aria-labelledby="contact-cta-heading">
+    <section
+      className="relative w-full py-16 lg:py-20 bg-slate-50 overflow-hidden"
+      aria-labelledby="contact-cta-heading"
+    >
       {/* Decorative background */}
       <div
         className="absolute inset-0 opacity-[0.02] pointer-events-none"
@@ -16,8 +19,11 @@ export default function ContactCTA() {
 
       <div className="mx-auto max-w-3xl rounded-3xl border border-slate-100 bg-white px-4 py-10 md:py-16 shadow-2xl shadow-slate-200/50 flex flex-col items-center text-center gap-6 relative z-10">
         {/* Headline */}
-        <h2 id="contact-cta-heading" className="text-2xl md:text-3xl font-extrabold text-slate-900 mb-2 leading-relaxed">
-          برای اطلاع از قیمت‌ها،{" "}
+        <h2
+          id="contact-cta-heading"
+          className="text-2xl md:text-3xl font-extrabold text-slate-900 mb-2 leading-relaxed"
+        >
+          برای اطلاع از قیمت محصولات{" "}
           <span className="text-primary font-black">با ما در تماس باشید</span>
         </h2>
         {/* Subline */}
@@ -44,6 +50,7 @@ export default function ContactCTA() {
             href="https://instagram.com/siemens.plus1"
             target="_blank"
             rel="noopener noreferrer"
+            dir="ltr"
             className="flex items-center gap-2 rounded-xl border border-primary/30 px-7 py-3 text-base font-bold text-primary bg-primary/5 hover:bg-primary/10 transition duration-150 shadow focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-2"
             aria-label="صفحه اینستاگرام زیمنس پلاس"
           >
