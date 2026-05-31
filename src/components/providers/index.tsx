@@ -15,6 +15,8 @@ const Providers = ({ children }: { children: React.ReactNode }) => {
     "/verify",
     "/dashboard",
     "/admin",
+    "/forgot-password",
+    "/reset-password",
   ];
 
   const pathname = usePathname();

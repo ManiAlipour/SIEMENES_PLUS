@@ -297,7 +297,7 @@ export default function ShopPageClient() {
                     currentPage={currentPage}
                     totalPages={pages}
                     onPageChange={(p) => updateParams({ page: p })}
-                  />
+                  />-
                 </div>
               )}
             </div>

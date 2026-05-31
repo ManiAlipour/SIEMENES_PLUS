@@ -12,58 +12,37 @@ export interface IUser extends Document {
   active: boolean;
   isDeleted: boolean;
 
+  // Reset password
+  resetPasswordTokenHash?: string | null;
+  resetPasswordExpiresAt?: Date | null;
+
   createdAt: Date;
   updatedAt: Date;
 }
 
 const UserSchema = new Schema<IUser>(
   {
-    name: {
-      type: String,
-      required: [true, "Name is required"],
-      trim: true,
-    },
+    name: { type: String, required: true, trim: true },
     email: {
       type: String,
-      required: [true, "Email is required"],
+      required: true,
       unique: true,
       lowercase: true,
       index: true,
     },
-    password: {
-      type: String,
-      required: [true, "Password hash is required"],
-    },
-    role: {
-      type: String,
-      enum: ["user", "admin"],
-      default: "user",
-    },
+    password: { type: String, required: true },
+    role: { type: String, enum: ["user", "admin"], default: "user" },
 
-    // ✅ Email verification
-    verified: {
-      type: Boolean,
-      default: false,
-    },
-    verificationCode: {
-      type: String,
-      default: null,
-    },
+    verified: { type: Boolean, default: false },
+    verificationCode: { type: String, default: null },
 
-    // ✅ Account status
-    active: {
-      type: Boolean,
-      default: true,
-    },
-    isDeleted: {
-      type: Boolean,
-      default: false,
-    },
+    active: { type: Boolean, default: true },
+    isDeleted: { type: Boolean, default: false },
+
+    resetPasswordTokenHash: { type: String, default: null },
+    resetPasswordExpiresAt: { type: Date, default: null },
   },
-  {
-    timestamps: true,
-    versionKey: false,
-  },
+  { timestamps: true, versionKey: false },
 );
 
 const User: Model<IUser> =

@@ -2,18 +2,28 @@ import { NextResponse } from "next/server";
 import type { NextRequest } from "next/server";
 import { verifyToken } from "./lib/auth";
 
-export const runtime = "nodejs";
-
-const authPaths = ["/login", "/register", "/verify"];
-const publicPaths = ["/api/auth/login", "/api/auth/signup", "/api/auth/verify"];
+const authPaths = [
+  "/login",
+  "/register",
+  "/verify",
+  "/forgot-password",
+  "/reset-password",
+];
+const publicPaths = [
+  "/api/auth/login",
+  "/api/auth/signup",
+  "/api/auth/verify",
+  "/api/auth/forgot-password",
+  "/api/auth/reset-password",
+];
 const dashboardPath = "/dashboard";
 const adminPaths = ["/admin", "/api/admin"];
 
-export async function middleware(request: NextRequest) {
+export async function proxy(request: NextRequest) {
   const { pathname } = request.nextUrl;
   const token = request.cookies.get("token")?.value;
 
-  // Redirect logged-in users away from auth pages (login, register, verify)
+  // Redirect logged-in users away from auth pages
   if (authPaths.some((path) => pathname.startsWith(path))) {
     if (token) {
       return NextResponse.redirect(new URL("/", request.url));
@@ -21,7 +31,7 @@ export async function middleware(request: NextRequest) {
     return NextResponse.next();
   }
 
-  // Public API routes (auth, etc.) are allowed
+  // Public API routes are allowed
   if (publicPaths.some((path) => pathname.startsWith(path))) {
     return NextResponse.next();
   }
@@ -68,6 +78,8 @@ export const config = {
     "/login",
     "/register",
     "/verify",
+    "/forgot-password",
+    "/reset-password",
     "/admin/:path*",
   ],
 };

@@ -111,7 +111,6 @@ export default function AuthForm({ mode }: AuthFormProps) {
       if (!res.ok) {
         const errorMessage = await extractAuthErrorFromResponse(res);
 
-        // تشخیص حالت "اکانت وریفای نشده" (هم با متن انگلیسی، هم با ترجمه فارسی)
         const lower = errorMessage.toLowerCase();
         const isNotVerified =
           lower.includes("account not verified") ||
@@ -301,15 +300,8 @@ export default function AuthForm({ mode }: AuthFormProps) {
           transition={{ delay: 0.3 }}
           className="flex items-center justify-between text-sm"
         >
-          <label className="flex items-center gap-2.5 text-gray-600 cursor-pointer touch-manipulation">
-            <input
-              type="checkbox"
-              className="w-5 h-5 sm:w-4 sm:h-4 rounded border-gray-300 cursor-pointer"
-            />
-            <span className="text-sm sm:text-base">مرا به خاطر بسپار</span>
-          </label>
           <Link
-            href="#"
+            href="/forgot-password"
             className="text-primary hover:underline font-semibold text-sm sm:text-base min-h-[44px] flex items-center touch-manipulation"
           >
             رمز عبور را فراموش کرده‌اید؟

@@ -3,7 +3,7 @@ import jwt from "jsonwebtoken";
 import nodemailer from "nodemailer";
 import User from "@/models/User";
 import { connectDB } from "@/lib/db";
-import { redirect } from "next/dist/server/api-utils";
+import { createHash, randomBytes } from "node:crypto";
 
 interface ITokenData {
   _id: string;
@@ -281,4 +281,121 @@ export async function resendVerificationCode({ email }: { email: string }) {
   return {
     message: "Verification code sent, check your email",
   };
+}
+
+export async function resetPassword({
+  email,
+  token,
+  newPassword,
+}: {
+  email: string;
+  token: string;
+  newPassword: string;
+}) {
+  await connectDB();
+
+  const user = await User.findOne({ email });
+
+  if (!user) throw new Error("کاربر یافت نشد");
+
+  const tokenHash = createHash("sha256").update(token).digest("hex");
+
+  const isValid =
+    user.resetPasswordTokenHash &&
+    user.resetPasswordTokenHash === tokenHash &&
+    user.resetPasswordExpiresAt &&
+    user.resetPasswordExpiresAt.getTime() > Date.now();
+
+  if (!isValid) {
+    if (user.resetPasswordTokenHash !== tokenHash) {
+      throw new Error("توکن مطابقت ندارد (Invalid Token)");
+    }
+    if (
+      user.resetPasswordExpiresAt &&
+      user.resetPasswordExpiresAt.getTime() <= Date.now()
+    ) {
+      throw new Error("توکن منقضی شده است");
+    }
+    throw new Error("اطلاعات بازیابی نامعتبر است");
+  }
+
+  const hashed = await bcrypt.hash(newPassword, 10);
+  user.password = hashed;
+  user.resetPasswordTokenHash = null;
+  user.resetPasswordExpiresAt = null;
+  await user.save();
+
+  return { message: "رمز عبور با موفقیت تغییر کرد" };
+}
+
+export async function sendResetPasswordEmail({
+  email,
+  name,
+  resetLink,
+}: {
+  email: string;
+  name: string;
+  resetLink: string;
+}) {
+  await transporter.sendMail({
+    from: `"Control Room Auth" <${process.env.SMTP_USER}>`,
+    to: email,
+    subject: "بازیابی رمز عبور",
+    text: `${name} عزیز\n\nبرای تغییر رمز عبور روی لینک زیر کلیک کنید:\n${resetLink}\n\nاگر شما درخواست نداده‌اید این ایمیل را نادیده بگیرید.`,
+    html: `
+      <div style="font-family:Tahoma,Arial,sans-serif;background:#f6f7f9;padding:24px;direction:rtl">
+        <div style="max-width:520px;margin:auto;background:#fff;border-radius:12px;padding:32px;box-shadow:0 4px 12px rgba(0,0,0,.08)">
+          <h2 style="margin:0 0 12px;color:#111827">بازیابی رمز عبور</h2>
+          <p style="color:#374151;line-height:1.9;font-size:14px">
+            ${name} عزیز، برای تنظیم رمز عبور جدید روی دکمه زیر کلیک کنید:
+          </p>
+          <div style="margin:20px 0;text-align:center">
+            <a href="${resetLink}" style="display:inline-block;background:#2563eb;color:#fff;padding:12px 18px;border-radius:10px;text-decoration:none;font-weight:700">
+              تغییر رمز عبور
+            </a>
+          </div>
+          <p style="color:#6b7280;font-size:13px;line-height:1.8">
+            اگر شما درخواست بازیابی نداده‌اید، این ایمیل را نادیده بگیرید.
+          </p>
+        </div>
+      </div>
+    `,
+  });
+}
+
+export async function forgotPassword({ email }: { email: string }) {
+  await connectDB();
+
+  const generic = {
+    message:
+      "اگر حسابی با این ایمیل وجود داشته باشد، لینک بازیابی ارسال می‌شود.",
+  };
+
+  const user = await User.findOne({ email });
+  if (!user) return generic;
+
+  if (!user.active || user.isDeleted) return generic;
+
+  const token = randomBytes(32).toString("hex");
+  const tokenHash = createHash("sha256").update(token).digest("hex");
+  const expiresAt = new Date(Date.now() + 1000 * 60 * 15); // 15 دقیقه
+
+  user.resetPasswordTokenHash = tokenHash;
+  user.resetPasswordExpiresAt = expiresAt;
+  await user.save();
+
+  const baseUrl = process.env.NEXT_PUBLIC_SITE_URL;
+  if (!baseUrl) throw new Error("NEXT_PUBLIC_APP_URL is not set");
+
+  const resetLink = `${baseUrl}/reset-password?token=${token}&email=${encodeURIComponent(
+    user.email,
+  )}`;
+
+  await sendResetPasswordEmail({
+    email: user.email,
+    name: user.name,
+    resetLink,
+  });
+
+  return generic;
 }
