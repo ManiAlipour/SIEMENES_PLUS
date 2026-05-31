@@ -91,15 +91,29 @@ export default function AdminBlogPage() {
           <tbody>
             {loading ? (
               [...Array(5)].map((_, i) => (
-                <tr key={i} className="border-b border-slate-100 last:border-0 animate-pulse">
+                <tr
+                  key={i}
+                  className="border-b border-slate-100 last:border-0 animate-pulse"
+                >
                   <td className="px-4 py-3">
                     <div className="h-5 bg-slate-200 rounded w-3/4" />
                     <div className="h-3 bg-slate-100 rounded w-1/2 mt-2" />
                   </td>
-                  <td className="px-4 py-3"><div className="h-4 bg-slate-100 rounded w-24" /></td>
-                  <td className="px-4 py-3"><div className="h-6 bg-slate-100 rounded-full w-20 mx-auto" /></td>
-                  <td className="px-4 py-3"><div className="h-4 bg-slate-100 rounded w-16 mx-auto" /></td>
-                  <td className="px-4 py-3"><div className="flex justify-center gap-2"><div className="h-8 w-8 bg-slate-100 rounded-lg" /><div className="h-8 w-8 bg-slate-100 rounded-lg" /></div></td>
+                  <td className="px-4 py-3">
+                    <div className="h-4 bg-slate-100 rounded w-24" />
+                  </td>
+                  <td className="px-4 py-3">
+                    <div className="h-6 bg-slate-100 rounded-full w-20 mx-auto" />
+                  </td>
+                  <td className="px-4 py-3">
+                    <div className="h-4 bg-slate-100 rounded w-16 mx-auto" />
+                  </td>
+                  <td className="px-4 py-3">
+                    <div className="flex justify-center gap-2">
+                      <div className="h-8 w-8 bg-slate-100 rounded-lg" />
+                      <div className="h-8 w-8 bg-slate-100 rounded-lg" />
+                    </div>
+                  </td>
                 </tr>
               ))
             ) : posts.length > 0 ? (
@@ -165,8 +179,12 @@ export default function AdminBlogPage() {
                     <div className="w-16 h-16 rounded-2xl bg-slate-100 flex items-center justify-center text-slate-400 mb-4">
                       <FiFileText size={32} />
                     </div>
-                    <p className="text-slate-600 font-medium mb-1">هنوز مطلبی ثبت نشده</p>
-                    <p className="text-slate-500 text-sm mb-5">اولین مطلب وبلاگ را اضافه کنید.</p>
+                    <p className="text-slate-600 font-medium mb-1">
+                      هنوز مطلبی ثبت نشده
+                    </p>
+                    <p className="text-slate-500 text-sm mb-5">
+                      اولین مطلب وبلاگ را اضافه کنید.
+                    </p>
                     <button
                       onClick={() => setIsModalOpen(true)}
                       className="flex items-center gap-2 bg-cyan-500 text-white rounded-xl px-5 py-2.5 font-semibold hover:bg-cyan-600 transition-colors focus:outline-none focus-visible:ring-2 focus-visible:ring-cyan-500 focus-visible:ring-offset-2"
@@ -184,7 +202,10 @@ export default function AdminBlogPage() {
       <div className="md:hidden space-y-4">
         {loading ? (
           [...Array(3)].map((_, i) => (
-            <div key={i} className="bg-white rounded-2xl border border-slate-200 overflow-hidden animate-pulse">
+            <div
+              key={i}
+              className="bg-white rounded-2xl border border-slate-200 overflow-hidden animate-pulse"
+            >
               <div className="flex gap-3 p-4">
                 <div className="w-20 h-20 rounded-xl bg-slate-200 flex-shrink-0" />
                 <div className="flex-1 space-y-2">
@@ -219,7 +240,9 @@ export default function AdminBlogPage() {
                     {post.title}
                   </h3>
                   {post.slug && (
-                    <p className="text-xs text-slate-500 mt-0.5 font-mono truncate">{post.slug}</p>
+                    <p className="text-xs text-slate-500 mt-0.5 font-mono truncate">
+                      {post.slug}
+                    </p>
                   )}
                   <span
                     className={`inline-block mt-2 px-2.5 py-1 text-[10px] rounded-full font-medium ${
@@ -259,8 +282,12 @@ export default function AdminBlogPage() {
             <div className="w-16 h-16 rounded-2xl bg-slate-100 flex items-center justify-center text-slate-400 mb-4">
               <FiFileText size={32} />
             </div>
-            <p className="text-slate-600 font-medium mb-1">هنوز مطلبی ثبت نشده</p>
-            <p className="text-slate-500 text-sm mb-5 text-center">اولین مطلب وبلاگ را اضافه کنید.</p>
+            <p className="text-slate-600 font-medium mb-1">
+              هنوز مطلبی ثبت نشده
+            </p>
+            <p className="text-slate-500 text-sm mb-5 text-center">
+              اولین مطلب وبلاگ را اضافه کنید.
+            </p>
             <button
               onClick={() => setIsModalOpen(true)}
               className="flex items-center gap-2 bg-cyan-500 text-white rounded-xl px-5 py-2.5 font-semibold hover:bg-cyan-600 transition-colors"
@@ -272,10 +299,12 @@ export default function AdminBlogPage() {
       </div>
 
       {isModalOpen && (
-        <AddBlogPostModal
-          onClose={() => setIsModalOpen(false)}
-          onAdd={fetchPosts}
-        />
+        <div className="overflow-x-hidden">
+          <AddBlogPostModal
+            onClose={() => setIsModalOpen(false)}
+            onAdd={fetchPosts}
+          />
+        </div>
       )}
 
       {isEditOpen && editPost && (

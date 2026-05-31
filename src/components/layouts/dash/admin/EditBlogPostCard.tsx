@@ -3,9 +3,8 @@
 import { useState } from "react";
 import { FiX, FiLink, FiImage } from "react-icons/fi";
 import toast from "react-hot-toast";
-import BlogRichEditor, {
-  extractEmbeddedProductsFromHtml,
-} from "@/components/admin/BlogRichEditor";
+import BlogRichEditor from "@/components/admin/blogRichEditor/BlogRichEditor";
+import { extractEmbeddedProductsFromHtml } from "@/components/admin/blogRichEditor/utils";
 
 const inputBase =
   "w-full px-4 py-2.5 rounded-xl bg-white border border-slate-200 focus:ring-2 focus:ring-cyan-500 focus:border-cyan-400 outline-none transition-all placeholder:text-slate-400 disabled:opacity-70 disabled:bg-slate-50";
@@ -134,7 +133,9 @@ export default function EditBlogPostCard({
         onClick={(e) => e.stopPropagation()}
       >
         <div className="sticky top-0 z-10 bg-gradient-to-r from-cyan-500 to-cyan-600 px-4 sm:px-6 py-4 text-white flex justify-between items-center shadow-md">
-          <h2 id="edit-blog-title" className="font-bold text-lg">ویرایش مطلب وبلاگ</h2>
+          <h2 id="edit-blog-title" className="font-bold text-lg">
+            ویرایش مطلب وبلاگ
+          </h2>
           <button
             type="button"
             className="p-2 rounded-xl hover:bg-white/20 transition-colors focus:outline-none focus-visible:ring-2 focus-visible:ring-white"
@@ -152,7 +153,9 @@ export default function EditBlogPostCard({
                 اطلاعات اصلی
               </h3>
               <div>
-                <label className="block text-sm font-semibold text-slate-700 mb-1.5">عنوان *</label>
+                <label className="block text-sm font-semibold text-slate-700 mb-1.5">
+                  عنوان *
+                </label>
                 <input
                   type="text"
                   className={inputBase}
@@ -162,10 +165,14 @@ export default function EditBlogPostCard({
                   maxLength={200}
                   required
                 />
-                <p className="mt-1 text-xs text-slate-400 text-left">{title.length}/200</p>
+                <p className="mt-1 text-xs text-slate-400 text-left">
+                  {title.length}/200
+                </p>
               </div>
               <div>
-                <label className="block text-sm font-semibold text-slate-700 mb-1.5">اسلاگ</label>
+                <label className="block text-sm font-semibold text-slate-700 mb-1.5">
+                  اسلاگ
+                </label>
                 <input
                   type="text"
                   className={inputBase}
@@ -174,10 +181,14 @@ export default function EditBlogPostCard({
                   disabled={loading}
                   maxLength={220}
                 />
-                <p className="mt-1 text-xs text-slate-400 text-left">{slug.length}/220</p>
+                <p className="mt-1 text-xs text-slate-400 text-left">
+                  {slug.length}/220
+                </p>
               </div>
               <div>
-                <label className="block text-sm font-semibold text-slate-700 mb-1.5">خلاصه</label>
+                <label className="block text-sm font-semibold text-slate-700 mb-1.5">
+                  خلاصه
+                </label>
                 <textarea
                   className={inputBase}
                   value={excerpt}
@@ -186,7 +197,9 @@ export default function EditBlogPostCard({
                   rows={2}
                   maxLength={400}
                 />
-                <p className="mt-1 text-xs text-slate-400 text-left">{excerpt.length}/400</p>
+                <p className="mt-1 text-xs text-slate-400 text-left">
+                  {excerpt.length}/400
+                </p>
               </div>
             </section>
 
@@ -220,7 +233,9 @@ export default function EditBlogPostCard({
                 </div>
               </div>
               <div>
-                <label className="block text-sm font-semibold text-slate-700 mb-1.5">محتوای مطلب</label>
+                <label className="block text-sm font-semibold text-slate-700 mb-1.5">
+                  محتوای مطلب
+                </label>
                 <BlogRichEditor
                   value={content}
                   onChange={setContent}
@@ -263,11 +278,15 @@ export default function EditBlogPostCard({
                 />
               </div>
               <div>
-                <label className="block text-sm font-semibold text-slate-700 mb-1.5">وضعیت</label>
+                <label className="block text-sm font-semibold text-slate-700 mb-1.5">
+                  وضعیت
+                </label>
                 <select
                   className={inputBase}
                   value={status}
-                  onChange={(e) => setStatus(e.target.value as "draft" | "published")}
+                  onChange={(e) =>
+                    setStatus(e.target.value as "draft" | "published")
+                  }
                   disabled={loading}
                 >
                   <option value="draft">پیش‌نویس</option>

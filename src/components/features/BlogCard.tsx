@@ -14,7 +14,8 @@ export interface BlogCardModel {
 }
 
 export default function BlogCard({ post }: { post: BlogCardModel }) {
-  const { title, slug, excerpt, coverImage, video, tags, status, createdAt } = post;
+  const { title, slug, excerpt, coverImage, video, tags, status, createdAt } =
+    post;
 
   if (status === "draft") return null;
 
@@ -42,22 +43,29 @@ export default function BlogCard({ post }: { post: BlogCardModel }) {
         <div className="pointer-events-none absolute inset-0 bg-gradient-to-t from-black/30 via-transparent to-transparent" />
       </div>
       <div className="flex-1 p-4 md:p-5 flex flex-col gap-2">
-        <h2 className="text-lg md:text-xl font-bold text-gray-800 group-hover:text-cyan-600 transition-colors line-clamp-2" dir="auto">
+        <h2
+          className="text-lg md:text-xl font-bold text-gray-800 group-hover:text-cyan-600 transition-colors line-clamp-2"
+          dir="auto"
+        >
           {title}
         </h2>
         {excerpt && (
-          <p className="text-slate-600 text-sm line-clamp-2" dir="auto">{excerpt}</p>
+          <p className="text-slate-600 text-sm line-clamp-2" dir="auto">
+            {excerpt}
+          </p>
         )}
         {Array.isArray(tags) && tags.length > 0 && (
-          <div className="flex flex-wrap gap-1.5 mt-1" onClick={(e) => e.stopPropagation()}>
+          <div
+            className="flex flex-wrap gap-1.5 mt-1"
+            onClick={(e) => e.stopPropagation()}
+          >
             {tags.slice(0, 3).map((tag) => (
-              <Link
+              <span
                 key={tag}
-                href={`/blog?tag=${encodeURIComponent(tag)}`}
                 className="text-xs px-2 py-0.5 rounded-md bg-cyan-100 text-cyan-700 hover:bg-cyan-200 transition"
               >
                 {tag}
-              </Link>
+              </span>
             ))}
           </div>
         )}

@@ -4,9 +4,8 @@ import { useEffect, useState } from "react";
 import { FiX, FiLink, FiImage } from "react-icons/fi";
 import toast from "react-hot-toast";
 import { useScrollLock } from "iso-hooks";
-import BlogRichEditor, {
-  extractEmbeddedProductsFromHtml,
-} from "@/components/admin/BlogRichEditor";
+import BlogRichEditor from "@/components/admin/blogRichEditor/BlogRichEditor";
+import { extractEmbeddedProductsFromHtml } from "@/components/admin/blogRichEditor/utils";
 
 const inputBase =
   "w-full px-4 py-2.5 rounded-xl bg-white border border-slate-200 focus:ring-2 focus:ring-cyan-500 focus:border-cyan-400 outline-none transition-all placeholder:text-slate-400";
@@ -115,7 +114,8 @@ export default function AddBlogPostModal({
 
   return (
     <div
-      className="fixed inset-0 z-50 flex items-center justify-center bg-black/55 backdrop-blur-sm p-4 overflow-y-auto"
+      className="fixed inset-0 z-50 flex items-center justify-center bg-black/55 backdrop-blur-sm p-4
+       overflow-y-auto "
       onClick={onClose}
       role="dialog"
       aria-modal="true"
@@ -126,7 +126,9 @@ export default function AddBlogPostModal({
         className="relative w-full max-w-3xl mx-auto my-8 rounded-2xl overflow-hidden bg-white shadow-2xl border border-slate-200/80"
       >
         <div className="sticky top-0 z-10 bg-gradient-to-r from-cyan-500 to-cyan-600 px-4 sm:px-6 py-4 text-white flex justify-between items-center shadow-md">
-          <h2 id="add-blog-title" className="font-bold text-lg">افزودن مطلب وبلاگ</h2>
+          <h2 id="add-blog-title" className="font-bold text-lg">
+            افزودن مطلب وبلاگ
+          </h2>
           <button
             type="button"
             onClick={onClose}
@@ -155,7 +157,9 @@ export default function AddBlogPostModal({
                   required
                   maxLength={200}
                 />
-                <p className="mt-1 text-xs text-slate-400 text-left">{title.length}/200</p>
+                <p className="mt-1 text-xs text-slate-400 text-left">
+                  {title.length}/200
+                </p>
               </div>
               <div>
                 <label className="block text-sm font-semibold text-slate-700 mb-1.5">
@@ -168,7 +172,9 @@ export default function AddBlogPostModal({
                   onChange={(e) => setSlug(e.target.value)}
                   maxLength={220}
                 />
-                <p className="mt-1 text-xs text-slate-400 text-left">{slug.length}/220</p>
+                <p className="mt-1 text-xs text-slate-400 text-left">
+                  {slug.length}/220
+                </p>
               </div>
               <div>
                 <label className="block text-sm font-semibold text-slate-700 mb-1.5">
@@ -182,7 +188,9 @@ export default function AddBlogPostModal({
                   rows={2}
                   maxLength={400}
                 />
-                <p className="mt-1 text-xs text-slate-400 text-left">{excerpt.length}/400</p>
+                <p className="mt-1 text-xs text-slate-400 text-left">
+                  {excerpt.length}/400
+                </p>
               </div>
             </section>
 
@@ -258,7 +266,9 @@ export default function AddBlogPostModal({
                 />
               </div>
               <div>
-                <label className="block text-sm font-semibold text-slate-700 mb-2">وضعیت انتشار</label>
+                <label className="block text-sm font-semibold text-slate-700 mb-2">
+                  وضعیت انتشار
+                </label>
                 <div className="flex flex-wrap gap-4">
                   <label className="flex items-center gap-2.5 cursor-pointer group">
                     <input
@@ -268,7 +278,9 @@ export default function AddBlogPostModal({
                       onChange={() => setStatus("draft")}
                       className="w-4 h-4 text-cyan-600 border-slate-300 focus:ring-cyan-500"
                     />
-                    <span className="text-slate-700 group-hover:text-slate-900">پیش‌نویس</span>
+                    <span className="text-slate-700 group-hover:text-slate-900">
+                      پیش‌نویس
+                    </span>
                   </label>
                   <label className="flex items-center gap-2.5 cursor-pointer group">
                     <input
@@ -278,7 +290,9 @@ export default function AddBlogPostModal({
                       onChange={() => setStatus("published")}
                       className="w-4 h-4 text-cyan-600 border-slate-300 focus:ring-cyan-500"
                     />
-                    <span className="text-slate-700 group-hover:text-slate-900">منتشر شود</span>
+                    <span className="text-slate-700 group-hover:text-slate-900">
+                      منتشر شود
+                    </span>
                   </label>
                 </div>
               </div>

@@ -83,7 +83,8 @@ export default function AddBlogModal({ onClose, onAdd }: AddBlogModalProps) {
 
   return (
     <div
-      className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 backdrop-blur-sm animate-fadeIn max-w-screen overflow-hidden"
+      className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 backdrop-blur-sm animate-fadeIn 
+      overflow-x-hidden overflow-y-auto"
       onClick={onClose}
     >
       {/* --- Modal Container --- */}
