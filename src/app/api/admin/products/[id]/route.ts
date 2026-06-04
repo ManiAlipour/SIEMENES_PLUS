@@ -2,7 +2,7 @@ import { NextRequest, NextResponse } from "next/server";
 import { adminOnly } from "@/lib/middlewares/adminOnly";
 import { connectDB } from "@/lib/db";
 import Product from "@/models/Product";
-import { deleteFromLiara, uploadToLiara } from "@/lib/uploadToLiara";
+import { deleteFromLiara, uploadToLiara } from "@/lib/storage/s3Client";
 import { productRequestSchema } from "@/lib/validations/productValidator";
 
 export const runtime = "nodejs";
@@ -14,7 +14,7 @@ interface RouteContext {
 // DELETE handler
 export async function DELETE(
   request: NextRequest,
-  context: { params: Promise<{ id: string }> }
+  context: { params: Promise<{ id: string }> },
 ) {
   try {
     await adminOnly(request);
@@ -26,7 +26,7 @@ export async function DELETE(
     if (!product) {
       return NextResponse.json(
         { success: false, message: "محصول موردنظر یافت نشد" },
-        { status: 404 }
+        { status: 404 },
       );
     }
 
@@ -53,7 +53,7 @@ export async function DELETE(
           error?.message ||
           "خطایی در حذف محصول رخ داده است، لطفاً بعداً تلاش کنید.",
       },
-      { status: 500 }
+      { status: 500 },
     );
   }
 }
@@ -61,7 +61,7 @@ export async function DELETE(
 //  PUT handler
 export async function PUT(
   request: NextRequest,
-  context: { params: Promise<{ id: string }> }
+  context: { params: Promise<{ id: string }> },
 ) {
   try {
     await adminOnly(request);
@@ -73,7 +73,7 @@ export async function PUT(
     if (!existingProduct) {
       return NextResponse.json(
         { success: false, message: "محصول موردنظر یافت نشد" },
-        { status: 404 }
+        { status: 404 },
       );
     }
 
@@ -141,7 +141,7 @@ export async function PUT(
           error?.message ||
           "خطایی در ویرایش محصول رخ داده است، لطفاً بعداً تلاش کنید.",
       },
-      { status: 500 }
+      { status: 500 },
     );
   }
 }

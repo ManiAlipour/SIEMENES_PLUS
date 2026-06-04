@@ -5,7 +5,10 @@ import { FiX, FiLink, FiImage } from "react-icons/fi";
 import toast from "react-hot-toast";
 import { useScrollLock } from "iso-hooks";
 import BlogRichEditor from "@/components/admin/blogRichEditor/BlogRichEditor";
-import { extractEmbeddedProductsFromHtml } from "@/components/admin/blogRichEditor/utils";
+import {
+  extractEmbeddedProductsFromHtml,
+  sanitizeHtml,
+} from "@/components/admin/blogRichEditor/utils";
 
 const inputBase =
   "w-full px-4 py-2.5 rounded-xl bg-white border border-slate-200 focus:ring-2 focus:ring-cyan-500 focus:border-cyan-400 outline-none transition-all placeholder:text-slate-400";
@@ -72,7 +75,10 @@ export default function AddBlogPostModal({
       }
     }
 
-    const embeddedProducts = extractEmbeddedProductsFromHtml(content).map(
+    const sanitizedContent = sanitizeHtml(content);
+    const embeddedProducts = extractEmbeddedProductsFromHtml(
+      sanitizedContent,
+    ).map(
       (p) => ({ productId: p.productId, slug: p.slug, blockId: p.blockId }),
     );
     const tags = tagsInput
@@ -89,7 +95,7 @@ export default function AddBlogPostModal({
           title: title.trim(),
           slug: slug.trim() || undefined,
           excerpt: excerpt.trim().slice(0, 400),
-          content,
+          content: sanitizedContent,
           coverImage: coverImage.trim(),
           images: [],
           video: video.trim(),

@@ -9,8 +9,8 @@ export async function POST(req: NextRequest) {
     if (authResult) return authResult;
 
     const validation = await uploadValidator(req, {
-      maxSizeMB: 5,
-      allowedTypes: ["image/jpeg", "image/png", "image/webp"],
+      maxSizeMB: 50,
+      allowedTypes: ["video/mp4", "video/webm"],
       maxFiles: 1,
     });
 
@@ -22,13 +22,20 @@ export async function POST(req: NextRequest) {
     }
 
     const file = validation.files[0];
-    const { url } = await uploadFileToStorage(file, { folder: "blog" });
-    
+    const { url } = await uploadFileToStorage(file, { folder: "blog/videos" });
+
+    if (!url) {
+      return NextResponse.json(
+        { error: "آدرس عمومی فایل پیکربندی نشده است" },
+        { status: 500 },
+      );
+    }
+
     return NextResponse.json({ url });
   } catch (err: any) {
-    console.error("Blog image upload error:", err);
+    console.error("Blog video upload error:", err);
     return NextResponse.json(
-      { error: err.message || "خطا در آپلود تصویر" },
+      { error: err.message || "خطا در آپلود ویدیو" },
       { status: 500 },
     );
   }

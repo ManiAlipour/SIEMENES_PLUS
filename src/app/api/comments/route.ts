@@ -40,11 +40,12 @@ export async function POST(req: NextRequest) {
         { status: 400 },
       );
     }
-    const comment = await Comment.create({
+    await Comment.create({
       user: userData._id,
       targetType,
       targetId,
       text,
+      approved: true,
     });
     return NextResponse.json(
       { message: "Comment created successfully", success: true },
@@ -80,8 +81,20 @@ export async function GET(req: NextRequest) {
       .populate("user", "email name")
       .sort({ createdAt: -1 });
 
-    const allowdComments = comments.filter(c => c.approved)
-    return NextResponse.json({ data: allowdComments });
+    return NextResponse.json({
+      data: comments.map((c) => ({
+        _id: c._id,
+        text: c.text,
+        createdAt: c.createdAt,
+        user:
+          typeof c.user === "object" && c.user
+            ? {
+                name: (c.user as { name?: string }).name,
+                email: (c.user as { email?: string }).email,
+              }
+            : undefined,
+      })),
+    });
   } catch (error) {
     return NextResponse.json(
       {

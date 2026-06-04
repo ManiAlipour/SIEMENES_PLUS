@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import { notFound } from "next/navigation";
 import { connectDB } from "@/lib/db";
 import BlogPost from "@/models/BlogPost";
+import { fetchRelatedBlogPosts } from "@/lib/blog/relatedPosts";
 import BlogPostClient from "./BlogPostClient";
 
 const siteUrl = process.env.NEXT_PUBLIC_SITE_URL || "https://site-mohandesi.ir";
@@ -78,8 +79,11 @@ export default async function BlogPostPage({ params }: Props) {
     ? rawTags.filter((t: any) => typeof t === "string" && t.trim())
     : [];
 
+  const postId = (post as any)._id?.toString();
+  const relatedPosts = await fetchRelatedBlogPosts(postId, tags, 3);
+
   const data = {
-    _id: (post as any)._id?.toString(),
+    _id: postId,
     title: post.title,
     slug: post.slug,
     excerpt: post.excerpt,
@@ -113,12 +117,12 @@ export default async function BlogPostPage({ params }: Props) {
   };
 
   return (
-    <main className="min-h-screen bg-gray-50/70">
+    <main className="min-h-screen bg-slate-50">
       <script
         type="application/ld+json"
         dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
       />
-      <BlogPostClient post={data} />
+      <BlogPostClient post={data} relatedPosts={relatedPosts} />
     </main>
   );
 }

@@ -2,6 +2,7 @@
 
 import React, { useMemo, useState, useEffect } from "react";
 import dynamic from "next/dynamic";
+import { stripEditorChrome } from "@/components/admin/blogRichEditor/utils";
 
 const ProductCard = dynamic(
   () => import("@/components/features/ProductCard").then((m) => m.default),
@@ -116,7 +117,7 @@ export default function BlogPostContent({
               key={i}
               dir="auto"
               className="prose prose-slate max-w-none prose-headings:font-bold prose-img:rounded-xl prose-a:text-cyan-600"
-              dangerouslySetInnerHTML={{ __html: seg.value }}
+              dangerouslySetInnerHTML={{ __html: stripEditorChrome(seg.value) }}
             />
           );
         }

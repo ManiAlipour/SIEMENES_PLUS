@@ -28,7 +28,6 @@ export default function Header() {
 
   const { lock, unlock } = useScrollLock();
 
-  // Lock body scroll when mobile menu is open
   useEffect(() => {
     isMobileOpen ? lock() : unlock();
   }, [isMobileOpen]);
@@ -36,6 +35,7 @@ export default function Header() {
   const links = [
     { name: "خانه", href: "/" },
     { name: "فروشگاه", href: "/shop" },
+    { name: "مقالات", href: "/blog" },
     { name: "درباره ما", href: "/about-us" },
     { name: "تماس با ما", href: "/contact-us" },
   ];

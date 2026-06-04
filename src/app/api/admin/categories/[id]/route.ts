@@ -2,7 +2,7 @@ import { NextRequest, NextResponse } from "next/server";
 import { connectDB } from "@/lib/db";
 import { adminOnly } from "@/lib/middlewares/adminOnly";
 import Category from "@/models/Category";
-import { deleteFromLiara, uploadToLiara } from "@/lib/uploadToLiara";
+import { deleteFromLiara, uploadToLiara } from "@/lib/storage/s3Client";
 
 export const runtime = "nodejs";
 export const dynamic = "force-dynamic";
@@ -10,7 +10,7 @@ export const dynamic = "force-dynamic";
 // DELETE category
 export async function DELETE(
   _request: NextRequest,
-  context: { params: Promise<{ id: string }> }
+  context: { params: Promise<{ id: string }> },
 ) {
   try {
     await adminOnly(_request);
@@ -22,7 +22,7 @@ export async function DELETE(
     if (!category) {
       return NextResponse.json(
         { success: false, message: "دسته‌بندی موردنظر یافت نشد" },
-        { status: 404 }
+        { status: 404 },
       );
     }
 
@@ -49,7 +49,7 @@ export async function DELETE(
           (error as Error)?.message ||
           "خطایی در حذف دسته‌بندی رخ داده است، لطفاً بعداً تلاش کنید.",
       },
-      { status: 500 }
+      { status: 500 },
     );
   }
 }
@@ -57,7 +57,7 @@ export async function DELETE(
 // PATCH category (partial update)
 export async function PATCH(
   request: NextRequest,
-  context: { params: Promise<{ id: string }> }
+  context: { params: Promise<{ id: string }> },
 ) {
   try {
     await adminOnly(request);
@@ -69,7 +69,7 @@ export async function PATCH(
     if (!category) {
       return NextResponse.json(
         { success: false, message: "دسته‌بندی موردنظر یافت نشد" },
-        { status: 404 }
+        { status: 404 },
       );
     }
 
@@ -84,21 +84,24 @@ export async function PATCH(
       const parent = formData.get("parent") as string | null;
       const description = formData.get("description") as string | null;
       const isFeaturedRaw = formData.get("isFeatured") as string | null;
-      const isFeatured =
-        isFeaturedRaw === "true" || isFeaturedRaw === "1";
+      const isFeatured = isFeaturedRaw === "true" || isFeaturedRaw === "1";
 
       if (name != null) category.name = name;
       if (slug != null) {
         const exists = await Category.findOne({ slug, _id: { $ne: id } });
         if (exists)
           return NextResponse.json(
-            { success: false, message: "این اسلاگ از قبل برای دسته‌ای دیگر وجود دارد" },
-            { status: 400 }
+            {
+              success: false,
+              message: "این اسلاگ از قبل برای دسته‌ای دیگر وجود دارد",
+            },
+            { status: 400 },
           );
         category.slug = slug;
       }
       if (parent !== undefined) category.parent = parent || undefined;
-      if (description !== undefined) category.description = description || undefined;
+      if (description !== undefined)
+        category.description = description || undefined;
       if (isFeaturedRaw !== undefined) category.isFeatured = isFeatured;
 
       if (file && file.size > 0) {
@@ -117,17 +120,25 @@ export async function PATCH(
 
       if (body.name != null) category.name = body.name;
       if (body.slug != null) {
-        const exists = await Category.findOne({ slug: body.slug, _id: { $ne: id } });
+        const exists = await Category.findOne({
+          slug: body.slug,
+          _id: { $ne: id },
+        });
         if (exists)
           return NextResponse.json(
-            { success: false, message: "این اسلاگ از قبل برای دسته‌ای دیگر وجود دارد" },
-            { status: 400 }
+            {
+              success: false,
+              message: "این اسلاگ از قبل برای دسته‌ای دیگر وجود دارد",
+            },
+            { status: 400 },
           );
         category.slug = body.slug;
       }
       if (body.parent !== undefined) category.parent = body.parent || undefined;
-      if (body.description !== undefined) category.description = body.description || undefined;
-      if (body.isFeatured !== undefined) category.isFeatured = body.isFeatured === true;
+      if (body.description !== undefined)
+        category.description = body.description || undefined;
+      if (body.isFeatured !== undefined)
+        category.isFeatured = body.isFeatured === true;
       if (body.image !== undefined) category.image = body.image || undefined;
     }
 
@@ -160,7 +171,7 @@ export async function PATCH(
           (error as Error)?.message ||
           "خطایی در به‌روزرسانی دسته‌بندی رخ داده است.",
       },
-      { status: 500 }
+      { status: 500 },
     );
   }
 }

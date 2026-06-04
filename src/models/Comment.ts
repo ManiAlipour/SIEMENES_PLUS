@@ -5,7 +5,7 @@ import mongoose, { Schema, Document, Types } from "mongoose";
  */
 export interface IComment extends Document {
   user: Types.ObjectId;
-  targetType: "post" | "product";
+  targetType: "post" | "product" | "blogPost";
   targetId: Types.ObjectId;
   text: string;
   approved: boolean;
@@ -25,7 +25,7 @@ const CommentSchema = new Schema<IComment>(
     },
     targetType: {
       type: String,
-      enum: ["post", "product"],
+      enum: ["post", "product", "blogPost"],
       required: true,
     },
     targetId: {
@@ -41,7 +41,7 @@ const CommentSchema = new Schema<IComment>(
     },
     approved: {
       type: Boolean,
-      default: false,
+      default: true,
     },
   },
   {

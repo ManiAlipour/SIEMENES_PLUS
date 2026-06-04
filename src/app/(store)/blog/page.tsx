@@ -32,7 +32,7 @@ export const metadata: Metadata = {
 
 export default function BlogPage() {
   return (
-    <main className="min-h-screen bg-gray-50/70">
+    <main className="min-h-screen bg-slate-50">
       <Suspense fallback={<div className="container mx-auto px-4 py-12">در حال بارگذاری مطالب...</div>}>
         <BlogListClient />
       </Suspense>

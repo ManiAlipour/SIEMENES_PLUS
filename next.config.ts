@@ -1,17 +1,27 @@
 import type { NextConfig } from "next";
 
 const nextConfig: NextConfig = {
+  async rewrites() {
+    return [
+      {
+        source: "/storage/:path*",
+        destination: "https://c631618.parspack.net/c631618/:path*",
+      },
+    ];
+  },
   images: {
     remotePatterns: [
       {
         protocol: "https",
-        hostname: "storage.c2.liara.space",
-        pathname: "**",
+        hostname: "c631618.parspack.net",
+        port: "",
+        pathname: "/c631618/**",
       },
       {
-        protocol: "https",
-        hostname: "storage.liara.space",
-        pathname: "**",
+        protocol: "http",
+        hostname: "localhost",
+        port: "3000",
+        pathname: "/storage/**",
       },
     ],
     formats: ["image/avif", "image/webp"],

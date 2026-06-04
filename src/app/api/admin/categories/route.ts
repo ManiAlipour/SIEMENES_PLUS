@@ -2,7 +2,7 @@ import { NextRequest, NextResponse } from "next/server";
 import { connectDB } from "@/lib/db";
 import { adminOnly } from "@/lib/middlewares/adminOnly";
 import Category from "@/models/Category";
-import { uploadToLiara } from "@/lib/uploadToLiara";
+import { uploadToLiara } from "@/lib/storage/s3Client";
 
 export async function POST(request: NextRequest) {
   await adminOnly(request);
@@ -43,7 +43,7 @@ export async function POST(request: NextRequest) {
     if (!name || !slug) {
       return NextResponse.json(
         { success: false, message: "نام و شناسه الزامی هستند" },
-        { status: 400 }
+        { status: 400 },
       );
     }
 
@@ -51,7 +51,7 @@ export async function POST(request: NextRequest) {
     if (exists)
       return NextResponse.json(
         { success: false, message: "این اسلاگ از قبل وجود دارد" },
-        { status: 400 }
+        { status: 400 },
       );
 
     const cat = new Category({
@@ -82,7 +82,7 @@ export async function POST(request: NextRequest) {
     console.error(err);
     return NextResponse.json(
       { success: false, message: "خطایی رخ داد" },
-      { status: 500 }
+      { status: 500 },
     );
   }
 }

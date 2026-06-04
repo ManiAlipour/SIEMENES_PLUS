@@ -17,10 +17,9 @@ export default function ProductImage({ src, alt, onClick }: ProductImageProps) {
           group-hover:shadow-inner
         "
     >
-      <Image
+      <img
         src={src}
         alt={alt}
-        fill
         loading="lazy"
         sizes="(max-width:640px)100vw, (max-width:1024px)50vw, 25vw"
         className="object-contain p-4 sm:p-6 md:p-10 transition-transform duration-300 group-hover:scale-[1.02] group-hover:drop-shadow-lg"

@@ -4,4 +4,7 @@ export { AnalyticsLists } from "./AnalyticsLists";
 export { StatsPageHeader } from "./StatsPageHeader";
 export { StatsEmptyState } from "./StatsEmptyState";
 export { StatsChartCard } from "./StatsChartCard";
+export { OverviewKpiGrid } from "./OverviewKpiGrid";
+export { ContentStatsSection } from "./ContentStatsSection";
+export { StatsChartsSection } from "./StatsChartsSection";
 export * from "./StatsCharts";

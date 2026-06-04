@@ -286,7 +286,10 @@ export default function ShopPageClient() {
 
               {/* Products Grid */}
               <ProductGrid
-                products={products}
+                products={products?.map((p) => ({
+                  ...p,
+                  image: p.image.replace("http://localhost:3000", ""),
+                }))}
                 viewMode={viewMode}
                 loading={loading}
               />
@@ -297,7 +300,8 @@ export default function ShopPageClient() {
                     currentPage={currentPage}
                     totalPages={pages}
                     onPageChange={(p) => updateParams({ page: p })}
-                  />-
+                  />
+                  -
                 </div>
               )}
             </div>

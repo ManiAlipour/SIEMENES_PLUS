@@ -4,7 +4,10 @@ import { useState } from "react";
 import { FiX, FiLink, FiImage } from "react-icons/fi";
 import toast from "react-hot-toast";
 import BlogRichEditor from "@/components/admin/blogRichEditor/BlogRichEditor";
-import { extractEmbeddedProductsFromHtml } from "@/components/admin/blogRichEditor/utils";
+import {
+  extractEmbeddedProductsFromHtml,
+  sanitizeHtml,
+} from "@/components/admin/blogRichEditor/utils";
 
 const inputBase =
   "w-full px-4 py-2.5 rounded-xl bg-white border border-slate-200 focus:ring-2 focus:ring-cyan-500 focus:border-cyan-400 outline-none transition-all placeholder:text-slate-400 disabled:opacity-70 disabled:bg-slate-50";
@@ -78,9 +81,10 @@ export default function EditBlogPostCard({
       }
     }
 
-    const embeddedProducts = extractEmbeddedProductsFromHtml(content).map(
-      (p) => ({ productId: p.productId, slug: p.slug, blockId: p.blockId }),
-    );
+    const sanitizedContent = sanitizeHtml(content);
+    const embeddedProducts = extractEmbeddedProductsFromHtml(
+      sanitizedContent,
+    ).map((p) => ({ productId: p.productId, slug: p.slug, blockId: p.blockId }));
     const tags = tagsInput
       .split(/[،,]/)
       .map((t) => t.trim())
@@ -95,7 +99,7 @@ export default function EditBlogPostCard({
           title: title.trim(),
           slug: slug.trim() || undefined,
           excerpt: excerpt.trim().slice(0, 400),
-          content,
+          content: sanitizedContent,
           coverImage: coverImage.trim(),
           video: video.trim(),
           tags,

@@ -63,7 +63,7 @@ function ProductCard({
       <MobileActions id={id} />
       <DesktopTopActions id={id} brand={brand} />
 
-      {/* Image Layer (contains Floating Desktop Actions) */}
+      {/* Image Laye */}
       <div className="relative">
         <DesktopFloatingActions
           onAddToCart={handleAddToCart}

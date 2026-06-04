@@ -1,21 +1,26 @@
 "use client";
 
-import {
-  BeautifulLineChart,
-  BarChart,
-  DonutChart,
-  DualLineChart,
-} from "@/components/ui/admin/stats/StatsCharts";
 import { StatsSkeleton } from "@/components/ui/admin/stats/StatsSkeleton";
 import { SummaryStatsCards } from "@/components/ui/admin/stats/SummaryStatsCards";
 import { AnalyticsLists } from "@/components/ui/admin/stats/AnalyticsLists";
 import { StatsPageHeader } from "@/components/ui/admin/stats/StatsPageHeader";
 import { StatsEmptyState } from "@/components/ui/admin/stats/StatsEmptyState";
-import { StatsChartCard } from "@/components/ui/admin/stats/StatsChartCard";
+import { OverviewKpiGrid } from "@/components/ui/admin/stats/OverviewKpiGrid";
+import { ContentStatsSection } from "@/components/ui/admin/stats/ContentStatsSection";
+import { StatsChartsSection } from "@/components/ui/admin/stats/StatsChartsSection";
 import { useAdminStats } from "@/hooks/useAdminStats";
 
 export default function AdminStatPage() {
-  const { data, analytics, isMock, isLoading, error } = useAdminStats();
+  const {
+    data,
+    analytics,
+    isMock,
+    isLoading,
+    isRefreshing,
+    error,
+    lastUpdated,
+    refresh,
+  } = useAdminStats();
 
   if (isLoading) {
     return (
@@ -25,10 +30,21 @@ export default function AdminStatPage() {
     );
   }
 
-  if (error) {
+  if (error && !analytics) {
     return (
-      <div className="rounded-2xl border border-red-200 bg-red-50 p-8 text-center text-sm text-red-600 shadow-sm dark:border-red-800 dark:bg-red-900/20 dark:text-red-400">
-        {error}
+      <div className="space-y-4">
+        <div className="rounded-2xl border border-red-200 bg-red-50 p-8 text-center text-sm text-red-600">
+          {error}
+        </div>
+        <div className="text-center">
+          <button
+            type="button"
+            onClick={refresh}
+            className="rounded-xl bg-cyan-600 px-5 py-2.5 text-sm font-semibold text-white hover:bg-cyan-700"
+          >
+            تلاش مجدد
+          </button>
+        </div>
       </div>
     );
   }
@@ -38,45 +54,29 @@ export default function AdminStatPage() {
   }
 
   return (
-    <div className="space-y-10">
-      <StatsPageHeader isMock={isMock} />
+    <div className="space-y-10 pb-8">
+      <StatsPageHeader
+        isMock={isMock}
+        lastUpdated={lastUpdated}
+        isRefreshing={isRefreshing}
+        onRefresh={refresh}
+      />
+
+      {analytics && <OverviewKpiGrid analytics={analytics} />}
+
+      {analytics && <ContentStatsSection analytics={analytics} />}
 
       <div>
-        <SummaryStatsCards data={data} />
+        <h2 className="mb-4 flex items-center gap-2 text-sm font-bold text-slate-800">
+          <span className="h-4 w-1 rounded-full bg-blue-500" />
+          خلاصه عددی
+        </h2>
+        <SummaryStatsCards data={data} analytics={analytics} />
       </div>
 
-      <div className="grid grid-cols-1 gap-6 lg:grid-cols-3">
-        <StatsChartCard
-          title="روند بازدید سالانه"
-          description="نمایش جزئیات رشد و فراز و فرود بازدید در طول سال."
-          className="lg:col-span-2"
-        >
-          <BeautifulLineChart data={data} />
-        </StatsChartCard>
-
-        <StatsChartCard
-          title="مقایسه با سال قبل"
-          description="بررسی وضعیت امسال نسبت به سال گذشته در هر ماه."
-        >
-          <DualLineChart data={data} />
-        </StatsChartCard>
-      </div>
-
-      <div className="grid grid-cols-1 gap-6 lg:grid-cols-2">
-        <StatsChartCard
-          title="سهم هر ماه از بازدید سال (ستونی)"
-          description="توزیع بازدید بین ماه‌های مختلف به‌صورت نمودار میله‌ای."
-        >
-          <BarChart data={data} />
-        </StatsChartCard>
-
-        <StatsChartCard
-          title="سهم ماه‌ها به‌صورت دایره‌ای"
-          description="نمایش درصد سهم هر ماه از کل بازدید سال در قالب چارت دایره‌ای."
-        >
-          <DonutChart data={data} />
-        </StatsChartCard>
-      </div>
+      {analytics && (
+        <StatsChartsSection analytics={analytics} monthlyViews={data} />
+      )}
 
       {analytics && <AnalyticsLists analytics={analytics} />}
     </div>

@@ -1,7 +1,7 @@
 import { NextResponse } from "next/server";
 import { ZodError } from "zod";
 import { adminOnly } from "@/lib/middlewares/adminOnly";
-import { uploadToLiara } from "@/lib/uploadToLiara";
+import { uploadFileToStorage } from "@/lib/storage/storage.service";
 import { connectDB } from "@/lib/db";
 import Product from "@/models/Product";
 import { productRequestSchema } from "@/lib/validations/productValidator";
@@ -46,13 +46,13 @@ export async function POST(request: Request) {
     if (existing) {
       return NextResponse.json(
         { success: false, message: "این اسلاگ از قبل ثبت شده است" },
-        { status: 400 }
+        { status: 400 },
       );
     }
 
     let imageUrl: string | null = null;
     if (file) {
-      const { url } = await uploadToLiara(file, "products");
+      const { url } = await uploadFileToStorage(file, { folder: "products" });
       imageUrl = url;
     }
 
@@ -68,7 +68,7 @@ export async function POST(request: Request) {
         message: "✅ محصول با موفقیت اضافه شد",
         data: newProduct,
       },
-      { status: 201 }
+      { status: 201 },
     );
   } catch (error: any) {
     console.error("⛔ product POST error:", error);
@@ -76,7 +76,7 @@ export async function POST(request: Request) {
     if (error instanceof ZodError) {
       return NextResponse.json(
         { success: false, message: "ورودی نامعتبر است", error: error.format() },
-        { status: 400 }
+        { status: 400 },
       );
     }
 
@@ -87,7 +87,7 @@ export async function POST(request: Request) {
           error?.message ||
           "خطایی در سرور رخ داده است، لطفاً مجدداً تلاش کنید.",
       },
-      { status: 500 }
+      { status: 500 },
     );
   }
 }
