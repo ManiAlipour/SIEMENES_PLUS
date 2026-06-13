@@ -27,7 +27,7 @@ export const s3Client = new S3Client({
   },
   requestHandler: new NodeHttpHandler({
     httpsAgent: new https.Agent({
-      rejectUnauthorized: false, // این خط کلید حل مشکل فعلی توست
+      rejectUnauthorized: false,
     }),
   }),
   forcePathStyle: true,

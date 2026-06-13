@@ -31,7 +31,6 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
 
   const keywords: string[] = [
     "وبلاگ صنعتی",
-    "اتوماسیون صنعتی",
     ...(tags as string[]),
     String(post.title || "").slice(0, 60),
   ].filter(Boolean);

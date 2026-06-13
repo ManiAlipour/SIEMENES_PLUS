@@ -5,12 +5,11 @@ import BlogListClient from "./BlogListClient";
 const siteUrl = process.env.NEXT_PUBLIC_SITE_URL || "https://site-mohandesi.ir";
 
 export const metadata: Metadata = {
-  title: "وبلاگ | مقالات و اخبار صنعتی",
+  title: "وبلاگ | مقالات و اخبار",
   description:
-    "مقالات تخصصی اتوماسیون صنعتی، PLC، اینورتر، HMI و تجهیزات زیمنس. اخبار و راهنماهای فنی.",
+    "مقالات تخصصی PLC، اینورتر، HMI و تجهیزات زیمنس. اخبار و راهنماهای فنی.",
   keywords: [
     "وبلاگ صنعتی",
-    "اتوماسیون صنعتی",
     "PLC",
     "اینورتر",
     "HMI",
@@ -19,7 +18,7 @@ export const metadata: Metadata = {
   ],
   openGraph: {
     title: "وبلاگ | مقالات و اخبار صنعتی",
-    description: "مقالات تخصصی اتوماسیون صنعتی و تجهیزات زیمنس",
+    description: "مقالات تخصصی و تجهیزات زیمنس",
     type: "website",
     locale: "fa_IR",
     siteName: "زیمنس پلاس",

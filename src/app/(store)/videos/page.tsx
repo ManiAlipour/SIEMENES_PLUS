@@ -7,7 +7,7 @@ const siteUrl = process.env.NEXT_PUBLIC_SITE_URL || "https://site-mohandesi.ir";
 export const metadata: Metadata = {
   title: "ویدیوها | زیمنس پلاس",
   description:
-    "مجموعه ویدیوهای آموزشی و معرفی محصولات اتوماسیون صنعتی و تجهیزات زیمنس.",
+    "مجموعه ویدیوهای آموزشی و معرفی محصولات صنعتی و تجهیزات زیمنس.",
   openGraph: {
     title: "ویدیوها | زیمنس پلاس",
     description: "ویدیوهای آموزشی و معرفی محصولات صنعتی زیمنس",

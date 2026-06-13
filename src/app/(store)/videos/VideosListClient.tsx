@@ -52,7 +52,7 @@ export default function VideosListClient() {
           ویدیوها
         </h1>
         <p className="text-slate-600 max-w-xl mx-auto">
-          ویدیوهای آموزشی و معرفی محصولات اتوماسیون صنعتی
+          ویدیوهای آموزشی و معرفی محصولات صنعتی
         </p>
       </header>
 

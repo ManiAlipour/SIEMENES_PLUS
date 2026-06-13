@@ -46,8 +46,8 @@ export default function ContactUs() {
             </h2>
 
             <p className="text-slate-400 text-lg mb-10 leading-relaxed max-w-lg">
-              تیم فنی ما آماده پاسخگویی به سوالات شما در زمینه اتوماسیون صنعتی،
-              درایو و تجهیزات زیمنس می‌باشد.
+              تیم فنی ما آماده پاسخگویی به سوالات شما در زمینه ، درایو و تجهیزات
+              زیمنس می‌باشد.
             </p>
 
             {/* Contact Info Cards */}

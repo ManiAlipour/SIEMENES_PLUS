@@ -11,8 +11,8 @@ interface SeoProps {
 }
 
 export default function Seo({
-  title = "زیمنس پلاس | اتوماسیون و قطعات صنعتی",
-  description = "فروش و پشتیبانی تخصصی تجهیزات اتوماسیون صنعتی زیمنس و ارائه راهکارهای مهندسی.",
+  title = "زیمنس پلاس | قطعات صنعتی",
+  description = "فروش و پشتیبانی تخصصی تجهیزات زیمنس و ارائه راهکارهای مهندسی.",
   canonical,
   ogImage = "/images/logo.jpg",
   ogType = "website",

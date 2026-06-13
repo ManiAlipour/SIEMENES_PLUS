@@ -59,8 +59,8 @@ export default function LocationSection() {
             دفتر مرکزی <span className="text-cyan-600">زیمنس</span>
           </h2>
           <p className="text-slate-500 max-w-2xl mx-auto">
-            برای مشاوره حضوری و بازدید از جدیدترین تجهیزات اتوماسیون صنعتی،
-            مشتاق دیدار شما هستیم.
+            برای مشاوره حضوری و بازدید از جدیدترین تجهیزات ، مشتاق دیدار شما
+            هستیم.
           </p>
         </div>
 

@@ -27,7 +27,7 @@ export default function Footer() {
     "/api/categories",
     {
       initialData: { data: [], message: "در حال انتظار" },
-    }
+    },
   );
 
   return (
@@ -38,7 +38,10 @@ export default function Footer() {
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-12 gap-10 lg:gap-8 mb-12">
           {/* Column 1: Brand & Contact (Spans 4 cols on desktop) */}
           <div className="lg:col-span-4 space-y-6">
-            <Link href="/" className="flex items-center gap-2 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-cyan-400 focus-visible:ring-offset-2 focus-visible:ring-offset-slate-900 rounded-lg">
+            <Link
+              href="/"
+              className="flex items-center gap-2 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-cyan-400 focus-visible:ring-offset-2 focus-visible:ring-offset-slate-900 rounded-lg"
+            >
               <div className="relative w-10 h-10 rounded-lg overflow-hidden shrink-0">
                 <Image
                   src="/images/logo.jpg"
@@ -53,8 +56,8 @@ export default function Footer() {
               </span>
             </Link>
             <p className="text-slate-400 text-sm leading-relaxed max-w-sm">
-              ارائه دهنده پیشرفته‌ترین تجهیزات اتوماسیون صنعتی زیمنس و راهکارهای
-              مهندسی دقیق برای صنایع کشور.
+              ارائه دهنده پیشرفته‌ترین تجهیزات زیمنس و راهکارهای مهندسی دقیق
+              برای صنایع کشور.
             </p>
 
             {/* Contact Info with Icons */}
@@ -85,7 +88,10 @@ export default function Footer() {
           <div className="lg:col-span-2 lg:pl-4">
             <h3 className="font-bold text-white text-lg mb-6 relative inline-block">
               لینک‌های سریع
-              <span className="absolute -bottom-2 right-0 w-1/2 h-0.5 bg-cyan-500 rounded-full" aria-hidden />
+              <span
+                className="absolute -bottom-2 right-0 w-1/2 h-0.5 bg-cyan-500 rounded-full"
+                aria-hidden
+              />
             </h3>
             <ul className="space-y-3 text-sm" role="list">
               {[

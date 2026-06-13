@@ -7,20 +7,19 @@ import Script from "next/script";
 export const metadata: Metadata = {
   title: "فروشگاه محصولات | زیمنس پلاس",
   description:
-    "فروشگاه تخصصی تجهیزات اتوماسیون صنعتی، PLC، اینورتر، HMI و قطعات زیمنس. بهترین قیمت و پشتیبانی فنی حرفه‌ای.",
+    "فروشگاه تخصصی تجهیزات صنعتی، PLC، اینورتر، HMI و قطعات زیمنس. بهترین قیمت و پشتیبانی فنی حرفه‌ای.",
   keywords: [
     "فروشگاه محصولات صنعتی",
     "PLC زیمنس",
     "اینورتر صنعتی",
     "HMI",
-    "اتوماسیون صنعتی",
     "قطعات زیمنس",
     "تجهیزات صنعتی",
   ],
   openGraph: {
     title: "فروشگاه محصولات | زیمنس پلاس",
     description:
-      "فروشگاه تخصصی تجهیزات اتوماسیون صنعتی، PLC، اینورتر، HMI و قطعات زیمنس",
+      "فروشگاه تخصصی تجهیزات صنعتی، PLC، اینورتر، HMI و قطعات زیمنس",
     type: "website",
     locale: "fa_IR",
     siteName: "زیمنس پلاس",
@@ -39,7 +38,7 @@ export const metadata: Metadata = {
     card: "summary_large_image",
     title: "فروشگاه محصولات | زیمنس پلاس",
     description:
-      "فروشگاه تخصصی تجهیزات اتوماسیون صنعتی، PLC، اینورتر، HMI و قطعات زیمنس",
+      "فروشگاه تخصصی تجهیزات صنعتی، PLC، اینورتر، HMI و قطعات زیمنس",
     images: [
       `${
         process.env.NEXT_PUBLIC_SITE_URL || "https://site-mohandesi.ir"
@@ -68,7 +67,7 @@ function generateJsonLd(products: any[] = []) {
     "@type": "CollectionPage",
     name: "فروشگاه محصولات زیمنس پلاس",
     description:
-      "فروشگاه تخصصی تجهیزات اتوماسیون صنعتی، PLC، اینورتر، HMI و قطعات زیمنس",
+      "فروشگاه تخصصی تجهیزات صنعتی، PLC، اینورتر، HMI و قطعات زیمنس",
     url: `${
       process.env.NEXT_PUBLIC_SITE_URL || "https://siemensplus1.ir"
     }/shop`,

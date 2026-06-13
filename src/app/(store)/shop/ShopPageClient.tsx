@@ -113,9 +113,9 @@ export default function ShopPageClient() {
     () => ({
       "@context": "https://schema.org",
       "@type": "CollectionPage",
-      name: "فروشگاه محصولات زیمنس | تجهیزات اتوماسیون صنعتی",
+      name: "فروشگاه محصولات زیمنس | تجهیزات صنعتی",
       description:
-        "لیست کامل PLC، HMI، درایو و تجهیزات اتوماسیون صنعتی زیمنس با قیمت روز و ارسال فوری.",
+        "لیست کامل PLC، HMI، درایو و تجهیزات صنعتی زیمنس با قیمت روز و ارسال فوری.",
       mainEntity: products?.map((p) => ({
         "@type": "Product",
         name: p.name,
@@ -172,7 +172,7 @@ export default function ShopPageClient() {
               </h1>
 
               <p className="text-lg md:text-xl lg:text-2xl text-gray-700 max-w-3xl mx-auto leading-relaxed font-medium">
-                کامل‌ترین مرجع فروش تجهیزات اتوماسیون صنعتی
+                کامل‌ترین مرجع فروش تجهیزات صنعتی
                 <br />
                 <span className="text-primary font-bold">
                   ارسال فوری

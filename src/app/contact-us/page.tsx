@@ -4,9 +4,9 @@ import ContactPageClient from "./ContactPageClient";
 const baseUrl = process.env.NEXT_PUBLIC_SITE_URL || "https://site-mohandesi.ir";
 
 export const metadata: Metadata = {
-  title: "تماس با ما | زیمنس پلاس | اتوماسیون و قطعات صنعتی",
+  title: "تماس با ما | زیمنس پلاس | قطعات صنعتی",
   description:
-    "تماس با تیم فنی زیمنس پلاس: تلفن 09199883772، آدرس قزوین شهر صنعتی البرز. پشتیبانی و مشاوره تخصصی تجهیزات اتوماسیون صنعتی.",
+    "تماس با تیم فنی زیمنس پلاس: تلفن 09199883772، آدرس قزوین شهر صنعتی البرز. پشتیبانی و مشاوره تخصصی تجهیزات صنعتی.",
   keywords: [
     "تماس زیمنس پلاس",
     "پشتیبانی فنی زیمنس",

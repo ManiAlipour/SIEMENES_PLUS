@@ -11,14 +11,13 @@ export const viewport: Viewport = {
 
 export const metadata: Metadata = {
   metadataBase: new URL("https://site-mohandesi.ir"),
-  title: "زیمنس پلاس | اتوماسیون و قطعات صنعتی",
+  title: "زیمنس پلاس | قطعات",
   description:
-    "فروش و پشتیبانی تخصصی تجهیزات اتوماسیون صنعتی زیمنس و ارائه راهکارهای مهندسی. PLC، اینورتر، HMI و قطعات صنعتی.",
+    "فروش و پشتیبانی تخصصی تجهیزات زیمنس و ارائه راهکارهای مهندسی. PLC، اینورتر، HMI و قطعات .",
 
   keywords: [
     "زیمنس",
     "PLC",
-    "اتوماسیون صنعتی",
     "اینورتر",
     "HMI",
     "قطعات صنعتی",
@@ -32,9 +31,9 @@ export const metadata: Metadata = {
     locale: "fa_IR",
     url: "https://siemenes-plus.ir",
     siteName: "زیمنس پلاس",
-    title: "زیمنس پلاس | اتوماسیون و قطعات صنعتی",
+    title: "زیمنس پلاس | قطعات",
     description:
-      "فروش و پشتیبانی تخصصی تجهیزات اتوماسیون صنعتی زیمنس و ارائه راهکارهای مهندسی",
+      "فروش و پشتیبانی تخصصی تجهیزات زیمنس و ارائه راهکارهای مهندسی",
     images: [
       {
         url: "/images/logo.jpg",
@@ -54,8 +53,8 @@ export const metadata: Metadata = {
   },
   twitter: {
     card: "summary_large_image",
-    title: "زیمنس پلاس | اتوماسیون و قطعات صنعتی",
-    description: "فروش و پشتیبانی تخصصی تجهیزات اتوماسیون صنعتی زیمنس",
+    title: "زیمنس پلاس | قطعات",
+    description: "فروش و پشتیبانی تخصصی تجهیزات زیمنس",
     images: ["/images/logo.jpg"],
   },
   robots: {

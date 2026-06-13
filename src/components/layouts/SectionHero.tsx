@@ -21,32 +21,22 @@ const SLIDES: Slide[] = [
   {
     id: 1,
     tag: "Industrial Automation",
-    title: "هوشمندی در تعمیر و نگهداری",
-    highlight: "ماشین آلات CNC",
-    description:
-      "کنترل دقیق خطوط تولید با تجهیزات اورجینال زیمنس. پایدار، سریع و قابل‌اعتماد.",
-    image: "/images/hero-industrial-solder.jpg",
+    title: "فروش و تامین",
+    highlight: "تجهیزات زیمنس",
+    description: `فروش تجهیزات اصلی SIEMENS به همراه ضمانت اصالت و راه اندازی همراه با پشتیبانی تخصصی`,
+    image: "/images/hero2.jpg",
     accent: "cyan",
   },
   {
     id: 2,
     tag: "Drive Technology",
-    title: "کنترل بی‌نقص",
-    highlight: "سیستم‌های محرکه",
-    description:
-      "درایوهای SINAMICS با راندمان بالا و عملکرد پایدار برای صنایع سنگین.",
-    image: "/images/section-one-image.jpg",
+    title: "تعمیر و نگه داری",
+    highlight: "تجهیزات زیمنس",
+    description: `تعمیرات تخصصی سیستم های siemens: \n 
+    کنترل، درایو، موتور، انکودر، خط کش و ...
+    `,
+    image: "/images/hero1.jpg",
     accent: "emerald",
-  },
-  {
-    id: 3,
-    tag: "Technical Support",
-    title: "پشتیبانی مهندسی",
-    highlight: "در تمام مسیر",
-    description:
-      "از انتخاب تجهیز تا راه‌اندازی و تعمیرات تخصصی در کنار شما هستیم.",
-    image: "/images/section-two-image.jpg",
-    accent: "amber",
   },
 ];
 
@@ -73,14 +63,8 @@ export default function HeroSection() {
     setIndex((i + SLIDES.length) % SLIDES.length);
   }, []);
 
-  const next = useCallback(
-    () => goTo(index + 1),
-    [index, goTo]
-  );
-  const prev = useCallback(
-    () => goTo(index - 1),
-    [index, goTo]
-  );
+  const next = useCallback(() => goTo(index + 1), [index, goTo]);
+  const prev = useCallback(() => goTo(index - 1), [index, goTo]);
 
   /* Preload next images for smooth transitions */
   useEffect(() => {
@@ -94,7 +78,10 @@ export default function HeroSection() {
   /* Autoplay: pause when tab hidden or user hovers */
   useEffect(() => {
     if (isPaused) return;
-    if (typeof document !== "undefined" && document.visibilityState !== "visible")
+    if (
+      typeof document !== "undefined" &&
+      document.visibilityState !== "visible"
+    )
       return;
 
     const id = setInterval(next, AUTOPLAY_MS);
@@ -107,7 +94,8 @@ export default function HeroSection() {
       else setIsPaused(false);
     };
     document.addEventListener("visibilitychange", handleVisibility);
-    return () => document.removeEventListener("visibilitychange", handleVisibility);
+    return () =>
+      document.removeEventListener("visibilitychange", handleVisibility);
   }, []);
 
   /* Keyboard navigation */
@@ -122,7 +110,7 @@ export default function HeroSection() {
 
   return (
     <section
-      className="relative h-[calc(100dvh-64px)] min-h-[520px] bg-slate-950 overflow-hidden group/hero"
+      className="relative h-[calc(100dvh)] min-h-[520px] bg-slate-950 overflow-hidden group/hero"
       onMouseEnter={() => setIsPaused(true)}
       onMouseLeave={() => setIsPaused(false)}
     >
@@ -205,14 +193,14 @@ export default function HeroSection() {
           <button
             onClick={prev}
             aria-label="اسلاید قبلی"
-            className="w-12 h-12 rounded-full bg-white/10 border border-white/20 text-white hover:bg-white hover:text-black transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white focus-visible:ring-offset-2 focus-visible:ring-offset-slate-900"
+            className="w-12 h-12 rounded-full bg-white/10 border border-white/20 text-white hover:bg-white hover:text-black transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white focus-visible:ring-offset-2 focus-visible:ring-offset-slate-900 flex justify-center items-center"
           >
             <FiChevronRight />
           </button>
           <button
             onClick={next}
             aria-label="اسلاید بعدی"
-            className="w-12 h-12 rounded-full bg-white/10 border border-white/20 text-white hover:bg-white hover:text-black transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white focus-visible:ring-offset-2 focus-visible:ring-offset-slate-900"
+            className="w-12 h-12 rounded-full bg-white/10 border border-white/20 text-white hover:bg-white hover:text-black transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white focus-visible:ring-offset-2 focus-visible:ring-offset-slate-900 flex justify-center items-center"
           >
             <FiChevronLeft />
           </button>

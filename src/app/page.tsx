@@ -6,13 +6,13 @@ import CategoriesSection from "@/components/features/shop/TopCategoriesSection";
 import CategoryHighlightsSection from "@/components/layouts/CategoryHighlightsSection";
 
 export const metadata: Metadata = {
-  title: "زیمنس پلاس | اتوماسیون و قطعات صنعتی | فروش و تعمیرات تخصصی",
+  title: "زیمنس پلاس | قطعات | فروش و تعمیرات تخصصی",
   description:
-    "فروش و پشتیبانی تخصصی تجهیزات اتوماسیون صنعتی زیمنس. PLC، اینورتر، HMI، درایو و قطعات صنعتی با بهترین قیمت و گارانتی.",
+    "فروش و پشتیبانی تخصصی تجهیزات زیمنس. PLC، اینورتر، HMI، درایو و قطعات با بهترین قیمت و گارانتی.",
   openGraph: {
-    title: "زیمنس پلاس | اتوماسیون و قطعات صنعتی",
+    title: "زیمنس پلاس | قطعات",
     description:
-      "فروش و تعمیرات تخصصی تجهیزات زیمنس. PLC، اینورتر، HMI و قطعات صنعتی.",
+      "فروش و تعمیرات تخصصی تجهیزات زیمنس. PLC، اینورتر، HMI و قطعات.",
     url: "/",
   },
   alternates: { canonical: "/" },

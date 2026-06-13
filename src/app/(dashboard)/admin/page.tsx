@@ -147,7 +147,9 @@ export default function AdminDashboardPage() {
               </Link>
               <div className="hidden md:flex items-center gap-2 px-4 py-2 bg-primary/10 rounded-xl">
                 <FiActivity className="w-5 h-5 text-primary" />
-                <span className="text-sm font-semibold text-primary">آنلاین</span>
+                <span className="text-sm font-semibold text-primary">
+                  آنلاین
+                </span>
               </div>
             </div>
           </div>
@@ -282,15 +284,6 @@ export default function AdminDashboardPage() {
             </div>
           </div>
         </motion.section>
-
-        <motion.div
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ delay: 0.3, duration: 0.5 }}
-          className="mb-8"
-        >
-          <RecentActionsWidget />
-        </motion.div>
 
         <motion.div
           initial={{ opacity: 0, y: 20 }}

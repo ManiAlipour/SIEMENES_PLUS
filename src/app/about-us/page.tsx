@@ -4,7 +4,7 @@ import AboutPageClient from "./AboutPageClient";
 const baseUrl = process.env.NEXT_PUBLIC_SITE_URL || "https://site-mohandesi.ir";
 
 export const metadata: Metadata = {
-  title: "درباره ما | زیمنس پلاس | اتوماسیون و قطعات صنعتی",
+  title: "درباره ما | زیمنس پلاس | قطعات صنعتی",
   description:
     "شرکت Siemens Plus با ترکیب دقت مهندسی و طراحی لوکس صنعتی، در زمینه فروش و تعمیرات تخصصی قطعات زیمنس، سیستم‌های کنترل، درایوها و انکودرها فعالیت می‌کند.",
   keywords: [
@@ -12,7 +12,6 @@ export const metadata: Metadata = {
     "تیم فنی زیمنس",
     "تعمیرات تخصصی زیمنس",
     "فروش قطعات صنعتی",
-    "اتوماسیون صنعتی",
   ],
   openGraph: {
     title: "درباره ما | زیمنس پلاس",

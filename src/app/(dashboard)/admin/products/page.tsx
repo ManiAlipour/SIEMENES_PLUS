@@ -10,29 +10,26 @@ import AddProductModal from "@/components/layouts/dash/admin/addProductModal";
 import toast from "react-hot-toast";
 import ProductTable from "@/components/layouts/dash/admin/ProductTable";
 
-/* -----------------------
-   Main Products Page
------------------------- */
 export default function ProductsPage() {
   const [query, setQuery] = useState("");
   const [products, setProducts] = useState<any[]>([]);
   const [loading, setLoading] = useState(false);
   const [addProductModalOpen, setAddProductModalOpen] = useState(false);
 
+  const fetchProducts = async () => {
+    try {
+      setLoading(true);
+      const res = await fetch(`/api/products?limit=15`);
+      const { items } = await res.json();
+      setProducts(items);
+      setLoading(false);
+    } catch (err) {
+      console.error(err);
+      setLoading(false);
+    }
+  };
   // Fetch products on mount
   useEffect(() => {
-    const fetchProducts = async () => {
-      try {
-        setLoading(true);
-        const res = await fetch(`/api/products?limit=15`);
-        const { items } = await res.json();
-        setProducts(items);
-        setLoading(false);
-      } catch (err) {
-        console.error(err);
-        setLoading(false);
-      }
-    };
     fetchProducts();
   }, []);
 
@@ -46,7 +43,7 @@ export default function ProductsPage() {
   }
 
   const filtered = products.filter((p: any) =>
-    p.name.toLowerCase().includes(query.toLowerCase().trim())
+    p.name.toLowerCase().includes(query.toLowerCase().trim()),
   );
 
   const addProductHandler = () => {
@@ -135,7 +132,7 @@ export default function ProductsPage() {
       </div>
 
       {/* ===== Product Table ===== */}
-      <ProductTable products={filtered} />
+      <ProductTable products={filtered} onRefresh={fetchProducts} />
     </div>
   );
 }

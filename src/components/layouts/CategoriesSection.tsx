@@ -8,7 +8,6 @@ import { motion } from "framer-motion";
 import type { Category } from "@/types/category";
 
 const defaultCategories = [
-  { title: "اتوماسیون صنعتی", image: "/images/categories/automation.png" },
   { title: "الکترونیک صنعتی", image: "/images/categories/electronics.png" },
   { title: "موتور و کنترل", image: "/images/categories/motor.png" },
   { title: "ابزار دقیق", image: "/images/categories/instrumentation.png" },

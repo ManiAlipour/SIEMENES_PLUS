@@ -15,7 +15,7 @@ interface ITokenData {
 }
 
 export const transporter = nodemailer.createTransport({
-  host: "smtp.gmail.com",
+  host: process.env.SMTP_HOST!,
   port: 587,
   auth: {
     user: process.env.SMTP_USER!,
