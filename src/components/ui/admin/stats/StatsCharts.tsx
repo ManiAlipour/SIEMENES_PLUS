@@ -24,7 +24,7 @@ ChartJS.register(
   ArcElement,
   Tooltip,
   Legend,
-  Filler
+  Filler,
 );
 
 export type MonthlyView = {
@@ -206,36 +206,6 @@ export function BeautifulLineChart({ data }: { data: MonthlyView[] }) {
               g.addColorStop(1, "rgba(59,130,246,0)");
               return g;
             },
-          },
-        ],
-      }}
-    />
-  );
-}
-
-export function DualLineChart({ data }: { data: MonthlyView[] }) {
-  return (
-    <Line
-      options={baseLineOptions}
-      data={{
-        labels: data.map((d) => d.month),
-        datasets: [
-          {
-            label: "امسال",
-            data: data.map((d) => d.views),
-            borderColor: "#22c55e",
-            borderWidth: 3,
-            tension: 0.4,
-            pointRadius: 0,
-          },
-          {
-            label: "سال قبل",
-            data: data.map((d) => Math.floor(d.views * 0.7)),
-            borderColor: "#94a3b8",
-            borderDash: [6, 4],
-            borderWidth: 2,
-            tension: 0.4,
-            pointRadius: 0,
           },
         ],
       }}
@@ -702,4 +672,3 @@ export function AreaChart({
     />
   );
 }
-

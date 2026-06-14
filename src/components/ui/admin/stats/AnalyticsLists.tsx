@@ -14,7 +14,7 @@ type PopularProduct = {
   slug?: string;
 };
 
-export type OverviewStats = {
+type OverviewStats = {
   totalViews: number;
   totalProductViews: number;
   totalSearches: number;
@@ -113,7 +113,9 @@ function RankList({
     <div className="rounded-2xl border border-slate-200 bg-white p-4 shadow-sm h-full">
       <p className="mb-4 text-xs font-semibold text-slate-700">{title}</p>
       {items.length === 0 ? (
-        <p className="text-[11px] text-slate-400 py-4 text-center">{emptyText}</p>
+        <p className="text-[11px] text-slate-400 py-4 text-center">
+          {emptyText}
+        </p>
       ) : (
         <ul className="space-y-2.5">
           {items.map((item, index) => (
@@ -134,7 +136,9 @@ function RankList({
               <div className="h-1.5 overflow-hidden rounded-full bg-slate-100">
                 <div
                   className="h-full rounded-full bg-gradient-to-l from-cyan-500 to-cyan-400 transition-all"
-                  style={{ width: `${Math.max((item.total / peak) * 100, 4)}%` }}
+                  style={{
+                    width: `${Math.max((item.total / peak) * 100, 4)}%`,
+                  }}
                 />
               </div>
             </li>
