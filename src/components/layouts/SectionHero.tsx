@@ -24,22 +24,22 @@ const SLIDES: Slide[] = [
     tag: "Industrial Automation",
     title: "فروش و تامین",
     highlight: "تجهیزات زیمنس",
-    description: `فروش تجهیزات اصلی SIEMENS به همراه ضمانت اصالت و راه اندازی همراه با پشتیبانی تخصصی`,
+    description:
+      "فروش تجهیزات اصلی SIEMENS به همراه ضمانت اصالت و راه اندازی همراه با پشتیبانی تخصصی",
     image: "/images/hero2.jpg",
     accent: "cyan",
-    align: "left",
+    align: "right",
   },
   {
     id: 2,
     tag: "Drive Technology",
     title: "تعمیر و نگه داری",
     highlight: "تجهیزات زیمنس",
-    description: `تعمیرات تخصصی سیستم های siemens: \n 
-    کنترل، درایو، موتور، انکودر، خط کش و ...
-    `,
+    description: `تعمیرات تخصصی سیستم های siemens:
+کنترل، درایو، موتور، انکودر، خط کش و ...`,
     image: "/images/hero1.jpg",
     accent: "emerald",
-    align: "right",
+    align: "left",
   },
 ];
 
@@ -69,7 +69,6 @@ export default function HeroSection() {
   const next = useCallback(() => goTo(index + 1), [index, goTo]);
   const prev = useCallback(() => goTo(index - 1), [index, goTo]);
 
-  /* Preload next images for smooth transitions */
   useEffect(() => {
     SLIDES.forEach((s, i) => {
       if (i === 0) return;
@@ -78,7 +77,6 @@ export default function HeroSection() {
     });
   }, []);
 
-  /* Autoplay: pause when tab hidden or user hovers */
   useEffect(() => {
     if (isPaused) return;
     if (
@@ -101,7 +99,6 @@ export default function HeroSection() {
       document.removeEventListener("visibilitychange", handleVisibility);
   }, []);
 
-  /* Keyboard navigation */
   useEffect(() => {
     const handleKeyDown = (e: KeyboardEvent) => {
       if (e.key === "ArrowRight") prev();
@@ -117,7 +114,7 @@ export default function HeroSection() {
       onMouseEnter={() => setIsPaused(true)}
       onMouseLeave={() => setIsPaused(false)}
     >
-      {/* Background */}
+      {/* Background Layer */}
       <div className="absolute inset-0">
         <Image
           key={slide.id}
@@ -126,47 +123,52 @@ export default function HeroSection() {
           fill
           priority={index === 0}
           sizes="100vw"
-          className="object-cover brightness-[0.9] transition-opacity duration-500"
-          fetchPriority={index === 0 ? "high" : "auto"}
+          className="object-cover brightness-[0.8] transition-opacity duration-700"
         />
-        <div className="absolute inset-0 bg-gradient-to-br from-black/70 via-black/40 to-transparent" />
+        <div className="absolute inset-0 bg-gradient-to-br from-black/80 via-black/40 to-transparent" />
       </div>
 
-      {/* Content */}
-      <div className="relative z-10 h-full container mx-auto px-6 lg:px-24 flex items-center">
+      {/* Content Container */}
+      <div
+        className={`relative z-10 h-full container mx-auto px-6 lg:px-24 flex items-center
+        justify-center
+        ${slide.align === "right" ? "lg:justify-end" : "lg:justify-start"}`}
+      >
         <div
           key={slide.id}
-          className="max-w-3xl w-full rounded-2xl bg-black/40 border border-white/10 shadow-[0_20px_60px_rgba(0,0,0,0.45)] 
-          p-6 sm:p-8 lg:p-10 min-h-[400px] animate-fadeIn"
+          className="max-w-2xl w-full rounded-2xl bg-black/40 backdrop-blur-md border border-white/10 shadow-2xl
+          p-6 sm:p-10 min-h-[380px] animate-fadeIn text-right"
+          dir="rtl"
         >
           <span
-            className={`inline-flex mb-4 px-3 py-1 rounded text-xs font-bold tracking-widest uppercase border border-white/20 ${accentClass[slide.accent]}`}
+            className={`inline-flex mb-6 px-3 py-1 rounded text-xs font-bold tracking-widest uppercase border border-white/10 ${accentClass[slide.accent]}`}
           >
             {slide.tag}
           </span>
 
-          <h1 className="text-3xl sm:text-4xl lg:text-5xl xl:text-6xl font-black text-white leading-tight">
+          <h1 className="text-3xl sm:text-4xl lg:text-5xl xl:text-6xl font-black text-white leading-[1.2]">
             {slide.title}
-            <span className={`block ${accentHighlight[slide.accent]}`}>
+            <span className={`block mt-2 ${accentHighlight[slide.accent]}`}>
               {slide.highlight}
             </span>
           </h1>
 
-          <p className="mt-4 text-slate-200 text-base sm:text-lg leading-relaxed max-w-2xl">
+          <p className="mt-6 text-slate-200 text-base sm:text-lg leading-relaxed">
             {slide.description}
           </p>
 
-          <div className="mt-8 flex flex-col sm:flex-row gap-3">
+          <div className="mt-10 flex flex-wrap gap-4 justify-start">
             <Link
               href="/shop"
-              className={`inline-flex items-center justify-center gap-2 px-7 py-3.5 rounded-lg font-bold text-white shadow-xl transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white focus-visible:ring-offset-2 focus-visible:ring-offset-slate-900 ${accentClass[slide.accent]}`}
+              className={`inline-flex items-center justify-center gap-3 px-8 py-4 rounded-xl font-bold text-white shadow-lg transition-all hover:scale-105 active:scale-95 ${accentClass[slide.accent]}`}
             >
               مشاهده محصولات
-              <FiArrowLeft />
+              <FiArrowLeft className="text-xl" />
             </Link>
+
             <Link
               href="/contact-us"
-              className="inline-flex items-center justify-center px-7 py-3.5 rounded-lg border border-white/30 bg-white/10 text-white/90 hover:bg-white/20 transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white focus-visible:ring-offset-2 focus-visible:ring-offset-slate-900"
+              className="inline-flex items-center justify-center px-8 py-4 rounded-xl border border-white/30 bg-white/5 text-white font-bold hover:bg-white/10 transition-all backdrop-blur-sm"
             >
               مشاوره تخصصی
             </Link>
@@ -174,39 +176,34 @@ export default function HeroSection() {
         </div>
       </div>
 
-      {/* Controls */}
-      <div className="absolute bottom-8 right-8 z-20 flex items-center gap-4">
-        <div className="flex gap-1.5" role="tablist" aria-label="انتخاب اسلاید">
+      {/* Navigation Indicators */}
+      <div className="absolute bottom-10 left-1/2 -translate-x-1/2 lg:left-auto lg:right-12 lg:translate-x-0 z-20 flex items-center gap-6">
+        <div className="flex gap-2" role="tablist">
           {SLIDES.map((_, i) => (
             <button
               key={i}
-              role="tab"
-              aria-selected={i === index}
-              aria-label={`اسلاید ${i + 1}`}
               onClick={() => goTo(i)}
-              className={`h-2 rounded-full transition-all duration-300 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white focus-visible:ring-offset-2 focus-visible:ring-offset-slate-900 ${
+              className={`h-1.5 rounded-full transition-all duration-500 ${
                 i === index
-                  ? "w-8 bg-white"
-                  : "w-2 bg-white/40 hover:bg-white/60"
+                  ? "w-10 bg-white"
+                  : "w-3 bg-white/30 hover:bg-white/50"
               }`}
             />
           ))}
         </div>
 
-        <div className="flex gap-2">
+        <div className="hidden sm:flex gap-3">
           <button
             onClick={prev}
-            aria-label="اسلاید قبلی"
-            className="w-12 h-12 rounded-full bg-white/10 border border-white/20 text-white hover:bg-white hover:text-black transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white focus-visible:ring-offset-2 focus-visible:ring-offset-slate-900 flex justify-center items-center"
+            className="w-11 h-11 rounded-full bg-black/20 border border-white/10 text-white hover:bg-white hover:text-black transition-all flex justify-center items-center backdrop-blur-md"
           >
-            <FiChevronRight />
+            <FiChevronRight size={20} />
           </button>
           <button
             onClick={next}
-            aria-label="اسلاید بعدی"
-            className="w-12 h-12 rounded-full bg-white/10 border border-white/20 text-white hover:bg-white hover:text-black transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white focus-visible:ring-offset-2 focus-visible:ring-offset-slate-900 flex justify-center items-center"
+            className="w-11 h-11 rounded-full bg-black/20 border border-white/10 text-white hover:bg-white hover:text-black transition-all flex justify-center items-center backdrop-blur-md"
           >
-            <FiChevronLeft />
+            <FiChevronLeft size={20} />
           </button>
         </div>
       </div>

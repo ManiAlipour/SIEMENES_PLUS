@@ -6,7 +6,7 @@ const embeddedProductSchema = new Schema(
     slug: { type: String, required: true },
     blockId: { type: String, required: true },
   },
-  { _id: false }
+  { _id: false },
 );
 
 const BlogPostSchema = new Schema(
@@ -61,12 +61,14 @@ const BlogPostSchema = new Schema(
       trim: true,
     },
   },
-  { timestamps: true }
+  { timestamps: true },
 );
 
-BlogPostSchema.index({ slug: 1 });
-BlogPostSchema.index({ status: 1, createdAt: -1 });
-BlogPostSchema.index({ tags: 1 });
+if (!models.BlogPost) {
+  BlogPostSchema.index({ slug: 1 });
+  BlogPostSchema.index({ status: 1, createdAt: -1 });
+  BlogPostSchema.index({ tags: 1 });
+}
 
 const BlogPost = models.BlogPost || mongoose.model("BlogPost", BlogPostSchema);
 export default BlogPost;
@@ -98,15 +100,26 @@ export function sanitizeBlogPost(post: any) {
     video: video ?? "",
     status,
     embeddedProducts: embeddedProducts ?? [],
-    tags: Array.isArray(tags) ? tags.filter((t: any) => typeof t === "string" && t.trim()) : [],
+    tags: Array.isArray(tags)
+      ? tags.filter((t: any) => typeof t === "string" && t.trim())
+      : [],
     createdAt,
     updatedAt,
   };
 }
 
 export function sanitizeBlogPostSummary(post: any) {
-  const { _id, title, slug, excerpt, coverImage, video, status, tags, createdAt } =
-    post;
+  const {
+    _id,
+    title,
+    slug,
+    excerpt,
+    coverImage,
+    video,
+    status,
+    tags,
+    createdAt,
+  } = post;
   return {
     _id,
     title,
@@ -115,7 +128,9 @@ export function sanitizeBlogPostSummary(post: any) {
     coverImage: coverImage ?? "",
     video: video ?? "",
     status,
-    tags: Array.isArray(tags) ? tags.filter((t: any) => typeof t === "string" && t.trim()) : [],
+    tags: Array.isArray(tags)
+      ? tags.filter((t: any) => typeof t === "string" && t.trim())
+      : [],
     createdAt,
   };
 }

@@ -13,9 +13,7 @@ export interface IComment extends Document {
   updatedAt: Date;
 }
 
-/**
- * Comment schema
- */
+
 const CommentSchema = new Schema<IComment>(
   {
     user: {
