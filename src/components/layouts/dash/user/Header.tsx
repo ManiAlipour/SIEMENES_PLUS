@@ -3,7 +3,6 @@
 import Image from "next/image";
 import Link from "next/link";
 import { Menu, Bell, Search, User, Settings } from "lucide-react";
-import { motion } from "framer-motion";
 import { useState } from "react";
 import { useSelector } from "react-redux";
 import { RootState } from "@/store";
@@ -13,7 +12,6 @@ export default function Header({
 }: {
   onToggleSidebar?: () => void;
 }) {
-  const [notifications] = useState(2);
   const user = useSelector((state: RootState) => state.user);
 
   return (
@@ -54,10 +52,8 @@ export default function Header({
         {/* Right Section */}
         <div className="flex items-center gap-3">
           {/* User Menu */}
-          <Link
-            href="/dashboard/profile"
-            className="flex items-center gap-3 pl-3 border-l border-gray-200"
-          >
+          {/* User Menu */}
+          <div className="flex items-center gap-3 pl-3 border-l border-gray-200">
             <div className="hidden sm:flex flex-col items-end">
               <span className="text-sm font-semibold text-gray-900">
                 {user.name || "کاربر"}
@@ -66,6 +62,7 @@ export default function Header({
                 {user.email || "user@example.com"}
               </span>
             </div>
+
             <div className="relative group">
               <button
                 className="w-11 h-11 sm:w-10 sm:h-10 rounded-xl bg-gradient-to-br from-cyan-500 to-blue-600 flex items-center justify-center shadow-md hover:shadow-lg active:shadow-md active:scale-95 transition-all touch-manipulation"
@@ -73,6 +70,7 @@ export default function Header({
               >
                 <User className="w-5 h-5 text-white" />
               </button>
+
               {/* Dropdown Menu */}
               <div className="absolute left-0 top-full mt-2 w-48 bg-white rounded-xl shadow-xl border border-gray-200 opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-200">
                 <Link
@@ -82,6 +80,7 @@ export default function Header({
                   <User className="w-4 h-4 text-gray-600" />
                   <span className="text-sm text-gray-700">پروفایل</span>
                 </Link>
+
                 <Link
                   href="/dashboard/settings"
                   className="flex items-center gap-2 px-4 py-2 hover:bg-gray-50 rounded-b-xl transition-colors"
@@ -91,7 +90,7 @@ export default function Header({
                 </Link>
               </div>
             </div>
-          </Link>
+          </div>
         </div>
       </div>
     </header>

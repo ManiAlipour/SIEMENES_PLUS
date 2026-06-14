@@ -28,6 +28,7 @@ import {
 
 import { useCloseOnClickOutside } from "@/hooks/useCloseOnClickOutside";
 import type { BlogRichEditorProps, FormatState } from "./types";
+
 import {
   buildAparatEmbedHtml,
   getFormatState,
@@ -39,14 +40,13 @@ import {
   wrapProductEmbed,
 } from "./utils";
 
-// groups
-import TextFormatGroup from ".//groups/TextFormatGroup";
-import BlockFormatGroup from ".//groups/BlockFormatGroup";
-import AlignGroup from ".//groups/AlignGroup";
-import ListGroup from ".//groups/ListGroup";
-import TableGroup from ".//groups/TableGroup";
-import InsertGroup from ".//groups/InsertGroup";
-import ToolbarButton from ".//ToolbarButton";
+import TextFormatGroup from "./groups/TextFormatGroup";
+import BlockFormatGroup from "./groups/BlockFormatGroup";
+import AlignGroup from "./groups/AlignGroup";
+import ListGroup from "./groups/ListGroup";
+import TableGroup from "./groups/TableGroup";
+import InsertGroup from "./groups/InsertGroup";
+import ToolbarButton from "./ToolbarButton";
 
 export default function BlogRichEditor({
   value,
@@ -58,6 +58,8 @@ export default function BlogRichEditor({
   const editorRef = useRef<HTMLDivElement>(null);
   const tablePickerRef = useRef<HTMLDivElement>(null);
   const linkPopoverRef = useRef<HTMLDivElement>(null);
+  const aparatPopoverRef = useRef<HTMLDivElement>(null);
+
   const isInitialMount = useRef(true);
 
   const [formatState, setFormatState] =
@@ -66,62 +68,84 @@ export default function BlogRichEditor({
   const [showProductPicker, setShowProductPicker] = useState(false);
   const [showTablePicker, setShowTablePicker] = useState(false);
   const [showLinkPopover, setShowLinkPopover] = useState(false);
+  const [showAparatPopover, setShowAparatPopover] = useState(false);
 
   const [linkUrl, setLinkUrl] = useState("");
+  const [aparatUrl, setAparatUrl] = useState("");
 
   const [tableRows, setTableRows] = useState(3);
   const [tableCols, setTableCols] = useState(3);
 
   const [uploadingImage, setUploadingImage] = useState(false);
-  const [showAparatPopover, setShowAparatPopover] = useState(false);
-  const [aparatUrl, setAparatUrl] = useState("");
-  const aparatPopoverRef = useRef<HTMLDivElement>(null);
 
   // ============== Change emitter ==============
   const emitChange = useCallback(() => {
     const el = editorRef.current;
     if (!el) return;
+
     onChange(sanitizeHtml(el.innerHTML));
   }, [onChange]);
 
+  // ============== Remove media/embed button handler ==============
   useEffect(() => {
-    const editor = editorRef.current;
-    if (!editor) return;
-
     function handleRemoveClick(e: MouseEvent) {
+      const editor = editorRef.current;
+      if (!editor) return;
+
       if (!(e.target instanceof HTMLElement)) return;
+
       const btn = e.target.closest(".blog-media-remove-btn");
       if (!btn) return;
 
       const wrapper =
         btn.closest(".blog-media-wrapper") ||
         btn.closest(".blog-embed-wrapper");
+
       if (wrapper && editor.contains(wrapper)) {
         wrapper.remove();
         emitChange();
       }
     }
 
-    editor.addEventListener("click", handleRemoveClick);
-    return () => editor.removeEventListener("click", handleRemoveClick);
-  }, [emitChange]);
-
-  useEffect(() => {
     const editor = editorRef.current;
     if (!editor) return;
 
+    editor.addEventListener("click", handleRemoveClick);
+
+    return () => {
+      editor.removeEventListener("click", handleRemoveClick);
+    };
+  }, [emitChange]);
+
+  // ============== Media selection visual feedback ==============
+  useEffect(() => {
     function handleMouseDown(e: MouseEvent) {
+      const editor = editorRef.current;
+      if (!editor) return;
+
       if (!(e.target instanceof HTMLElement)) return;
+
       const wrapper = e.target.closest(".blog-media-wrapper");
+
       if (wrapper && editor.contains(wrapper)) {
         e.preventDefault();
+
         wrapper.classList.add("blog-media-selected");
-        setTimeout(() => wrapper.classList.remove("blog-media-selected"), 140);
+
+        window.setTimeout(() => {
+          wrapper.classList.remove("blog-media-selected");
+        }, 140);
       }
     }
 
+    const editor = editorRef.current;
+    if (!editor) return;
+
     editor.addEventListener("mousedown", handleMouseDown);
-    return () => editor.removeEventListener("mousedown", handleMouseDown);
+
+    return () => {
+      editor.removeEventListener("mousedown", handleMouseDown);
+    };
   }, []);
 
   const updateFormatState = useCallback(() => {
@@ -129,6 +153,7 @@ export default function BlogRichEditor({
     if (!el) return;
 
     const active = document.activeElement;
+
     if (!active || !el.contains(active)) return;
 
     setFormatState(getFormatState(editorRef));
@@ -137,19 +162,25 @@ export default function BlogRichEditor({
   useCloseOnClickOutside(showTablePicker, tablePickerRef, () =>
     setShowTablePicker(false),
   );
+
   useCloseOnClickOutside(showLinkPopover, linkPopoverRef, () =>
     setShowLinkPopover(false),
   );
+
   useCloseOnClickOutside(showAparatPopover, aparatPopoverRef, () =>
     setShowAparatPopover(false),
   );
 
+  // ============== Selection state listener ==============
   useEffect(() => {
     const el = editorRef.current;
     if (!el) return;
 
     const onSelectionChange = () => {
-      if (el.contains(document.getSelection()?.anchorNode ?? null)) {
+      const selection = document.getSelection();
+      const anchorNode = selection?.anchorNode;
+
+      if (anchorNode && el.contains(anchorNode)) {
         updateFormatState();
       }
     };
@@ -163,6 +194,7 @@ export default function BlogRichEditor({
     };
   }, [updateFormatState]);
 
+  // ============== Initial HTML setup ==============
   useEffect(() => {
     const el = editorRef.current;
     if (!el) return;
@@ -171,32 +203,40 @@ export default function BlogRichEditor({
       el.innerHTML = prepareHtmlForEditor(value || "");
       isInitialMount.current = false;
     }
-  }, []);
+  }, [value]);
 
+  // ============== Sync external value to editor ==============
   useEffect(() => {
     const el = editorRef.current;
     if (!el || isInitialMount.current) return;
+
     const active = document.activeElement;
+
     if (active === el || el.contains(active)) return;
+
     const prepared = prepareHtmlForEditor(value || "");
+
     if (prepared === el.innerHTML) return;
+
     el.innerHTML = prepared;
   }, [value]);
 
+  // ============== Input and paste handlers ==============
   useEffect(() => {
     const el = editorRef.current;
     if (!el) return;
 
-    el.addEventListener("input", emitChange);
+    const handlePaste = (e: ClipboardEvent) => {
+      e.preventDefault();
 
-    const handlePaste = (e: Event) => {
-      const ev = e as ClipboardEvent;
-      ev.preventDefault();
-      const text = ev.clipboardData?.getData("text/plain") ?? "";
+      const text = e.clipboardData?.getData("text/plain") ?? "";
+
       document.execCommand("insertText", false, text);
+
       emitChange();
     };
 
+    el.addEventListener("input", emitChange);
     el.addEventListener("paste", handlePaste);
 
     return () => {
@@ -209,7 +249,9 @@ export default function BlogRichEditor({
   const exec = useCallback(
     (cmd: string, v?: string) => {
       document.execCommand(cmd, false, v ?? undefined);
+
       editorRef.current?.focus();
+
       updateFormatState();
       emitChange();
     },
@@ -219,12 +261,14 @@ export default function BlogRichEditor({
   // ============== Actions ==============
   const undo = useCallback(() => {
     document.execCommand("undo");
+
     updateFormatState();
     emitChange();
   }, [updateFormatState, emitChange]);
 
   const redo = useCallback(() => {
     document.execCommand("redo");
+
     updateFormatState();
     emitChange();
   }, [updateFormatState, emitChange]);
@@ -232,26 +276,32 @@ export default function BlogRichEditor({
   const insertDivider = useCallback(() => {
     const el = editorRef.current;
     if (!el) return;
+
     insertHtmlAtCaret(
       el,
       '<hr style="margin: 20px 0; border: none; border-top: 1.5px solid #38bdf8;">',
     );
+
     updateFormatState();
     emitChange();
   }, [updateFormatState, emitChange]);
 
   const insertImage = useCallback(() => {
     const input = document.createElement("input");
+
     input.type = "file";
     input.accept = "image/jpeg,image/png,image/webp";
 
     input.onchange = async (e) => {
       const file = (e.target as HTMLInputElement).files?.[0];
+
       if (!file) return;
 
       setUploadingImage(true);
+
       try {
         const form = new FormData();
+
         form.append("file", file);
 
         const res = await fetch("/api/admin/upload/blog-image", {
@@ -260,11 +310,15 @@ export default function BlogRichEditor({
         });
 
         const data = await res.json();
+
         const el = editorRef.current;
         if (!el) return;
+
         if (data?.url) {
           const imageTag = `<img src="${data.url}" alt="" style="max-width:100%;height:auto;display:block;border-radius:9px;box-shadow:0 3px 8px #0001;" />`;
+
           insertHtmlAtCaret(el, wrapInsertedMedia(imageTag, "image"));
+
           emitChange();
           updateFormatState();
         }
@@ -278,16 +332,20 @@ export default function BlogRichEditor({
 
   const insertVideo = useCallback(() => {
     const input = document.createElement("input");
+
     input.type = "file";
     input.accept = "video/mp4,video/webm";
 
     input.onchange = async (e) => {
       const file = (e.target as HTMLInputElement).files?.[0];
+
       if (!file) return;
 
       setUploadingImage(true);
+
       try {
         const form = new FormData();
+
         form.append("file", file);
 
         const res = await fetch("/api/admin/upload/blog-video", {
@@ -296,11 +354,15 @@ export default function BlogRichEditor({
         });
 
         const data = await res.json();
+
         const el = editorRef.current;
         if (!el) return;
+
         if (data?.url) {
-          const videoTag = `<video src="${data.url}" controls style="max-width:100%;height:auto;display:block;border-radius:8px;box-shadow:0 2px 7px #0002;" />`;
+          const videoTag = `<video src="${data.url}" controls style="max-width:100%;height:auto;display:block;border-radius:8px;box-shadow:0 2px 7px #0002;"></video>`;
+
           insertHtmlAtCaret(el, wrapInsertedMedia(videoTag, "video"));
+
           emitChange();
           updateFormatState();
         }
@@ -315,11 +377,16 @@ export default function BlogRichEditor({
   const insertAparatEmbed = useCallback(() => {
     const url = aparatUrl.trim();
     const html = buildAparatEmbedHtml(url);
+
     const el = editorRef.current;
+
     if (!html || !el) return;
+
     insertHtmlAtCaret(el, html);
+
     setAparatUrl("");
     setShowAparatPopover(false);
+
     emitChange();
     updateFormatState();
   }, [aparatUrl, emitChange, updateFormatState]);
@@ -331,18 +398,23 @@ export default function BlogRichEditor({
         .slice(2, 9)}`;
 
       const div = document.createElement("div");
+
       div.className = "blog-product-embed";
       div.setAttribute("data-product-id", product._id);
       div.setAttribute("data-product-slug", product.slug);
       div.setAttribute("data-block-id", blockId);
       div.setAttribute("contenteditable", "false");
+
       div.style.cssText =
         "padding:18px 16px;margin:15px 0;background:#e0f2fe;border-radius:14px 8px 14px 8px;border:1.5px solid #7dd3fc;font-size:1.08em;font-weight:600;box-shadow:0 2px 12px #06b6d44a;";
+
       div.textContent = `📦 محصول: ${product.name}`;
 
       const el = editorRef.current;
       if (!el) return;
+
       insertHtmlAtCaret(el, wrapProductEmbed(div.outerHTML));
+
       emitChange();
       updateFormatState();
     },
@@ -355,6 +427,7 @@ export default function BlogRichEditor({
       const c = Math.max(TABLE_COLS_MIN, Math.min(TABLE_COLS_MAX, cols));
 
       const theadRow = "<tr>" + "<th></th>".repeat(c) + "</tr>";
+
       const tbodyRows = Array(r - 1)
         .fill(null)
         .map(() => "<tr>" + "<td></td>".repeat(c) + "</tr>")
@@ -364,9 +437,11 @@ export default function BlogRichEditor({
 
       const el = editorRef.current;
       if (!el) return;
+
       insertHtmlAtCaret(el, tableHtml);
 
       setShowTablePicker(false);
+
       updateFormatState();
       emitChange();
     },
@@ -375,10 +450,13 @@ export default function BlogRichEditor({
 
   const applyLink = useCallback(() => {
     const url = normalizeLinkUrl(linkUrl);
+
     const el = editorRef.current;
+
     if (!url || !el) return;
 
     const sel = window.getSelection();
+
     const hasSelection =
       sel &&
       !sel.isCollapsed &&
@@ -390,13 +468,18 @@ export default function BlogRichEditor({
     } else {
       insertHtmlAtCaret(
         el,
-        `<a href="${url.replace(/"/g, "&quot;")}" target="_blank" rel="noopener noreferrer">${url}</a>`,
+        `<a href="${url.replace(
+          /"/g,
+          "&quot;",
+        )}" target="_blank" rel="noopener noreferrer">${url}</a>`,
       );
+
       emitChange();
     }
 
     setLinkUrl("");
     setShowLinkPopover(false);
+
     editorRef.current?.focus();
   }, [linkUrl, exec, emitChange]);
 
@@ -432,6 +515,7 @@ export default function BlogRichEditor({
             btn={btn}
             icon={<CiUndo className={TOOLBAR_BTN_ICON} />}
           />
+
           <ToolbarButton
             onClick={redo}
             active={false}
@@ -532,6 +616,7 @@ export default function BlogRichEditor({
             className={BLUR_OVERLAY}
             onClick={() => setShowProductPicker(false)}
           />
+
           <div className="fixed inset-0 z-40 flex items-center justify-center p-2 sm:p-4">
             <BlogProductPickerModal
               onClose={() => setShowProductPicker(false)}

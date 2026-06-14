@@ -4,8 +4,7 @@ import Header from "../layouts/Header";
 import { usePathname } from "next/navigation";
 import ReduxProvider from "@/store";
 import { AuthProvider } from "./AuthProvider";
-import { useEffect } from "react";
-import toast from "react-hot-toast";
+import { Suspense, useEffect } from "react";
 import { ProgressBar } from "./NProgress";
 
 const Providers = ({ children }: { children: React.ReactNode }) => {
@@ -44,7 +43,9 @@ const Providers = ({ children }: { children: React.ReactNode }) => {
       <AuthProvider>
         <div className="font-vazir">
           {!isNotHeaderAndFooter && <Header />}
-          <ProgressBar />
+          <Suspense fallback={null}>
+            <ProgressBar />
+          </Suspense>
           {children}
           {!isNotHeaderAndFooter && <Footer />}
         </div>

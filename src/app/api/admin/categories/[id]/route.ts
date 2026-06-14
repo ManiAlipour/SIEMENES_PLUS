@@ -2,7 +2,10 @@ import { NextRequest, NextResponse } from "next/server";
 import { connectDB } from "@/lib/db";
 import { adminOnly } from "@/lib/middlewares/adminOnly";
 import Category from "@/models/Category";
-import { deleteFromLiara, uploadToLiara } from "@/lib/storage/s3Client";
+import {
+  deleteFileFromStorage,
+  uploadFileToStorage,
+} from "@/lib/storage/storage.service";
 
 export const runtime = "nodejs";
 export const dynamic = "force-dynamic";
@@ -28,7 +31,7 @@ export async function DELETE(
 
     if (category.image && typeof category.image === "string") {
       try {
-        await deleteFromLiara(category.image);
+        await deleteFileFromStorage(category.image);
       } catch (err) {
         console.error("خطا در حذف تصویر از Liara:", err);
       }
@@ -54,7 +57,7 @@ export async function DELETE(
   }
 }
 
-// PATCH category (partial update)
+// PATCH category
 export async function PATCH(
   request: NextRequest,
   context: { params: Promise<{ id: string }> },
@@ -107,12 +110,14 @@ export async function PATCH(
       if (file && file.size > 0) {
         if (category.image && typeof category.image === "string") {
           try {
-            await deleteFromLiara(category.image);
+            await deleteFileFromStorage(category.image);
           } catch (err) {
             console.error("خطا در حذف تصویر قبلی از Liara:", err);
           }
         }
-        const { url } = await uploadToLiara(file, "categories");
+        const { url } = await uploadFileToStorage(file, {
+          folder: "categories",
+        });
         category.image = url;
       }
     } else {

@@ -15,6 +15,7 @@ type Slide = {
   description: string;
   image: string;
   accent: Accent;
+  align: "left" | "right";
 };
 
 const SLIDES: Slide[] = [
@@ -26,6 +27,7 @@ const SLIDES: Slide[] = [
     description: `فروش تجهیزات اصلی SIEMENS به همراه ضمانت اصالت و راه اندازی همراه با پشتیبانی تخصصی`,
     image: "/images/hero2.jpg",
     accent: "cyan",
+    align: "left",
   },
   {
     id: 2,
@@ -37,6 +39,7 @@ const SLIDES: Slide[] = [
     `,
     image: "/images/hero1.jpg",
     accent: "emerald",
+    align: "right",
   },
 ];
 
@@ -133,7 +136,8 @@ export default function HeroSection() {
       <div className="relative z-10 h-full container mx-auto px-6 lg:px-24 flex items-center">
         <div
           key={slide.id}
-          className="max-w-3xl w-full rounded-2xl bg-black/40 border border-white/10 shadow-[0_20px_60px_rgba(0,0,0,0.45)] p-6 sm:p-8 lg:p-10 min-h-[400px] animate-fadeIn"
+          className="max-w-3xl w-full rounded-2xl bg-black/40 border border-white/10 shadow-[0_20px_60px_rgba(0,0,0,0.45)] 
+          p-6 sm:p-8 lg:p-10 min-h-[400px] animate-fadeIn"
         >
           <span
             className={`inline-flex mb-4 px-3 py-1 rounded text-xs font-bold tracking-widest uppercase border border-white/20 ${accentClass[slide.accent]}`}

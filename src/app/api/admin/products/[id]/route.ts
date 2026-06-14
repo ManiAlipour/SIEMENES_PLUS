@@ -2,8 +2,11 @@ import { NextRequest, NextResponse } from "next/server";
 import { adminOnly } from "@/lib/middlewares/adminOnly";
 import { connectDB } from "@/lib/db";
 import Product from "@/models/Product";
-import { deleteFromLiara, uploadToLiara } from "@/lib/storage/s3Client";
 import { productRequestSchema } from "@/lib/validations/productValidator";
+import {
+  deleteFileFromStorage,
+  uploadFileToStorage,
+} from "@/lib/storage/storage.service";
 
 export const runtime = "nodejs";
 export const dynamic = "force-dynamic";
@@ -32,7 +35,7 @@ export async function DELETE(
 
     if (product.image && typeof product.image === "string") {
       try {
-        await deleteFromLiara(product.image);
+        await deleteFileFromStorage(product.image);
       } catch (err) {
         console.error(" خطا در حذف تصویر از Liara:", err);
       }
@@ -110,17 +113,17 @@ export async function PUT(
       isFeatured,
     });
 
-    // Update image in Liara storage
+    // Update image
     if (image && image.size > 0) {
       try {
         if (existingProduct.image) {
-          await deleteFromLiara(existingProduct.image);
+          await deleteFileFromStorage(existingProduct.image);
         }
       } catch (err) {
-        console.warn("⚠️ خطا در حذف تصویر قبلی از Liara:", err);
+        console.warn(" خطا در حذف تصویر قبلی از Liara:", err);
       }
 
-      const uploaded = await uploadToLiara(image, "products");
+      const uploaded = await uploadFileToStorage(image, { folder: "products" });
       (parsed as any).image = uploaded.url;
     }
 

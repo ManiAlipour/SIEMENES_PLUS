@@ -2,7 +2,7 @@ import { NextRequest, NextResponse } from "next/server";
 import { connectDB } from "@/lib/db";
 import { adminOnly } from "@/lib/middlewares/adminOnly";
 import Category from "@/models/Category";
-import { uploadToLiara } from "@/lib/storage/s3Client";
+import { uploadFileToStorage } from "@/lib/storage/storage.service";
 
 export async function POST(request: NextRequest) {
   await adminOnly(request);
@@ -28,7 +28,9 @@ export async function POST(request: NextRequest) {
       isFeatured = (formData.get("isFeatured") as string) === "true";
 
       if (file && file.size > 0) {
-        const { url } = await uploadToLiara(file, "categories");
+        const { url } = await uploadFileToStorage(file, {
+          folder: "categories",
+        });
         imageUrl = url;
       }
     } else {

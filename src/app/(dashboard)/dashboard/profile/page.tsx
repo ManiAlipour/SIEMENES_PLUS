@@ -4,14 +4,13 @@ import { useSelector } from "react-redux";
 import { RootState } from "@/store";
 import { motion } from "framer-motion";
 import { UserCircle, Lock, X, Loader2 } from "lucide-react";
-import {
-  Dialog,
-  DialogPanel,
-  DialogTitle,
-  Transition,
-} from "@headlessui/react";
-import { Fragment, useState } from "react";
+import { Suspense, useState } from "react";
+import dynamic from "next/dynamic";
 
+const ResetPasswordModal = dynamic(
+  () => import("../settings/_components/ResetPasswordModal"),
+  { ssr: false },
+);
 /* =========================
    Profile Page
 ========================= */
@@ -96,6 +95,7 @@ export default function ProfilePage() {
       </motion.section>
 
       {/* Modal */}
+
       <ResetPasswordModal
         open={openPasswordModal}
         onClose={() => setOpenPasswordModal(false)}
@@ -117,9 +117,6 @@ function Avatar({ name }: { name?: string }) {
   );
 }
 
-/* =========================
-   Status Badge
-========================= */
 function StatusBadge({ verified }: { verified: boolean }) {
   return (
     <span
@@ -134,9 +131,6 @@ function StatusBadge({ verified }: { verified: boolean }) {
   );
 }
 
-/* =========================
-   ReadOnly Field
-========================= */
 function ReadOnlyField({ label, value }: { label: string; value: string }) {
   return (
     <div className="flex flex-col gap-1">
@@ -148,136 +142,6 @@ function ReadOnlyField({ label, value }: { label: string; value: string }) {
   );
 }
 
-/* =========================
-   Reset Password Modal
-========================= */
-function ResetPasswordModal({
-  open,
-  onClose,
-}: {
-  open: boolean;
-  onClose: () => void;
-}) {
-  const [currentPassword, setCurrentPassword] = useState("");
-  const [newPassword, setNewPassword] = useState("");
-  const [confirmPassword, setConfirmPassword] = useState("");
-  const [loading, setLoading] = useState(false);
-  const [error, setError] = useState<string | null>(null);
-  const [success, setSuccess] = useState(false);
-
-  async function handleSubmit(e: React.FormEvent) {
-    e.preventDefault();
-    setError(null);
-
-    if (newPassword !== confirmPassword) {
-      setError("رمز عبور جدید با تکرار آن مطابقت ندارد");
-      return;
-    }
-
-    try {
-      setLoading(true);
-
-      const res = await fetch("/api/auth/change-password", {
-        method: "PATCH",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({
-          currentPassword,
-          newPassword,
-          confirmPassword,
-        }),
-      });
-
-      const data = await res.json();
-
-      if (!res.ok) {
-        setError(data?.message || "خطا در تغییر رمز عبور");
-        return;
-      }
-
-      setSuccess(true);
-      setCurrentPassword("");
-      setNewPassword("");
-      setConfirmPassword("");
-    } catch {
-      setError("خطا در ارتباط با سرور");
-    } finally {
-      setLoading(false);
-    }
-  }
-
-  return (
-    <Transition appear show={open} as={Fragment}>
-      <Dialog as="div" className="relative z-50" onClose={onClose}>
-        <div className="fixed inset-0 bg-black/30 backdrop-blur-sm" />
-
-        <div className="fixed inset-0 flex items-center justify-center p-4">
-          <DialogPanel className="w-full max-w-md rounded-2xl bg-white shadow-xl p-6">
-            <div className="flex items-center justify-between mb-4">
-              <DialogTitle className="text-lg font-bold text-gray-700">
-                تغییر رمز عبور
-              </DialogTitle>
-              <button onClick={onClose}>
-                <X size={18} />
-              </button>
-            </div>
-
-            {success ? (
-              <div className="text-center py-8">
-                <p className="text-emerald-600 font-semibold">
-                  ✅ رمز عبور با موفقیت تغییر کرد
-                </p>
-                <button
-                  onClick={onClose}
-                  className="mt-6 px-4 py-2 rounded-xl bg-cyan-500 text-white"
-                >
-                  بستن
-                </button>
-              </div>
-            ) : (
-              <form onSubmit={handleSubmit} className="space-y-4">
-                <Input
-                  label="رمز عبور فعلی"
-                  type="password"
-                  value={currentPassword}
-                  onChange={setCurrentPassword}
-                />
-                <Input
-                  label="رمز عبور جدید"
-                  type="password"
-                  value={newPassword}
-                  onChange={setNewPassword}
-                />
-                <Input
-                  label="تکرار رمز عبور جدید"
-                  type="password"
-                  value={confirmPassword}
-                  onChange={setConfirmPassword}
-                />
-
-                {error && <p className="text-sm text-red-600">{error}</p>}
-
-                <button
-                  type="submit"
-                  disabled={loading}
-                  className="w-full flex items-center justify-center gap-2 rounded-xl bg-cyan-500 py-2.5 text-white font-semibold hover:bg-cyan-600 disabled:opacity-60"
-                >
-                  {loading && <Loader2 className="animate-spin" size={18} />}
-                  ذخیره تغییرات
-                </button>
-              </form>
-            )}
-          </DialogPanel>
-        </div>
-      </Dialog>
-    </Transition>
-  );
-}
-
-/* =========================
-   Input
-========================= */
 function Input({
   label,
   type = "text",
