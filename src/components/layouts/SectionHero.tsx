@@ -26,7 +26,7 @@ const SLIDES: Slide[] = [
     highlight: "تجهیزات زیمنس",
     description:
       "فروش تجهیزات اصلی SIEMENS به همراه ضمانت اصالت و راه اندازی همراه با پشتیبانی تخصصی",
-    image: "/images/hero2.jpg",
+    image: "/images/hero2.webp",
     accent: "cyan",
     align: "right",
   },
@@ -37,7 +37,7 @@ const SLIDES: Slide[] = [
     highlight: "تجهیزات زیمنس",
     description: `تعمیرات تخصصی سیستم های siemens:
 کنترل، درایو، موتور، انکودر، خط کش و ...`,
-    image: "/images/hero1.jpg",
+    image: "/images/hero1.webp",
     accent: "emerald",
     align: "left",
   },
