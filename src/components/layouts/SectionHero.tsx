@@ -123,7 +123,7 @@ export default function HeroSection() {
           fill
           priority={index === 0}
           sizes="100vw"
-          className="object-cover brightness-[0.8] transition-opacity duration-700"
+          className="object-cover "
         />
         <div className="absolute inset-0 bg-gradient-to-br from-black/80 via-black/40 to-transparent" />
       </div>
@@ -136,7 +136,7 @@ export default function HeroSection() {
       >
         <div
           key={slide.id}
-          className="max-w-2xl w-full rounded-2xl bg-black/40 backdrop-blur-md border border-white/10 shadow-2xl
+          className="max-w-2xl w-full rounded-2xl
           p-6 sm:p-10 min-h-[380px] animate-fadeIn text-right"
           dir="rtl"
         >

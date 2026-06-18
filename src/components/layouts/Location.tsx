@@ -193,12 +193,12 @@ export default function LocationSection() {
               <div className="w-full h-full rounded-[1.5rem] overflow-hidden relative bg-slate-200">
                 <iframe
                   title="siemensplus-map"
-                  src="https://www.google.com/maps/embed?pb=!1m16!1m12!1m3!1d284.57077922117645!2d50.088454345482525!3d36.20180397222579!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!2m1!1zICAg2YLYstmI24zZhtiMINi02YfYsSDYtdmG2LnYqtuMINin2YTYqNix2LLYjCDYrtuM2KfYqNin2YYg2LLaqdix24zYp9uMINix2KfYstuM2Iwg2KzZhtioINi02LHaqdiqINmF2YfYsdin2YXYjCDZvtmE2KfaqSDbstuw!5e0!3m2!1sfa!2s!4v1761992148931!5m2!1sfa!2s"
+                  src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3219.575954852423!2d50.09012632451797!3d36.20119341332384!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x3f8cad00694365bb%3A0x7d9345082453edbd!2z2LLbjNmF2YbYsyDZvtmE2KfYsw!5e0!3m2!1sfa!2s!4v1781771002106!5m2!1sfa!2s"
                   className="relative z-10 w-full h-full border-0 opacity-90 hover:opacity-100 transition-opacity duration-700"
                   allowFullScreen
                   loading="lazy"
                   referrerPolicy="no-referrer-when-downgrade"
-                ></iframe>
+                />
 
                 <div className="absolute bottom-4 right-4 z-20 bg-white/95 px-4 py-2 rounded-xl shadow-lg border border-slate-200 text-xs font-bold text-slate-800 hidden sm:block">
                   زیمنس پلاس | Siemens Plus
