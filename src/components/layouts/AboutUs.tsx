@@ -16,7 +16,7 @@ const AboutUs = () => {
         <div className="flex justify-center md:justify-start order-1 md:order-2">
           <div className="rounded-xl overflow-hidden shadow-lg border border-primary/20 w-full max-w-[500px] aspect-4/3 ring-1 ring-primary/10">
             <Image
-              src="/images/team-industrial.png"
+              src="/images/team-industrial.webp"
               alt="تیم فنی زیمنس پلاس | SIEMENS PLUS"
               width={900}
               height={600}
