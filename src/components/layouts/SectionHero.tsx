@@ -77,9 +77,11 @@ export default function HeroSection() {
             alt={slide.title}
             fill
             priority
-            className="object-contain lg:object-cover transition-transform duration-1000 scale-100 group-hover/hero:scale-105"
+            quality={100}
+            sizes="100vw"
+            className="object-cover"
           />
-          <div className="absolute inset-0 bg-black/40 lg:bg-gradient-to-l lg:from-black/80 lg:via-black/30 lg:to-transparent" />
+          <div className="absolute inset-0 bg-black/50 md:bg-black/20" />
         </div>
 
         <div
@@ -89,7 +91,7 @@ export default function HeroSection() {
         >
           <div
             className={`max-w-3xl w-full flex flex-col items-center animate-fadeIn
-    ${slide.align === "left" ? "lg:items-start lg:text-right" : "lg:items-end lg:text-right"}`}
+            ${slide.align === "left" ? "lg:items-start lg:text-right" : "lg:items-end lg:text-right"}`}
           >
             <h1 className="text-white font-black text-2xl sm:text-4xl lg:text-7xl leading-tight">
               {slide.title}
