@@ -170,10 +170,7 @@ export async function login({
   const isMatch = await bcrypt.compare(password, user.password);
   if (!isMatch) throw new Error("Invalid credentials");
 
-  const token = generateToken({
-    ...user,
-    _id: `${user._id}`,
-  } as ITokenData);
+  const token = generateToken(user as ITokenData);
 
   return {
     token,
@@ -200,10 +197,7 @@ export async function verifyEmail({
   user.verificationCode = null;
   await user.save();
 
-  const token = generateToken({
-    ...user,
-    _id: `${user._id}`,
-  } as ITokenData);
+  const token = generateToken(user as ITokenData);
 
   return {
     message: "Account verified successfully",
