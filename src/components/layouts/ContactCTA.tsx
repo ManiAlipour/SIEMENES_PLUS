@@ -1,4 +1,6 @@
-import { Instagram, PhoneCall } from "lucide-react";
+import { PhoneCall } from "lucide-react";
+import Image from "next/image";
+import { RiInstagramFill } from "react-icons/ri";
 
 export default function ContactCTA() {
   return (
@@ -54,7 +56,12 @@ export default function ContactCTA() {
             className="flex items-center gap-2 rounded-xl border border-primary/30 px-7 py-3 text-base font-bold text-primary bg-primary/5 hover:bg-primary/10 transition duration-150 shadow focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-2"
             aria-label="صفحه اینستاگرام زیمنس پلاس"
           >
-            <Instagram size={18} className="text-primary" aria-hidden />
+            <Image
+              src="/images/instagram.svg"
+              alt="instagram"
+              width={35}
+              height={35}
+            />{" "}
             @siemens.plus1
           </a>
         </div>

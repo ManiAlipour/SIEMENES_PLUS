@@ -6,9 +6,7 @@ export async function connectDB() {
   if (isConnected) return;
 
   try {
-    const conn = await mongoose.connect(process.env.DATABASE_URL!, {
-      dbName: "SIEMENES-DEMO",
-    });
+    const conn = await mongoose.connect(process.env.DATABASE_URL!);
     isConnected = conn.connections[0].readyState;
     console.log("🟢 MongoDB Connected:", conn.connection.name);
   } catch (err) {

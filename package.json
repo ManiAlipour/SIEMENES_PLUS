@@ -4,7 +4,7 @@
   "private": true,
   "scripts": {
     "dev": "next dev -p 3001",
-    "build": "next build",
+    "build": "next build && next-sitemap --config next-sitemap.config.js",
     "start": "next start -p 9711",
     "lint": "eslint"
   },
@@ -27,6 +27,7 @@
     "lucide-react": "^0.552.0",
     "mongoose": "^8.19.2",
     "next": "^16.0.10",
+    "next-sitemap": "^4.2.3",
     "nodemailer": "^7.0.10",
     "nprogress": "^0.2.0",
     "react": "19.2.0",

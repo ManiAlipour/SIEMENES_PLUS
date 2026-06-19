@@ -12,12 +12,10 @@ import ContactForm from "./ContactForm";
 export default function ContactUs() {
   return (
     <section className="relative py-24 overflow-hidden bg-slate-950">
-      {/* ---------------- BACKGROUND EFFECTS ---------------- */}
 
       {/* Deep Base Gradient */}
       <div className="absolute inset-0 bg-gradient-to-b from-slate-900 to-slate-950 z-0" />
 
-      {/* Grid Pattern - Engineering Feel */}
       <div
         className="absolute inset-0 z-0 opacity-[0.03]"
         style={{

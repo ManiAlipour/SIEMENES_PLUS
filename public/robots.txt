@@ -1,0 +1,17 @@
+# *
+User-agent: *
+Allow: /
+Disallow: /login
+Disallow: /register
+Disallow: /forgot-password
+Disallow: /reset-password
+Disallow: /verify
+Disallow: /admin
+Disallow: /dashboard
+Disallow: /api
+
+# Host
+Host: https://siemensplus1.ir
+
+# Sitemaps
+Sitemap: https://siemensplus1.ir/sitemap.xml
