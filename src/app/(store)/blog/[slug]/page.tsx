@@ -5,7 +5,7 @@ import BlogPost from "@/models/BlogPost";
 import { fetchRelatedBlogPosts } from "@/lib/blog/relatedPosts";
 import BlogPostClient from "./BlogPostClient";
 
-const siteUrl = process.env.NEXT_PUBLIC_SITE_URL || "https://site-mohandesi.ir";
+const siteUrl = process.env.NEXT_PUBLIC_SITE_URL || "https://siemensplus1.ir";
 
 type Props = { params: Promise<{ slug: string }> };
 
@@ -50,7 +50,11 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
       publishedTime: (post as any).createdAt,
       modifiedTime: (post as any).updatedAt || (post as any).createdAt,
     },
-    twitter: { card: "summary_large_image", title: `${title} | وبلاگ`, description },
+    twitter: {
+      card: "summary_large_image",
+      title: `${title} | وبلاگ`,
+      description,
+    },
     alternates: { canonical: `/blog/${slug}` },
     robots: { index: true, follow: true },
   };

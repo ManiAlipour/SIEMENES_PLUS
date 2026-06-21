@@ -18,15 +18,14 @@ export const metadata: Metadata = {
   ],
   openGraph: {
     title: "فروشگاه محصولات | زیمنس پلاس",
-    description:
-      "فروشگاه تخصصی تجهیزات صنعتی، PLC، اینورتر، HMI و قطعات زیمنس",
+    description: "فروشگاه تخصصی تجهیزات صنعتی، PLC، اینورتر، HMI و قطعات زیمنس",
     type: "website",
     locale: "fa_IR",
     siteName: "زیمنس پلاس",
     images: [
       {
         url: `${
-          process.env.NEXT_PUBLIC_SITE_URL || "https://site-mohandesi.ir"
+          process.env.NEXT_PUBLIC_SITE_URL || "https://siemensplus1.ir"
         }/images/logo.jpg`,
         width: 1200,
         height: 630,
@@ -37,11 +36,10 @@ export const metadata: Metadata = {
   twitter: {
     card: "summary_large_image",
     title: "فروشگاه محصولات | زیمنس پلاس",
-    description:
-      "فروشگاه تخصصی تجهیزات صنعتی، PLC، اینورتر، HMI و قطعات زیمنس",
+    description: "فروشگاه تخصصی تجهیزات صنعتی، PLC، اینورتر، HMI و قطعات زیمنس",
     images: [
       `${
-        process.env.NEXT_PUBLIC_SITE_URL || "https://site-mohandesi.ir"
+        process.env.NEXT_PUBLIC_SITE_URL || "https://siemensplus1.ir"
       }/images/logo.jpg`,
     ],
   },
@@ -66,8 +64,7 @@ function generateJsonLd(products: any[] = []) {
     "@context": "https://schema.org",
     "@type": "CollectionPage",
     name: "فروشگاه محصولات زیمنس پلاس",
-    description:
-      "فروشگاه تخصصی تجهیزات صنعتی، PLC، اینورتر، HMI و قطعات زیمنس",
+    description: "فروشگاه تخصصی تجهیزات صنعتی، PLC، اینورتر، HMI و قطعات زیمنس",
     url: `${
       process.env.NEXT_PUBLIC_SITE_URL || "https://siemensplus1.ir"
     }/shop`,

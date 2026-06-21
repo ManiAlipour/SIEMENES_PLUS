@@ -1,7 +1,7 @@
 import type { Metadata } from "next";
 import ContactPageClient from "./ContactPageClient";
 
-const baseUrl = process.env.NEXT_PUBLIC_SITE_URL || "https://site-mohandesi.ir";
+const baseUrl = process.env.NEXT_PUBLIC_SITE_URL || "https://siemensplus1.ir";
 
 export const metadata: Metadata = {
   title: "تماس با ما | زیمنس پلاس | قطعات صنعتی",
@@ -21,7 +21,12 @@ export const metadata: Metadata = {
     siteName: "زیمنس پلاس",
     url: `${baseUrl}/contact-us`,
     images: [
-      { url: `${baseUrl}/images/logo.jpg`, width: 1200, height: 630, alt: "زیمنس پلاس - تماس با ما" },
+      {
+        url: `${baseUrl}/images/logo.jpg`,
+        width: 1200,
+        height: 630,
+        alt: "زیمنس پلاس - تماس با ما",
+      },
     ],
   },
   twitter: {

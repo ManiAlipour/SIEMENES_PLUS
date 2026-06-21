@@ -170,6 +170,7 @@ export async function login({
   const isMatch = await bcrypt.compare(password, user.password);
   if (!isMatch) throw new Error("Invalid credentials");
 
+  // @ts-ignore
   const token = generateToken(user as ITokenData);
 
   return {
@@ -197,6 +198,7 @@ export async function verifyEmail({
   user.verificationCode = null;
   await user.save();
 
+  // @ts-ignore
   const token = generateToken(user as ITokenData);
 
   return {

@@ -1,7 +1,7 @@
 import type { Metadata } from "next";
 import AboutPageClient from "./AboutPageClient";
 
-const baseUrl = process.env.NEXT_PUBLIC_SITE_URL || "https://site-mohandesi.ir";
+const baseUrl = process.env.NEXT_PUBLIC_SITE_URL || "https://siemensplus1.ir";
 
 export const metadata: Metadata = {
   title: "درباره ما | زیمنس پلاس | قطعات صنعتی",

@@ -10,7 +10,7 @@ export const viewport: Viewport = {
 };
 
 export const metadata: Metadata = {
-  metadataBase: new URL("https://site-mohandesi.ir"),
+  metadataBase: new URL("https://siemensplus1.ir"),
   title: "زیمنس پلاس | قطعات",
   description:
     "فروش و پشتیبانی تخصصی تجهیزات زیمنس و ارائه راهکارهای مهندسی. PLC، اینورتر، HMI و قطعات .",

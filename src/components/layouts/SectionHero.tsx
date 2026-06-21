@@ -18,18 +18,18 @@ const SLIDES: Slide[] = [
   {
     id: 1,
     title: "فروش و تامین تجهیزات زیمنس",
-    highlight: "نمایندگی رسمی زیمنس در ایران",
+    highlight: "تامین تجهیزات  Siemens همراه با ضمانت",
     description:
-      "تامین و فروش تجهیزات اصلی فشار ضعیف و اتوماسیون صنعتی با ضمانت اصالت کالا.",
+      "فروش تجهیزات اصلی Siemens به همراه ضمانت اصالت و راه اندازی همراه با پشتیبانی تخصصی",
     image: "/images/hero2.webp",
     align: "right",
   },
   {
     id: 2,
-    title: "تعمیرات تخصصی",
+    title: "تعمیر و نگهداری تجهیزات زیمنس",
     highlight: "پشتیبانی فنی و مهندسی",
     description:
-      "ارائه خدمات نصب، راه‌اندازی و تعمیرات تخصصی درایوها و سیستم‌های کنترلی زیمنس.",
+      "تعمیرات تخصصی سیستم های Siemens: کنترل، درایور، موتور، انکودر، خط کش و ...",
     image: "/images/hero1.webp",
     align: "left",
   },
@@ -86,18 +86,18 @@ export default function HeroSection() {
 
         <div
           className={`relative z-10 h-full container mx-auto px-6 flex items-center 
-  justify-center 
-  ${slide.align === "left" ? "lg:justify-start" : "lg:justify-end"}`}
+                    justify-center 
+                    ${slide.align === "left" ? "lg:justify-start" : "lg:justify-end"}`}
         >
           <div
             className={`max-w-3xl w-full flex flex-col items-center animate-fadeIn
-            ${slide.align === "left" ? "lg:items-start lg:text-right" : "lg:items-end lg:text-right"}`}
+            ${slide.align === "left" ? "lg:items-start lg:text-right" : "lg:items-start lg:pr-20 lg:text-right"}`}
           >
-            <h1 className="text-white font-black text-2xl sm:text-4xl lg:text-7xl leading-tight">
+            <span className="text-white font-black text-2xl sm:text-3xl lg:text-5xl leading-tight">
               {slide.title}
-            </h1>
+            </span>
 
-            <p className="mt-1 lg:mt-4 text-white/90 font-medium text-sm sm:text-lg lg:text-3xl">
+            <p className="mt-1 lg:mt-4 text-white/90 font-medium text-sm sm:text-lg lg:text-2xl">
               {slide.highlight}
             </p>
 
@@ -120,7 +120,7 @@ export default function HeroSection() {
         </div>
       </div>
 
-      {/* Navigation Bars (Bottom) */}
+      {/* Navigation Bars */}
       <div className="absolute bottom-4 lg:bottom-10 left-1/2 -translate-x-1/2 lg:left-12 lg:translate-x-0 z-20 flex items-center gap-2 lg:gap-3">
         {SLIDES.map((_, i) => (
           <button
