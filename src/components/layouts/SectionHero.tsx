@@ -103,7 +103,7 @@ export default function HeroSection() {
 
             <p
               className={`mt-6 text-slate-300 text-base sm:text-lg max-w-xl leading-relaxed hidden lg:block
-      ${slide.align === "left" ? "text-right" : "text-right"}`}
+              ${slide.align === "left" ? "text-right" : "text-right"}`}
             >
               {slide.description}
             </p>

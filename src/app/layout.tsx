@@ -17,6 +17,7 @@ export const metadata: Metadata = {
 
   keywords: [
     "زیمنس",
+    "فروشگاه زیمنس پلاس",
     "PLC",
     "اینورتر",
     "HMI",
@@ -32,8 +33,7 @@ export const metadata: Metadata = {
     url: "https://siemenes-plus.ir",
     siteName: "زیمنس پلاس",
     title: "زیمنس پلاس | قطعات",
-    description:
-      "فروش و پشتیبانی تخصصی تجهیزات زیمنس و ارائه راهکارهای مهندسی",
+    description: "فروش و پشتیبانی تخصصی تجهیزات زیمنس و ارائه راهکارهای مهندسی",
     images: [
       {
         url: "/images/logo.jpg",
@@ -57,6 +57,7 @@ export const metadata: Metadata = {
     description: "فروش و پشتیبانی تخصصی تجهیزات زیمنس",
     images: ["/images/logo.jpg"],
   },
+
   robots: {
     index: true,
     follow: true,

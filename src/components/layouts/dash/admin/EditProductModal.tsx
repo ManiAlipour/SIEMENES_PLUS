@@ -29,7 +29,6 @@ export default function EditProductModal({
     try {
       const fd = new FormData();
 
-      // اگر specs به صورت object از سرور آمده بود، تبدیلش می‌کنیم
       const specsArray = Array.isArray(values.specifications)
         ? values.specifications
         : Object.entries(values.specifications || {}).map(([key, value]) => ({
@@ -37,12 +36,12 @@ export default function EditProductModal({
             value,
           }));
 
-      const specsObj: Record<string, string> = {};
-      specsArray.forEach((s: any) => {
-        if (s.key) specsObj[s.key] = s.value;
-      });
-
-      fd.append("specifications", JSON.stringify(specsObj));
+      fd.append(
+        "specifications",
+        JSON.stringify(
+          specsArray.filter((s: any) => s.key && s.value !== undefined),
+        ),
+      );
 
       Object.entries(values).forEach(([key, val]) => {
         if (key !== "specifications" && key !== "image") {
@@ -50,7 +49,7 @@ export default function EditProductModal({
         }
       });
 
-      if (values.image) {
+      if (values.image instanceof File) {
         fd.append("image", values.image);
       }
 
@@ -59,29 +58,33 @@ export default function EditProductModal({
         body: fd,
       });
 
-      if (!res.ok) throw new Error();
+      const data = await res.json();
 
-      await fetch("/api/admin/actions", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          action: "UPDATE_PRODUCT",
-          entity: "product",
-          entityName: values.name,
-        }),
-      });
+      if (!res.ok) {
+        throw new Error(data?.message || "خطا در بروزرسانی محصول");
+      }
 
-      toast.success("محصول بروزرسانی شد ✅");
+      // await fetch("/api/admin/actions", {
+      //   method: "POST",
+      //   headers: { "Content-Type": "application/json" },
+      //   body: JSON.stringify({
+      //     action: "UPDATE_PRODUCT",
+      //     entity: "product",
+      //     entityName: values.name,
+      //   }),
+      // });
 
+      toast.success("محصول بروزرسانی شد");
       onUpdated();
       onClose();
     } catch (err) {
       console.error(err);
-      toast.error("خطا در بروزرسانی محصول");
+      toast.error(
+        err instanceof Error ? err.message : "خطا در بروزرسانی محصول",
+      );
     }
   };
 
-  // اگر specifications از دیتابیس object بود → تبدیل به array برای فرم
   const normalizedSpecs = Array.isArray(product.specifications)
     ? product.specifications
     : Object.entries(product.specifications || {}).map(([key, value]) => ({

@@ -1,6 +1,5 @@
 "use client";
 
-import React from "react";
 import Image from "next/image";
 import ProductCard from "../features/ProductCard";
 import { useCategoryHighlights } from "@/hooks/useCategoryHighlights";
@@ -127,7 +126,8 @@ export default function CategoryHighlightsSection() {
             const shopUrl = getShopCategoryUrl(category);
 
             // Maximum 4 product previews for compactness
-            const previewCount = category.products.length > 4 ? 4 : category.products.length;
+            const previewCount =
+              category.products.length > 4 ? 4 : category.products.length;
             const previewProducts = category.products.slice(0, previewCount);
 
             return (
@@ -155,7 +155,7 @@ export default function CategoryHighlightsSection() {
                       </p>
                     </div>
                   </div>
-                  {/* Better UX for mobile: Button is more touch-friendly and fixed for overflow, disabled clearly */}
+
                   {shopUrl ? (
                     <Link
                       href={shopUrl}
@@ -180,7 +180,6 @@ export default function CategoryHighlightsSection() {
                   )}
                 </div>
 
-                {/* Horizontal static products list: NO vertical scroll */}
                 <div className="relative">
                   <div
                     className="
@@ -191,7 +190,7 @@ export default function CategoryHighlightsSection() {
                       px-1 -mx-1
                       [&>*]:flex-shrink-0
                       "
-                    style={{ overflowY: 'hidden' }} // This disables vertical scroll!
+                    style={{ overflowY: "hidden" }} // This disables vertical scroll!
                   >
                     {category.products.length === 0 ? (
                       <div className="flex items-center justify-center min-w-[220px] md:min-w-[260px] h-80 bg-gray-50 rounded-2xl border border-gray-200">
@@ -208,14 +207,14 @@ export default function CategoryHighlightsSection() {
                           <div
                             key={product.id}
                             className="max-w-[150px] xs:max-w-[200px] md:max-w-[220px] lg:max-w-[240px] snap-start shrink-0 flex"
-                            style={{ overflowY: 'hidden' }}
+                            style={{ overflowY: "hidden" }}
                           >
                             <ProductCard
                               id={product.id}
                               name={product.name}
                               image={product.image}
                               price={product.price}
-                              className="h-full"
+                              slug={product.slug}
                             />
                           </div>
                         ))}
@@ -226,9 +225,12 @@ export default function CategoryHighlightsSection() {
                             className="flex flex-col items-center justify-center min-w-[120px] xs:min-w-[150px] md:min-w-[160px] h-80 bg-primary/10 text-primary rounded-2xl font-bold text-base xs:text-lg transition-all duration-300 hover:bg-primary hover:text-white hover:scale-105 shadow group mx-1 snap-start shrink-0"
                             tabIndex={0}
                             aria-label={`نمایش همه محصولات دسته ${category.title}`}
-                            style={{ overflowY: 'hidden' }} // Prevent vertical scroll on "show all" block
+                            style={{ overflowY: "hidden" }} // Prevent vertical scroll on "show all" block
                           >
-                            <span className="mb-2 text-sm xs:text-base">+{category.products.length - previewCount} محصول بیشتر</span>
+                            <span className="mb-2 text-sm xs:text-base">
+                              +{category.products.length - previewCount} محصول
+                              بیشتر
+                            </span>
                             <div className="flex items-center gap-2">
                               <span>مشاهده همه</span>
                               <FiArrowLeft className="w-4 h-4 transition-transform group-hover:translate-x-1" />

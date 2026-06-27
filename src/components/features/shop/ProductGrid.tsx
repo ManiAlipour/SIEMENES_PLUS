@@ -167,7 +167,6 @@ export default function ProductGrid({
             brand={product.brand}
             isFeatured={product.isFeatured}
             slug={product.slug}
-            className="h-full rounded-3xl shadow-xl hover:shadow-2xl border-2 border-gray-200 hover:border-primary/30 bg-white transition-all duration-300"
           />
         </div>
       ))}

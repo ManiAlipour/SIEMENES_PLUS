@@ -65,9 +65,7 @@ export default function Header() {
               <span className="text-xl font-bold text-slate-900 leading-none">
                 زیمِنس <span className="text-primary">پلاس</span>
               </span>
-              <span className="text-[10px] text-slate-500 tracking-wider mt-1">
-                INDUSTRIAL AUTOMATION
-              </span>
+             
             </div>
           </Link>
 

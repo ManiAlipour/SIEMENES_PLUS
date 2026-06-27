@@ -65,12 +65,12 @@ export default function FeaturedProductsSection() {
           </div>
         </div>
         <Link
-            href="/shop?sort=-createdAt"
-            className="inline-flex items-center gap-2 text-primary hover:text-cyan-600 font-bold transition-colors px-6 py-3 rounded-2xl hover:bg-primary/10 border-2 border-primary/20 hover:border-primary/40 transition-all duration-300 text-base md:text-lg"
-          >
-            <span>مشاهده همه</span>
-            <FiArrowLeft className="w-5 h-5" />
-          </Link>
+          href="/shop?sort=-createdAt"
+          className="inline-flex items-center gap-2 text-primary hover:text-cyan-600 font-bold transition-colors px-6 py-3 rounded-2xl hover:bg-primary/10 border-2 border-primary/20 hover:border-primary/40 transition-all duration-300 text-base md:text-lg"
+        >
+          <span>مشاهده همه</span>
+          <FiArrowLeft className="w-5 h-5" />
+        </Link>
       </div>
 
       <div className="grid grid-cols-2 sm:grid-cols-2 md:grid-cols-4 gap-3 sm:gap-4 md:gap-5 lg:gap-6">
@@ -83,7 +83,6 @@ export default function FeaturedProductsSection() {
               brand={product.brand}
               isFeatured={product.isFeatured}
               slug={product.slug}
-              className="h-full rounded-3xl shadow-xl hover:shadow-2xl border-2 border-gray-200 hover:border-primary/30 bg-white transition-all duration-300"
             />
           </div>
         ))}
