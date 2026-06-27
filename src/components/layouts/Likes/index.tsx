@@ -218,6 +218,7 @@ export default function LikesPageComp() {
                     name={product.name}
                     image={product.image}
                     brand={product.brand}
+                    modelNumber={product.modelNumber}
                     isFeatured={product.isFeatured}
                     slug={product.slug}
                   />

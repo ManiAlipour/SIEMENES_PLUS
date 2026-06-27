@@ -17,10 +17,10 @@ type Slide = {
 const SLIDES: Slide[] = [
   {
     id: 1,
-    title: "فروش و تامین تجهیزات زیمنس",
-    highlight: "تامین تجهیزات  Siemens همراه با ضمانت",
+    title: "فروشگاه زیمنس پلاس",
+    highlight: "محصولات زیمنس با جستجوی نام و کد محصولات",
     description:
-      "فروش تجهیزات اصلی Siemens به همراه ضمانت اصالت و راه اندازی همراه با پشتیبانی تخصصی",
+      "فروشگاه تخصصی محصولات زیمنس — PLC، اینورتر، HMI و قطعات با ضمانت اصالت. جستجو با نام محصولات یا کد MLFB.",
     image: "/images/hero2.webp",
     align: "right",
   },
@@ -29,7 +29,7 @@ const SLIDES: Slide[] = [
     title: "تعمیر و نگهداری تجهیزات زیمنس",
     highlight: "پشتیبانی فنی و مهندسی",
     description:
-      "تعمیرات تخصصی سیستم های Siemens: کنترل، درایور، موتور، انکودر، خط کش و ...",
+      "تعمیرات تخصصی سیستم‌های Siemens: کنترل، درایور، موتور، انکودر، خط‌کش و ...",
     image: "/images/hero1.webp",
     align: "left",
   },
@@ -76,9 +76,10 @@ export default function HeroSection() {
             src={slide.image}
             alt={slide.title}
             fill
-            priority
-            quality={100}
+            priority={index === 0}
+            quality={index === 0 ? 80 : 70}
             sizes="100vw"
+            fetchPriority={index === 0 ? "high" : "low"}
             className="object-cover"
           />
           <div className="absolute inset-0 bg-black/50 md:bg-black/20" />
@@ -93,9 +94,15 @@ export default function HeroSection() {
             className={`max-w-3xl w-full flex flex-col items-center animate-fadeIn
             ${slide.align === "left" ? "lg:items-start lg:text-right" : "lg:items-start lg:pr-20 lg:text-right"}`}
           >
-            <span className="text-white font-black text-2xl sm:text-3xl lg:text-5xl leading-tight">
-              {slide.title}
-            </span>
+            {index === 0 ? (
+              <h1 className="text-white font-black text-2xl sm:text-3xl lg:text-5xl leading-tight">
+                {slide.title}
+              </h1>
+            ) : (
+              <p className="text-white font-black text-2xl sm:text-3xl lg:text-5xl leading-tight">
+                {slide.title}
+              </p>
+            )}
 
             <p className="mt-1 lg:mt-4 text-white/90 font-medium text-sm sm:text-lg lg:text-2xl">
               {slide.highlight}
@@ -113,7 +120,7 @@ export default function HeroSection() {
                 href="/shop"
                 className="inline-flex items-center justify-center px-6 py-2 lg:px-10 lg:py-3.5 border-2 border-white text-white font-bold text-xs sm:text-sm lg:text-lg hover:bg-white hover:text-black transition-all duration-300"
               >
-                مشاهده محصولات
+                مشاهده محصولات زیمنس
               </Link>
             </div>
           </div>

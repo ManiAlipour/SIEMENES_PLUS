@@ -7,16 +7,13 @@ export function normalizeSearchQuery(raw: string): string {
   const s = (raw ?? "")
     .trim()
     .replace(/\s+/g, " ")
-    // Normalize Arabic/Persian characters
     .replace(/ي/g, "ی")
     .replace(/ك/g, "ک")
     // Remove common invisible characters
     .replace(/[\u200C\u200D\u200E\u200F]/g, "");
 
-  // Lowercase for consistency
   const lower = s.toLowerCase();
 
-  // Length limit to prevent spam/DB bloat
   return lower.slice(0, 200);
 }
 
@@ -33,10 +30,6 @@ type LogSearchParams = {
   meta?: Record<string, unknown> | null;
 };
 
-/**
- * Log search to DB.
- * Passes errors to caller; caller should swallow to avoid failing the search flow.
- */
 export async function logSearchQuery({
   query,
   normalizedQuery,
@@ -62,4 +55,3 @@ export async function logSearchQuery({
     timestamp: new Date(),
   });
 }
-

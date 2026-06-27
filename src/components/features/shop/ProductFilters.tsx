@@ -117,7 +117,7 @@ export default function ProductFilters({
               type="text"
               value={localSearch}
               onChange={(e) => handleSearchChange(e.target.value)}
-              placeholder="جستجوی محصولات، برند، مدل..."
+              placeholder="نام، برند یا شماره مدل (MLFB)..."
               className="w-full pr-14 pl-5 py-5 md:py-6 text-base md:text-lg bg-transparent border-0 focus:ring-0 focus:outline-none placeholder:text-gray-400 text-gray-900 font-medium"
               aria-label="جستجوی محصولات"
             />

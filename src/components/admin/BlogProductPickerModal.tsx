@@ -8,6 +8,7 @@ export interface ProductOption {
   name: string;
   slug: string;
   image?: string;
+  modelNumber?: string;
 }
 
 interface BlogProductPickerModalProps {
@@ -47,11 +48,14 @@ export default function BlogProductPickerModal({
   }, []);
 
   const filtered = search.trim()
-    ? products.filter(
-        (p) =>
-          p.name.toLowerCase().includes(search.toLowerCase()) ||
-          (p.slug && p.slug.toLowerCase().includes(search.toLowerCase())),
-      )
+    ? products.filter((p) => {
+        const q = search.toLowerCase();
+        return (
+          p.name.toLowerCase().includes(q) ||
+          (p.slug && p.slug.toLowerCase().includes(q)) ||
+          (p.modelNumber && p.modelNumber.toLowerCase().includes(q))
+        );
+      })
     : products;
 
   return (

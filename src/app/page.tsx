@@ -2,66 +2,74 @@ import dynamic from "next/dynamic";
 import { Suspense } from "react";
 import type { Metadata } from "next";
 import HeroSection from "@/components/layouts/SectionHero";
-import CategoriesSection from "@/components/features/shop/TopCategoriesSection";
 import CategoryHighlightsSection from "@/components/layouts/CategoryHighlightsSection";
+import { getCategoryHighlights } from "@/lib/categories/highlights";
+import {
+  buildOrganizationJsonLd,
+  buildWebSiteJsonLd,
+} from "@/lib/seo/jsonld";
+import { SEO_KEYWORDS, SITE_NAME, SITE_URL } from "@/lib/seo/site";
 
 export const metadata: Metadata = {
-  title: "زیمنس پلاس | قطعات | فروش و تعمیرات تخصصی",
+  title: "زیمنس پلاس | فروشگاه زیمنس | محصولات زیمنس",
   description:
-    "فروش و پشتیبانی تخصصی تجهیزات زیمنس. PLC، اینورتر، HMI، درایو و قطعات با بهترین قیمت و گارانتی.",
+    "فروشگاه زیمنس پلاس — خرید محصولات زیمنس با جستجوی نام محصولات و کد محصولات (MLFB). PLC، اینورتر، HMI و قطعات با ضمانت و پشتیبانی فنی.",
+  keywords: [...SEO_KEYWORDS],
   openGraph: {
-    title: "زیمنس پلاس | قطعات",
+    title: "زیمنس پلاس | فروشگاه زیمنس | محصولات زیمنس",
     description:
-      "فروش و تعمیرات تخصصی تجهیزات زیمنس. PLC، اینورتر، HMI و قطعات.",
-    url: "/",
+      "فروشگاه تخصصی محصولات زیمنس — جستجو با نام محصولات و کد محصولات",
+    url: SITE_URL,
+    locale: "fa_IR",
+    siteName: SITE_NAME,
+    type: "website",
+    images: [
+      {
+        url: `${SITE_URL}/images/logo.jpg`,
+        width: 1200,
+        height: 630,
+        alt: "فروشگاه زیمنس پلاس",
+      },
+    ],
+  },
+  twitter: {
+    card: "summary_large_image",
+    title: "زیمنس پلاس | فروشگاه زیمنس",
+    description: "خرید محصولات زیمنس — جستجو با نام و کد محصولات",
+    images: [`${SITE_URL}/images/logo.jpg`],
   },
   alternates: { canonical: "/" },
+  robots: { index: true, follow: true },
 };
 
-async function getFeaturedProducts() {
-  const base = process.env.NEXT_PUBLIC_SITE_URL || "http://localhost:9711";
-  try {
-    const res = await fetch(`${base}/api/products?isFeatured=true&limit=8`, {
-      next: { revalidate: 60 },
-    });
-    const data = await res.json();
-    if (data.success && data.items?.length > 0) return data.items;
-    const fallback = await fetch(`${base}/api/products?limit=6`, {
-      next: { revalidate: 60 },
-    });
-    const fallbackData = await fallback.json();
-    return fallbackData.success ? fallbackData.items || [] : [];
-  } catch {
-    return [];
-  }
-}
+export const revalidate = 120;
 
 const ServiceFeatures = dynamic(
   () => import("@/components/layouts/ServiceFeatures"),
-  { ssr: true },
+  { loading: () => <SectionPlaceholder h={200} /> },
 );
 const VideosSection = dynamic(
   () => import("@/components/layouts/VideosSection"),
-  { ssr: true },
+  { loading: () => <SectionPlaceholder h={320} /> },
 );
 const BlogSection = dynamic(() => import("@/components/layouts/BlogSection"), {
-  ssr: true,
+  loading: () => <SectionPlaceholder h={400} />,
 });
 const RepairProcess = dynamic(
   () => import("@/components/layouts/RepairProcess"),
-  { ssr: true },
+  { loading: () => <SectionPlaceholder h={280} /> },
 );
 const AboutUs = dynamic(() => import("@/components/layouts/AboutUs"), {
-  ssr: true,
+  loading: () => <SectionPlaceholder h={320} />,
 });
 const ContactUs = dynamic(() => import("@/components/layouts/ContactUs"), {
-  ssr: true,
-});
+  loading: () => <SectionPlaceholder h={280} /> },
+);
 const LocationSection = dynamic(() => import("@/components/layouts/Location"), {
-  ssr: true,
+  loading: () => <SectionPlaceholder h={240} />,
 });
 const ContactCTA = dynamic(() => import("@/components/layouts/ContactCTA"), {
-  ssr: true,
+  loading: () => <SectionPlaceholder h={160} />,
 });
 
 function SectionPlaceholder({ h = 200 }: { h?: number }) {
@@ -75,44 +83,60 @@ function SectionPlaceholder({ h = 200 }: { h?: number }) {
 }
 
 export default async function Home() {
+  const categories = await getCategoryHighlights();
+
+  const jsonLd = [buildOrganizationJsonLd(), buildWebSiteJsonLd()];
+
   return (
-    <div>
-      <HeroSection />
-      {/* <CategoriesSection /> */}
-      {/* <FeaturedProductsSection initialProducts={featuredProducts} /> */}
-      <div style={{ contentVisibility: "auto" }}>
-        <Suspense fallback={<SectionPlaceholder h={320} />}>
-          <CategoryHighlightsSection />
-        </Suspense>
-      </div>
-      <div style={{ contentVisibility: "auto" }}>
-        <ServiceFeatures />
-      </div>
-      <div style={{ contentVisibility: "auto" }}>
-        <Suspense fallback={<SectionPlaceholder h={320} />}>
-          <VideosSection />
-        </Suspense>
-      </div>
-      <div style={{ contentVisibility: "auto" }}>
-        <Suspense fallback={<SectionPlaceholder h={400} />}>
-          <BlogSection />
-        </Suspense>
-      </div>
-      <div style={{ contentVisibility: "auto" }}>
-        <RepairProcess />
-      </div>
-      <div style={{ contentVisibility: "auto" }}>
-        <AboutUs />
-      </div>
-      <div style={{ contentVisibility: "auto" }}>
-        <ContactCTA />
-      </div>
-      <div style={{ contentVisibility: "auto" }}>
-        <ContactUs />
-      </div>
-      <div style={{ contentVisibility: "auto" }}>
-        <LocationSection />
-      </div>
-    </div>
+    <>
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
+      />
+
+      <main>
+        <HeroSection />
+
+        <div style={{ contentVisibility: "auto" }}>
+          <CategoryHighlightsSection categories={categories} />
+        </div>
+
+        <div style={{ contentVisibility: "auto" }}>
+          <ServiceFeatures />
+        </div>
+
+        <div style={{ contentVisibility: "auto" }}>
+          <Suspense fallback={<SectionPlaceholder h={320} />}>
+            <VideosSection />
+          </Suspense>
+        </div>
+
+        <div style={{ contentVisibility: "auto" }}>
+          <Suspense fallback={<SectionPlaceholder h={400} />}>
+            <BlogSection />
+          </Suspense>
+        </div>
+
+        <div style={{ contentVisibility: "auto" }}>
+          <RepairProcess />
+        </div>
+
+        <div style={{ contentVisibility: "auto" }}>
+          <AboutUs />
+        </div>
+
+        <div style={{ contentVisibility: "auto" }}>
+          <ContactCTA />
+        </div>
+
+        <div style={{ contentVisibility: "auto" }}>
+          <ContactUs />
+        </div>
+
+        <div style={{ contentVisibility: "auto" }}>
+          <LocationSection />
+        </div>
+      </main>
+    </>
   );
 }

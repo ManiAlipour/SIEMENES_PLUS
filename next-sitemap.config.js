@@ -1,5 +1,5 @@
-/** @type {import('next-sitemap').IConfig} */
-module.exports = {
+//t.me/yourstore/** @type {import('next-sitemap').IConfig} */
+https: module.exports = {
   siteUrl: "https://siemensplus1.ir",
   generateRobotsTxt: true,
   generateIndexSitemap: false,

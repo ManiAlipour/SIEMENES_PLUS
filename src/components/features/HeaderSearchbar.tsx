@@ -26,7 +26,7 @@ export default function HeaderSearchbar() {
         ref={inputRef}
         type="search"
         name="q"
-        placeholder="جستجو در محصولات..."
+        placeholder="جستجو: نام، برند یا شماره مدل..."
         autoComplete="off"
         className="w-full bg-slate-50 border border-slate-200 rounded-xl py-2.5 pr-10 pl-4 text-sm focus:border-cyan-500 outline-none transition"
         aria-label="جستجو در محصولات"

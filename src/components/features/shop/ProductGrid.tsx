@@ -2,27 +2,47 @@
 
 import ProductCard from "../ProductCard";
 import Image from "next/image";
-import { useRouter } from "next/navigation";
-import { FiShoppingCart, FiAlertCircle } from "react-icons/fi";
+import Link from "next/link";
+import { FiShoppingCart, FiAlertCircle, FiTag } from "react-icons/fi";
 import ListLikeButton from "./ListLikeButton";
 
 interface ProductGridProps {
   products: ProductObject[];
   viewMode: "grid" | "list";
   loading?: boolean;
+  searchQuery?: string;
+}
+
+function highlightMatch(text: string, query: string) {
+  if (!query?.trim() || !text) return text;
+  const escaped = query.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
+  const parts = text.split(new RegExp(`(${escaped})`, "gi"));
+  if (parts.length <= 1) return text;
+
+  return parts.map((part, i) =>
+    part.toLowerCase() === query.toLowerCase() ? (
+      <mark
+        key={i}
+        className="rounded bg-amber-100 px-0.5 font-semibold text-amber-900"
+      >
+        {part}
+      </mark>
+    ) : (
+      part
+    ),
+  );
 }
 
 export default function ProductGrid({
   products,
   viewMode,
   loading = false,
+  searchQuery = "",
 }: ProductGridProps) {
-  const router = useRouter();
-
   if (loading) {
     return (
       <div
-        className={`grid gap-6 md:gap-8 ${
+        className={`grid gap-4 md:gap-6 ${
           viewMode === "grid"
             ? "grid-cols-2 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4"
             : "grid-cols-1"
@@ -31,13 +51,13 @@ export default function ProductGrid({
         {Array.from({ length: 8 }).map((_, i) => (
           <div
             key={i}
-            className="bg-white rounded-3xl border-2 border-gray-200 shadow-lg overflow-hidden animate-pulse"
+            className="overflow-hidden rounded-2xl border border-slate-200 bg-white shadow-sm animate-pulse"
           >
-            <div className="aspect-square bg-gradient-to-br from-gray-100 via-gray-50 to-gray-200" />
-            <div className="p-5 space-y-4">
-              <div className="h-5 bg-gray-200 rounded-xl w-3/4" />
-              <div className="h-4 bg-gray-100 rounded-lg w-1/2" />
-              <div className="h-8 bg-gray-200 rounded-xl w-2/3" />
+            <div className="aspect-[4/3] bg-gradient-to-br from-slate-100 to-slate-50" />
+            <div className="space-y-3 p-4">
+              <div className="h-3 w-1/3 rounded bg-slate-200" />
+              <div className="h-4 w-3/4 rounded bg-slate-200" />
+              <div className="h-3 w-1/2 rounded bg-slate-100" />
             </div>
           </div>
         ))}
@@ -47,109 +67,109 @@ export default function ProductGrid({
 
   if (products.length === 0) {
     return (
-      <div className="flex flex-col items-center justify-center py-24 md:py-32 px-4 animate-fadeIn">
-        <div className="flex items-center justify-center mb-8">
-          <div className="p-8 bg-gradient-to-br from-gray-100 to-gray-200 rounded-3xl">
-            <FiAlertCircle className="w-20 h-20 md:w-24 md:h-24 text-gray-400" />
-          </div>
+      <div className="flex flex-col items-center justify-center rounded-3xl border border-dashed border-slate-200 bg-white px-6 py-20 text-center">
+        <div className="mb-6 rounded-2xl bg-slate-100 p-6">
+          <FiAlertCircle className="h-14 w-14 text-slate-400" />
         </div>
-        <h3 className="text-3xl md:text-4xl font-black text-gray-900 mb-4">
+        <h3 className="mb-2 text-2xl font-black text-slate-900">
           محصولی پیدا نشد
         </h3>
-        <p className="text-gray-600 text-lg md:text-xl mb-10 text-center max-w-md leading-relaxed">
-          معیار جستجو یا فیلترها را تغییر دهید تا محصولات بیشتری مشاهده کنید.
+        <p className="mb-8 max-w-md text-slate-600">
+          عبارت جستجو، دسته‌بندی یا مرتب‌سازی را تغییر دهید. برای شماره مدل
+          زیمنس می‌توانید با یا بدون خط تیره جستجو کنید.
         </p>
-        <button
-          type="button"
-          className="bg-gradient-to-r from-primary via-cyan-500 to-blue-600 text-white rounded-2xl font-bold px-8 py-4 shadow-2xl hover:shadow-primary/30 hover:scale-105 active:scale-95 transition-all duration-200 text-lg"
-          onClick={() => window.scrollTo({ top: 0, behavior: "smooth" })}
+        <Link
+          href="/shop"
+          className="rounded-xl bg-gradient-to-r from-primary to-cyan-500 px-6 py-3 text-sm font-bold text-white shadow-lg transition hover:shadow-primary/30"
         >
-          بازگشت به بالا
-        </button>
+          مشاهده همه محصولات
+        </Link>
       </div>
     );
   }
 
   if (viewMode === "list") {
     return (
-      <div className="space-y-5 md:space-y-6">
+      <div className="space-y-4 md:space-y-5">
         {products.map((product, idx) => {
           const productUrl = product.slug
             ? `/shop/${product.slug}`
             : `/shop/${product._id}`;
+
           return (
-            <div
+            <article
               key={product._id}
-              className="group bg-white rounded-3xl border-2 border-gray-200 shadow-lg hover:shadow-2xl hover:border-primary/30 transition-all duration-300 flex flex-col sm:flex-row gap-5 md:gap-8 overflow-hidden animate-fadeIn"
-              style={{ animationDelay: `${idx * 30}ms` }}
+              className="group flex flex-col overflow-hidden rounded-2xl border border-slate-200 bg-white shadow-sm transition-all hover:border-primary/25 hover:shadow-lg sm:flex-row"
             >
-              {/* Product Image */}
-              <div
-                onClick={() => router.push(productUrl)}
-                className="relative w-full sm:w-48 md:w-56 lg:w-64 aspect-square bg-gradient-to-br from-gray-50 via-white to-gray-100 cursor-pointer overflow-hidden flex-shrink-0 flex items-center justify-center group-hover:bg-gradient-to-br group-hover:from-primary/5 group-hover:via-cyan-50 group-hover:to-blue-50 transition-all duration-500"
+              <Link
+                href={productUrl}
+                className="relative aspect-square w-full shrink-0 overflow-hidden bg-gradient-to-br from-slate-50 to-cyan-50/30 sm:w-44 md:w-52 lg:w-56"
               >
                 <Image
                   src={product.image}
                   alt={product.name}
                   fill
-                  sizes="(max-width: 640px) 100vw, (max-width: 1024px) 256px, 256px"
-                  className="object-contain p-6 group-hover:scale-110 transition-transform duration-700"
-                  draggable={false}
+                  sizes="(max-width: 640px) 100vw, 224px"
+                  className="object-contain p-5 transition-transform duration-500 group-hover:scale-105"
                   priority={idx < 2}
                 />
                 {product.isFeatured && (
-                  <span className="absolute top-4 right-4 bg-gradient-to-r from-primary to-cyan-500 text-white text-xs font-black px-3 py-1.5 rounded-xl shadow-xl z-10">
-                    ⭐ ویژه
+                  <span className="absolute right-3 top-3 rounded-full bg-gradient-to-r from-amber-400 to-orange-500 px-2.5 py-1 text-xs font-bold text-white">
+                    ویژه
                   </span>
                 )}
-                {/* Hover Overlay */}
-                <div className="absolute inset-0 bg-gradient-to-t from-primary/20 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
-              </div>
+              </Link>
 
-              {/* Product Info */}
-              <div className="flex flex-col justify-between flex-1 py-5 px-5 sm:px-0 min-w-0">
+              <div className="flex min-w-0 flex-1 flex-col justify-between p-4 sm:p-5">
                 <div>
-                  <h3
-                    onClick={() => router.push(productUrl)}
-                    className="cursor-pointer font-black text-xl md:text-2xl text-gray-900 line-clamp-2 group-hover:text-primary transition-colors duration-300 mb-3 leading-tight"
-                  >
-                    {product.name}
-                  </h3>
+                  {product.brand && (
+                    <span className="mb-1 block text-xs font-semibold uppercase tracking-wide text-primary/80">
+                      {product.brand}
+                    </span>
+                  )}
+                  <Link href={productUrl}>
+                    <h3 className="mb-2 line-clamp-2 text-lg font-bold text-slate-900 transition-colors group-hover:text-primary md:text-xl">
+                      {highlightMatch(product.name, searchQuery)}
+                    </h3>
+                  </Link>
+
+                  {product.modelNumber && (
+                    <p className="mb-3 font-mono text-sm font-medium text-slate-600">
+                      MLFB:{" "}
+                      <span className="rounded-md bg-slate-100 px-2 py-0.5 text-slate-800">
+                        {highlightMatch(product.modelNumber, searchQuery)}
+                      </span>
+                    </p>
+                  )}
+
                   {product.description && (
-                    <p className="text-sm md:text-base text-gray-600 line-clamp-2 mb-4 leading-relaxed">
+                    <p className="mb-3 line-clamp-2 text-sm leading-relaxed text-slate-600">
                       {product.description}
                     </p>
                   )}
-                  <div className="flex items-center flex-wrap gap-2 mb-4">
-                    {product.brand && (
-                      <span className="inline-flex items-center gap-1.5 text-xs font-bold text-primary bg-primary/10 px-3 py-1.5 rounded-xl border border-primary/20">
-                        {product.brand}
-                      </span>
-                    )}
+
+                  <div className="flex flex-wrap gap-2">
                     {product.category && (
-                      <span className="inline-block text-xs font-semibold text-gray-600 bg-gray-100 px-3 py-1.5 rounded-xl border border-gray-200">
+                      <span className="inline-flex items-center gap-1 rounded-lg bg-slate-100 px-2.5 py-1 text-xs font-medium text-slate-600">
+                        <FiTag className="h-3 w-3" />
                         {product.category}
                       </span>
                     )}
                   </div>
                 </div>
 
-                {/* Actions */}
-                <div className="flex items-center justify-between pt-4 border-t-2 border-gray-100">
-                  <div className="flex items-center gap-3">
-                    <ListLikeButton productId={product._id} />
-                  </div>
-                  <button
-                    type="button"
-                    className="flex items-center gap-2 px-4 sm:px-5 md:px-6 py-2.5 sm:py-3 min-h-[44px] bg-gradient-to-r from-primary to-cyan-500 text-white rounded-xl sm:rounded-2xl font-bold shadow-lg hover:shadow-xl active:scale-[0.98] transition-transform duration-200 text-xs sm:text-sm md:text-base touch-manipulation"
-                    onClick={() => router.push(productUrl)}
+                <div className="mt-4 flex items-center justify-between border-t border-slate-100 pt-4">
+                  <ListLikeButton productId={product._id} />
+                  <Link
+                    href={productUrl}
+                    className="inline-flex items-center gap-2 rounded-xl bg-gradient-to-r from-primary to-cyan-500 px-4 py-2.5 text-sm font-bold text-white shadow-md transition hover:shadow-lg"
                   >
-                    <FiShoppingCart className="w-5 h-5" />
+                    <FiShoppingCart className="h-4 w-4" />
                     مشاهده جزئیات
-                  </button>
+                  </Link>
                 </div>
               </div>
-            </div>
+            </article>
           );
         })}
       </div>
@@ -157,14 +177,16 @@ export default function ProductGrid({
   }
 
   return (
-    <div className="grid grid-cols-2 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-3 sm:gap-4 md:gap-5 lg:gap-6 xl:gap-8">
+    <div className="grid grid-cols-2 gap-3 sm:gap-4 md:grid-cols-3 md:gap-5 lg:grid-cols-4 lg:gap-6">
       {products.map((product) => (
-        <div key={product._id} className="h-full animate-fadeIn">
+        <div key={product._id} className="h-full">
           <ProductCard
             id={product._id}
             name={product.name}
             image={product.image}
             brand={product.brand}
+            modelNumber={product.modelNumber}
+            category={product.category}
             isFeatured={product.isFeatured}
             slug={product.slug}
           />
