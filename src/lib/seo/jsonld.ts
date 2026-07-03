@@ -46,13 +46,14 @@ type ProductJsonLdInput = {
   category?: string;
   slug: string;
   createdAt?: string;
+price?: string | number | null;
 };
 
 export function buildProductJsonLd(product: ProductJsonLdInput) {
   const productUrl = `${SITE_URL}/shop/${product.slug}`;
   const sku = product.modelNumber || product.slug;
 
-  return {
+  const jsonLd: any = {
     "@context": "https://schema.org/",
     "@type": "Product",
     name: product.name,
@@ -69,22 +70,30 @@ export function buildProductJsonLd(product: ProductJsonLdInput) {
     category: product.category,
     url: productUrl,
     ...(product.createdAt ? { releaseDate: product.createdAt } : {}),
-    offers: {
+  };
+
+  const priceValue = product.price ? Number(product.price) : 0;
+
+  if (priceValue > 0) {
+    jsonLd.offers = {
       "@type": "Offer",
       url: productUrl,
       priceCurrency: "IRR",
+      price: priceValue,
       availability: "https://schema.org/InStock",
       seller: {
         "@type": "Organization",
         name: SITE_NAME,
         url: SITE_URL,
       },
-      priceValidUntil: new Date(
-        Date.now() + 365 * 24 * 60 * 60 * 1000,
-      ).toISOString().split("T")[0],
+      priceValidUntil: new Date(Date.now() + 365 * 24 * 60 * 60 * 1000)
+        .toISOString()
+        .split("T")[0],
       itemCondition: "https://schema.org/NewCondition",
-    },
-  };
+    };
+  }
+
+  return jsonLd;
 }
 
 export function buildFAQJsonLd(faqs: { question: string; answer: string }[]) {
@@ -102,9 +111,7 @@ export function buildFAQJsonLd(faqs: { question: string; answer: string }[]) {
   };
 }
 
-export function buildBreadcrumbJsonLd(
-  items: { name: string; url: string }[],
-) {
+export function buildBreadcrumbJsonLd(items: { name: string; url: string }[]) {
   return {
     "@context": "https://schema.org",
     "@type": "BreadcrumbList",

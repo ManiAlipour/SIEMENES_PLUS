@@ -1,5 +1,6 @@
-//t.me/yourstore/** @type {import('next-sitemap').IConfig} */
-https: module.exports = {
+/** @type {import('next-sitemap').IConfig} */
+
+module.exports = {
   siteUrl: "https://siemensplus1.ir",
   generateRobotsTxt: true,
   generateIndexSitemap: false,
@@ -44,5 +45,19 @@ https: module.exports = {
       priority: path === "/" ? 1.0 : 0.7,
       lastmod: new Date().toISOString(),
     };
+  },
+
+  additionalPaths: async (config) => {
+    const result = [];
+
+    const products = await fetch(
+      "https://siemensplus1.ir/api/products/sitemap",
+    ).then((res) => res.json());
+    return products.data.map((product) => ({
+      loc: `/product/${product.slug}`,
+      changefreq: "weekly",
+      priority: 0.8,
+      lastmod: new Date().toISOString(),
+    }));
   },
 };

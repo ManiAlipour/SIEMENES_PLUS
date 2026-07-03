@@ -36,7 +36,7 @@ export default function CategoryHighlightsSection({ categories }: Props) {
           </div>
           <p className="text-sm xs:text-base text-gray-600 max-w-2xl mx-auto leading-relaxed">
             جستجو و خرید محصولات زیمنس با نام محصولات یا کد محصولات (MLFB) در
-            فروشگاه زیمنس پلاس
+            <b>فروشگاه زیمنس پلاس</b>
           </p>
         </div>
 
@@ -44,8 +44,11 @@ export default function CategoryHighlightsSection({ categories }: Props) {
           <div className="text-center py-16">
             <p className="text-gray-500 max-w-md mx-auto">
               در حال حاضر محصولی برای نمایش وجود ندارد.{" "}
-              <Link href="/shop" className="text-primary font-semibold underline">
-                مشاهده فروشگاه زیمنس
+              <Link
+                href="/shop"
+                className="text-primary font-semibold underline"
+              >
+                مشاهده فروشگاه <b>زیمنس</b>
               </Link>
             </p>
           </div>
