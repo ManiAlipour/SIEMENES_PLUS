@@ -1,12 +1,7 @@
 import { PhoneCall } from "lucide-react";
 import Image from "next/image";
-import TrackedLink from "./TrackedLink";
 
-interface ContactCTAProps {
-  productId: string;
-}
-
-export default function ContactCTA({ productId }: ContactCTAProps) {
+export default function ContactCTA() {
   return (
     <section
       className="relative w-full py-16 lg:py-20 bg-slate-50 overflow-hidden"
@@ -38,24 +33,20 @@ export default function ContactCTA({ productId }: ContactCTAProps) {
 
         <div className="flex flex-col sm:flex-row items-center justify-center gap-4 mt-2 w-full">
           {/* Phone */}
-          <TrackedLink
+          <a
             href="tel:09199883772"
-            channel="CALL"
-            productId={productId}
-            className="flex items-center gap-2 rounded-xl bg-primary hover:bg-primary/90 px-7 py-3 text-base font-bold text-white shadow transition duration-150 focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-2"
+            className="flex items-center gap-2 rounded-xl bg-primary hover:bg-primary/90 px-7 py-3 text-base font-bold text-white shadow transition duration-150 focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-2 animate-none"
             style={{ direction: "ltr" }}
             aria-label="تماس تلفنی: ۰۹۱۹۹۸۸۳۷۷۲"
           >
             <PhoneCall size={18} aria-hidden />
             <span className="font-mono">0919 988 3772</span>
             <span className="hidden sm:inline">| تماس تلفنی</span>
-          </TrackedLink>
+          </a>
 
           {/* Instagram */}
-          <TrackedLink
+          <a
             href="https://instagram.com/siemens.plus1"
-            channel="INSTAGRAM"
-            productId={productId}
             target="_blank"
             rel="noopener noreferrer"
             className="flex items-center gap-2 rounded-xl border border-primary/30 px-7 py-3 text-base font-bold text-primary bg-primary/5 hover:bg-primary/10 transition duration-150 shadow focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-2"
@@ -68,7 +59,7 @@ export default function ContactCTA({ productId }: ContactCTAProps) {
               height={35}
             />{" "}
             @siemens.plus1
-          </TrackedLink>
+          </a>
         </div>
       </div>
     </section>

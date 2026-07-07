@@ -104,7 +104,9 @@ export default async function ProductPage({ params }: IProductProps) {
           <div className="mx-auto mb-4 flex h-16 w-16 items-center justify-center rounded-2xl bg-red-50 text-3xl">
             🔍
           </div>
-          <h1 className="mb-2 text-2xl font-black text-slate-900">{errorMsg}</h1>
+          <h1 className="mb-2 text-2xl font-black text-slate-900">
+            {errorMsg}
+          </h1>
           <p className="mb-6 text-slate-600">
             محصول موردنظر یافت نشد. می‌توانید از فروشگاه جستجو کنید.
           </p>
@@ -120,7 +122,7 @@ export default async function ProductPage({ params }: IProductProps) {
     );
   }
 
-  const productCode = product._id
+  const productCode = product._id;
   const productUrl = `${SITE_URL}/shop/${product.slug}`;
   const imageAlt = `${product.name}${product.modelNumber ? ` — کد ${product.modelNumber}` : ""} | محصولات زیمنس`;
   const descriptionText =
@@ -214,7 +216,9 @@ export default async function ProductPage({ params }: IProductProps) {
                         dateTime={product.createdAt}
                       >
                         <FiCalendar className="h-3 w-3" aria-hidden />
-                        {new Date(product.createdAt).toLocaleDateString("fa-IR")}
+                        {new Date(product.createdAt).toLocaleDateString(
+                          "fa-IR",
+                        )}
                       </time>
                     )}
                   </div>

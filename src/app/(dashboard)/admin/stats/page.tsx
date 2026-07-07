@@ -74,9 +74,7 @@ export default function AdminStatPage() {
         <SummaryStatsCards data={data} analytics={analytics} />
       </div>
 
-      {analytics && (
-        <StatsChartsSection analytics={analytics} monthlyViews={data} />
-      )}
+      {analytics && <StatsChartsSection />}
 
       {analytics && <AnalyticsLists analytics={analytics} />}
     </div>
