@@ -1,8 +1,12 @@
 import { PhoneCall } from "lucide-react";
 import Image from "next/image";
-import { RiInstagramFill } from "react-icons/ri";
+import TrackedLink from "./TrackedLink";
 
-export default function ContactCTA() {
+interface ContactCTAProps {
+  productId: string;
+}
+
+export default function ContactCTA({ productId }: ContactCTAProps) {
   return (
     <section
       className="relative w-full py-16 lg:py-20 bg-slate-50 overflow-hidden"
@@ -20,7 +24,6 @@ export default function ContactCTA() {
       <div className="pointer-events-none absolute -bottom-14 -right-14 w-52 h-52 rounded-full bg-blue-400/10 blur-3xl -z-10" />
 
       <div className="mx-auto max-w-3xl rounded-3xl border border-slate-100 bg-white px-4 py-10 md:py-16 shadow-2xl shadow-slate-200/50 flex flex-col items-center text-center gap-6 relative z-10">
-        {/* Headline */}
         <h2
           id="contact-cta-heading"
           className="text-2xl md:text-3xl font-extrabold text-slate-900 mb-2 leading-relaxed"
@@ -28,17 +31,17 @@ export default function ContactCTA() {
           برای اطلاع از قیمت محصولات{" "}
           <span className="text-primary font-black">با ما در تماس باشید</span>
         </h2>
-        {/* Subline */}
         <p className="text-slate-500 text-base mb-6 max-w-xl mx-auto">
           مشاوره تخصصی، تحلیل نیاز شما و اعلام هزینه به صورت شفاف و سریع از طریق
           تماس یا شبکه‌های اجتماعی.
         </p>
 
-        {/* Actions */}
         <div className="flex flex-col sm:flex-row items-center justify-center gap-4 mt-2 w-full">
           {/* Phone */}
-          <a
+          <TrackedLink
             href="tel:09199883772"
+            channel="CALL"
+            productId={productId}
             className="flex items-center gap-2 rounded-xl bg-primary hover:bg-primary/90 px-7 py-3 text-base font-bold text-white shadow transition duration-150 focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-2"
             style={{ direction: "ltr" }}
             aria-label="تماس تلفنی: ۰۹۱۹۹۸۸۳۷۷۲"
@@ -46,13 +49,15 @@ export default function ContactCTA() {
             <PhoneCall size={18} aria-hidden />
             <span className="font-mono">0919 988 3772</span>
             <span className="hidden sm:inline">| تماس تلفنی</span>
-          </a>
+          </TrackedLink>
 
-          <a
+          {/* Instagram */}
+          <TrackedLink
             href="https://instagram.com/siemens.plus1"
+            channel="INSTAGRAM"
+            productId={productId}
             target="_blank"
             rel="noopener noreferrer"
-            dir="ltr"
             className="flex items-center gap-2 rounded-xl border border-primary/30 px-7 py-3 text-base font-bold text-primary bg-primary/5 hover:bg-primary/10 transition duration-150 shadow focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-2"
             aria-label="صفحه اینستاگرام زیمنس پلاس"
           >
@@ -63,7 +68,7 @@ export default function ContactCTA() {
               height={35}
             />{" "}
             @siemens.plus1
-          </a>
+          </TrackedLink>
         </div>
       </div>
     </section>

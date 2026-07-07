@@ -1,330 +1,316 @@
 "use client";
 
-import {
-  MultiLineChart,
-  StackedBarChart,
-  MixedBarLineChart,
-  HorizontalBarChart,
-  MixPieChart,
-  DailyEngagementChart,
-  AreaChart,
-  BeautifulLineChart,
-  BarChart,
-  DonutChart,
-  DailyViewsChart,
-  type MultiSeries,
-} from "./StatsCharts";
+import React, { useEffect, useState } from "react";
+import { AreaChart, BarChart } from "./StatsCharts";
 import { StatsChartCard } from "./StatsChartCard";
-import type { AdminAnalyticsData } from "./AnalyticsLists";
 
-type Props = {
-  analytics: AdminAnalyticsData;
-  monthlyViews: { month: string; views: number }[];
+type PriceInquiry = {
+  _id: string;
+  type: string;
+  productId:
+    | {
+        _id: string;
+        slug: string;
+      }
+    | string
+    | null;
+  channel: string;
+  meta: {
+    pathname: string;
+    referrer: string;
+    source?: string;
+  };
+  ip: string;
+  userAgent: string;
+  createdAt: string;
 };
 
-function SectionTitle({
-  title,
-  color,
-}: {
-  title: string;
-  color: string;
-}) {
+type PriceActionApiResponse = {
+  success: boolean;
+  data: PriceInquiry[];
+  pagination: {
+    total: number;
+    page: number;
+    limit: number;
+    totalPages: number;
+  };
+};
+
+function SectionTitle({ title, color }: { title: string; color: string }) {
   return (
-    <h2 className="mb-4 flex items-center gap-2 text-sm font-bold text-slate-800">
-      <span className={`h-4 w-1 rounded-full ${color}`} />
+    <h2 className="mb-4 flex items-center gap-2 text-lg font-extrabold text-slate-800">
+      <span className={`h-5 w-1.5 rounded-full ${color}`} />
       {title}
     </h2>
   );
 }
 
-export function StatsChartsSection({ analytics, monthlyViews }: Props) {
-  const engagementSeries: MultiSeries[] = [
-    {
-      label: "نظرات",
-      data: analytics.monthlyComments ?? [],
-      color: "#8b5cf6",
-    },
-    {
-      label: "جستجو",
-      data: analytics.monthlySearches ?? [],
-      color: "#f59e0b",
-    },
-    {
-      label: "تعامل",
-      data: analytics.monthlyInteractions ?? [],
-      color: "#ef4444",
-    },
-    {
-      label: "پیام تماس",
-      data: analytics.monthlyContacts ?? [],
-      color: "#06b6d4",
-    },
-  ];
+const MONTHS_FA = [
+  "ژانویه",
+  "فوریه",
+  "مارس",
+  "آوریل",
+  "مه",
+  "ژوئن",
+  "جولای",
+  "اوت",
+  "سپتامبر",
+  "اکتبر",
+  "نوامبر",
+  "دسامبر",
+];
 
-  const trafficCompare: MultiSeries[] = [
-    {
-      label: "بازدید صفحات",
-      data: monthlyViews,
-      color: "#3b82f6",
-    },
-    {
-      label: "بازدید محصولات",
-      data: analytics.productViewsMonthly ?? [],
-      color: "#10b981",
-    },
-  ];
+function formatMonthLabel(iso: string) {
+  const [year, month] = iso.split("-");
+  const m = parseInt(month, 10);
+  return `${MONTHS_FA[m - 1]} ${year}`;
+}
 
-  const topSearchLabels = analytics.topSearches
-    .slice(0, 6)
-    .map((s) => s._id);
-  const topSearchValues = analytics.topSearches
-    .slice(0, 6)
-    .map((s) => s.total);
+function formatDayLabel(iso: string) {
+  const d = new Date(iso);
+  return d.toLocaleDateString("fa-IR", { month: "short", day: "numeric" });
+}
 
-  const topProductLabels = (analytics.popularProducts ?? [])
-    .slice(0, 6)
-    .map((p) => p.name ?? "محصول");
-  const topProductValues = (analytics.popularProducts ?? [])
-    .slice(0, 6)
-    .map((p) => p.views);
+function toLocalDateKey(date: Date) {
+  const year = date.getFullYear();
+  const month = String(date.getMonth() + 1).padStart(2, "0");
+  const day = String(date.getDate()).padStart(2, "0");
+  return `${year}-${month}-${day}`;
+}
 
-  const monthLabels = monthlyViews.map((m) => m.month);
+function groupByMonth(data: PriceInquiry[]) {
+  return data.reduce<Record<string, number>>((acc, curr) => {
+    const date = new Date(curr.createdAt);
+    const monthLabel = `${date.getFullYear()}-${String(date.getMonth() + 1).padStart(2, "0")}`;
+    acc[monthLabel] = (acc[monthLabel] ?? 0) + 1;
+    return acc;
+  }, {});
+}
+
+function groupByChannel(data: PriceInquiry[]) {
+  return data.reduce<Record<string, number>>((acc, curr) => {
+    acc[curr.channel] = (acc[curr.channel] ?? 0) + 1;
+    return acc;
+  }, {});
+}
+
+function groupByProduct(data: PriceInquiry[], topN = 6) {
+  const counts: Record<string, { name: string; count: number }> = {};
+
+  data.forEach((d) => {
+    const slug =
+      d.productId && typeof d.productId === "object" && "slug" in d.productId
+        ? d.productId.slug
+        : "نامشخص";
+
+    counts[slug] = counts[slug] || { name: slug, count: 0 };
+    counts[slug].count += 1;
+  });
+
+  return Object.values(counts)
+    .sort((a, b) => b.count - a.count)
+    .slice(0, topN);
+}
+
+function groupByDay(data: PriceInquiry[]) {
+  const result: Record<string, number> = {};
+  data.forEach((d) => {
+    const date = new Date(d.createdAt);
+    const day = toLocalDateKey(date);
+    result[day] = (result[day] ?? 0) + 1;
+  });
+  return result;
+}
+
+function ErrorBanner({
+  message,
+  onRetry,
+}: {
+  message: string;
+  onRetry: () => void;
+}) {
+  return (
+    <div className="mb-6 flex items-center justify-between rounded border border-red-200 bg-red-50 px-4 py-3 text-red-800">
+      <span>{message}</span>
+      <button
+        className="rounded border bg-red-100 px-2 py-1 text-xs text-red-900 transition hover:bg-red-200"
+        onClick={onRetry}
+      >
+        تلاش مجدد
+      </button>
+    </div>
+  );
+}
+
+function EmptyState({ message }: { message: string }) {
+  return (
+    <div className="flex h-40 flex-col items-center justify-center text-slate-400">
+      <svg width={40} height={40} fill="none" viewBox="0 0 40 40">
+        <rect width="40" height="40" rx="8" fill="#f1f5f9" />
+        <path
+          d="M10 23a10 10 0 0 1 20 0"
+          stroke="#cbd5e1"
+          strokeWidth="2"
+          strokeLinecap="round"
+        />
+        <circle cx="20" cy="17" r="2.5" fill="#cbd5e1" />
+      </svg>
+      <div className="mt-2 text-sm">{message}</div>
+    </div>
+  );
+}
+
+export function StatsChartsSection() {
+  const [loading, setLoading] = useState(true);
+  const [priceActions, setPriceActions] = useState<PriceInquiry[]>([]);
+  const [error, setError] = useState<string | null>(null);
+
+  const fetchData = async () => {
+    try {
+      setLoading(true);
+      setError(null);
+
+      const res = await fetch("/api/admin/actions/price", {
+        cache: "no-store",
+      });
+
+      const json: PriceActionApiResponse = await res.json();
+
+      console.log("PRICE API RESPONSE:", json);
+
+      if (json.success && Array.isArray(json.data)) {
+        setPriceActions(json.data);
+      } else {
+        setPriceActions([]);
+        setError("خطا در دریافت داده‌ها. لطفاً دوباره تلاش کنید.");
+      }
+    } catch (err) {
+      console.error("PRICE API ERROR:", err);
+      setPriceActions([]);
+      setError(
+        "خطا در ارتباط با سرور. لطفاً اتصال اینترنت خود را بررسی کنید یا بعداً تلاش کنید.",
+      );
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  useEffect(() => {
+    fetchData();
+  }, []);
+
+  const queriesByMonth = groupByMonth(priceActions);
+  const queriesByChannel = groupByChannel(priceActions);
+  const topProduct = groupByProduct(priceActions);
+  const dayCountsRaw = groupByDay(priceActions);
+
+  const lastNDays = Array.from({ length: 14 }, (_, i) => {
+    const d = new Date();
+    d.setDate(d.getDate() - (13 - i));
+    return toLocalDateKey(d);
+  });
+
+  const areaChartData = Object.entries(queriesByMonth)
+    .sort(([a], [b]) => a.localeCompare(b))
+    .map(([month, count]) => ({
+      month: formatMonthLabel(month),
+      views: count,
+    }));
+
+  const barChannelData = Object.entries(queriesByChannel).map(
+    ([channel, count]) => ({
+      month: channel,
+      views: count,
+    }),
+  );
+
+  const barProductData = topProduct.map((prod) => ({
+    month: prod.name,
+    views: prod.count,
+  }));
+
+  const dailyTrendData = lastNDays.map((day) => ({
+    month: formatDayLabel(day),
+    views: dayCountsRaw[day] ?? 0,
+  }));
 
   return (
     <div className="space-y-10">
-      {/* ── فعالیت روزانه ── */}
       <section>
-        <SectionTitle title="فعالیت روزانه (۷ روز اخیر)" color="bg-cyan-500" />
-        <div className="grid grid-cols-1 gap-6 lg:grid-cols-2">
-          {analytics.dailyEngagement && analytics.dailyEngagement.length > 0 && (
-            <StatsChartCard
-              title="ترکیب فعالیت‌ها — خطی"
-              description="بازدید صفحه، محصول، نظر و جستجو در هر روز."
-              className="lg:col-span-2"
-            >
-              <DailyEngagementChart data={analytics.dailyEngagement} />
-            </StatsChartCard>
-          )}
-          {analytics.dailyViews && analytics.dailyViews.length > 0 && (
-            <StatsChartCard
-              title="بازدید صفحات — میله‌ای"
-              description="تعداد بازدید صفحات در هر روز."
-            >
-              <DailyViewsChart data={analytics.dailyViews} />
-            </StatsChartCard>
-          )}
-          {analytics.dailyEngagement && (
-            <StatsChartCard
-              title="جستجو و نظر — میله‌ای"
-              description="مقایسه جستجوها و نظرات ثبت‌شده روزانه."
-            >
-              <BarChart
-                data={analytics.dailyEngagement.map((d) => ({
-                  month: d.day,
-                  views: d.searches + d.comments,
-                }))}
-              />
-            </StatsChartCard>
-          )}
-        </div>
-      </section>
+        <SectionTitle title="آمار استعلام قیمت محصولات" color="bg-cyan-500" />
 
-      {/* ── ترافیک ── */}
-      <section>
-        <SectionTitle title="ترافیک و بازدید" color="bg-blue-500" />
-        <div className="grid grid-cols-1 gap-6 lg:grid-cols-3">
+        {error && <ErrorBanner message={error} onRetry={fetchData} />}
+
+        <div className="grid grid-cols-1 gap-7 lg:grid-cols-2">
           <StatsChartCard
-            title="مقایسه بازدید صفحه و محصول"
-            description="روند دو نوع بازدید در ۱۲ ماه."
+            title="روند ماهانه استعلام قیمت"
+            description="نمودار تعداد درخواست ثبت‌شده برای استعلام قیمت در هر ماه."
             className="lg:col-span-2"
           >
-            <MultiLineChart series={trafficCompare} />
-          </StatsChartCard>
-
-          <StatsChartCard
-            title="ترکیب انواع تعامل"
-            description="سهم هر نوع فعالیت از کل تعامل سایت."
-          >
-            {(analytics.engagementMix?.length ?? 0) > 0 ? (
-              <MixPieChart slices={analytics.engagementMix ?? []} />
-            ) : (
-              <div className="flex h-full items-center justify-center text-xs text-slate-400">
-                داده‌ای موجود نیست
+            {loading ? (
+              <div className="flex h-40 items-center justify-center animate-pulse text-sky-800">
+                <span>در حال دریافت داده...</span>
               </div>
+            ) : areaChartData.length === 0 ? (
+              <EmptyState message="هیچ داده‌ای برای نمایش روند ماهانه پیدا نشد." />
+            ) : (
+              <AreaChart
+                data={areaChartData}
+                color="#06b6d4"
+                label="استعلام قیمت"
+              />
             )}
           </StatsChartCard>
 
           <StatsChartCard
-            title="بازدید صفحات — خطی"
-            description="روند ماهانه بازدید صفحات."
-            className="lg:col-span-2"
+            title="تفکیک کانال‌های استعلام"
+            description="درخواست‌های استعلام قیمت از کانال‌های مختلف مانند واتساپ، تلگرام و غیره."
           >
-            <BeautifulLineChart data={monthlyViews} />
-          </StatsChartCard>
-
-          <StatsChartCard
-            title="بازدید صفحات — دونات"
-            description="سهم هر ماه از کل بازدید."
-          >
-            <DonutChart data={monthlyViews} />
-          </StatsChartCard>
-
-          {analytics.productViewsMonthly && (
-            <StatsChartCard
-              title="بازدید صفحات + نظرات"
-              description="میله‌ای بازدید و خطی نظرات — دو محور."
-              className="lg:col-span-2"
-            >
-              <MixedBarLineChart
-                labels={monthLabels}
-                barData={monthlyViews.map((m) => m.views)}
-                barLabel="بازدید صفحات"
-                lineData={(analytics.monthlyComments ?? []).map((m) => m.views)}
-                lineLabel="نظرات"
-                barColor="#6366f1"
-                lineColor="#8b5cf6"
-              />
-            </StatsChartCard>
-          )}
-        </div>
-      </section>
-
-      {/* ── تعامل کاربران ── */}
-      <section>
-        <SectionTitle title="تعامل و مشارکت کاربران" color="bg-violet-500" />
-        <div className="grid grid-cols-1 gap-6 lg:grid-cols-2">
-          <StatsChartCard
-            title="فعالیت‌های ماهانه — stacked"
-            description="تجمیع نظر، جستجو، تعامل و پیام تماس."
-            className="lg:col-span-2"
-          >
-            <StackedBarChart series={engagementSeries} />
-          </StatsChartCard>
-
-          <StatsChartCard
-            title="ثبت‌نام کاربران — area"
-            description="روند عضویت کاربران جدید در هر ماه."
-          >
-            <AreaChart
-              data={analytics.monthlyUsers ?? []}
-              color="#6366f1"
-              label="کاربر جدید"
-            />
-          </StatsChartCard>
-
-          <StatsChartCard
-            title="نظرات ماهانه — میله‌ای"
-            description="تعداد نظرات ثبت‌شده در هر ماه."
-          >
-            <BarChart data={analytics.monthlyComments ?? []} />
-          </StatsChartCard>
-
-          <StatsChartCard
-            title="جستجو و تعامل — خطی"
-            description="مقایسه جستجوها و رویدادهای تعاملی."
-            className="lg:col-span-2"
-          >
-            <MultiLineChart
-              series={[
-                {
-                  label: "جستجو",
-                  data: analytics.monthlySearches ?? [],
-                  color: "#f59e0b",
-                },
-                {
-                  label: "تعامل",
-                  data: analytics.monthlyInteractions ?? [],
-                  color: "#ef4444",
-                },
-              ]}
-            />
-          </StatsChartCard>
-        </div>
-      </section>
-
-      {/* ── محتوا ── */}
-      <section>
-        <SectionTitle title="محتوا و موجودی" color="bg-emerald-500" />
-        <div className="grid grid-cols-1 gap-6 lg:grid-cols-3">
-          <StatsChartCard
-            title="ترکیب محتوای سایت"
-            description="توزیع محصولات، وبلاگ، پست و نظرات."
-          >
-            {(analytics.contentMix?.length ?? 0) > 0 ? (
-              <MixPieChart slices={analytics.contentMix ?? []} />
-            ) : (
-              <div className="flex h-full items-center justify-center text-xs text-slate-400">
-                داده‌ای موجود نیست
+            {loading ? (
+              <div className="flex h-40 items-center justify-center animate-pulse text-sky-800">
+                <span>در حال دریافت داده...</span>
               </div>
+            ) : barChannelData.length === 0 ? (
+              <EmptyState message="هیچ داده‌ای از کانال‌های استعلام به دست نیامد." />
+            ) : (
+              <BarChart data={barChannelData} />
             )}
           </StatsChartCard>
 
           <StatsChartCard
-            title="پیام‌های تماس — area"
-            description="روند دریافت پیام تماس ماهانه."
+            title="محصولات پرجستجو برای استعلام"
+            description="لیست ۶ محصول با بیشترین میزان استعلام قیمت ثبت‌شده."
           >
-            <AreaChart
-              data={analytics.monthlyContacts ?? []}
-              color="#06b6d4"
-              label="پیام"
-            />
+            {loading ? (
+              <div className="flex h-40 items-center justify-center animate-pulse text-sky-800">
+                <span>در حال دریافت داده...</span>
+              </div>
+            ) : barProductData.length === 0 ? (
+              <EmptyState message="داده‌ای برای محصولات پرمراجعه وجود ندارد." />
+            ) : (
+              <BarChart data={barProductData} />
+            )}
           </StatsChartCard>
 
           <StatsChartCard
-            title="توزیع نظرات — دونات"
-            description="سهم هر نوع (وبلاگ / محصول / پست)."
+            title="ترند روزانه استعلام قیمت"
+            description="تعداد درخواست ثبت‌شده برای استعلام قیمت در هر روز (۱۴ روز اخیر)"
+            className="lg:col-span-2"
           >
-            {(analytics.commentsByType?.length ?? 0) > 0 ? (
-              <DonutChart
-                data={(analytics.commentsByType ?? []).map((c) => ({
-                  month:
-                    c._id === "blogPost"
-                      ? "وبلاگ"
-                      : c._id === "product"
-                        ? "محصول"
-                        : c._id === "post"
-                          ? "پست"
-                          : c._id,
-                  views: c.total,
-                }))}
-              />
-            ) : (
-              <div className="flex h-full items-center justify-center text-xs text-slate-400">
-                نظری ثبت نشده
+            {loading ? (
+              <div className="flex h-40 items-center justify-center animate-pulse text-sky-800">
+                <span>در حال دریافت داده...</span>
               </div>
+            ) : dailyTrendData.every((t) => t.views === 0) ? (
+              <EmptyState message="داده‌ای از ترند روزانه موجود نیست." />
+            ) : (
+              <AreaChart
+                data={dailyTrendData}
+                color="#3b82f6"
+                label="استعلام روزانه"
+              />
             )}
           </StatsChartCard>
-        </div>
-      </section>
-
-      {/* ── رتبه‌بندی افقی ── */}
-      <section>
-        <SectionTitle title="رتبه‌بندی" color="bg-amber-500" />
-        <div className="grid grid-cols-1 gap-6 lg:grid-cols-2">
-          {topSearchLabels.length > 0 && (
-            <StatsChartCard
-              title="جستجوهای برتر — افقی"
-              description="پرتکرارترین عبارت‌های جستجو."
-            >
-              <HorizontalBarChart
-                labels={topSearchLabels}
-                values={topSearchValues}
-                color="#f59e0b"
-              />
-            </StatsChartCard>
-          )}
-          {topProductLabels.length > 0 && (
-            <StatsChartCard
-              title="محصولات پربازدید — افقی"
-              description="محصولاتی که بیشترین بازدید را داشته‌اند."
-            >
-              <HorizontalBarChart
-                labels={topProductLabels}
-                values={topProductValues}
-                color="#10b981"
-              />
-            </StatsChartCard>
-          )}
         </div>
       </section>
     </div>

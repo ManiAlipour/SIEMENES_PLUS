@@ -120,7 +120,7 @@ export default async function ProductPage({ params }: IProductProps) {
     );
   }
 
-  const productCode = product.modelNumber || product._id.slice(-5);
+  const productCode = product._id
   const productUrl = `${SITE_URL}/shop/${product.slug}`;
   const imageAlt = `${product.name}${product.modelNumber ? ` — کد ${product.modelNumber}` : ""} | محصولات زیمنس`;
   const descriptionText =
@@ -272,7 +272,7 @@ export default async function ProductPage({ params }: IProductProps) {
 
                 <ProductInquiryPanel
                   productName={product.name}
-                  productCode={productCode}
+                  productId={productCode}
                   productUrl={productUrl}
                 />
 

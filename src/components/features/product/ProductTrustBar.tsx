@@ -25,7 +25,7 @@ const TRUST_ITEMS = [
 
 export default function ProductTrustBar() {
   return (
-    <ul className="grid grid-cols-2 gap-3 xl:grid-cols-4">
+    <ul className="grid grid-cols-2 gap-3">
       {TRUST_ITEMS.map(({ icon: Icon, title, desc }) => (
         <li
           key={title}
