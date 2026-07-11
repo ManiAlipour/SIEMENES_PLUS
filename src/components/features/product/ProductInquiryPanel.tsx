@@ -90,7 +90,7 @@ export default function ProductInquiryPanel({
           className="inline-flex min-w-[140px] flex-1 items-center justify-center gap-2 rounded-xl border border-primary/25 bg-white px-4 py-2.5 text-sm font-bold text-primary shadow-sm hover:bg-primary/5"
         >
           <FiPhone className="h-4 w-4" aria-hidden />
-          {OFFICE_PHONE_DISPLAY}
+          <span dir="ltr">{OFFICE_PHONE_DISPLAY}</span>
         </TrackedLink>
 
         <TrackedLink

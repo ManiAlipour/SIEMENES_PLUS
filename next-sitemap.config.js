@@ -54,7 +54,7 @@ module.exports = {
       "https://siemensplus1.ir/api/products/sitemap",
     ).then((res) => res.json());
     return products.data.map((product) => ({
-      loc: `/product/${product.slug}`,
+      loc: `/shop/${product.slug}`,
       changefreq: "weekly",
       priority: 0.8,
       lastmod: new Date().toISOString(),

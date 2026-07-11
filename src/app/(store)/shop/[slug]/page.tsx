@@ -122,7 +122,7 @@ export default async function ProductPage({ params }: IProductProps) {
     );
   }
 
-  const productCode = product._id;
+  const productCode = product.modelNumber;
   const productUrl = `${SITE_URL}/shop/${product.slug}`;
   const imageAlt = `${product.name}${product.modelNumber ? ` — کد ${product.modelNumber}` : ""} | محصولات زیمنس`;
   const descriptionText =
@@ -169,7 +169,7 @@ export default async function ProductPage({ params }: IProductProps) {
 
       <main className="relative min-h-screen pb-24 md:pb-12">
         <div
-          className="pointer-events-none absolute inset-x-0 top-0 h-72 bg-gradient-to-b from-primary/[0.06] to-transparent"
+          className="pointer-events-none absolute inset-x-0 top-0 h-72 bg-gradient-to-b from-primary/6 to-transparent"
           aria-hidden
         />
 

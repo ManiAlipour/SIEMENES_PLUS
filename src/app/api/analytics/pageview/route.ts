@@ -5,7 +5,6 @@ import { verifyToken } from "@/lib/auth";
 
 export const runtime = "nodejs";
 
-// POST: Log page view
 export async function POST(req: NextRequest) {
   try {
     await connectDB();
@@ -42,7 +41,6 @@ export async function POST(req: NextRequest) {
       );
     }
 
-    // Extract IP (proxy-aware)
     let ip =
       req.headers.get("x-forwarded-for")?.split(",")[0]?.trim() ||
       req.headers.get("x-real-ip") ||
@@ -60,7 +58,6 @@ export async function POST(req: NextRequest) {
 
     return NextResponse.json({ ok: true });
   } catch (err: any) {
-    // Return error response
     return NextResponse.json(
       { ok: false, error: err?.message || "خطای سرور" },
       { status: 500 }
