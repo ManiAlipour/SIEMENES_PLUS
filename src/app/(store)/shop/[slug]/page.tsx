@@ -39,14 +39,16 @@ export async function generateMetadata({
     const product = await getProductBySlug(slug);
     if (!product) {
       return {
-        title: "محصول پیدا نشد | فروشگاه زیمنس",
-        description: "چنین محصولی در فروشگاه زیمنس وجود ندارد.",
+        title: "محصول پیدا نشد | فروشگاه زیمنس پلاس",
+        description: "چنین محصولی در فروشگاه زیمنس پلاس وجود ندارد.",
         robots: { index: false, follow: false },
       };
     }
 
-    const title = buildProductTitle(product);
-    const description = buildProductDescription(product);
+    const title = product.metaTitle?.trim() || buildProductTitle(product);
+
+    const description =
+      product.metaDescription?.trim() || buildProductDescription(product);
     const keywords = buildProductKeywords(product);
     const productUrl = `${SITE_URL}/shop/${product.slug}`;
     const imageAlt = `${product.name}${product.modelNumber ? ` — کد ${product.modelNumber}` : ""} | محصولات زیمنس`;

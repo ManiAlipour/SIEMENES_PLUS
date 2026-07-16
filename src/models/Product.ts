@@ -5,6 +5,8 @@ const productSchema = new Schema(
   {
     name: { type: String, required: true, trim: true },
     slug: { type: String, required: true, unique: true, lowercase: true },
+    metaTitle: { type: String, default: "" },
+    metaDescription: { type: String, default: "" },
     brand: { type: String },
     category: { type: String, index: true },
     modelNumber: { type: String, index: true },
@@ -17,7 +19,7 @@ const productSchema = new Schema(
     isFeatured: { type: Boolean, default: false },
     createdBy: { type: Schema.Types.ObjectId, ref: "User" },
   },
-  { timestamps: true }
+  { timestamps: true },
 );
 
 export default models.Product || model("Product", productSchema);

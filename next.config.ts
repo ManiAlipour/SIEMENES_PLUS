@@ -24,13 +24,30 @@ const nextConfig: NextConfig = {
         pathname: "/storage/**",
       },
     ],
+
     formats: ["image/avif", "image/webp"],
     deviceSizes: [640, 750, 828, 1080, 1200, 1920, 2048],
     imageSizes: [16, 32, 48, 64, 96, 128, 256],
   },
+  async redirects() {
+    return [
+      {
+        source: "/:path*",
+        has: [
+          {
+            type: "host",
+            value: "www.siemensplus1.ir", // آدرس سایت خودت رو اینجا بنویس
+          },
+        ],
+        destination: "https://siemensplus1.ir/:path*",
+        permanent: true,
+      },
+    ];
+  },
   turbopack: {
     root: __dirname,
   },
+  poweredByHeader: false,
 };
 
 export default nextConfig;

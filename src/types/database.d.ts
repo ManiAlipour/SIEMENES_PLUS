@@ -66,6 +66,8 @@ declare interface ProductObject {
   description: string;
   specifications: object;
   isFeatured: boolean;
+  metaTitle: string;
+  metaDescription: string;
   createdAt: string;
   updatedAt: string;
   __v: number;
