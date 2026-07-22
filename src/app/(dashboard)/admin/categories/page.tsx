@@ -21,12 +21,17 @@ export default function AdminCategoriesPage() {
   return (
     <div
       dir="rtl"
-      className="relative z-0 min-h-screen font-vazirmatn bg-linear-to-br from-white via-slate-50 to-cyan-50/30 p-2 sm:p-4 md:p-6 lg:p-8 transition-colors duration-300"
+      className="mx-auto max-w-7xl transition-colors duration-300"
     >
-      <header className="flex flex-col sm:flex-row justify-between items-center mb-6 sm:mb-10 border-b border-slate-200 pb-3 gap-4">
-        <h1 className="text-xl sm:text-2xl font-extrabold text-gray-800 tracking-tight">
-          مدیریت دسته‌بندی‌ها
-        </h1>
+      <header className="mb-6 flex flex-col items-start justify-between gap-3 border-b border-[#d7e3ef] pb-4 sm:flex-row sm:items-center">
+        <div>
+          <h1 className="text-xl font-extrabold tracking-tight text-[#0b1f33] sm:text-2xl">
+            مدیریت دسته‌بندی‌ها
+          </h1>
+          <p className="mt-1 text-sm text-[#64748b]">
+            ساختار دسته‌بندی محصولات فروشگاه
+          </p>
+        </div>
       </header>
 
       <div className="grid grid-cols-1 md:grid-cols-2 gap-4 md:gap-8">

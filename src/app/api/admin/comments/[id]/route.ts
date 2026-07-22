@@ -9,7 +9,8 @@ export async function DELETE(
   { params }: { params: Promise<{ id: string }> },
 ) {
   try {
-    await adminOnly(req);
+    const authResult = await adminOnly(req);
+    if (authResult) return authResult;
     await connectDB();
 
     const { id } = await params;

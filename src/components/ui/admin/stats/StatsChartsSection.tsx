@@ -10,6 +10,7 @@ type PriceInquiry = {
   productId:
     | {
         _id: string;
+        name?: string;
         slug: string;
       }
     | string
@@ -98,13 +99,13 @@ function groupByProduct(data: PriceInquiry[], topN = 6) {
   const counts: Record<string, { name: string; count: number }> = {};
 
   data.forEach((d) => {
-    const slug =
-      d.productId && typeof d.productId === "object" && "slug" in d.productId
-        ? d.productId.slug
-        : "نامشخص";
+    const product =
+      d.productId && typeof d.productId === "object" ? d.productId : null;
+    const key = product?._id || "unknown";
+    const label = product?.name || product?.slug || "نامشخص";
 
-    counts[slug] = counts[slug] || { name: slug, count: 0 };
-    counts[slug].count += 1;
+    counts[key] = counts[key] || { name: label, count: 0 };
+    counts[key].count += 1;
   });
 
   return Object.values(counts)
@@ -170,20 +171,19 @@ export function StatsChartsSection() {
       setLoading(true);
       setError(null);
 
-      const res = await fetch("/api/admin/actions/price", {
+      const res = await fetch("/api/admin/actions/price?limit=1000", {
         cache: "no-store",
       });
 
       const json: PriceActionApiResponse = await res.json();
 
-      console.log("PRICE API RESPONSE:", json);
-
-      if (json.success && Array.isArray(json.data)) {
-        setPriceActions(json.data);
-      } else {
+      if (!res.ok || !json.success || !Array.isArray(json.data)) {
         setPriceActions([]);
         setError("خطا در دریافت داده‌ها. لطفاً دوباره تلاش کنید.");
+        return;
       }
+
+      setPriceActions(json.data);
     } catch (err) {
       console.error("PRICE API ERROR:", err);
       setPriceActions([]);
@@ -237,7 +237,7 @@ export function StatsChartsSection() {
   return (
     <div className="space-y-10">
       <section>
-        <SectionTitle title="آمار استعلام قیمت محصولات" color="bg-cyan-500" />
+        <SectionTitle title="آمار استعلام قیمت محصولات" color="bg-[#0079c2]" />
 
         {error && <ErrorBanner message={error} onRetry={fetchData} />}
 

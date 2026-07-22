@@ -6,32 +6,56 @@ import User from "@/models/User";
 import { NextRequest, NextResponse } from "next/server";
 
 export async function GET(req: NextRequest) {
-  await connectDB();
+  try {
+    await connectDB();
 
-  await adminOnly(req);
+    const authResult = await adminOnly(req);
+    if (authResult) return authResult;
 
-  const actions = await AdminAction.find()
-    .sort({ createdAt: -1 })
-    .limit(10)
-    .lean();
-  return NextResponse.json(actions);
+    const actions = await AdminAction.find()
+      .sort({ createdAt: -1 })
+      .limit(20)
+      .lean();
+
+    return NextResponse.json(actions);
+  } catch (error) {
+    console.error("Error fetching admin actions:", error);
+    return NextResponse.json(
+      { error: "خطا در دریافت فعالیت‌ها." },
+      { status: 500 },
+    );
+  }
 }
 
 export async function POST(req: NextRequest) {
-  await connectDB();
+  try {
+    await connectDB();
 
-  await adminOnly(req);
+    const authResult = await adminOnly(req);
+    if (authResult) return authResult;
 
-  const token = req.cookies.get("token")?.value as string;
+    const token = req.cookies.get("token")?.value;
+    if (!token) {
+      return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+    }
 
-  const decoded = verifyToken(token);
+    const decoded = verifyToken(token);
+    const user = await User.findById(decoded.id);
+    const body = await req.json();
 
-  const user = await User.findById(decoded.id);
+    await AdminAction.create({
+      action: body.action,
+      entity: body.entity,
+      entityName: body.entityName,
+      user: user?.name || user?.email || "admin",
+    });
 
-  const body = await req.json();
-  await AdminAction.create({
-    ...body,
-    author: user?.name,
-  });
-  return NextResponse.json({ success: true });
+    return NextResponse.json({ success: true });
+  } catch (error) {
+    console.error("Error creating admin action:", error);
+    return NextResponse.json(
+      { error: "خطا در ثبت فعالیت." },
+      { status: 500 },
+    );
+  }
 }

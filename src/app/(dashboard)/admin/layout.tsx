@@ -10,23 +10,15 @@ interface AdminLayoutProps {
 
 export default function AdminLayout({ children }: AdminLayoutProps) {
   const [sidebarOpen, setSidebarOpen] = useState(false);
-  const toggleSidebar = () => setSidebarOpen(!sidebarOpen);
+  const toggleSidebar = () => setSidebarOpen((v) => !v);
 
   return (
-    <div className="flex min-h-screen bg-gradient-to-br from-gray-50 to-white">
-      {/* Sidebar - Always fixed, hidden on mobile when closed */}
+    <div className="admin-shell flex min-h-screen">
       <AdminSideBar open={sidebarOpen} toggleOpen={toggleSidebar} />
 
-      {/* Main Content Container */}
-      <div
-        className="flex flex-col lg:mr-72
-       flex-1 w-full md:w-[calc(100%-18rem)] transition-all duration-300"
-      >
-        {/* Header */}
+      <div className="flex min-w-0 flex-1 flex-col md:mr-[17.5rem]">
         <Header onToggleSidebar={toggleSidebar} />
-
-        {/* Page Content */}
-        <main className="flex-1 w-full">{children}</main>
+        <main className="admin-main flex-1 w-full">{children}</main>
       </div>
     </div>
   );

@@ -11,10 +11,10 @@ import {
   FiPackage,
   FiEdit3,
   FiMessageSquare,
-  FiActivity,
   FiMail,
   FiBarChart2,
   FiRefreshCw,
+  FiFolder,
 } from "react-icons/fi";
 
 interface DashboardStats {
@@ -31,17 +31,26 @@ interface DashboardStats {
   pageViewsToday: number;
   pageViewsThisMonth: number;
   viewsGrowth: string;
+  totalCategories?: number;
 }
 
 function DashboardSkeleton() {
   return (
-    <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 mb-8 animate-pulse">
+    <div className="mb-8 grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-4 animate-pulse">
       {Array.from({ length: 4 }).map((_, i) => (
-        <div key={i} className="h-36 rounded-2xl bg-slate-100" />
+        <div key={i} className="h-36 rounded-2xl bg-white/70" />
       ))}
     </div>
   );
 }
+
+const quickLinks = [
+  { href: "/admin/products", label: "محصولات", icon: FiPackage },
+  { href: "/admin/categories", label: "دسته‌ها", icon: FiFolder },
+  { href: "/admin/blog", label: "وبلاگ", icon: FiEdit3 },
+  { href: "/admin/contacts", label: "پیام‌ها", icon: FiMail },
+  { href: "/admin/stats", label: "آمار", icon: FiBarChart2 },
+];
 
 export default function AdminDashboardPage() {
   const [stats, setStats] = useState<DashboardStats | null>(null);
@@ -77,6 +86,7 @@ export default function AdminDashboardPage() {
         pageViewsToday: overview?.pageViewsToday ?? 0,
         pageViewsThisMonth: overview?.pageViewsThisMonth ?? 0,
         viewsGrowth: trendStats?.viewsGrowth ?? "0",
+        totalCategories: statsData.totalCategories,
       });
     } catch (err) {
       console.error("خطا در دریافت آمار:", err);
@@ -90,12 +100,6 @@ export default function AdminDashboardPage() {
     fetchStats();
   }, []);
 
-  const monthlyViewPercent = useMemo(() => {
-    const MAX = 5000;
-    const tv = stats?.pageViewsThisMonth ?? 0;
-    return Math.min((tv / MAX) * 100, 100);
-  }, [stats?.pageViewsThisMonth]);
-
   const ticketAnswerRate = useMemo(() => {
     if (!stats?.totalTickets) return 0;
     const answered = stats.totalTickets - stats.pendingTickets;
@@ -105,193 +109,164 @@ export default function AdminDashboardPage() {
   const viewsTrend = stats ? parseFloat(stats.viewsGrowth) : 0;
 
   return (
-    <div
-      dir="rtl"
-      className="min-h-screen bg-gradient-to-br from-gray-50 via-white to-gray-50"
-    >
-      <div className="max-w-7xl mx-auto px-4 md:px-6 lg:px-8 py-8">
-        <motion.header
-          initial={{ opacity: 0, y: -20 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.5 }}
-          className="mb-8"
-        >
-          <div className="flex flex-wrap items-start justify-between gap-4">
-            <div>
-              <h1 className="text-3xl md:text-4xl font-bold text-gray-900 mb-2">
-                داشبورد مدیریتی
-              </h1>
-              <p className="text-gray-600">
-                خلاصه وضعیت سایت، محتوا و تعامل کاربران
-              </p>
-            </div>
-            <div className="flex items-center gap-2">
-              <button
-                type="button"
-                onClick={() => fetchStats(true)}
-                disabled={refreshing}
-                className="inline-flex items-center gap-2 rounded-xl border border-slate-200 bg-white px-4 py-2 text-sm font-medium text-slate-600 shadow-sm hover:bg-slate-50 disabled:opacity-60"
-              >
-                <FiRefreshCw
-                  size={16}
-                  className={refreshing ? "animate-spin" : ""}
-                />
-                به‌روزرسانی
-              </button>
-              <Link
-                href="/admin/stats"
-                className="inline-flex items-center gap-2 rounded-xl bg-cyan-600 px-4 py-2 text-sm font-semibold text-white hover:bg-cyan-700 shadow-sm"
-              >
-                <FiBarChart2 size={16} />
-                آمار کامل
-              </Link>
-              <div className="hidden md:flex items-center gap-2 px-4 py-2 bg-primary/10 rounded-xl">
-                <FiActivity className="w-5 h-5 text-primary" />
-                <span className="text-sm font-semibold text-primary">
-                  آنلاین
-                </span>
-              </div>
-            </div>
-          </div>
-        </motion.header>
+    <div dir="rtl" className="mx-auto max-w-7xl">
+      <motion.header
+        initial={{ opacity: 0, y: -12 }}
+        animate={{ opacity: 1, y: 0 }}
+        className="mb-7 flex flex-wrap items-start justify-between gap-4"
+      >
+        <div>
+          <h1 className="text-2xl font-extrabold text-[#0b1f33] md:text-3xl">
+            داشبورد
+          </h1>
+          <p className="mt-1 text-sm text-[#64748b]">
+            خلاصه وضعیت محتوا، کاربران و تعاملات سایت
+          </p>
+        </div>
+        <div className="flex items-center gap-2">
+          <button
+            type="button"
+            onClick={() => fetchStats(true)}
+            disabled={refreshing}
+            className="admin-btn-ghost"
+          >
+            <FiRefreshCw
+              size={16}
+              className={refreshing ? "animate-spin" : ""}
+            />
+            به‌روزرسانی
+          </button>
+          <Link href="/admin/stats" className="admin-btn">
+            <FiBarChart2 size={16} />
+            آمار کامل
+          </Link>
+        </div>
+      </motion.header>
 
-        {loading ? (
-          <DashboardSkeleton />
-        ) : (
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
-            <InfoCard
-              title="کاربران"
-              desc={`${stats?.activeUsers ?? 0} تأییدشده · ${stats?.newUsersThisMonth ?? 0} جدید`}
-              count={stats?.users ?? 0}
-              color="primary"
-              icon={<FiUsers className="w-6 h-6 text-white" />}
-            />
-            <InfoCard
-              title="محصولات"
-              desc="محصولات ثبت‌شده"
-              count={stats?.products ?? 0}
-              color="success"
-              icon={<FiPackage className="w-6 h-6 text-white" />}
-            />
-            <InfoCard
-              title="وبلاگ"
-              desc={`${stats?.posts ?? 0} ویدیو / پست`}
-              count={stats?.blogPosts ?? 0}
-              color="warn"
-              icon={<FiEdit3 className="w-6 h-6 text-white" />}
-            />
-            <InfoCard
-              title="نظرات"
-              desc={`${stats?.newCommentsThisMonth ?? 0} نظر این ماه`}
-              count={stats?.comments ?? 0}
-              color="danger"
-              icon={<FiMessageSquare className="w-6 h-6 text-white" />}
-            />
-          </div>
-        )}
+      {loading ? (
+        <DashboardSkeleton />
+      ) : (
+        <div className="mb-7 grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-4">
+          <InfoCard
+            title="کاربران"
+            desc={`${stats?.activeUsers ?? 0} تأییدشده · ${stats?.newUsersThisMonth ?? 0} جدید`}
+            count={stats?.users ?? 0}
+            color="primary"
+            icon={<FiUsers className="h-5 w-5" />}
+          />
+          <InfoCard
+            title="محصولات"
+            desc="محصولات ثبت‌شده در کاتالوگ"
+            count={stats?.products ?? 0}
+            color="success"
+            icon={<FiPackage className="h-5 w-5" />}
+          />
+          <InfoCard
+            title="وبلاگ"
+            desc={`${stats?.posts ?? 0} ویدیو ثبت‌شده`}
+            count={stats?.blogPosts ?? 0}
+            color="warn"
+            icon={<FiEdit3 className="h-5 w-5" />}
+          />
+          <InfoCard
+            title="نظرات"
+            desc={`${stats?.newCommentsThisMonth ?? 0} نظر این ماه`}
+            count={stats?.comments ?? 0}
+            color="danger"
+            icon={<FiMessageSquare className="h-5 w-5" />}
+          />
+        </div>
+      )}
 
-        <motion.section
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ delay: 0.2, duration: 0.5 }}
-          className="rounded-2xl bg-white border-2 border-gray-200 shadow-lg p-6 md:p-8 mb-8"
-        >
-          <h2 className="text-xl font-bold text-gray-900 mb-6 flex items-center gap-2">
-            <div className="w-1 h-6 bg-gradient-to-b from-primary to-primary/60 rounded-full" />
+      <div className="mb-7 grid grid-cols-1 gap-4 lg:grid-cols-3">
+        <div className="admin-card p-5 lg:col-span-2">
+          <h2 className="mb-4 text-base font-bold text-[#0b1f33]">
             شاخص‌های کلیدی
           </h2>
-
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
-            <div className="rounded-xl border border-slate-100 bg-slate-50 p-4 text-center">
-              <p className="text-xs text-slate-500 mb-1">بازدید امروز</p>
-              <p className="text-2xl font-bold text-cyan-600 tabular-nums">
+          <div className="mb-5 grid grid-cols-1 gap-3 sm:grid-cols-3">
+            <div className="rounded-xl bg-[#f3f7fb] px-4 py-3 text-center">
+              <p className="text-xs text-[#64748b]">بازدید امروز</p>
+              <p className="mt-1 text-2xl font-bold tabular-nums text-[#004c97]">
                 {(stats?.pageViewsToday ?? 0).toLocaleString("fa-IR")}
               </p>
             </div>
-            <div className="rounded-xl border border-slate-100 bg-slate-50 p-4 text-center">
-              <p className="text-xs text-slate-500 mb-1">بازدید این ماه</p>
-              <p className="text-2xl font-bold text-indigo-600 tabular-nums">
+            <div className="rounded-xl bg-[#f3f7fb] px-4 py-3 text-center">
+              <p className="text-xs text-[#64748b]">بازدید این ماه</p>
+              <p className="mt-1 text-2xl font-bold tabular-nums text-[#0079c2]">
                 {(stats?.pageViewsThisMonth ?? 0).toLocaleString("fa-IR")}
               </p>
               {viewsTrend !== 0 && (
                 <p
-                  className={`text-xs mt-1 font-medium ${viewsTrend >= 0 ? "text-emerald-600" : "text-rose-600"}`}
+                  className={`mt-1 text-xs font-medium ${viewsTrend >= 0 ? "text-emerald-600" : "text-rose-600"}`}
                 >
                   {viewsTrend >= 0 ? "+" : ""}
                   {viewsTrend.toLocaleString("fa-IR")}٪ نسبت به ماه قبل
                 </p>
               )}
             </div>
-            <div className="rounded-xl border border-slate-100 bg-slate-50 p-4 text-center">
-              <p className="text-xs text-slate-500 mb-1 flex items-center justify-center gap-1">
-                <FiMail size={12} />
-                پیام‌های در انتظار
-              </p>
-              <p className="text-2xl font-bold text-rose-600 tabular-nums">
+            <div className="rounded-xl bg-[#f3f7fb] px-4 py-3 text-center">
+              <p className="text-xs text-[#64748b]">پیام‌های در انتظار</p>
+              <p className="mt-1 text-2xl font-bold tabular-nums text-rose-600">
                 {(stats?.pendingTickets ?? 0).toLocaleString("fa-IR")}
               </p>
-              {stats?.pendingTickets ? (
+              {!!stats?.pendingTickets && (
                 <Link
                   href="/admin/contacts"
-                  className="text-xs text-cyan-600 hover:underline mt-1 inline-block"
+                  className="mt-1 inline-block text-xs text-[#0079c2] hover:underline"
                 >
                   مشاهده پیام‌ها
                 </Link>
-              ) : null}
+              )}
             </div>
           </div>
 
-          <div className="space-y-6">
-            <div>
-              <div className="flex justify-between items-center mb-2">
-                <span className="text-sm font-semibold text-gray-700">
-                  پیشرفت بازدید ماهانه
-                </span>
-                <span className="text-lg font-bold text-primary">
-                  {monthlyViewPercent.toFixed(0)}٪
-                </span>
-              </div>
-              <div className="h-3 w-full rounded-full bg-gray-200 overflow-hidden">
-                <motion.div
-                  initial={{ width: 0 }}
-                  animate={{ width: `${monthlyViewPercent}%` }}
-                  transition={{ duration: 1, delay: 0.3 }}
-                  className="h-full bg-gradient-to-r from-primary to-primary/80 rounded-full shadow-md"
-                />
-              </div>
-              <p className="text-[11px] text-slate-400 mt-1">
-                بر اساس هدف ۵٬۰۰۰ بازدید ماهانه
-              </p>
+          <div>
+            <div className="mb-2 flex items-center justify-between">
+              <span className="text-sm font-semibold text-[#475569]">
+                نرخ پاسخ‌دهی پیام‌ها
+              </span>
+              <span className="text-sm font-bold text-amber-600">
+                {ticketAnswerRate.toLocaleString("fa-IR")}٪
+              </span>
             </div>
-
-            <div>
-              <div className="flex justify-between items-center mb-2">
-                <span className="text-sm font-semibold text-gray-700">
-                  نرخ پاسخ‌دهی پیام‌ها
-                </span>
-                <span className="text-lg font-bold text-amber-600">
-                  {ticketAnswerRate}٪
-                </span>
-              </div>
-              <div className="h-3 w-full rounded-full bg-gray-200 overflow-hidden">
-                <motion.div
-                  initial={{ width: 0 }}
-                  animate={{ width: `${ticketAnswerRate}%` }}
-                  transition={{ duration: 1, delay: 0.5 }}
-                  className="h-full bg-gradient-to-r from-amber-500 to-amber-600 rounded-full shadow-md"
-                />
-              </div>
+            <div className="h-2.5 overflow-hidden rounded-full bg-[#e8eef5]">
+              <motion.div
+                initial={{ width: 0 }}
+                animate={{ width: `${ticketAnswerRate}%` }}
+                transition={{ duration: 0.8 }}
+                className="h-full rounded-full bg-gradient-to-l from-amber-500 to-amber-400"
+              />
             </div>
           </div>
-        </motion.section>
+        </div>
 
-        <motion.div
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ delay: 0.4, duration: 0.5 }}
-        >
+        <div className="admin-card p-5">
+          <h2 className="mb-4 text-base font-bold text-[#0b1f33]">
+            دسترسی سریع
+          </h2>
+          <div className="grid grid-cols-2 gap-2">
+            {quickLinks.map((link) => {
+              const Icon = link.icon;
+              return (
+                <Link
+                  key={link.href}
+                  href={link.href}
+                  className="flex flex-col items-center gap-2 rounded-xl border border-[#e8eef5] bg-[#f8fafc] px-3 py-4 text-sm font-medium text-[#334155] transition hover:border-[#0079c2]/30 hover:bg-white hover:text-[#004c97]"
+                >
+                  <Icon className="h-5 w-5" />
+                  {link.label}
+                </Link>
+              );
+            })}
+          </div>
+        </div>
+      </div>
+
+      <div className="mb-7 grid grid-cols-1 gap-4 xl:grid-cols-3">
+        <div className="xl:col-span-2">
           <AdminChartSection />
-        </motion.div>
+        </div>
+        <RecentActionsWidget />
       </div>
     </div>
   );

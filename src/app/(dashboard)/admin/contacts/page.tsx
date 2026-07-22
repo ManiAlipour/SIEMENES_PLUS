@@ -87,10 +87,13 @@ export default function AdminContactsPage() {
   }, [modalContact]);
 
   return (
-    <div className="p-3 sm:p-6">
-      <h1 className="font-black text-lg sm:text-2xl mb-5 text-primary">
+    <div className="mx-auto max-w-7xl">
+      <h1 className="mb-2 text-lg font-extrabold text-[#0b1f33] sm:text-2xl">
         پیام‌های تماس با ما
       </h1>
+      <p className="mb-5 text-sm text-[#64748b]">
+        پیام‌های دریافتی از فرم تماس سایت
+      </p>
 
       {loading && (
         <div className="text-center text-gray-500 my-12">در حال بارگذاری...</div>

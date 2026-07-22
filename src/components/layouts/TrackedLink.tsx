@@ -15,6 +15,27 @@ interface TrackedLinkProps {
   ariaLabel?: string;
 }
 
+function sendPriceAction(payload: Record<string, unknown>) {
+  const body = JSON.stringify(payload);
+
+  try {
+    if (typeof navigator !== "undefined" && navigator.sendBeacon) {
+      const blob = new Blob([body], { type: "application/json" });
+      const queued = navigator.sendBeacon("/api/actions/price", blob);
+      if (queued) return;
+    }
+  } catch {
+    // fallback below
+  }
+
+  void fetch("/api/actions/price", {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body,
+    keepalive: true,
+  }).catch((e) => console.error("tracking failed", e));
+}
+
 export default function TrackedLink({
   href,
   channel,
@@ -28,25 +49,17 @@ export default function TrackedLink({
 }: TrackedLinkProps) {
   const pathname = usePathname();
 
-  const logAction = async () => {
-    try {
-      await fetch("/api/actions/price", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          productName,
-          productId,
-          channel,
-          meta: {
-            pathname,
-            referrer: document.referrer,
-            source: "product_inquiry_panel",
-          },
-        }),
-      });
-    } catch (e) {
-      console.error("tracking failed", e);
-    }
+  const logAction = () => {
+    sendPriceAction({
+      productName,
+      productId,
+      channel,
+      meta: {
+        pathname,
+        referrer: typeof document !== "undefined" ? document.referrer : "",
+        source: "product_inquiry_panel",
+      },
+    });
   };
 
   return (

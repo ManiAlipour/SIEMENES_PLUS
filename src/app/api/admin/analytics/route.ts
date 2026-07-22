@@ -6,7 +6,8 @@ export const runtime = "nodejs";
 
 export async function GET(req: Request) {
   try {
-    const isAdmin = await adminOnly(req);
+    const authResult = await adminOnly(req);
+    if (authResult) return authResult;
 
     const data = await getAdminAnalytics();
 

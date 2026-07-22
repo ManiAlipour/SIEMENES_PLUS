@@ -49,9 +49,9 @@ export default function AdminChartSection() {
 
   if (loading) {
     return (
-      <section className="mt-8 rounded-xl border border-slate-200 bg-white p-6 animate-pulse">
-        <div className="h-6 w-40 bg-slate-100 rounded mb-4" />
-        <div className="h-[300px] bg-slate-50 rounded" />
+      <section className="admin-card animate-pulse p-6">
+        <div className="mb-4 h-6 w-40 rounded bg-[#eef3f8]" />
+        <div className="h-[300px] rounded bg-[#f8fafc]" />
       </section>
     );
   }
@@ -59,12 +59,12 @@ export default function AdminChartSection() {
   if (!data.length) return null;
 
   return (
-    <section className="mt-8 bg-white border border-slate-200 shadow-sm rounded-2xl p-6">
-      <h2 className="text-lg font-semibold text-slate-800 mb-1">
+    <section className="admin-card p-6">
+      <h2 className="mb-1 text-base font-bold text-[#0b1f33]">
         نمودارهای ترکیبی ماهانه
       </h2>
-      <p className="text-xs text-slate-500 mb-6">
-        بازدید، نظرات، جستجو و ثبت‌نام کاربران — داده واقعی
+      <p className="mb-6 text-xs text-[#64748b]">
+        بازدید، نظرات، جستجو و ثبت‌نام کاربران
       </p>
 
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">

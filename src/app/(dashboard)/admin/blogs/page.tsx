@@ -82,13 +82,15 @@ export default function AdminBlogsPage() {
   // RENDER
   // ----------------------------
   return (
-    <div className="p-6 font-vazirmatn">
-      {/* Header */}
-      <div className="flex flex-col sm:flex-row justify-between items-center gap-3 mb-6 bg-gradient-to-r from-cyan-500 to-cyan-700 text-white rounded-2xl p-4 shadow-lg backdrop-blur-xl">
-        <h1 className="text-xl font-bold">مدیریت ویدیوها</h1>
+    <div className="mx-auto max-w-7xl">
+      <div className="admin-card mb-6 flex flex-col items-center justify-between gap-3 bg-gradient-to-l from-[#004c97] to-[#0079c2] p-4 text-white sm:flex-row">
+        <div>
+          <h1 className="text-xl font-bold">مدیریت ویدیوها</h1>
+          <p className="mt-1 text-sm text-white/75">ویدیوهای آموزشی و معرفی</p>
+        </div>
         <button
           onClick={() => setIsModalOpen(true)}
-          className="flex items-center gap-2 bg-white/20 hover:bg-white/30 text-white rounded-xl px-4 py-2 shadow-md transition-all duration-200 hover:scale-95"
+          className="flex items-center gap-2 rounded-xl bg-white/15 px-4 py-2 text-white shadow-md transition-all duration-200 hover:bg-white/25"
         >
           <FiPlus /> افزودن ویدیو جدید
         </button>
@@ -98,7 +100,7 @@ export default function AdminBlogsPage() {
       <div className="hidden md:block overflow-x-auto">
         <table className="min-w-full border border-slate-200 rounded-xl overflow-hidden bg-white/70 backdrop-blur-md shadow-[0_4px_18px_rgba(0,0,0,0.05)] text-slate-700">
           <thead>
-            <tr className="bg-gradient-to-r from-cyan-50 via-cyan-100 to-cyan-200 text-slate-700 text-xs font-semibold border-b border-slate-200/50">
+            <tr className="border-b border-[#d7e3ef] bg-[#f3f7fb] text-xs font-semibold text-[#334155]">
               <th className="py-3 px-4 text-right">عنوان</th>
               <th className="py-3 px-4 text-right">لینک ویدیو</th>
               <th className="py-3 px-4 text-center">وضعیت</th>

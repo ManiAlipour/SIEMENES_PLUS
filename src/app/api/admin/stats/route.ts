@@ -20,7 +20,8 @@ function startOfMonth() {
 
 export async function GET(request: Request) {
   try {
-    await adminOnly(request);
+    const authResult = await adminOnly(request);
+    if (authResult) return authResult;
     await connectDB();
 
     const monthStart = startOfMonth();

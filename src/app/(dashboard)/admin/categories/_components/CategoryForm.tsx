@@ -187,7 +187,7 @@ export default function CategoryForm({ categories, onSuccess }: CategoryFormProp
 
             <button
               type="submit"
-              className="w-full py-2.5 bg-linear-to-r from-cyan-500 to-cyan-700 text-white rounded-xl font-semibold shadow-md text-base hover:scale-[1.02] transition-all duration-300"
+              className="admin-btn w-full"
             >
               ثبت دسته
             </button>

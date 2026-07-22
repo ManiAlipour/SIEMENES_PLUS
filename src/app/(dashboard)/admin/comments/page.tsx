@@ -147,29 +147,34 @@ export default function AdminCommentsPage() {
   };
 
   return (
-    <div className="p-4 sm:p-6 font-vazirmatn space-y-6">
-      <div className="flex flex-col sm:flex-row justify-between gap-4 bg-gradient-to-r from-cyan-500 to-cyan-700 text-white rounded-2xl p-5 shadow-lg">
-        <div className="flex items-center gap-3">
-          <div className="flex h-11 w-11 items-center justify-center rounded-xl bg-white/15">
-            <FiMessageSquare size={22} />
+    <div className="mx-auto max-w-7xl space-y-6">
+      <div className="admin-card flex flex-col justify-between gap-4 bg-gradient-to-l from-[#004c97] to-[#0079c2] p-5 text-white">
+        <div className="flex flex-col justify-between gap-4 sm:flex-row sm:items-center">
+          <div className="flex items-center gap-3">
+            <div className="flex h-11 w-11 items-center justify-center rounded-xl bg-white/15">
+              <FiMessageSquare size={22} />
+            </div>
+            <div>
+              <h1 className="text-xl font-bold">مدیریت نظرات</h1>
+              <p className="mt-0.5 text-sm text-white/75">
+                مشاهده، جستجو و حذف نظرات کاربران
+              </p>
+            </div>
           </div>
-          <div>
-            <h1 className="text-xl font-bold">مدیریت نظرات</h1>
-            <p className="text-sm text-cyan-100 mt-0.5">
-              مشاهده، جستجو و حذف نظرات کاربران
-            </p>
-          </div>
-        </div>
 
-        <button
-          type="button"
-          onClick={() => fetchComments(true)}
-          disabled={refreshing}
-          className="self-start sm:self-center inline-flex items-center gap-2 rounded-xl bg-white/15 px-4 py-2 text-sm font-medium hover:bg-white/25 disabled:opacity-60 transition-colors"
-        >
-          <FiRefreshCw size={14} className={refreshing ? "animate-spin" : ""} />
-          به‌روزرسانی
-        </button>
+          <button
+            type="button"
+            onClick={() => fetchComments(true)}
+            disabled={refreshing}
+            className="inline-flex items-center gap-2 self-start rounded-xl bg-white/15 px-4 py-2 text-sm font-medium transition-colors hover:bg-white/25 disabled:opacity-60 sm:self-center"
+          >
+            <FiRefreshCw
+              size={14}
+              className={refreshing ? "animate-spin" : ""}
+            />
+            به‌روزرسانی
+          </button>
+        </div>
       </div>
 
       <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">

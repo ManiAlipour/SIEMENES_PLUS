@@ -9,9 +9,9 @@ export async function PATCH(
   { params }: { params: Promise<{ id: string }> },
 ) {
   try {
-    // DB + Auth
     await connectDB();
-    await adminOnly(req);
+    const authResult = await adminOnly(req);
+    if (authResult) return authResult;
 
     // Get id
     const { id } = await params;
@@ -91,9 +91,9 @@ export async function DELETE(
   { params }: { params: Promise<{ id: string }> },
 ) {
   try {
-    // DB + Auth
     await connectDB();
-    await adminOnly(req);
+    const authResult = await adminOnly(req);
+    if (authResult) return authResult;
 
     // Get id 
     const { id } = await params;

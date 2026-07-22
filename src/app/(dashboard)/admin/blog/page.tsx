@@ -66,12 +66,15 @@ export default function AdminBlogPage() {
   };
 
   return (
-    <div className="p-4 sm:p-6 font-vazir min-h-[60vh]">
-      <div className="flex flex-col sm:flex-row justify-between items-center gap-4 mb-6 bg-gradient-to-r from-cyan-500 to-cyan-600 text-white rounded-2xl p-5 shadow-lg shadow-cyan-500/20">
-        <h1 className="text-xl sm:text-2xl font-bold">مدیریت وبلاگ</h1>
+    <div className="mx-auto max-w-7xl">
+      <div className="admin-card mb-6 flex flex-col items-center justify-between gap-4 bg-gradient-to-l from-[#004c97] to-[#0079c2] p-5 text-white sm:flex-row">
+        <div>
+          <h1 className="text-xl font-bold sm:text-2xl">مدیریت وبلاگ</h1>
+          <p className="mt-1 text-sm text-white/75">مقالات و محتوای متنی سایت</p>
+        </div>
         <button
           onClick={() => setIsModalOpen(true)}
-          className="flex items-center gap-2 bg-white text-cyan-600 rounded-xl px-5 py-2.5 font-semibold shadow-md hover:bg-white/95 hover:shadow-lg transition-all duration-200 active:scale-[0.98] focus:outline-none focus-visible:ring-2 focus-visible:ring-white focus-visible:ring-offset-2 focus-visible:ring-offset-cyan-500"
+          className="flex items-center gap-2 rounded-xl bg-white px-5 py-2.5 font-semibold text-[#004c97] shadow-md transition-all duration-200 hover:bg-white/95 active:scale-[0.98]"
         >
           <FiPlus size={20} /> افزودن مطلب جدید
         </button>

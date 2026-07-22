@@ -27,15 +27,14 @@ export function StatsPageHeader({
   return (
     <div className="flex flex-col gap-4 sm:flex-row sm:items-start sm:justify-between">
       <div>
-        <h1 className="text-xl font-bold tracking-tight text-slate-900">
+        <h1 className="text-xl font-extrabold tracking-tight text-[#0b1f33] md:text-2xl">
           آمار و تحلیل سایت
         </h1>
-        <p className="mt-1 text-xs text-slate-500 md:text-sm">
-          ترافیک، تعامل، محتوا و رفتار کاربران — با انواع نمودار (خطی، میله‌ای،
-          دایره‌ای، area، stacked و ترکیبی).
+        <p className="mt-1 text-xs text-[#64748b] md:text-sm">
+          ترافیک، تعامل، محتوا و استعلام قیمت محصولات
         </p>
         {formattedTime && (
-          <p className="mt-1 text-[11px] text-slate-400">
+          <p className="mt-1 text-[11px] text-[#94a3b8]">
             آخرین به‌روزرسانی: {formattedTime}
           </p>
         )}
@@ -53,7 +52,7 @@ export function StatsPageHeader({
             type="button"
             onClick={onRefresh}
             disabled={isRefreshing}
-            className="inline-flex items-center gap-2 rounded-xl border border-slate-200 bg-white px-4 py-2 text-xs font-semibold text-slate-600 shadow-sm hover:bg-slate-50 disabled:opacity-60 transition-colors"
+            className="admin-btn-ghost text-xs"
           >
             <FiRefreshCw
               size={14}

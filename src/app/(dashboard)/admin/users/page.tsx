@@ -80,10 +80,13 @@ export default function AdminUsersPage() {
   // Render
   // ---------------------------
   return (
-    <div className="p-4 md:p-6 font-vazirmatn">
-      <h1 className="text-2xl font-bold mb-4 bg-gradient-to-r from-cyan-500 to-cyan-700 bg-clip-text text-transparent">
+    <div dir="rtl" className="mx-auto max-w-7xl">
+      <h1 className="mb-4 text-2xl font-extrabold text-[#0b1f33]">
         مدیریت کاربران
       </h1>
+      <p className="mb-5 -mt-2 text-sm text-[#64748b]">
+        مشاهده، مسدودسازی و مدیریت کاربران سایت
+      </p>
 
       <UsersFilterBar
         onSearch={handleSearch}

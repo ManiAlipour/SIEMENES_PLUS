@@ -39,6 +39,35 @@
     @apply px-5 py-2.5 rounded-xl bg-cyan-500 text-white font-semibold 
            hover:bg-cyan-600 transition-all duration-300;
   }
+
+  .admin-shell {
+    background:
+      radial-gradient(1200px 500px at 100% -10%, rgba(0, 121, 194, 0.08), transparent 55%),
+      radial-gradient(900px 420px at 0% 100%, rgba(0, 76, 151, 0.06), transparent 50%),
+      linear-gradient(180deg, #f4f7fb 0%, #eef3f8 100%);
+  }
+
+  .admin-sidebar {
+    background:
+      linear-gradient(165deg, #0b1f33 0%, #0f2d4a 45%, #004c97 140%);
+    box-shadow: -8px 0 32px rgba(11, 31, 51, 0.18);
+  }
+
+  .admin-main {
+    @apply px-4 py-5 md:px-6 lg:px-8;
+  }
+
+  .admin-card {
+    @apply rounded-2xl border border-[#d7e3ef] bg-white/90 shadow-[0_8px_30px_rgba(11,31,51,0.04)] backdrop-blur;
+  }
+
+  .admin-btn {
+    @apply inline-flex items-center justify-center gap-2 rounded-xl bg-[#004c97] px-4 py-2.5 text-sm font-semibold text-white transition hover:bg-[#0079c2] disabled:opacity-60;
+  }
+
+  .admin-btn-ghost {
+    @apply inline-flex items-center justify-center gap-2 rounded-xl border border-[#d7e3ef] bg-white px-4 py-2.5 text-sm font-medium text-[#1e3a5f] transition hover:bg-[#f3f7fb] disabled:opacity-60;
+  }
 }
 
 html,

@@ -2,93 +2,157 @@
 
 import Image from "next/image";
 import Link from "next/link";
-import { Menu, Bell, Search, User, LogOut } from "lucide-react";
-import { motion } from "framer-motion";
-import { useState } from "react";
+import { useEffect, useRef, useState } from "react";
+import { useRouter } from "next/navigation";
+import { Menu, User, LogOut, ExternalLink, ChevronDown } from "lucide-react";
+
+type AdminUser = {
+  name?: string;
+  email?: string;
+};
 
 export default function Header({
   onToggleSidebar,
 }: {
   onToggleSidebar?: () => void;
 }) {
-  const [notifications] = useState(3);
+  const router = useRouter();
+  const [user, setUser] = useState<AdminUser | null>(null);
+  const [menuOpen, setMenuOpen] = useState(false);
+  const [loggingOut, setLoggingOut] = useState(false);
+  const menuRef = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    let cancelled = false;
+
+    fetch("/api/users/get-one", { cache: "no-store" })
+      .then((res) => res.json())
+      .then((json) => {
+        if (!cancelled && json?.success && json.data) {
+          setUser(json.data);
+        }
+      })
+      .catch(() => {});
+
+    return () => {
+      cancelled = true;
+    };
+  }, []);
+
+  useEffect(() => {
+    const onPointerDown = (event: MouseEvent) => {
+      if (!menuRef.current?.contains(event.target as Node)) {
+        setMenuOpen(false);
+      }
+    };
+    document.addEventListener("mousedown", onPointerDown);
+    return () => document.removeEventListener("mousedown", onPointerDown);
+  }, []);
+
+  const handleLogout = async () => {
+    try {
+      setLoggingOut(true);
+      await fetch("/api/auth/logout", { method: "POST" });
+      router.push("/login");
+      router.refresh();
+    } catch {
+      setLoggingOut(false);
+    }
+  };
+
+  const displayName = user?.name || "مدیر سیستم";
+  const displayEmail = user?.email || "";
 
   return (
-    <header className="sticky top-0 z-10 w-full bg-white/80 backdrop-blur-xl border-b border-gray-200/50 shadow-sm">
-      <div className="flex items-center justify-between px-6 py-4">
-        {/* Left Section */}
-        <div className="flex items-center gap-4">
-          {/* Mobile Menu Button */}
+    <header className="sticky top-0 z-20 border-b border-[#d7e3ef] bg-white/85 backdrop-blur-xl">
+      <div className="flex items-center justify-between gap-4 px-4 py-3 md:px-6">
+        <div className="flex items-center gap-3">
           <button
+            type="button"
             onClick={onToggleSidebar}
-            className="md:hidden p-2 hover:bg-gray-100 rounded-lg transition-colors"
+            className="rounded-xl border border-[#d7e3ef] bg-white p-2 text-[#1e3a5f] transition hover:bg-[#f3f7fb] md:hidden"
+            aria-label="باز کردن منو"
           >
-            <Menu className="w-6 h-6 text-gray-700" />
+            <Menu className="h-5 w-5" />
           </button>
 
-          {/* Logo */}
-          <Link href="/" className="hidden md:flex items-center gap-3 group">
-            <div className="relative">
-              <Image
-                src="/images/logo.jpg"
-                alt="Siemens Plus Logo"
-                width={40}
-                height={40}
-                priority
-                className="rounded-xl shadow-md ring-2 ring-primary/20 group-hover:ring-primary/40 transition-all"
-              />
-              <div className="absolute inset-0 rounded-xl bg-primary/10 opacity-0 group-hover:opacity-100 transition-opacity" />
-            </div>
-            <div className="flex flex-col">
-              <span className="font-bold text-gray-900 text-lg">پنل ادمین</span>
-              <span className="text-xs text-gray-500">زیمنس پلاس</span>
-            </div>
-          </Link>
-
-          {/* Search Bar */}
-          <div className="hidden lg:flex items-center gap-2 bg-gray-50 rounded-xl px-4 py-2 border border-gray-200 focus-within:border-primary focus-within:ring-2 focus-within:ring-primary/20 transition-all">
-            <Search className="w-4 h-4 text-gray-400" />
-            <input
-              type="text"
-              placeholder="جستجو..."
-              className="bg-transparent border-none outline-none text-sm text-gray-700 placeholder-gray-400 w-64"
-            />
+          <div className="hidden sm:block">
+            <p className="text-sm font-bold text-[#0b1f33]">پنل مدیریت</p>
+            <p className="text-xs text-[#64748b]">کنترل محتوا و عملکرد سایت</p>
           </div>
         </div>
 
-        {/* Right Section */}
-        <div className="flex items-center gap-3">
-      
+        <div className="flex items-center gap-2 sm:gap-3">
+          <Link
+            href="/"
+            target="_blank"
+            className="inline-flex items-center gap-1.5 rounded-xl border border-[#d7e3ef] bg-white px-3 py-2 text-xs font-medium text-[#1e3a5f] transition hover:border-[#0079c2]/40 hover:bg-[#f3f7fb]"
+          >
+            <ExternalLink className="h-3.5 w-3.5" />
+            <span className="hidden sm:inline">مشاهده سایت</span>
+          </Link>
 
-          {/* User Menu */}
-          <div className="flex items-center gap-3 pl-3 border-l border-gray-200">
-            <div className="hidden sm:flex flex-col items-end">
-              <span className="text-sm font-semibold text-gray-900">
-                مدیر سیستم
+          <div className="relative" ref={menuRef}>
+            <button
+              type="button"
+              onClick={() => setMenuOpen((v) => !v)}
+              className="flex items-center gap-2 rounded-xl border border-[#d7e3ef] bg-white py-1.5 pr-1.5 pl-2.5 transition hover:bg-[#f3f7fb]"
+            >
+              <span className="flex h-8 w-8 items-center justify-center rounded-lg bg-gradient-to-br from-[#004c97] to-[#0079c2] text-white">
+                <User className="h-4 w-4" />
               </span>
-              <span className="text-xs text-gray-500">
-                admin@siemensplus.ir
+              <span className="hidden text-right sm:block">
+                <span className="block text-xs font-semibold text-[#0b1f33]">
+                  {displayName}
+                </span>
+                {displayEmail ? (
+                  <span className="block max-w-[10rem] truncate text-[10px] text-[#64748b]">
+                    {displayEmail}
+                  </span>
+                ) : null}
               </span>
-            </div>
-            <div className="relative group">
-              <button className="w-10 h-10 rounded-xl bg-gradient-to-br from-primary to-primary/80 flex items-center justify-center shadow-md hover:shadow-lg transition-all">
-                <User className="w-5 h-5 text-white" />
-              </button>
-              {/* Dropdown Menu */}
-              <div className="absolute left-0 top-full mt-2 w-48 bg-white rounded-xl shadow-xl border border-gray-200 opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-200">
+              <ChevronDown
+                className={`h-3.5 w-3.5 text-[#64748b] transition ${menuOpen ? "rotate-180" : ""}`}
+              />
+            </button>
+
+            {menuOpen && (
+              <div className="absolute left-0 top-full z-30 mt-2 w-52 overflow-hidden rounded-xl border border-[#d7e3ef] bg-white shadow-[0_12px_40px_rgba(11,31,51,0.12)]">
+                <div className="border-b border-[#eef3f8] px-3 py-2.5 sm:hidden">
+                  <p className="text-xs font-semibold text-[#0b1f33]">
+                    {displayName}
+                  </p>
+                  {displayEmail ? (
+                    <p className="truncate text-[10px] text-[#64748b]">
+                      {displayEmail}
+                    </p>
+                  ) : null}
+                </div>
                 <Link
-                  href="/admin/settings"
-                  className="flex items-center gap-2 px-4 py-2 hover:bg-gray-50 rounded-t-xl transition-colors"
+                  href="/"
+                  className="flex items-center gap-2 px-3 py-2.5 text-sm text-[#334155] transition hover:bg-[#f3f7fb]"
+                  onClick={() => setMenuOpen(false)}
                 >
-                  <User className="w-4 h-4 text-gray-600" />
-                  <span className="text-sm text-gray-700">پروفایل</span>
+                  <Image
+                    src="/images/logo.jpg"
+                    alt=""
+                    width={16}
+                    height={16}
+                    className="rounded"
+                  />
+                  بازگشت به فروشگاه
                 </Link>
-                <button className="flex items-center gap-2 px-4 py-2 hover:bg-red-50 text-red-600 rounded-b-xl transition-colors w-full">
-                  <LogOut className="w-4 h-4" />
-                  <span className="text-sm">خروج</span>
+                <button
+                  type="button"
+                  onClick={handleLogout}
+                  disabled={loggingOut}
+                  className="flex w-full items-center gap-2 px-3 py-2.5 text-sm text-rose-600 transition hover:bg-rose-50 disabled:opacity-60"
+                >
+                  <LogOut className="h-4 w-4" />
+                  {loggingOut ? "در حال خروج..." : "خروج از حساب"}
                 </button>
               </div>
-            </div>
+            )}
           </div>
         </div>
       </div>

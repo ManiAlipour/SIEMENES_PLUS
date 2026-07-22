@@ -7,14 +7,16 @@ import { Types } from "mongoose";
 export async function GET(req: NextRequest) {
   try {
     await connectDB();
-    await adminOnly(req);
+
+    const authResult = await adminOnly(req);
+    if (authResult) return authResult;
 
     const { searchParams } = new URL(req.url);
 
     const page = Math.max(Number(searchParams.get("page") || 1), 1);
     const limit = Math.min(
-      Math.max(Number(searchParams.get("limit") || 10), 1),
-      100,
+      Math.max(Number(searchParams.get("limit") || 100), 1),
+      1000,
     );
     const skip = (page - 1) * limit;
 
@@ -23,7 +25,7 @@ export async function GET(req: NextRequest) {
     const from = searchParams.get("from");
     const to = searchParams.get("to");
 
-    const filter: Record<string, any> = {
+    const filter: Record<string, unknown> = {
       type: "PRICE",
     };
 
@@ -42,9 +44,10 @@ export async function GET(req: NextRequest) {
     }
 
     if (from || to) {
-      filter.createdAt = {};
-      if (from) filter.createdAt.$gte = new Date(from);
-      if (to) filter.createdAt.$lte = new Date(to);
+      const createdAt: { $gte?: Date; $lte?: Date } = {};
+      if (from) createdAt.$gte = new Date(from);
+      if (to) createdAt.$lte = new Date(to);
+      filter.createdAt = createdAt;
     }
 
     const [actions, total] = await Promise.all([
@@ -52,7 +55,7 @@ export async function GET(req: NextRequest) {
         .sort({ createdAt: -1 })
         .skip(skip)
         .limit(limit)
-        .populate("productId", "title slug")
+        .populate("productId", "name slug")
         .lean(),
       PriceAction.countDocuments(filter),
     ]);
@@ -64,7 +67,7 @@ export async function GET(req: NextRequest) {
         total,
         page,
         limit,
-        totalPages: Math.ceil(total / limit),
+        totalPages: Math.ceil(total / limit) || 1,
       },
     });
   } catch (error) {

@@ -22,105 +22,76 @@ export default function InfoCard({
 }: IInfoCardProps) {
   const colorMap = {
     primary: {
-      gradient: "from-blue-500 to-blue-600",
-      bg: "bg-blue-50",
-      text: "text-blue-600",
-      border: "border-blue-200",
+      iconBg: "from-[#004c97] to-[#0079c2]",
+      accent: "bg-[#004c97]",
+      soft: "bg-[#e8f1fa]",
+      text: "text-[#004c97]",
     },
     warn: {
-      gradient: "from-amber-500 to-amber-600",
-      bg: "bg-amber-50",
+      iconBg: "from-amber-500 to-amber-600",
+      accent: "bg-amber-500",
+      soft: "bg-amber-50",
       text: "text-amber-600",
-      border: "border-amber-200",
     },
     danger: {
-      gradient: "from-red-500 to-red-600",
-      bg: "bg-red-50",
-      text: "text-red-600",
-      border: "border-red-200",
+      iconBg: "from-rose-500 to-rose-600",
+      accent: "bg-rose-500",
+      soft: "bg-rose-50",
+      text: "text-rose-600",
     },
     success: {
-      gradient: "from-emerald-500 to-emerald-600",
-      bg: "bg-emerald-50",
+      iconBg: "from-emerald-500 to-emerald-600",
+      accent: "bg-emerald-500",
+      soft: "bg-emerald-50",
       text: "text-emerald-600",
-      border: "border-emerald-200",
     },
   };
 
   const colors = colorMap[color];
-  const formatNumber = (num: number) => {
-    return new Intl.NumberFormat("fa-IR").format(num);
-  };
+  const formatNumber = (num: number) =>
+    new Intl.NumberFormat("fa-IR").format(num);
 
   return (
     <motion.div
-      initial={{ opacity: 0, y: 20 }}
+      initial={{ opacity: 0, y: 16 }}
       animate={{ opacity: 1, y: 0 }}
-      whileHover={{ y: -4, scale: 1.02 }}
-      transition={{ duration: 0.3 }}
-      className={`group relative overflow-hidden rounded-2xl p-6 bg-white border-2 ${colors.border} shadow-sm hover:shadow-xl transition-all duration-300`}
+      whileHover={{ y: -3 }}
+      transition={{ duration: 0.25 }}
+      className="admin-card group relative overflow-hidden p-5"
     >
-      {/* Background Gradient */}
       <div
-        className={`absolute inset-0 bg-gradient-to-br ${colors.gradient} opacity-0 group-hover:opacity-5 transition-opacity duration-300`}
+        className={`absolute inset-x-0 top-0 h-1 ${colors.accent} opacity-80`}
       />
 
-      {/* Header */}
-      <div className="flex items-start justify-between mb-4">
-        <div className="flex-1">
-          <h3 className="text-sm font-semibold text-gray-600 mb-1">{title}</h3>
-          <p className="text-xs text-gray-500">{desc}</p>
+      <div className="mb-4 flex items-start justify-between gap-3">
+        <div className="min-w-0">
+          <h3 className="text-sm font-semibold text-[#475569]">{title}</h3>
+          <p className="mt-1 text-xs leading-5 text-[#94a3b8]">{desc}</p>
         </div>
-
-        {/* Icon */}
-        {icon ? (
-          <div
-            className={`p-3 rounded-xl bg-gradient-to-br ${colors.gradient} shadow-lg`}
-          >
-            {icon}
-          </div>
-        ) : (
-          <div
-            className={`w-12 h-12 rounded-xl bg-gradient-to-br ${colors.gradient} flex items-center justify-center shadow-lg`}
-          >
-            <span className="text-white font-bold text-lg">
-              {count.toString().slice(0, 1)}
-            </span>
-          </div>
-        )}
-      </div>
-
-      {/* Count */}
-      <div className="mb-3">
-        <motion.div
-          initial={{ scale: 0.8, opacity: 0 }}
-          animate={{ scale: 1, opacity: 1 }}
-          transition={{ delay: 0.2 }}
-          className={`text-3xl font-extrabold bg-gradient-to-r ${colors.gradient} bg-clip-text text-transparent`}
+        <div
+          className={`flex h-11 w-11 shrink-0 items-center justify-center rounded-xl bg-gradient-to-br ${colors.iconBg} text-white shadow-md`}
         >
-          {formatNumber(count)}
-        </motion.div>
+          {icon}
+        </div>
       </div>
 
-      {/* Trend */}
+      <div className={`text-3xl font-extrabold ${colors.text}`}>
+        {formatNumber(count)}
+      </div>
+
       {trend !== undefined && (
-        <div className="flex items-center gap-2">
+        <div className={`mt-3 flex items-center gap-1.5 text-xs ${colors.text}`}>
           {trend >= 0 ? (
-            <FiTrendingUp className={`w-4 h-4 ${colors.text}`} />
+            <FiTrendingUp className="h-3.5 w-3.5" />
           ) : (
-            <FiTrendingDown className={`w-4 h-4 ${colors.text}`} />
+            <FiTrendingDown className="h-3.5 w-3.5" />
           )}
-          <span className={`text-xs font-semibold ${colors.text}`}>
+          <span className="font-semibold">
             {trend >= 0 ? "+" : ""}
             {trend}% نسبت به ماه قبل
           </span>
         </div>
       )}
-
-      {/* Accent Line */}
-      <div
-        className={`absolute bottom-0 right-0 left-0 h-1 bg-gradient-to-r ${colors.gradient} transform scale-x-0 group-hover:scale-x-100 transition-transform duration-300 origin-right`}
-      />
     </motion.div>
   );
 }
