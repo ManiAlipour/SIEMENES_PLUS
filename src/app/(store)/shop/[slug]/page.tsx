@@ -22,7 +22,7 @@ import {
 import {
   buildBreadcrumbJsonLd,
   buildFAQJsonLd,
-  buildProductJsonLd,
+  // buildProductJsonLd,
 } from "@/lib/seo/jsonld";
 import { SITE_NAME, SITE_URL } from "@/lib/seo/site";
 
@@ -45,10 +45,17 @@ export async function generateMetadata({
       };
     }
 
-    const title = product.metaTitle?.trim() || buildProductTitle(product);
+    const metaTitle = product.metaTitle?.trim();
+    const metaDescription = product.metaDescription?.trim();
 
-    const description =
-      product.metaDescription?.trim() || buildProductDescription(product);
+    const title = metaTitle
+      ? `${metaTitle} | زیمنس پلاس`
+      : buildProductTitle(product);
+
+    const description = metaDescription
+      ? `${metaDescription} | کلیک کنید`
+      : buildProductDescription(product);
+
     const keywords = buildProductKeywords(product);
     const productUrl = `${SITE_URL}/shop/${product.slug}`;
     const imageAlt = `${product.name}${product.modelNumber ? ` — کد ${product.modelNumber}` : ""} | محصولات زیمنس`;
@@ -148,16 +155,16 @@ export default async function ProductPage({ params }: IProductProps) {
   ];
 
   const jsonLd = [
-    buildProductJsonLd({
-      name: product.name,
-      description: product.description,
-      image: product.image,
-      brand: product.brand,
-      modelNumber: product.modelNumber,
-      category: product.category,
-      slug: product.slug,
-      createdAt: product.createdAt,
-    }),
+    // buildProductJsonLd({
+    //   name: product.name,
+    //   description: product.description,
+    //   image: product.image,
+    //   brand: product.brand,
+    //   modelNumber: product.modelNumber,
+    //   category: product.category,
+    //   slug: product.slug,
+    //   createdAt: product.createdAt,
+    // }),
     buildBreadcrumbJsonLd(breadcrumbItems),
     buildFAQJsonLd(faqs),
   ];
@@ -179,8 +186,8 @@ export default async function ProductPage({ params }: IProductProps) {
           <ProductBreadcrumb product={product} />
 
           <article
-            itemScope
-            itemType="https://schema.org/Product"
+            // itemScope
+            // itemType="https://schema.org/Product"
             className="space-y-8"
           >
             <section className="grid gap-8 lg:grid-cols-12 lg:gap-10">

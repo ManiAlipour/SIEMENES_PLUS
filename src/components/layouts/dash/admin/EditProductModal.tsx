@@ -12,8 +12,10 @@ interface Product {
   modelNumber?: string;
   description?: string;
   specifications?: { key: string; value: string }[] | Record<string, string>;
-  imageUrl?: string;
+  image?: string;
   isFeatured?: boolean;
+  metaTitle: string;
+  metaDescription: string;
 }
 
 export default function EditProductModal({
@@ -109,9 +111,10 @@ export default function EditProductModal({
           normalizedSpecs.length > 0
             ? normalizedSpecs
             : [{ key: "", value: "" }],
-        image: null,
-        imageUrl: product.imageUrl || null,
+        image: product.image || null,
         isFeatured: product.isFeatured || false,
+        metaTitle: product.metaTitle,
+        metaDescription: product.metaDescription,
       }}
     />
   );

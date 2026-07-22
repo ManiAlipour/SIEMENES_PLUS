@@ -15,13 +15,27 @@ export default function ProductsPage() {
   const [products, setProducts] = useState<any[]>([]);
   const [loading, setLoading] = useState(false);
   const [addProductModalOpen, setAddProductModalOpen] = useState(false);
+  const [totalProduct, setTotalProduct] = useState(0);
+  const [pagination, setPagination] = useState<{
+    limit: number;
+    page: number;
+    totalPage: number;
+  }>({
+    limit: 15,
+    page: 1,
+    totalPage: 1,
+  });
 
   const fetchProducts = async () => {
     try {
       setLoading(true);
-      const res = await fetch(`/api/products?limit=15`);
-      const { items } = await res.json();
+      const res = await fetch(
+        `/api/products?limit=${pagination.limit}&page=${pagination.page}`,
+      );
+      const { items, page, total, pages: totalPage } = await res.json();
       setProducts(items);
+      setPagination({ ...pagination, page, totalPage });
+      setTotalProduct(total);
       setLoading(false);
     } catch (err) {
       console.error(err);
@@ -109,30 +123,19 @@ export default function ProductsPage() {
       <div className="relative z-10 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 mt-10">
         <InfoCard
           label="تعداد کل محصولات"
-          value={products.length.toString()}
+          value={totalProduct.toString()}
           icon={<BsBoxSeam size={24} />}
           color="from-[#06b6d4] to-[#0e7490]"
-        />
-        <InfoCard
-          label="محصولات فعال"
-          value={products
-            .filter((p: any) => p.status === "موجود")
-            .length.toString()}
-          icon={<BsGraphUp size={24} />}
-          color="from-[#16a34a] to-[#065f46]"
-        />
-        <InfoCard
-          label="محصولات ناموجود"
-          value={products
-            .filter((p: any) => p.status === "ناموجود")
-            .length.toString()}
-          icon={<BsBoxSeam size={24} />}
-          color="from-[#f59e0b] to-[#b45309]"
         />
       </div>
 
       {/* ===== Product Table ===== */}
-      <ProductTable products={filtered} onRefresh={fetchProducts} />
+      <ProductTable
+        products={filtered}
+        onRefresh={fetchProducts}
+        pagination={pagination}
+        onPageChange={fetchProducts}
+      />
     </div>
   );
 }

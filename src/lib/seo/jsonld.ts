@@ -46,7 +46,7 @@ type ProductJsonLdInput = {
   category?: string;
   slug: string;
   createdAt?: string;
-price?: string | number | null;
+  price?: string | number | null;
 };
 
 export function buildProductJsonLd(product: ProductJsonLdInput) {

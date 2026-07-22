@@ -73,6 +73,8 @@ export default function AddProductModal({
         category: "",
         modelNumber: "",
         description: "",
+        metaTitle: "",
+        metaDescription: "",
         specifications: [{ key: "", value: "" }],
         image: null,
         isFeatured: false,
