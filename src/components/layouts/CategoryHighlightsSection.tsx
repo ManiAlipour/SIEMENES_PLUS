@@ -34,10 +34,10 @@ export default function CategoryHighlightsSection({ categories }: Props) {
               محصولات زیمنس بر اساس دسته‌بندی
             </h2>
           </div>
-          <p className="text-sm xs:text-base text-gray-600 max-w-2xl mx-auto leading-relaxed">
+          <div className="text-sm xs:text-base text-gray-600 max-w-2xl mx-auto leading-relaxed">
             جستجو و خرید محصولات زیمنس با نام محصولات یا کد محصولات (MLFB) در
             <h1 className="inline">فروشگاه زیمنس پلاس</h1>
-          </p>
+          </div>
         </div>
 
         {categories.length === 0 ? (

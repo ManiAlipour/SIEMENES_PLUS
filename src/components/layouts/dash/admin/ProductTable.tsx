@@ -200,7 +200,7 @@ export default function ProductTable({
             <div className="flex items-center gap-2 flex-wrap">
               <button
                 disabled={pagination.page === 1}
-                onClick={() => onPageChange(pagination.page - 1)}
+                onClick={() => onPageChange(pagination.page)}
                 className="inline-flex items-center gap-2 rounded-lg border px-3 py-2 text-sm transition
                            disabled:opacity-40 disabled:cursor-not-allowed hover:bg-gray-50"
               >

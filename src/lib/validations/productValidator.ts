@@ -16,6 +16,8 @@ export const productSchemaZod = z.object({
     .string()
     .regex(/^[0-9a-fA-F]{24}$/)
     .optional(),
+  metaTitle: z.string().trim(),
+  metaDescription: z.string().trim(),
 });
 
 export const productRequestSchema = z.object({
@@ -29,6 +31,8 @@ export const productRequestSchema = z.object({
     specifications: productSchemaZod.shape.specifications,
     isFeatured: productSchemaZod.shape.isFeatured,
     createdBy: productSchemaZod.shape.createdBy,
+    metaTitle: productSchemaZod.shape.metaTitle,
+    metaDescription: productSchemaZod.shape.metaDescription,
   }),
   file: z.instanceof(File).optional().optional(),
 });

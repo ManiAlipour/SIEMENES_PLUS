@@ -29,7 +29,6 @@ export default function AddBlogModal({ onClose, onAdd }: AddBlogModalProps) {
     };
   }, []);
 
-  // --- Submit Blog ---
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!title.trim()) {
@@ -40,7 +39,6 @@ export default function AddBlogModal({ onClose, onAdd }: AddBlogModalProps) {
       toast.error("لینک آپارات الزامی است");
       return;
     }
-    // Regex validation (client-side, like backend)
     const aparatRegex = /^https?:\/\/(www\.)?aparat\.com\/.+/;
     if (!aparatRegex.test(video)) {
       toast.error("لینک ویدیو باید آدرس صحیح از Aparat باشد");
@@ -83,7 +81,7 @@ export default function AddBlogModal({ onClose, onAdd }: AddBlogModalProps) {
 
   return (
     <div
-      className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 backdrop-blur-sm animate-fadeIn 
+      className="max-w-full fixed inset-0 z-50 flex items-center justify-center bg-black/50 backdrop-blur-sm animate-fadeIn 
       overflow-x-hidden overflow-y-auto"
       onClick={onClose}
     >

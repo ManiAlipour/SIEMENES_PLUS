@@ -50,6 +50,8 @@ export default function ProductGallery({
                 alt={alt}
                 fill
                 priority
+                loading="eager"
+                placeholder="blur"
                 sizes="(max-width: 768px) 100vw, 45vw"
                 className="object-contain p-6 sm:p-10 transition-transform duration-500 group-hover:scale-105"
               />

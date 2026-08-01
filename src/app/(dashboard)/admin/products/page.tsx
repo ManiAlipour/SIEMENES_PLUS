@@ -42,6 +42,14 @@ export default function ProductsPage() {
     }
   };
 
+  const changePageHandler = async (page: number) => {
+    setPagination((prev) => ({
+      ...prev,
+      page,
+    }));
+    await fetchProducts();
+  };
+
   useEffect(() => {
     fetchProducts();
     // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -121,7 +129,7 @@ export default function ProductsPage() {
         products={filtered}
         onRefresh={fetchProducts}
         pagination={pagination}
-        onPageChange={fetchProducts}
+        onPageChange={changePageHandler}
       />
     </div>
   );

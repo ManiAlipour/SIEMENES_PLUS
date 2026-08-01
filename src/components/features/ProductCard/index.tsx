@@ -26,27 +26,21 @@ export default function ProductCard({
   const productUrl = slug ? `/shop/${slug}` : `/shop/${id}`;
 
   return (
-    // ۱. حذف hover:-translate-y-1 روی موبایل یا استفاده از transform ساده‌تر
-    // ۲. اضافه کردن will-change-transform به کلاس‌ها جهت کمک به رندر سخت‌افزاری مرورگر
     <article className="group relative flex h-full flex-col overflow-hidden rounded-2xl border border-slate-200/80 bg-white shadow-sm transition-all duration-300 hover:border-primary/30 hover:shadow-xl hover:shadow-primary/10 md:hover:-translate-y-1 will-change-transform">
-      {/* لینک سراسری رو کل کارت اعمال می‌شه بدون اینکه z-indexهای پیچیده و تداخل لمسی ایجاد کنه */}
       <Link
         href={productUrl}
         className="absolute inset-0 z-10 rounded-2xl"
         aria-label={name}
       />
 
-      {/* بخش تصویر: حذف گرادینت‌های خیلی پیچیده در پس‌زمینه و ساده‌سازی افکت Scale */}
       <div className="relative aspect-[4/3] overflow-hidden bg-slate-50 p-4 sm:p-5">
         {isFeatured && (
-          // استفاده از z-20 فقط برای قرارگیری روی لینک سراسری
           <span className="absolute left-3 top-3 z-20 rounded-full bg-gradient-to-r from-amber-400 to-orange-500 px-2.5 py-1 text-[10px] font-bold text-white shadow-md sm:text-xs">
             ویژه
           </span>
         )}
 
         {modelNumber && (
-          // حذف backdrop-blur-sm که قاتل رندر در گوشی‌های ضعیف اندرویدی است و جایگزینی با رنگ ثابت تخت
           <span className="absolute bottom-3 right-3 z-20 max-w-[85%] truncate rounded-lg bg-slate-900/90 px-2 py-1 font-mono text-[10px] font-medium tracking-wide text-cyan-100 sm:text-xs">
             {modelNumber}
           </span>
@@ -56,14 +50,13 @@ export default function ProductCard({
           src={image}
           alt={name}
           fill
+          loading="lazy"
           sizes="(max-width: 640px) 50vw, (max-width: 1024px) 33vw, 25vw"
-          // استفاده از classNames ساده‌تر برای افکت تصویر
           className="object-contain p-2 transition-transform duration-500 md:group-hover:scale-105"
           priority={false}
         />
       </div>
 
-      {/* اطلاعات کارت */}
       <div className="flex flex-1 flex-col gap-3 p-4 pt-3">
         <div className="min-h-[72px] space-y-1.5">
           {brand && (
@@ -83,7 +76,7 @@ export default function ProductCard({
               {category}
             </span>
           )}
-          {/* برای جلوگیری از تداخل کلیک، این بخش نیاز به z-20 ندارد چون لینک سراسری z-10 است و کل کارت را پوشش داده است */}
+
           <span className="mr-auto inline-flex items-center gap-1 text-xs font-bold text-primary transition-colors group-hover:text-cyan-600">
             جزئیات
             <FiArrowLeft className="h-3.5 w-3.5 transition-transform group-hover:-translate-x-0.5" />

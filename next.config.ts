@@ -24,7 +24,6 @@ const nextConfig: NextConfig = {
         pathname: "/storage/**",
       },
     ],
-
     formats: ["image/avif", "image/webp"],
     deviceSizes: [640, 750, 828, 1080, 1200, 1920, 2048],
     imageSizes: [16, 32, 48, 64, 96, 128, 256],
@@ -32,11 +31,17 @@ const nextConfig: NextConfig = {
   async redirects() {
     return [
       {
+        source: "/product/:slug*",
+        destination: "/shop/:slug*",
+        permanent: true,
+      },
+      // ۲. ریدایرکت بدون www (تنظیمات قبلی خودت)
+      {
         source: "/:path*",
         has: [
           {
             type: "host",
-            value: "www.siemensplus1.ir", // آدرس سایت خودت رو اینجا بنویس
+            value: "www.siemensplus1.ir",
           },
         ],
         destination: "https://siemensplus1.ir/:path*",

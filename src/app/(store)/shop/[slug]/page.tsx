@@ -45,16 +45,12 @@ export async function generateMetadata({
       };
     }
 
-    const metaTitle = product.metaTitle?.trim();
-    const metaDescription = product.metaDescription?.trim();
+    const metaTitle = product.metaTitle.trim();
+    const metaDescription = product.metaDescription.trim();
 
-    const title = metaTitle
-      ? `${metaTitle} | زیمنس پلاس`
-      : buildProductTitle(product);
+    const title = `${metaTitle} | زیمنس پلاس`;
 
-    const description = metaDescription
-      ? `${metaDescription} | کلیک کنید`
-      : buildProductDescription(product);
+    const description = `${metaDescription} | کلیک کنید`;
 
     const keywords = buildProductKeywords(product);
     const productUrl = `${SITE_URL}/shop/${product.slug}`;
