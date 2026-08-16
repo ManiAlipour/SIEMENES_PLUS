@@ -1,66 +1,68 @@
-"use client";
 import Image from "next/image";
+import Link from "next/link";
 
-// About Us section with brand accent, image, and brief description
-const AboutUs = () => {
+export default function AboutUs() {
   return (
     <section
-      className="relative overflow-hidden py-24 md:py-28 bg-slate-50 border-t border-primary/10"
+      className="relative overflow-hidden bg-white py-16 md:py-24"
       aria-labelledby="about-us-heading"
     >
-      <div
-        className="absolute right-0 top-0 bottom-0 w-2 bg-primary/80 rounded-l-lg"
-        aria-hidden
-      />
-      <div className="container mx-auto grid md:grid-cols-2 gap-14 items-center px-6 md:px-10">
-        <div className="flex justify-center md:justify-start order-1 md:order-2">
-          <div className="rounded-xl overflow-hidden shadow-lg border border-primary/20 w-full max-w-[500px] aspect-4/3 ring-1 ring-primary/10">
-            <Image
-              src="/images/team-industrial.webp"
-              alt="تیم فنی زیمنس پلاس | SIEMENS PLUS"
-              width={900}
-              height={600}
-              className="object-cover w-full h-full"
-              loading="lazy"
-              sizes="(max-width: 768px) 100vw, 500px"
-            />
-          </div>
+      <div className="container mx-auto grid max-w-7xl items-stretch gap-0 px-0 md:grid-cols-2 md:px-6">
+        <div className="relative min-h-[280px] md:min-h-[420px]">
+          <Image
+            src="/images/team-industrial.webp"
+            alt="تیم فنی زیمنس پلاس"
+            fill
+            className="object-cover"
+            sizes="(max-width: 768px) 100vw, 50vw"
+            loading="lazy"
+          />
         </div>
 
-        <div className="order-2 md:order-1 text-right">
-          <span className="text-sm font-vazir-medium text-primary tracking-wide uppercase border-b border-primary/30 pb-1">
+        <div className="flex flex-col justify-center bg-[#f3f5f7] px-5 py-10 sm:px-8 md:px-10 md:py-12">
+          <p className="mb-2 text-xs font-bold tracking-[0.18em] text-primary">
             درباره ما
-          </span>
+          </p>
           <h2
             id="about-us-heading"
-            className="text-3xl md:text-4xl font-bold text-primary mt-3 mb-5"
+            className="text-2xl font-black text-slate-900 md:text-3xl"
           >
-            زیمنس پلاس{" "}
-            <span className="block text-gray-500 text-lg">SIEMENS PLUS</span>
+            زیمنس پلاس
           </h2>
-          <p className="text-gray-700 leading-relaxed mb-4 text-[15px]">
-            مجموعه‌ی فنی مهندسی زیمنس پلاس در سال ۱۳۹۵ تحت مدیریت مهندس مرتضی
-            مجیدی فعالیت خود را اغاز نموده. این مجموعه با بهره‌گیری از دانش فنی
-            به‌روز و تیمی متخصص، در زمینه‌هایی مانند فروش وتعمیرات تخصصی قطعات
-            زیمنس از جمله سیستم‌ کنترل ها و درایوها ،انکودرها وخط کش ها ...
-            فعالیت می‌کند.
+          <p className="mt-1 text-sm text-slate-500">SIEMENS PLUS</p>
+
+          <p className="mt-5 text-[15px] leading-8 text-slate-700">
+            مجموعه فنی‌مهندسی زیمنس پلاس از سال ۱۳۹۵ تحت مدیریت{" "}
+            <Link
+              href="/about-us/morteza-majidi"
+              className="font-bold text-primary underline-offset-4 hover:underline"
+            >
+              مهندس مرتضی مجیدی
+            </Link>{" "}
+            فعالیت می‌کند؛ فروش و تعمیرات تخصصی کنترل‌ها، درایوها، انکودرها و
+            خط‌کش‌های زیمنس.
           </p>
-          <p className="text-gray-600 text-sm leading-relaxed">
-            اعتماد مشتریان ما حاصل شفافیت، پشتیبانی فنی دائمی و ارائه تجهیزات
-            اورجینال با گارانتی معتبر است.
+          <p className="mt-3 text-sm leading-7 text-slate-600">
+            اعتماد مشتریان ما حاصل شفافیت، پشتیبانی فنی و تجهیزات اورجینال با
+            گارانتی معتبر است.
           </p>
 
-          <a
-            href="/about-us"
-            className="inline-block mt-8 text-sm font-vazir-medium text-white bg-primary px-6 py-2.5 rounded-full hover:shadow-lg hover:bg-primary/90 transition-all duration-300 focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-2"
-            aria-label="مطالعه بیشتر درباره زیمنس پلاس"
-          >
-            بیشتر بدانید
-          </a>
+          <div className="mt-8 flex flex-wrap gap-3">
+            <Link
+              href="/about-us"
+              className="inline-flex min-h-[44px] items-center bg-primary px-6 text-sm font-bold text-white transition hover:bg-primary/90"
+            >
+              بیشتر بدانید
+            </Link>
+            <Link
+              href="/about-us/morteza-majidi"
+              className="inline-flex min-h-[44px] items-center border border-slate-300 px-6 text-sm font-bold text-slate-700 transition hover:border-primary hover:text-primary"
+            >
+              پروفایل مرتضی مجیدی
+            </Link>
+          </div>
         </div>
       </div>
     </section>
   );
-};
-
-export default AboutUs;
+}

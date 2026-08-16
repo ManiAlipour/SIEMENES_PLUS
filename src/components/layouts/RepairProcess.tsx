@@ -1,85 +1,82 @@
+import Link from "next/link";
 import {
-  FaTools,
-  FaSearchPlus,
-  FaThumbsUp,
-  FaShippingFast,
-  FaUmbrella,
-  FaCalculator,
-} from "react-icons/fa";
+  FiTool,
+  FiSearch,
+  FiCheckCircle,
+  FiTruck,
+  FiDroplet,
+  FiClipboard,
+} from "react-icons/fi";
+
+const steps = [
+  { icon: FiClipboard, title: "برآورد هزینه قبل از تعمیر" },
+  { icon: FiTool, title: "تعمیر تخصصی و مهندسی" },
+  { icon: FiDroplet, title: "سرویس و شستشوی الکترونیکی" },
+  { icon: FiSearch, title: "آنالیز و عیب‌یابی قطعات" },
+  { icon: FiCheckCircle, title: "تست نهایی محصول" },
+  { icon: FiTruck, title: "ارسال مطمئن" },
+] as const;
 
 export default function RepairProcess() {
-  const steps = [
-    {
-      icon: <FaCalculator />,
-      title: "برآورد هزینه قبل از شروع تعمیرات",
-      step: 1,
-    },
-    { icon: <FaTools />, title: "تعمیرات به‌صورت تخصصی و علمی", step: 2 },
-    {
-      icon: <FaUmbrella />,
-      title: "سرویس اولیه و شستشوی تجهیزات الکترونیکی",
-      step: 3,
-    },
-    {
-      icon: <FaSearchPlus />,
-      title: "آنالیز و عیب‌یابی قطعات الکترونیک",
-      step: 4,
-    },
-    { icon: <FaThumbsUp />, title: "تست محصول تعمیر شده", step: 5 },
-    { icon: <FaShippingFast />, title: "ارسال مطمئن", step: 6 },
-  ];
-
   return (
-    <section className="relative overflow-hidden py-16 md:py-20 bg-[#0b1730] text-white">
-      {/* Dark overlay for depth */}
-      <div className="absolute inset-0 bg-[#002b59]/80" />
+    <section
+      className="relative overflow-hidden bg-[#0b1f33] py-16 text-white md:py-20"
+      aria-labelledby="repair-process-heading"
+    >
+      <div
+        className="pointer-events-none absolute inset-0 opacity-[0.07]"
+        style={{
+          backgroundImage:
+            "linear-gradient(#fff 1px, transparent 1px), linear-gradient(90deg, #fff 1px, transparent 1px)",
+          backgroundSize: "48px 48px",
+        }}
+        aria-hidden
+      />
 
-      <div className="absolute inset-0 z-0 opacity-30">
-        <svg viewBox="0 0 1200 400" className="w-full h-full">
-          <defs>
-            <linearGradient id="pulseGradient" x1="0%" y1="0%" x2="100%" y2="0%">
-              <stop offset="0%" stopColor="#00A9E0" stopOpacity="0.2" />
-              <stop offset="50%" stopColor="#00A9E0" stopOpacity="0.5" />
-              <stop offset="100%" stopColor="#00A9E0" stopOpacity="0.2" />
-            </linearGradient>
-          </defs>
-          <path
-            d="M0,200 C200,150 400,250 600,200 C800,150 1000,250 1200,200"
-            stroke="url(#pulseGradient)"
-            strokeWidth="2.5"
-            fill="none"
-          />
-        </svg>
-      </div>
-
-      {/* Section title */}
-      <div className="relative z-10 text-center mb-12">
-        <h2 className="text-2xl sm:text-3xl font-bold text-[#00A9E0]">
-          فرآیند تعمیرات گروه مهندسی{" "}
-          <span className="text-[#00CFB9]">زیمنس پلاس</span>
-        </h2>
-        <div className="mt-3 w-28 h-1 bg-[#00A9E0] mx-auto rounded-full shadow-[0_0_14px_#00A9E0]" />
-      </div>
-
-      {/* Process steps */}
-      <div className="relative z-10 max-w-6xl mx-auto grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-6 px-4 text-center items-start">
-        {steps.map((item, i) => (
-          <div
-            key={i}
-            className="flex flex-col items-center group"
+      <div className="relative mx-auto max-w-7xl px-4 md:px-6">
+        <header className="mb-10 max-w-xl md:mb-14">
+          <p className="mb-2 text-xs font-bold tracking-[0.18em] text-[#7ec8e3]">
+            خدمات تعمیرات
+          </p>
+          <h2
+            id="repair-process-heading"
+            className="text-2xl font-black leading-tight md:text-3xl"
           >
-            <div
-              className="relative w-16 h-16 flex items-center justify-center rounded-full bg-linear-to-b from-[#0b1730] to-[#002b59] border-2 border-[#00A9E0] shadow-[0_0_10px_#00A9E0]/40 mb-3 group-hover:scale-110 transition-transform duration-200"
-            >
-              <span className="text-[#00A9E0] text-3xl">{item.icon}</span>
-              <span className="absolute inset-0 rounded-full bg-[#00A9E0]/10 blur-lg opacity-0 group-hover:opacity-100 transition-opacity duration-200" />
-            </div>
+            فرآیند تعمیرات گروه مهندسی زیمنس پلاس
+          </h2>
+          <p className="mt-3 text-sm leading-7 text-white/65 md:text-base">
+            از برآورد هزینه تا تست نهایی — شفاف، تخصصی و قابل پیگیری.
+          </p>
+        </header>
 
-            <p className="text-sm sm:text-base font-medium text-white/85 leading-snug max-w-[140px]">
-              {item.title}
-            </p>
-          </div>
-        ))}
+        <ol className="grid grid-cols-2 gap-x-4 gap-y-8 sm:grid-cols-3 lg:grid-cols-6 lg:gap-6">
+          {steps.map((item, i) => {
+            const Icon = item.icon;
+            return (
+              <li key={item.title} className="relative">
+                <div className="mb-3 flex items-center gap-2">
+                  <span className="font-mono text-xs font-bold text-[#7ec8e3]">
+                    {String(i + 1).padStart(2, "0")}
+                  </span>
+                  <span className="h-px flex-1 bg-white/15" aria-hidden />
+                </div>
+                <Icon className="mb-3 h-6 w-6 text-white/90" aria-hidden />
+                <p className="text-sm font-medium leading-6 text-white/85">
+                  {item.title}
+                </p>
+              </li>
+            );
+          })}
+        </ol>
+
+        <div className="mt-10 md:mt-12">
+          <Link
+            href="/contact-us"
+            className="inline-flex min-h-[44px] items-center border border-white/30 px-6 text-sm font-bold text-white transition hover:bg-white hover:text-[#0b1f33]"
+          >
+            درخواست تعمیرات
+          </Link>
+        </div>
       </div>
     </section>
   );

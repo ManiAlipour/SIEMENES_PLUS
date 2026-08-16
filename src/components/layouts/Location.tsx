@@ -1,214 +1,173 @@
 "use client";
 
-import { useState } from "react";
-import {
-  FiMapPin,
-  FiPhone,
-  FiClock,
-  FiNavigation,
-  FiCopy,
-  FiCheck,
-} from "react-icons/fi";
-import Link from "next/link";
+import { useEffect, useRef, useState } from "react";
+import { FiMapPin, FiPhone, FiClock, FiNavigation, FiCopy, FiCheck } from "react-icons/fi";
+
+const MAP_EMBED =
+  "https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3219.575954852423!2d50.09012632451797!3d36.20119341332384!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x3f8cad00694365bb%3A0x7d9345082453edbd!2z2LLbjNmF2YbYsyDZvtmE2KfYsw!5e0!3m2!1sfa!2s!4v1781771002106!5m2!1sfa!2s";
 
 export default function LocationSection() {
   const [copied, setCopied] = useState(false);
+  const [showMap, setShowMap] = useState(false);
+  const mapRef = useRef<HTMLDivElement>(null);
   const addressText =
     "قزوین – شهر صنعتی البرز، خیابان زکریای رازی، جنب شرکت مهرام، پلاک ۲۰";
 
+  useEffect(() => {
+    const el = mapRef.current;
+    if (!el) return;
+    const io = new IntersectionObserver(
+      ([entry]) => {
+        if (entry.isIntersecting) {
+          setShowMap(true);
+          io.disconnect();
+        }
+      },
+      { rootMargin: "200px" },
+    );
+    io.observe(el);
+    return () => io.disconnect();
+  }, []);
+
   const handleCopyAddress = async () => {
     try {
-      // Modern way
-      if (navigator.clipboard && navigator.clipboard.writeText) {
+      if (navigator.clipboard?.writeText) {
         await navigator.clipboard.writeText(addressText);
       } else {
-        // Legacy Fallback
         const textArea = document.createElement("textarea");
         textArea.value = addressText;
         textArea.style.position = "fixed";
         textArea.style.left = "-9999px";
         document.body.appendChild(textArea);
-        textArea.focus();
         textArea.select();
-        const successful = document.execCommand("copy");
+        document.execCommand("copy");
         document.body.removeChild(textArea);
-        if (!successful) throw new Error("Copy failed");
       }
-
       setCopied(true);
-      setTimeout(() => setCopied(false), 2000);
-    } catch (err) {
-      console.error("Copy failed", err);
+      window.setTimeout(() => setCopied(false), 2000);
+    } catch {
+      /* ignore */
     }
   };
 
+  const openDirections = () => {
+    const destination = "36.201758,50.088333";
+    const open = (origin?: string) => {
+      const url = origin
+        ? `https://www.google.com/maps/dir/?api=1&origin=${origin}&destination=${destination}&travelmode=driving`
+        : `https://www.google.com/maps/dir/?api=1&destination=${destination}&travelmode=driving`;
+      window.open(url, "_blank", "noopener,noreferrer");
+    };
+
+    if (!navigator.geolocation) {
+      open();
+      return;
+    }
+    navigator.geolocation.getCurrentPosition(
+      (pos) => open(`${pos.coords.latitude},${pos.coords.longitude}`),
+      () => open(),
+    );
+  };
+
   return (
-    <section className="relative py-20 lg:py-28 bg-slate-50 overflow-hidden">
-      {/* Background Pattern */}
-      <div
-        className="absolute inset-0 opacity-[0.03]"
-        style={{
-          backgroundImage: "radial-gradient(#0f172a 1px, transparent 1px)",
-          backgroundSize: "24px 24px",
-        }}
-      ></div>
-
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
-        <div className="text-center mb-12 lg:mb-16">
-          <h2 className="text-3xl md:text-4xl font-bold text-slate-900 mb-4">
-            دفتر مرکزی <span className="text-cyan-600">زیمنس</span>
-          </h2>
-          <p className="text-slate-500 max-w-2xl mx-auto">
-            برای مشاوره حضوری و بازدید از جدیدترین تجهیزات ، مشتاق دیدار شما
-            هستیم.
+    <section
+      className="bg-[#f3f5f7] py-16 md:py-20"
+      aria-labelledby="location-heading"
+    >
+      <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
+        <header className="mb-10 max-w-xl md:mb-12">
+          <p className="mb-2 text-xs font-bold tracking-[0.18em] text-primary">
+            موقعیت
           </p>
-        </div>
+          <h2
+            id="location-heading"
+            className="text-2xl font-black text-slate-900 md:text-3xl"
+          >
+            دفتر مرکزی زیمنس پلاس
+          </h2>
+          <p className="mt-3 text-sm leading-7 text-slate-600">
+            برای مشاوره حضوری و بازدید از تجهیزات، مشتاق دیدار شما هستیم.
+          </p>
+        </header>
 
-        <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 lg:gap-12 items-start">
-          <div className="lg:col-span-5 flex flex-col gap-6">
-            <div className="bg-white rounded-3xl p-6 sm:p-8 shadow-xl shadow-slate-200/50 border border-slate-100">
-              {/* Address Box */}
-              <div className="mb-8">
-                <div className="flex items-center gap-3 mb-4">
-                  <div className="w-10 h-10 rounded-xl bg-cyan-50 flex items-center justify-center text-cyan-600 shrink-0">
-                    <FiMapPin size={20} />
-                  </div>
-                  <h3 className="text-lg font-bold text-slate-800">آدرس ما</h3>
-                </div>
-                <p className="text-slate-600 leading-relaxed text-sm sm:text-base pr-2 border-r-2 border-slate-100">
-                  {addressText}
-                </p>
+        <div className="grid grid-cols-1 items-stretch gap-8 lg:grid-cols-12 lg:gap-10">
+          <div className="flex flex-col gap-6 lg:col-span-5">
+            <div className="border border-slate-200 bg-white p-6 sm:p-8">
+              <div className="mb-6 flex items-center gap-3">
+                <FiMapPin className="h-5 w-5 text-primary" aria-hidden />
+                <h3 className="text-base font-bold text-slate-900">آدرس</h3>
+              </div>
+              <p className="border-r-2 border-primary/30 pr-3 text-sm leading-7 text-slate-600 sm:text-base">
+                {addressText}
+              </p>
 
-                <div className="mt-4 flex gap-3">
-                  <button
-                    onClick={handleCopyAddress}
-                    className="flex items-center gap-2 px-4 py-2 rounded-lg bg-slate-100 text-slate-600 text-xs font-medium hover:bg-slate-200 transition-colors"
-                  >
-                    {copied ? (
-                      <FiCheck className="text-green-600" />
-                    ) : (
-                      <FiCopy />
-                    )}
-                    {copied ? "کپی شد!" : "کپی آدرس"}
-                  </button>
-
-                  <button
-                    type="button"
-                    onClick={() => {
-                      const destination = "36.201758, 50.088333";
-                      if (navigator.geolocation) {
-                        navigator.geolocation.getCurrentPosition(
-                          (position) => {
-                            const { latitude, longitude } = position.coords;
-
-                            const url = `https://www.google.com/maps/dir/?api=1&origin=${latitude},${longitude}&destination=${destination}&travelmode=driving`;
-                            window.open(url, "_blank", "noopener,noreferrer");
-                          },
-                          () => {
-                            const url = `https://www.google.com/maps/dir/?api=1&destination=${destination}&travelmode=driving`;
-                            window.open(url, "_blank", "noopener,noreferrer");
-                          },
-                        );
-                      } else {
-                        const url = `https://www.google.com/maps/dir/?api=1&destination=${destination}&travelmode=driving`;
-                        window.open(url, "_blank", "noopener,noreferrer");
-                      }
-                    }}
-                    className="flex items-center gap-2 px-4 py-2 rounded-lg bg-cyan-50 text-cyan-700 text-xs font-medium hover:bg-cyan-100 transition-colors"
-                  >
-                    <FiNavigation />
-                    مسیریابی
-                  </button>
-                </div>
+              <div className="mt-5 flex flex-wrap gap-2">
+                <button
+                  type="button"
+                  onClick={handleCopyAddress}
+                  className="inline-flex items-center gap-2 border border-slate-200 px-3 py-2 text-xs font-medium text-slate-600 transition hover:border-slate-300"
+                >
+                  {copied ? <FiCheck className="text-emerald-600" /> : <FiCopy />}
+                  {copied ? "کپی شد" : "کپی آدرس"}
+                </button>
+                <button
+                  type="button"
+                  onClick={openDirections}
+                  className="inline-flex items-center gap-2 border border-primary/25 bg-primary/5 px-3 py-2 text-xs font-medium text-primary transition hover:bg-primary/10"
+                >
+                  <FiNavigation />
+                  مسیریابی
+                </button>
               </div>
 
-              <div className="w-full h-px bg-slate-100 mb-8" />
+              <div className="my-7 h-px bg-slate-100" />
 
-              {/* Contact Info Grid */}
-              <div className="space-y-6">
-                {/* Phone */}
-                <div className="flex items-start gap-4">
-                  <div className="w-10 h-10 rounded-xl bg-slate-50 flex items-center justify-center text-slate-500 shrink-0">
-                    <FiPhone size={20} />
-                  </div>
+              <div className="space-y-5">
+                <div className="flex items-start gap-3">
+                  <FiPhone className="mt-0.5 h-5 w-5 shrink-0 text-slate-400" />
                   <div>
-                    <h4 className="text-sm font-bold text-slate-800 mb-1">
-                      شماره تماس
-                    </h4>
+                    <h4 className="text-sm font-bold text-slate-800">تماس</h4>
                     <p
                       dir="ltr"
-                      className="text-slate-600 font-mono text-sm sm:text-base text-right"
+                      className="mt-0.5 text-right font-mono text-sm text-slate-600"
                     >
                       09199883772
                     </p>
-                    <p className="text-xs text-slate-400 mt-1">
-                      پاسخگویی در ساعات اداری
-                    </p>
                   </div>
                 </div>
-
-                {/* Hours */}
-                <div className="flex items-start gap-4">
-                  <div className="w-10 h-10 rounded-xl bg-slate-50 flex items-center justify-center text-slate-500 shrink-0">
-                    <FiClock size={20} />
-                  </div>
+                <div className="flex items-start gap-3">
+                  <FiClock className="mt-0.5 h-5 w-5 shrink-0 text-slate-400" />
                   <div>
-                    <h4 className="text-sm font-bold text-slate-800 mb-1">
+                    <h4 className="text-sm font-bold text-slate-800">
                       ساعت کاری
                     </h4>
-                    <p className="text-slate-600 text-sm">
-                      شنبه تا چهارشنبه:{" "}
-                      <span className="font-bold text-slate-800">
-                        ۸:۰۰ تا ۱۸:۰۰
-                      </span>
-                    </p>
-                    <p className="text-slate-600 text-sm mt-1">
-                      پنج‌شنبه‌ها:{" "}
-                      <span className="font-bold text-slate-800">
-                        ۸:۰۰ تا ۱۴:۰۰
-                      </span>
+                    <p className="mt-0.5 text-sm text-slate-600">
+                      شنبه تا چهارشنبه ۸–۱۸ · پنج‌شنبه ۸–۱۴
                     </p>
                   </div>
                 </div>
               </div>
-            </div>
-
-            {/* Simple CTA Box */}
-            <div className="bg-gradient-to-br from-slate-900 to-slate-800 rounded-2xl p-6 text-white shadow-lg">
-              <p className="text-sm text-slate-300 mb-2">
-                نیاز به هماهنگی قبل از بازدید دارید؟
-              </p>
-              <a
-                href="tel:09199883772"
-                className="text-sm font-bold text-cyan-400 hover:text-cyan-300 transition flex items-center gap-2"
-              >
-                تماس با واحد فروش <span className="text-lg">←</span>
-              </a>
             </div>
           </div>
 
-          <div className="lg:col-span-7 h-full min-h-[400px] lg:min-h-[500px] relative">
-            {/* Map Container */}
-            <div className="absolute inset-0 bg-white p-2 rounded-[2rem] shadow-2xl shadow-slate-200/60 border border-slate-100">
-              <div className="w-full h-full rounded-[1.5rem] overflow-hidden relative bg-slate-200">
-                <iframe
-                  title="siemensplus-map"
-                  src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3219.575954852423!2d50.09012632451797!3d36.20119341332384!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x3f8cad00694365bb%3A0x7d9345082453edbd!2z2LLbjNmF2YbYsyDZvtmE2KfYsw!5e0!3m2!1sfa!2s!4v1781771002106!5m2!1sfa!2s"
-                  className="relative z-10 w-full h-full border-0 opacity-90 hover:opacity-100 transition-opacity duration-700"
-                  allowFullScreen
-                  loading="lazy"
-                  referrerPolicy="no-referrer-when-downgrade"
-                />
-
-                <div className="absolute bottom-4 right-4 z-20 bg-white/95 px-4 py-2 rounded-xl shadow-lg border border-slate-200 text-xs font-bold text-slate-800 hidden sm:block">
-                  زیمنس پلاس | Siemens Plus
-                </div>
+          <div
+            ref={mapRef}
+            className="relative min-h-[360px] border border-slate-200 bg-slate-200 lg:col-span-7 lg:min-h-[480px]"
+          >
+            {showMap ? (
+              <iframe
+                title="موقعیت زیمنس پلاس روی نقشه"
+                src={MAP_EMBED}
+                className="absolute inset-0 h-full w-full border-0"
+                allowFullScreen
+                loading="lazy"
+                referrerPolicy="no-referrer-when-downgrade"
+              />
+            ) : (
+              <div className="absolute inset-0 grid place-items-center text-sm text-slate-500">
+                در حال آماده‌سازی نقشه…
               </div>
-            </div>
-
-            {/* Decorative elements */}
-            <div className="absolute -top-10 -right-10 w-32 h-32 bg-cyan-500/10 rounded-full blur-2xl -z-10" />
-            <div className="absolute -bottom-10 -left-10 w-40 h-40 bg-blue-500/10 rounded-full blur-2xl -z-10" />
+            )}
           </div>
         </div>
       </div>

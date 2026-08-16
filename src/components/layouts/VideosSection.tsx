@@ -1,74 +1,73 @@
-"use client";
-
-import VideoCard from "../features/VideoCard";
 import Link from "next/link";
-import { useFetch } from "iso-hooks";
+import { connectDB } from "@/lib/db";
+import Post from "@/models/Post";
+import VideoCard from "../features/VideoCard";
 
-interface IVideosResponse {
-  data: IVideo[];
-  pagination?: { total: number; page: number; pages: number; limit: number };
+async function getHomeVideos(limit = 6) {
+  try {
+    await connectDB();
+    const posts = await Post.find({ status: "published" })
+      .sort({ createdAt: -1 })
+      .limit(limit)
+      .lean();
+
+    return posts.map((p: any) => ({
+      _id: String(p._id),
+      title: p.title as string,
+      video: p.video as string,
+      status: p.status as "draft" | "published",
+      createdAt:
+        p.createdAt instanceof Date
+          ? p.createdAt.toISOString()
+          : String(p.createdAt),
+    }));
+  } catch {
+    return null;
+  }
 }
 
-interface IVideo {
-  _id: string;
-  title: string;
-  video: string;
-  status: "draft" | "published";
-  createdAt: string;
-}
-
-export default function VideosSection() {
-  const { data, error, loading } = useFetch<IVideosResponse>("/api/blogs");
-
-  const mainPageLimit = 6;
-  const posts = data?.data ?? [];
-  const publishedPosts = posts.filter((p) => p.status === "published");
-  const shownPosts =
-    publishedPosts.length > 0
-      ? publishedPosts.slice(0, mainPageLimit)
-      : posts.slice(0, mainPageLimit);
-  const noVideos = !loading && !error && publishedPosts.length === 0;
+export default async function VideosSection() {
+  const videos = await getHomeVideos(6);
 
   return (
-    <section className="bg-gray-50/70 pt-16 md:pt-20 pb-12 md:pb-16">
-      <div className="container mx-auto px-4">
-        <h2
-          className="relative text-2xl md:text-3xl font-vazir-bold text-gray-800 text-center mb-12
-          after:absolute after:left-1/2 after:-bottom-2 after:-translate-x-1/2 after:w-24 after:h-[2px] after:bg-primary"
-        >
-          ویدیوها
-        </h2>
+    <section
+      className="border-t border-slate-200/80 bg-white py-16 md:py-20"
+      aria-labelledby="videos-heading"
+    >
+      <div className="container mx-auto max-w-7xl px-4 md:px-6">
+        <header className="mb-10 flex flex-col gap-4 sm:flex-row sm:items-end sm:justify-between md:mb-12">
+          <div>
+            <p className="mb-2 text-xs font-bold tracking-[0.18em] text-primary">
+              آموزش و معرفی
+            </p>
+            <h2
+              id="videos-heading"
+              className="text-2xl font-black text-slate-900 md:text-3xl"
+            >
+              ویدیوهای تخصصی
+            </h2>
+          </div>
+          <Link
+            href="/videos"
+            className="text-sm font-bold text-primary transition hover:underline"
+          >
+            همه ویدیوها
+          </Link>
+        </header>
 
-        {loading ? (
-          <div className="flex justify-center my-12 text-gray-500 animate-pulse font-vazirmatn">
-            در حال بارگذاری...
-          </div>
-        ) : error ? (
-          <div className="flex justify-center my-12 text-red-600 font-vazirmatn">
+        {videos === null ? (
+          <p className="py-10 text-center text-sm text-red-600">
             خطا در دریافت ویدیوها
-          </div>
-        ) : noVideos ? (
-          <div className="flex flex-col items-center justify-center my-12">
-            <div className="text-gray-500 font-vazirmatn text-lg">
-              ویدیویی یافت نشد
-            </div>
-          </div>
+          </p>
+        ) : videos.length === 0 ? (
+          <p className="py-10 text-center text-slate-500">ویدیویی یافت نشد</p>
         ) : (
-          <div className="grid gap-8 sm:grid-cols-2 lg:grid-cols-3">
-            {shownPosts.map((post) => (
-              <VideoCard key={post._id} video={post} />
+          <div className="grid gap-5 sm:grid-cols-2 lg:grid-cols-3 lg:gap-6">
+            {videos.map((video) => (
+              <VideoCard key={video._id} video={video} />
             ))}
           </div>
         )}
-
-        <div className="flex justify-center mt-10">
-          <Link
-            href="/videos"
-            className="px-6 py-2 border border-primary text-primary rounded-md hover:bg-primary hover:text-white transition-colors"
-          >
-            مشاهده همه ویدیوها
-          </Link>
-        </div>
       </div>
     </section>
   );

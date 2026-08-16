@@ -14,6 +14,7 @@ import {
   MessagesSquare,
   ChartColumnIncreasing,
   Mail,
+  Star,
   X,
 } from "lucide-react";
 
@@ -59,6 +60,7 @@ const navGroups: NavGroup[] = [
     items: [
       { title: "کاربران", href: "/admin/users", icon: Users },
       { title: "نظرات", href: "/admin/comments", icon: MessagesSquare },
+      { title: "امتیازها", href: "/admin/reviews", icon: Star },
       { title: "پیام‌ها", href: "/admin/contacts", icon: Mail },
     ],
   },

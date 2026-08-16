@@ -3,6 +3,7 @@ import { Suspense } from "react";
 import type { Metadata } from "next";
 import HeroSection from "@/components/layouts/SectionHero";
 import CategoryHighlightsSection from "@/components/layouts/CategoryHighlightsSection";
+import ServiceFeatures from "@/components/layouts/ServiceFeatures";
 import { getCategoryHighlights } from "@/lib/categories/highlights";
 import {
   buildOrganizationJsonLd,
@@ -44,10 +45,6 @@ export const metadata: Metadata = {
 
 export const revalidate = 120;
 
-const ServiceFeatures = dynamic(
-  () => import("@/components/layouts/ServiceFeatures"),
-  { loading: () => <SectionPlaceholder h={200} /> },
-);
 const VideosSection = dynamic(
   () => import("@/components/layouts/VideosSection"),
   { loading: () => <SectionPlaceholder h={320} /> },
@@ -60,22 +57,22 @@ const RepairProcess = dynamic(
   { loading: () => <SectionPlaceholder h={280} /> },
 );
 const AboutUs = dynamic(() => import("@/components/layouts/AboutUs"), {
-  loading: () => <SectionPlaceholder h={320} />,
+  loading: () => <SectionPlaceholder h={360} />,
 });
 const ContactUs = dynamic(() => import("@/components/layouts/ContactUs"), {
-  loading: () => <SectionPlaceholder h={280} /> },
-);
+  loading: () => <SectionPlaceholder h={280} />,
+});
 const LocationSection = dynamic(() => import("@/components/layouts/Location"), {
-  loading: () => <SectionPlaceholder h={240} />,
+  loading: () => <SectionPlaceholder h={360} />,
 });
 const ContactCTA = dynamic(() => import("@/components/layouts/ContactCTA"), {
-  loading: () => <SectionPlaceholder h={160} />,
+  loading: () => <SectionPlaceholder h={120} />,
 });
 
 function SectionPlaceholder({ h = 200 }: { h?: number }) {
   return (
     <div
-      className="w-full animate-pulse bg-gray-100"
+      className="w-full bg-slate-100/80"
       style={{ minHeight: h }}
       aria-hidden
     />
@@ -84,7 +81,6 @@ function SectionPlaceholder({ h = 200 }: { h?: number }) {
 
 export default async function Home() {
   const categories = await getCategoryHighlights();
-
   const jsonLd = [buildOrganizationJsonLd(), buildWebSiteJsonLd()];
 
   return (
@@ -96,46 +92,22 @@ export default async function Home() {
 
       <main>
         <HeroSection />
+        <ServiceFeatures />
+        <CategoryHighlightsSection categories={categories} />
 
-        <div style={{ contentVisibility: "auto" }}>
-          <CategoryHighlightsSection categories={categories} />
-        </div>
+        <Suspense fallback={<SectionPlaceholder h={320} />}>
+          <VideosSection />
+        </Suspense>
 
-        <div style={{ contentVisibility: "auto" }}>
-          <ServiceFeatures />
-        </div>
+        <Suspense fallback={<SectionPlaceholder h={400} />}>
+          <BlogSection />
+        </Suspense>
 
-        <div style={{ contentVisibility: "auto" }}>
-          <Suspense fallback={<SectionPlaceholder h={320} />}>
-            <VideosSection />
-          </Suspense>
-        </div>
-
-        <div style={{ contentVisibility: "auto" }}>
-          <Suspense fallback={<SectionPlaceholder h={400} />}>
-            <BlogSection />
-          </Suspense>
-        </div>
-
-        <div style={{ contentVisibility: "auto" }}>
-          <RepairProcess />
-        </div>
-
-        <div style={{ contentVisibility: "auto" }}>
-          <AboutUs />
-        </div>
-
-        <div style={{ contentVisibility: "auto" }}>
-          <ContactCTA />
-        </div>
-
-        <div style={{ contentVisibility: "auto" }}>
-          <ContactUs />
-        </div>
-
-        <div style={{ contentVisibility: "auto" }}>
-          <LocationSection />
-        </div>
+        <RepairProcess />
+        <AboutUs />
+        <ContactCTA />
+        <ContactUs />
+        <LocationSection />
       </main>
     </>
   );

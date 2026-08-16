@@ -1,4 +1,5 @@
 "use client";
+
 import {
   FaInstagram,
   FaTelegramPlane,
@@ -6,91 +7,76 @@ import {
   FaLinkedinIn,
   FaMapMarkerAlt,
 } from "react-icons/fa";
-import { MdEmail, MdPhone, MdSend } from "react-icons/md";
+import { MdEmail, MdPhone } from "react-icons/md";
 import ContactForm from "./ContactForm";
 
 export default function ContactUs() {
   return (
-    <section className="relative py-24 overflow-hidden bg-slate-950">
-
-      {/* Deep Base Gradient */}
-      <div className="absolute inset-0 bg-gradient-to-b from-slate-900 to-slate-950 z-0" />
-
-      <div
-        className="absolute inset-0 z-0 opacity-[0.03]"
-        style={{
-          backgroundImage: `linear-gradient(#fff 1px, transparent 1px), linear-gradient(90deg, #fff 1px, transparent 1px)`,
-          backgroundSize: "40px 40px",
-        }}
-      />
-
-      <div className="absolute top-0 left-0 w-[400px] h-[400px] bg-cyan-500/8 rounded-full blur-[80px] -translate-x-1/2 -translate-y-1/2 pointer-events-none" />
-      <div className="absolute bottom-0 right-0 w-[400px] h-[400px] bg-blue-600/8 rounded-full blur-[80px] translate-x-1/2 translate-y-1/2 pointer-events-none" />
-
-      <div className="relative container mx-auto px-6 max-w-7xl z-10">
-        <div className="grid lg:grid-cols-2 gap-16 lg:gap-12 items-center">
+    <section
+      className="bg-[#0b1f33] py-16 md:py-20"
+      aria-labelledby="contact-us-heading"
+    >
+      <div className="container relative z-10 mx-auto max-w-7xl px-4 md:px-6">
+        <div className="grid items-start gap-12 lg:grid-cols-2 lg:gap-16">
           <div>
-            {/* Section Badge */}
-            <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-cyan-500/10 border border-cyan-500/20 text-cyan-400 text-xs font-bold mb-6">
-              <span className="w-2 h-2 rounded-full bg-cyan-400 animate-pulse" />
+            <p className="mb-2 text-xs font-bold tracking-[0.18em] text-[#7ec8e3]">
               تماس با ما
-            </div>
-
-            <h2 className="text-4xl md:text-5xl font-bold text-white mb-6 leading-tight">
-              آماده همکاری در <br />
-              <span className="text-transparent bg-clip-text bg-gradient-to-r from-cyan-400 to-blue-500">
-                پروژه‌های صنعتی شما
-              </span>
+            </p>
+            <h2
+              id="contact-us-heading"
+              className="text-2xl font-black leading-tight text-white md:text-4xl"
+            >
+              آماده همکاری در پروژه‌های صنعتی شما
             </h2>
-
-            <p className="text-slate-400 text-lg mb-10 leading-relaxed max-w-lg">
-              تیم فنی ما آماده پاسخگویی به سوالات شما در زمینه ، درایو و تجهیزات
-              زیمنس می‌باشد.
+            <p className="mt-4 max-w-lg text-base leading-8 text-white/65">
+              تیم فنی زیمنس پلاس آماده پاسخگویی در زمینه فروش، تعمیرات و مشاوره
+              تجهیزات زیمنس است.
             </p>
 
-            {/* Contact Info Cards */}
-            <div className="grid sm:grid-cols-2 gap-4 mb-10">
-              <ContactCard
+            <div className="mt-8 grid gap-3 sm:grid-cols-2">
+              <ContactRow
                 icon={<MdPhone />}
                 title="تماس تلفنی"
                 value="09199883772"
                 href="tel:09199883772"
               />
-              <ContactCard
+              <ContactRow
                 icon={<MdEmail />}
-                title="ایمیل سازمانی"
+                title="ایمیل"
                 value="siemensplus8020@gmail.com"
                 href="mailto:siemensplus8020@gmail.com"
               />
-              <ContactCard
+              <ContactRow
                 icon={<FaWhatsapp />}
-                title="واتس‌اپ پشتیبانی"
+                title="واتس‌اپ"
                 value="09199883772"
-                href="https://wa.me/09199883772"
+                href="https://wa.me/989199883772"
               />
-              <div className="flex items-center gap-4 p-4 rounded-2xl bg-slate-800/30 border border-slate-700/50">
-                <div className="w-10 h-10 rounded-lg bg-slate-700/50 flex items-center justify-center text-cyan-400 text-xl">
+              <div className="flex items-center gap-3 border border-white/10 bg-white/[0.03] px-4 py-3.5">
+                <span className="text-lg text-[#7ec8e3]" aria-hidden>
                   <FaMapMarkerAlt />
-                </div>
+                </span>
                 <div>
-                  <p className="text-xs text-slate-500 mb-1">آدرس دفتر</p>
-                  <p className="text-sm text-slate-200 font-medium">
+                  <p className="text-xs text-white/45">آدرس دفتر</p>
+                  <p className="text-sm font-medium text-white/90">
                     قزوین، شهر صنعتی البرز
                   </p>
                 </div>
               </div>
             </div>
 
-            {/* Social Media Links */}
-            <div className="flex items-center gap-4">
-              <p className="text-slate-500 text-sm ml-2">ما را دنبال کنید:</p>
-              <SocialBtn icon={<FaInstagram />} href="#" />
-              <SocialBtn icon={<FaTelegramPlane />} href="#" />
-              <SocialBtn icon={<FaLinkedinIn />} href="#" />
+            <div className="mt-8 flex items-center gap-3">
+              <span className="text-xs text-white/45">شبکه‌های اجتماعی</span>
+              <SocialBtn
+                icon={<FaInstagram />}
+                href="https://instagram.com/siemens.plus1"
+                label="اینستاگرام"
+              />
+              <SocialBtn icon={<FaTelegramPlane />} href="#" label="تلگرام" />
+              <SocialBtn icon={<FaLinkedinIn />} href="#" label="لینکدین" />
             </div>
           </div>
 
-          {/* ---------------- RIGHT SIDE: CONTACT FORM ---------------- */}
           <ContactForm />
         </div>
       </div>
@@ -98,9 +84,7 @@ export default function ContactUs() {
   );
 }
 
-// --- Sub-components for cleaner code ---
-
-function ContactCard({
+function ContactRow({
   icon,
   title,
   value,
@@ -111,14 +95,17 @@ function ContactCard({
   value: string;
   href?: string;
 }) {
-  const Content = (
-    <div className="flex items-center gap-4 p-4 rounded-2xl bg-slate-800/30 border border-slate-700/50 hover:bg-slate-800/50 hover:border-cyan-500/30 transition-all cursor-pointer group">
-      <div className="w-10 h-10 rounded-lg bg-cyan-500/10 flex items-center justify-center text-cyan-400 text-xl group-hover:scale-110 transition-transform">
+  const inner = (
+    <div className="flex items-center gap-3 border border-white/10 bg-white/[0.03] px-4 py-3.5 transition hover:border-white/25 hover:bg-white/[0.06]">
+      <span className="text-lg text-[#7ec8e3]" aria-hidden>
         {icon}
-      </div>
-      <div>
-        <p className="text-xs text-slate-500 mb-1">{title}</p>
-        <p className="text-sm text-slate-200 font-medium font-mono dir-ltr text-right">
+      </span>
+      <div className="min-w-0">
+        <p className="text-xs text-white/45">{title}</p>
+        <p
+          className="truncate text-sm font-medium text-white/90"
+          style={{ direction: "ltr", textAlign: "right" }}
+        >
           {value}
         </p>
       </div>
@@ -127,18 +114,27 @@ function ContactCard({
 
   return href ? (
     <a href={href} className="block">
-      {Content}
+      {inner}
     </a>
   ) : (
-    Content
+    inner
   );
 }
 
-function SocialBtn({ icon, href }: { icon: React.ReactNode; href: string }) {
+function SocialBtn({
+  icon,
+  href,
+  label,
+}: {
+  icon: React.ReactNode;
+  href: string;
+  label: string;
+}) {
   return (
     <a
       href={href}
-      className="w-10 h-10 rounded-full bg-slate-800 border border-slate-700 flex items-center justify-center text-slate-400 hover:bg-cyan-500 hover:text-white hover:border-cyan-500 transition-all duration-300"
+      aria-label={label}
+      className="grid h-10 w-10 place-items-center border border-white/15 text-white/60 transition hover:border-white/40 hover:text-white"
     >
       {icon}
     </a>

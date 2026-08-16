@@ -1,52 +1,67 @@
-export default function ServiceFeatures() {
-  const features = [
-    {
-      icon: "🛒",
-      title: "تحویل سریع",
-      desc: "ارسال فوری در سریع‌ترین زمان ممکن به سراسر کشور",
-    },
-    {
-      icon: "✅",
-      title: "ضمانت اصالت کالا",
-      desc: "تمامی محصولات دارای گارانتی اصلی و تأیید شده",
-    },
-    {
-      icon: "💳",
-      title: "پرداخت امن",
-      desc: "امکان پرداخت امن با تمام کارت‌های عضو شتاب",
-    },
-    {
-      icon: "📞",
-      title: "پشتیبانی ۲۴ ساعته",
-      desc: "پشتیبانی تخصصی در تمام روزهای هفته",
-    },
-  ];
+import {
+  FiShield,
+  FiTruck,
+  FiHeadphones,
+  FiCreditCard,
+} from "react-icons/fi";
 
+const features = [
+  {
+    icon: FiTruck,
+    title: "ارسال سریع",
+    desc: "تحویل به سراسر کشور در کوتاه‌ترین زمان",
+  },
+  {
+    icon: FiShield,
+    title: "ضمانت اصالت",
+    desc: "محصولات اورجینال با گارانتی معتبر",
+  },
+  {
+    icon: FiCreditCard,
+    title: "پرداخت امن",
+    desc: "خرید امن با کارت‌های عضو شتاب",
+  },
+  {
+    icon: FiHeadphones,
+    title: "پشتیبانی فنی",
+    desc: "مشاوره تخصصی قبل و بعد از خرید",
+  },
+] as const;
+
+export default function ServiceFeatures() {
   return (
     <section
-      className="bg-primary py-10 sm:py-12"
+      className="border-y border-white/10 bg-primary"
       aria-labelledby="service-features-heading"
     >
       <h2 id="service-features-heading" className="sr-only">
         مزایای خدمات زیمنس پلاس
       </h2>
-      <div className="max-w-7xl mx-auto px-3 sm:px-6 grid grid-cols-2 lg:grid-cols-4 gap-4 sm:gap-6">
-        {features.map((f, i) => (
-          <div
-            key={i}
-            className="flex flex-col items-center text-center bg-primary/80 text-gray-100 rounded-xl sm:rounded-2xl shadow-lg hover:shadow-xl hover:bg-primary/90 transition-all duration-200 border border-white/10 p-4 sm:p-6"
-          >
-            <div className="text-3xl sm:text-4xl text-highlight mb-2 sm:mb-3" aria-hidden>
-              {f.icon}
+      <div className="mx-auto grid max-w-7xl grid-cols-2 divide-x divide-x-reverse divide-white/10 lg:grid-cols-4 lg:divide-x-0">
+        {features.map((f, i) => {
+          const Icon = f.icon;
+          return (
+            <div
+              key={f.title}
+              className={`flex items-start gap-3 px-4 py-7 sm:gap-4 sm:px-6 sm:py-8 ${
+                i >= 2 ? "border-t border-white/10 lg:border-t-0" : ""
+              } ${i % 2 === 1 ? "" : ""} lg:border-l lg:border-white/10 lg:first:border-l-0`}
+            >
+              <Icon
+                className="mt-0.5 h-5 w-5 shrink-0 text-white/80 sm:h-6 sm:w-6"
+                aria-hidden
+              />
+              <div>
+                <h3 className="text-sm font-bold text-white sm:text-base">
+                  {f.title}
+                </h3>
+                <p className="mt-1 text-xs leading-6 text-white/65 sm:text-sm">
+                  {f.desc}
+                </p>
+              </div>
             </div>
-            <h3 className="text-sm sm:text-lg font-bold mb-1 sm:mb-2 text-white">
-              {f.title}
-            </h3>
-            <p className="text-xs sm:text-sm text-slate-200 leading-relaxed">
-              {f.desc}
-            </p>
-          </div>
-        ))}
+          );
+        })}
       </div>
     </section>
   );

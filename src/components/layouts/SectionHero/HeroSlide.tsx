@@ -8,59 +8,72 @@ type Props = {
   isActive?: boolean;
 };
 
-export default function HeroSlide({ slide, isPrimary = false }: Props) {
+export default function HeroSlide({
+  slide,
+  isPrimary = false,
+  isActive = true,
+}: Props) {
   return (
     <>
       <div className="absolute inset-0">
-        <Image
-          src={slide.image}
-          alt={slide.title}
-          fill
-          priority={isPrimary}
-          quality={isPrimary ? 80 : 70}
-          sizes="100vw"
-          className="object-cover"
+        {isActive || isPrimary ? (
+          <Image
+            src={slide.image}
+            alt=""
+            fill
+            priority={isPrimary}
+            quality={isPrimary ? 75 : 65}
+            sizes="100vw"
+            className="object-cover object-center"
+          />
+        ) : null}
+        <div
+          className="absolute inset-0 bg-gradient-to-t from-black via-black/55 to-black/25"
+          aria-hidden
         />
-        <div className="absolute inset-0 bg-black/50 md:bg-black/20" />
+        <div
+          className="absolute inset-0 bg-gradient-to-l from-black/50 via-transparent to-transparent"
+          aria-hidden
+        />
       </div>
 
-      <div
-        className={`relative z-10 h-full container mx-auto px-6 flex items-center justify-center ${
-          slide.align === "left" ? "lg:justify-start" : "lg:justify-end"
-        }`}
-      >
+      <div className="relative z-10 flex h-full items-end pb-20 sm:pb-24 lg:items-center lg:pb-0">
         <div
-          className={`max-w-3xl w-full flex flex-col items-center animate-fadeIn ${
-            slide.align === "left"
-              ? "lg:items-start lg:text-right"
-              : "lg:items-start lg:pr-20 lg:text-right"
+          className={`container mx-auto w-full max-w-7xl px-5 sm:px-8 ${
+            slide.align === "left" ? "lg:pr-[8%]" : "lg:pl-[8%]"
           }`}
         >
-          {isPrimary ? (
-            <h1 className="text-white font-black text-2xl sm:text-3xl lg:text-5xl leading-tight">
-              {slide.title}
-            </h1>
-          ) : (
-            <h2 className="text-white font-black text-2xl sm:text-3xl lg:text-5xl leading-tight">
-              {slide.title}
-            </h2>
-          )}
+          <div
+            className={`max-w-xl ${
+              slide.align === "left" ? "lg:mr-auto" : "lg:ml-auto lg:text-right"
+            }`}
+          >
+            <p className="mb-3 text-[11px] font-bold tracking-[0.22em] text-white/70 sm:text-xs">
+              SIEMENS PLUS
+            </p>
 
-          <p className="mt-1 lg:mt-4 text-white/90 font-medium text-sm sm:text-lg lg:text-2xl">
-            {slide.highlight}
-          </p>
+            {isPrimary ? (
+              <h1 className="text-[1.75rem] font-black leading-[1.25] text-white sm:text-4xl lg:text-5xl xl:text-[3.25rem]">
+                {slide.title}
+              </h1>
+            ) : (
+              <h2 className="text-[1.75rem] font-black leading-[1.25] text-white sm:text-4xl lg:text-5xl xl:text-[3.25rem]">
+                {slide.title}
+              </h2>
+            )}
 
-          <p className="mt-6 text-slate-300 text-base sm:text-lg max-w-xl leading-relaxed hidden lg:block text-right">
-            {slide.description}
-          </p>
+            <p className="mt-3 max-w-md text-sm leading-7 text-white/85 sm:mt-4 sm:text-base lg:text-lg">
+              {slide.highlight}
+            </p>
 
-          <div className="mt-6 lg:mt-10">
-            <Link
-              href={slide.href}
-              className="inline-flex items-center justify-center px-6 py-2 lg:px-10 lg:py-3.5 border-2 border-white text-white font-bold text-xs sm:text-sm lg:text-lg hover:bg-white hover:text-black transition-all duration-300"
-            >
-              {slide.cta}
-            </Link>
+            <div className="mt-7 sm:mt-9">
+              <Link
+                href={slide.href}
+                className="inline-flex min-h-[48px] items-center justify-center border border-white bg-white px-7 text-sm font-bold text-slate-900 transition hover:bg-transparent hover:text-white sm:px-9 sm:text-base"
+              >
+                {slide.cta}
+              </Link>
+            </div>
           </div>
         </div>
       </div>

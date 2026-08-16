@@ -1,64 +1,41 @@
-import { PhoneCall } from "lucide-react";
-import Image from "next/image";
+import { FiPhone } from "react-icons/fi";
 
 export default function ContactCTA() {
   return (
     <section
-      className="relative w-full py-16 lg:py-20 bg-slate-50 overflow-hidden"
+      className="bg-primary"
       aria-labelledby="contact-cta-heading"
     >
-      {/* Decorative background */}
-      <div
-        className="absolute inset-0 opacity-[0.02] pointer-events-none"
-        style={{
-          backgroundImage: "radial-gradient(#06b6d4 1px, transparent 1px)",
-          backgroundSize: "22px 22px",
-        }}
-      />
-      <div className="pointer-events-none absolute -top-10 -left-10 w-44 h-44 rounded-full bg-cyan-400/10 blur-2xl -z-10" />
-      <div className="pointer-events-none absolute -bottom-14 -right-14 w-52 h-52 rounded-full bg-blue-400/10 blur-3xl -z-10" />
+      <div className="mx-auto flex max-w-7xl flex-col items-start justify-between gap-6 px-4 py-12 sm:px-6 md:flex-row md:items-center md:py-14">
+        <div className="max-w-xl">
+          <h2
+            id="contact-cta-heading"
+            className="text-xl font-black text-white md:text-2xl"
+          >
+            برای استعلام قیمت محصولات زیمنس با ما تماس بگیرید
+          </h2>
+          <p className="mt-2 text-sm leading-7 text-white/70">
+            مشاوره فنی، بررسی نیاز پروژه و اعلام هزینه به‌صورت شفاف.
+          </p>
+        </div>
 
-      <div className="mx-auto max-w-3xl rounded-3xl border border-slate-100 bg-white px-4 py-10 md:py-16 shadow-2xl shadow-slate-200/50 flex flex-col items-center text-center gap-6 relative z-10">
-        <h2
-          id="contact-cta-heading"
-          className="text-2xl md:text-3xl font-extrabold text-slate-900 mb-2 leading-relaxed"
-        >
-          برای اطلاع از قیمت محصولات{" "}
-          <span className="text-primary font-black">با ما در تماس باشید</span>
-        </h2>
-        <p className="text-slate-500 text-base mb-6 max-w-xl mx-auto">
-          مشاوره تخصصی، تحلیل نیاز شما و اعلام هزینه به صورت شفاف و سریع از طریق
-          تماس یا شبکه‌های اجتماعی.
-        </p>
-
-        <div className="flex flex-col sm:flex-row items-center justify-center gap-4 mt-2 w-full">
-          {/* Phone */}
+        <div className="flex w-full flex-col gap-3 sm:w-auto sm:flex-row">
           <a
             href="tel:09199883772"
-            className="flex items-center gap-2 rounded-xl bg-primary hover:bg-primary/90 px-7 py-3 text-base font-bold text-white shadow transition duration-150 focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-2 animate-none"
+            className="inline-flex min-h-[48px] items-center justify-center gap-2 bg-white px-6 text-sm font-bold text-primary transition hover:bg-slate-100"
             style={{ direction: "ltr" }}
-            aria-label="تماس تلفنی: ۰۹۱۹۹۸۸۳۷۷۲"
+            aria-label="تماس تلفنی"
           >
-            <PhoneCall size={18} aria-hidden />
-            <span className="font-mono">0919 988 3772</span>
-            <span className="hidden sm:inline">| تماس تلفنی</span>
+            <FiPhone size={16} aria-hidden />
+            0919 988 3772
           </a>
-
-          {/* Instagram */}
           <a
             href="https://instagram.com/siemens.plus1"
             target="_blank"
             rel="noopener noreferrer"
-            className="flex items-center gap-2 rounded-xl border border-primary/30 px-7 py-3 text-base font-bold text-primary bg-primary/5 hover:bg-primary/10 transition duration-150 shadow focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-2"
-            aria-label="صفحه اینستاگرام زیمنس پلاس"
+            className="inline-flex min-h-[48px] items-center justify-center border border-white/40 px-6 text-sm font-bold text-white transition hover:bg-white/10"
           >
-            <Image
-              src="/images/instagram.svg"
-              alt="instagram"
-              width={35}
-              height={35}
-            />{" "}
-            @siemens.plus1
+            اینستاگرام
           </a>
         </div>
       </div>

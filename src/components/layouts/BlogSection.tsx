@@ -1,12 +1,8 @@
 import Link from "next/link";
 import BlogCard from "../features/BlogCard";
 import BlogNotFound from "@/components/blog/BlogNotFound";
-
-// تایپ‌ها رو همین‌جا نگه می‌داریم
-interface IBlogPostsResponse {
-  data: IBlogPost[];
-  pagination?: { total: number; page: number; pages: number; limit: number };
-}
+import { connectDB } from "@/lib/db";
+import BlogPost from "@/models/BlogPost";
 
 interface IBlogPost {
   _id: string;
@@ -19,58 +15,75 @@ interface IBlogPost {
   createdAt: string;
 }
 
-// تابع واکشی دیتا در سمت سرور
-async function getBlogPosts() {
-  const base = process.env.NEXT_PUBLIC_SITE_URL || "http://localhost:3001";
+async function getHomeBlogPosts(limit = 6): Promise<IBlogPost[] | null> {
   try {
-    const res = await fetch(`${base}/api/blog-posts?status=published&limit=6`, {
-      next: { revalidate: 3600 }, // هر یک ساعت کش رو آپدیت می‌کنه (ISR)
-    });
-    if (!res.ok) return null;
-    return (await res.json()) as IBlogPostsResponse;
-  } catch (error) {
-    console.error("Blog fetch error:", error);
+    await connectDB();
+    const posts = await BlogPost.find({ status: "published" })
+      .sort({ createdAt: -1 })
+      .limit(limit)
+      .select("title slug excerpt coverImage video status createdAt")
+      .lean();
+
+    return posts.map((p: any) => ({
+      _id: String(p._id),
+      title: p.title,
+      slug: p.slug,
+      excerpt: p.excerpt,
+      coverImage: p.coverImage,
+      video: p.video,
+      status: p.status,
+      createdAt:
+        p.createdAt instanceof Date
+          ? p.createdAt.toISOString()
+          : String(p.createdAt),
+    }));
+  } catch {
     return null;
   }
 }
 
 export default async function BlogSection() {
-  const data = await getBlogPosts();
-  const posts = data?.data ?? [];
-  const noBlogs = posts.length === 0;
+  const posts = await getHomeBlogPosts(6);
 
   return (
-    <section className="bg-gray-50/70 pt-16 md:pt-20 pb-12 md:pb-16">
-      <div className="container mx-auto px-4">
-          <h2
-          className="relative mb-12 text-center text-2xl font-vazir-bold text-gray-800 md:text-3xl
-          after:absolute after:left-1/2 after:-bottom-2 after:h-[2px] after:w-24 after:-translate-x-1/2 after:bg-primary"
-        >
-          تازه‌های مجله تکنولوژی زیمنس پلاس
-        </h2>
-
-        {!data ? (
-          <div className="my-12 flex justify-center text-red-600 font-vazirmatn">
-            خطا در دریافت مطالب وبلاگ
+    <section
+      className="bg-[#f3f5f7] py-16 md:py-20"
+      aria-labelledby="blog-heading"
+    >
+      <div className="container mx-auto max-w-7xl px-4 md:px-6">
+        <header className="mb-10 flex flex-col gap-4 sm:flex-row sm:items-end sm:justify-between md:mb-12">
+          <div>
+            <p className="mb-2 text-xs font-bold tracking-[0.18em] text-primary">
+              مجله تخصصی
+            </p>
+            <h2
+              id="blog-heading"
+              className="text-2xl font-black text-slate-900 md:text-3xl"
+            >
+              تازه‌های وبلاگ زیمنس پلاس
+            </h2>
           </div>
-        ) : noBlogs ? (
+          <Link
+            href="/blog"
+            className="text-sm font-bold text-primary transition hover:underline"
+          >
+            همه مقالات
+          </Link>
+        </header>
+
+        {posts === null ? (
+          <p className="py-10 text-center text-sm text-red-600">
+            خطا در دریافت مطالب وبلاگ
+          </p>
+        ) : posts.length === 0 ? (
           <BlogNotFound />
         ) : (
-          <div className="grid gap-8 sm:grid-cols-2 lg:grid-cols-3">
+          <div className="grid gap-5 sm:grid-cols-2 lg:grid-cols-3 lg:gap-6">
             {posts.map((post) => (
               <BlogCard key={post._id} post={post} />
             ))}
           </div>
         )}
-
-        <div className="mt-10 flex justify-center">
-          <Link
-            href="/blog"
-            className="rounded-md border border-primary px-6 py-2 text-primary transition-colors hover:bg-primary hover:text-white"
-          >
-            مشاهده همه مقالات تخصصی
-          </Link>
-        </div>
       </div>
     </section>
   );
