@@ -18,7 +18,7 @@ export const SLIDES: Slide[] = [
     description:
       "فروش تجهیزات اصلی SIEMENS به همراه ضمانت اصالت و راه‌اندازی همراه با پشتیبانی تخصصی",
     image: "/images/hero2.webp",
-    align: "right",
+    align: "left", // was "right"
     href: "/shop",
     cta: "ورود به فروشگاه",
   },
@@ -30,7 +30,7 @@ export const SLIDES: Slide[] = [
     description:
       "تعمیرات تخصصی سیستم‌های Siemens: کنترل، درایور، موتور، انکودر، خط‌کش و ...",
     image: "/images/hero1.webp",
-    align: "left",
+    align: "right", // was "left"
     href: "/contact-us",
     cta: "درخواست پشتیبانی",
   },
