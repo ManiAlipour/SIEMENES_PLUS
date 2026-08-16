@@ -3,6 +3,13 @@ export const SITE_URL =
 
 export const SITE_NAME = "زیمنس پلاس";
 
+export const SITE_AUTHOR = {
+  name: "مرتضی مجیدی",
+  jobTitle: "مهندس الکترونیک و متخصص ارشد سیستم‌های کنترل CNC زیمنس",
+  url: `${SITE_URL}/about-us/morteza-majidi`,
+  image: `${SITE_URL}/images/profile/morteza-majidi.webp`,
+} as const;
+
 export const SEO_KEYWORDS = [
   "زیمنس",
   "فروشگاه زیمنس",

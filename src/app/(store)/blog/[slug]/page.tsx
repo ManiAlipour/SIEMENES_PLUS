@@ -3,9 +3,9 @@ import { notFound } from "next/navigation";
 import { connectDB } from "@/lib/db";
 import BlogPost from "@/models/BlogPost";
 import { fetchRelatedBlogPosts } from "@/lib/blog/relatedPosts";
+import { buildArticleJsonLd } from "@/lib/seo/jsonld";
+import { SITE_URL } from "@/lib/seo/site";
 import BlogPostClient from "./BlogPostClient";
-
-const siteUrl = process.env.NEXT_PUBLIC_SITE_URL || "https://siemensplus1.ir";
 
 type Props = { params: Promise<{ slug: string }> };
 
@@ -22,8 +22,8 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
   const title = (post.title as string) || "مطلب وبلاگ";
   const description =
     (post.excerpt as string)?.slice(0, 160) || (post.title as string);
-  const image = (post.coverImage as string) || `${siteUrl}/images/logo.jpg`;
-  const url = `${siteUrl}/blog/${slug}`;
+  const image = (post.coverImage as string) || `${SITE_URL}/images/logo.jpg`;
+  const url = `${SITE_URL}/blog/${slug}`;
   const rawTags = (post as any).tags;
   const tags = Array.isArray(rawTags)
     ? rawTags.filter((t: any) => typeof t === "string" && t.trim())
@@ -39,6 +39,7 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
     title: `${title} | وبلاگ`,
     description,
     keywords,
+    authors: [{ name: "مرتضی مجیدی", url: "/about-us/morteza-majidi" }],
     openGraph: {
       title: `${title} | وبلاگ`,
       description,
@@ -99,25 +100,16 @@ export default async function BlogPostPage({ params }: Props) {
     updatedAt: (post as any).updatedAt,
   };
 
-  const jsonLd = {
-    "@context": "https://schema.org",
-    "@type": "Article",
-    headline: post.title,
+  const jsonLd = buildArticleJsonLd({
+    title: post.title,
     description: (post.excerpt as string) || post.title,
-    image: (post.coverImage as string) || `${siteUrl}/images/logo.jpg`,
+    image: (post.coverImage as string) || `${SITE_URL}/images/logo.jpg`,
+    slug,
     datePublished: (post as any).createdAt,
     dateModified: (post as any).updatedAt || (post as any).createdAt,
-    author: { "@type": "Organization", name: "زیمنس پلاس" },
-    publisher: {
-      "@type": "Organization",
-      name: "زیمنس پلاس",
-      logo: { "@type": "ImageObject", url: `${siteUrl}/images/logo.jpg` },
-    },
-    mainEntityOfPage: { "@type": "WebPage", "@id": `${siteUrl}/blog/${slug}` },
     keywords: tags,
-    articleSection: tags[0] || undefined,
-    about: tags.map((t: string) => ({ "@type": "Thing", name: t })),
-  };
+    articleSection: tags[0],
+  });
 
   return (
     <main className="min-h-screen bg-slate-50">

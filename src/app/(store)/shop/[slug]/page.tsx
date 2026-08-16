@@ -10,19 +10,20 @@ import ProductInquiryPanel from "@/components/features/product/ProductInquiryPan
 import ProductStickyBar from "@/components/features/product/ProductStickyBar";
 import ProductTabs from "@/components/features/product/ProductTabs";
 import ProductTrustBar from "@/components/features/product/ProductTrustBar";
+import ProductRatingSummary from "@/components/features/product/ProductRatingSummary";
+import ReviewsSection from "@/components/features/product/ReviewsSection";
 import SimilarProductsSection from "@/components/features/product/SimilarProductsSection";
 import LikeButton from "./LikeButton";
 import { getProductBySlug } from "@/lib/products/getProduct";
 import {
-  buildProductDescription,
   buildProductFaqs,
   buildProductKeywords,
-  buildProductTitle,
 } from "@/lib/products/productSeo";
+import { getProductReviews } from "@/lib/reviews/getProductReviews";
 import {
   buildBreadcrumbJsonLd,
   buildFAQJsonLd,
-  // buildProductJsonLd,
+  buildProductJsonLd,
 } from "@/lib/seo/jsonld";
 import { SITE_NAME, SITE_URL } from "@/lib/seo/site";
 
@@ -136,6 +137,9 @@ export default async function ProductPage({ params }: IProductProps) {
   const specs = (product.specifications || {}) as Record<string, string>;
   const faqs = buildProductFaqs(product, productCode);
 
+  const { reviews, aggregate } = await getProductReviews(product._id, 10);
+  const { averageRating, reviewCount } = aggregate;
+
   const breadcrumbItems = [
     { name: "خانه", url: SITE_URL },
     { name: "فروشگاه", url: `${SITE_URL}/shop` },
@@ -151,16 +155,25 @@ export default async function ProductPage({ params }: IProductProps) {
   ];
 
   const jsonLd = [
-    // buildProductJsonLd({
-    //   name: product.name,
-    //   description: product.description,
-    //   image: product.image,
-    //   brand: product.brand,
-    //   modelNumber: product.modelNumber,
-    //   category: product.category,
-    //   slug: product.slug,
-    //   createdAt: product.createdAt,
-    // }),
+    buildProductJsonLd({
+      name: product.name,
+      description: product.description,
+      image: product.image,
+      brand: product.brand,
+      modelNumber: product.modelNumber,
+      category: product.category,
+      slug: product.slug,
+      createdAt: product.createdAt,
+      averageRating,
+      reviewCount,
+      reviews: reviews.map((r) => ({
+        rating: r.rating,
+        text: r.text,
+        title: r.title,
+        createdAt: r.createdAt,
+        authorName: r.user?.name,
+      })),
+    }),
     buildBreadcrumbJsonLd(breadcrumbItems),
     buildFAQJsonLd(faqs),
   ];
@@ -235,6 +248,11 @@ export default async function ProductPage({ params }: IProductProps) {
                     {product.name}
                   </h1>
 
+                  <ProductRatingSummary
+                    averageRating={averageRating}
+                    reviewCount={reviewCount}
+                  />
+
                   <div className="flex flex-wrap items-center gap-3">
                     <div
                       className="inline-flex items-center gap-2 rounded-2xl border border-primary/20 bg-primary/5 px-4 py-2.5"
@@ -255,9 +273,14 @@ export default async function ProductPage({ params }: IProductProps) {
                         itemType="https://schema.org/Brand"
                       >
                         برند{" "}
-                        <span itemProp="name" className="text-primary">
+                        <Link
+                          href="https://siemens.com"
+                          target="_blank"
+                          itemProp="name"
+                          className="text-primary"
+                        >
                           {product.brand}
-                        </span>
+                        </Link>
                       </span>
                     )}
                   </div>
@@ -298,10 +321,16 @@ export default async function ProductPage({ params }: IProductProps) {
               productName={product.name}
             />
 
+            <ReviewsSection
+              productId={product._id}
+              productName={product.name}
+              initialAggregate={{ averageRating, reviewCount }}
+            />
+
             <CommentsSection
               targetId={product._id}
               targetType="product"
-              title="نظرات و پرسش‌های مشتریان"
+              title="پرسش‌های مشتریان"
             />
 
             {product.similarProducts && product.similarProducts.length > 0 && (

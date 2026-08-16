@@ -47,17 +47,33 @@ module.exports = {
     };
   },
 
-  additionalPaths: async (config) => {
-    const result = [];
+  additionalPaths: async () => {
+    const now = new Date().toISOString();
 
-    const products = await fetch(
-      "https://siemensplus1.ir/api/products/sitemap",
-    ).then((res) => res.json());
-    return products.data.map((product) => ({
+    const [productsRes, blogsRes] = await Promise.all([
+      fetch("https://siemensplus1.ir/api/products/sitemap"),
+      fetch("https://siemensplus1.ir/api/blog-posts/sitemap"),
+    ]);
+
+    const [productsJson, blogsJson] = await Promise.all([
+      productsRes.json(),
+      blogsRes.json(),
+    ]);
+
+    const productPaths = (productsJson.data || []).map((product) => ({
       loc: `/shop/${product.slug}`,
       changefreq: "weekly",
       priority: 0.8,
-      lastmod: new Date().toISOString(),
+      lastmod: now,
     }));
+
+    const blogPaths = (blogsJson.data || []).map((post) => ({
+      loc: `/blog/${post.slug}`,
+      changefreq: "weekly",
+      priority: 0.6,
+      lastmod: now,
+    }));
+
+    return [...productPaths, ...blogPaths];
   },
 };

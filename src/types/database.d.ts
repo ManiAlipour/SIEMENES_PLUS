@@ -66,11 +66,25 @@ declare interface ProductObject {
   description: string;
   specifications: object;
   isFeatured: boolean;
+  averageRating?: number;
+  reviewCount?: number;
   metaTitle: string;
   metaDescription: string;
   createdAt: string;
   updatedAt: string;
   __v: number;
+}
+
+declare interface ProductReview {
+  _id: string;
+  rating: number;
+  title?: string;
+  text: string;
+  createdAt: string;
+  user?: {
+    name?: string;
+    email?: string;
+  };
 }
 
 declare interface Product extends ProductObject {

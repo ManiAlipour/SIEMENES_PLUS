@@ -9,44 +9,42 @@ export interface VideoCardModel {
   createdAt: string;
 }
 
-export default function VideoCard({ video: videoPost }: { video: VideoCardModel }) {
-  const { _id, title, video, status, createdAt } = videoPost;
+export default function VideoCard({
+  video: videoPost,
+}: {
+  video: VideoCardModel;
+}) {
+  const { title, video, status, createdAt } = videoPost;
 
   if (status === "draft") return null;
 
   return (
     <article
-      className="group flex flex-col overflow-hidden rounded-xl border border-gray-200 bg-[#f7f9fb] shadow-sm hover:border-primary/80 hover:shadow-lg hover:-translate-y-1 transition-all duration-300 focus-within:shadow-lg"
+      className="group flex flex-col overflow-hidden border border-slate-200 bg-white transition hover:border-primary/40"
       aria-label={`ویدیو: ${title}`}
     >
-      <Link
-        href="/videos"
-        className="flex flex-col flex-1 min-h-0 focus:outline-none focus-visible:ring-2 focus-visible:ring-cyan-500 rounded-xl"
-      >
-        <div className="relative w-full aspect-video overflow-hidden">
-          {video ? (
-            <div className="absolute inset-0">
-              <AparatPlayer videoUrl={video} />
-            </div>
-          ) : (
-            <div className="flex items-center justify-center w-full h-full bg-slate-200 text-slate-600 text-sm">
-              ویدیو ندارد
-            </div>
-          )}
-          <div className="pointer-events-none absolute inset-0 bg-gradient-to-t from-black/20 via-transparent to-transparent" />
-        </div>
-        <div className="flex-1 p-5 flex flex-col gap-3">
-          <h3 className="text-lg md:text-xl font-bold text-gray-800 group-hover:text-primary transition-colors">
+      <div className="relative aspect-video w-full overflow-hidden bg-[#0b1f33]">
+        {video ? (
+          <AparatPlayer videoUrl={video} title={title} autoLoad={false} />
+        ) : (
+          <div className="flex h-full items-center justify-center text-sm text-slate-400">
+            ویدیو ندارد
+          </div>
+        )}
+      </div>
+      <div className="flex flex-1 flex-col gap-2 p-4 sm:p-5">
+        <h3 className="text-base font-bold leading-7 text-slate-900 transition group-hover:text-primary md:text-lg">
+          <Link href="/videos" className="focus:outline-none">
             {title}
-          </h3>
-          <time
-            dateTime={new Date(createdAt).toISOString()}
-            className="text-xs text-gray-400"
-          >
-            {new Date(createdAt).toLocaleDateString("fa-IR")}
-          </time>
-        </div>
-      </Link>
+          </Link>
+        </h3>
+        <time
+          dateTime={new Date(createdAt).toISOString()}
+          className="text-xs text-slate-400"
+        >
+          {new Date(createdAt).toLocaleDateString("fa-IR")}
+        </time>
+      </div>
     </article>
   );
 }

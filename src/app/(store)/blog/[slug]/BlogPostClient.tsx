@@ -101,6 +101,28 @@ export default function BlogPostClient({
               </p>
             )}
             <div className="mt-5 flex flex-wrap items-center gap-4 text-sm text-slate-400">
+              <Link
+                href="/about-us/morteza-majidi"
+                className="inline-flex items-center gap-2.5 rounded-lg text-slate-200 transition hover:text-white"
+              >
+                <span className="relative h-9 w-9 overflow-hidden rounded-full border border-white/20 bg-slate-700">
+                  {/* eslint-disable-next-line @next/next/no-img-element */}
+                  <img
+                    src="/images/profile/morteza-majidi.webp"
+                    alt=""
+                    className="h-full w-full object-cover"
+                    width={36}
+                    height={36}
+                  />
+                </span>
+                <span>
+                  <span className="block text-[11px] text-slate-400">نویسنده</span>
+                  <span className="font-semibold text-white">مرتضی مجیدی</span>
+                </span>
+              </Link>
+              <span className="text-slate-600" aria-hidden>
+                ·
+              </span>
               <time
                 className="inline-flex items-center gap-1.5"
                 dateTime={new Date(post.createdAt).toISOString()}
@@ -112,7 +134,9 @@ export default function BlogPostClient({
                   day: "numeric",
                 })}
               </time>
-              <span className="text-slate-500">·</span>
+              <span className="text-slate-600" aria-hidden>
+                ·
+              </span>
               <span>حدود {readMinutes} دقیقه مطالعه</span>
             </div>
           </header>
