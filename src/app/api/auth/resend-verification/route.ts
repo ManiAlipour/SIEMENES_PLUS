@@ -1,23 +1,38 @@
 import { NextResponse } from "next/server";
-import { resendVerificationCode } from "@/lib/auth";
+import { resendOtp } from "@/lib/auth";
+import { resendOtpSchema } from "@/lib/validations/authValidator";
 
 export async function POST(req: Request) {
   try {
     const body = await req.json();
-    const { email } = body as { email?: string };
-
-    if (!email) {
-      return NextResponse.json({ error: "Email is required" }, { status: 400 });
+    const validatedData = resendOtpSchema.safeParse(body);
+    if (!validatedData.success) {
+      return NextResponse.json(
+        {
+          message:
+            validatedData.error.issues[0]?.message ||
+            "اطلاعات وارد شده معتبر نیست.",
+          errors: validatedData.error.flatten().fieldErrors,
+        },
+        { status: 400 },
+      );
     }
 
-    const result = await resendVerificationCode({ email });
+    const { phoneNumber } = validatedData.data;
 
+    if (!phoneNumber) {
+      return NextResponse.json(
+        { error: "شماره موبایل الزامی است" },
+        { status: 400 },
+      );
+    }
 
-    // { success: true, message: "Verification code sent" }
+    const result = await resendOtp({ phoneNumber });
+
     return NextResponse.json(result, { status: 200 });
   } catch (err: any) {
     return NextResponse.json(
-      { error: err?.message || "Failed to send verification code" },
+      { error: err?.message || "خطا در ارسال کد مجدد" },
       { status: 500 },
     );
   }
