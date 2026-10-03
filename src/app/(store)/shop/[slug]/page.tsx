@@ -267,18 +267,15 @@ export default async function ProductPage({ params }: IProductProps) {
                     </div>
                     {product.brand && (
                       <span
-                        className="rounded-2xl border border-slate-200 bg-white px-4 py-2.5 text-sm font-bold text-slate-700 shadow-sm"
                         itemProp="brand"
                         itemScope
                         itemType="https://schema.org/Brand"
                       >
+                        <span itemProp="name" className="sr-only">
+                          {product.brand}
+                        </span>
                         برند{" "}
-                        <Link
-                          href="https://siemens.com"
-                          target="_blank"
-                          itemProp="name"
-                          className="text-primary"
-                        >
+                        <Link href="https://siemens.com" target="_blank">
                           {product.brand}
                         </Link>
                       </span>

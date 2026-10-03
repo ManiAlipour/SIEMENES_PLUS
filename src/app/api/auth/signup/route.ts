@@ -1,26 +1,30 @@
 import { NextResponse } from "next/server";
-import { signup } from "@/lib/auth";
+import { registerSchema } from "@/lib/validations/authValidator";
+import { register } from "@/lib/auth";
 
 export async function POST(req: Request) {
   try {
     const body = await req.json();
-    const { name, email, password } = body;
 
-    if (!name || !email || !password) {
+    const validatedData = registerSchema.safeParse(body);
+    if (!validatedData.success) {
       return NextResponse.json(
-        { error: "All fields are required" },
-        { status: 400 }
+        {
+          message:
+            validatedData.error.issues[0]?.message ||
+            "اطلاعات وارد شده معتبر نیست.",
+          errors: validatedData.error.flatten().fieldErrors,
+        },
+        { status: 400 },
       );
     }
 
-    const result = await signup({ name, email, password });
-
+    const result = await register(validatedData.data);
     return NextResponse.json(result, { status: 201 });
-  } catch (err: any) {
-    console.error(err)
+  } catch (error: any) {
     return NextResponse.json(
-      { error: err.message || "Signup failed" },
-      { status: 500 }
+      { message: error.message || "خطای سرور" },
+      { status: 400 },
     );
   }
 }

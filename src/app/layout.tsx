@@ -1,13 +1,18 @@
 import type { Metadata, Viewport } from "next";
 import "./globals.css";
 import Providers from "@/components/providers";
+import Script from "next/script";
+import GaRouteTracker from "@/components/providers/GaRouteTracker";
+import { Suspense } from "react";
 
 export const viewport: Viewport = {
   width: "device-width",
   initialScale: 1,
- // maximumScale: 1,
+  // maximumScale: 1,
   viewportFit: "cover",
 };
+
+const GA_MEASUREMENT_ID = process.env.GA_MEASUREMENT_ID;
 
 export const metadata: Metadata = {
   metadataBase: new URL("https://siemensplus1.ir"),
@@ -33,7 +38,7 @@ export const metadata: Metadata = {
   openGraph: {
     type: "website",
     locale: "fa_IR",
-    url: "https://siemenes-plus.ir",
+    url: "https://siemensplus1.ir",
     siteName: "زیمنس پلاس",
     title: "زیمنس پلاس | قطعات",
     description: "فروش و پشتیبانی تخصصی تجهیزات زیمنس و ارائه راهکارهای مهندسی",
@@ -83,6 +88,9 @@ export default function RootLayout({
     <html dir="rtl" lang="fa-IR">
       <body>
         <Providers>{children}</Providers>
+        <Suspense fallback={null}>
+          <GaRouteTracker />
+        </Suspense>
       </body>
     </html>
   );

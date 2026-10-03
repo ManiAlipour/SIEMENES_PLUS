@@ -1,27 +1,41 @@
 import { NextResponse } from "next/server";
-import { verifyEmail } from "@/lib/auth";
+import { verifyOtp } from "@/lib/auth";
+import { verifyOtpSchema } from "@/lib/validations/authValidator";
 
 export async function POST(req: Request) {
   try {
     const body = await req.json();
-    const { email, code } = body;
 
-    if (!email || !code) {
+    const validatedData = verifyOtpSchema.safeParse(body);
+    if (!validatedData.success) {
       return NextResponse.json(
-        { error: "Email and code are required" },
-        { status: 400 }
+        {
+          message:
+            validatedData.error.issues[0]?.message ||
+            "اطلاعات وارد شده معتبر نیست.",
+          errors: validatedData.error.flatten().fieldErrors,
+        },
+        { status: 400 },
       );
     }
 
-    const { token, user, message } = await verifyEmail({ email, code });
+    const { phoneNumber, code } = validatedData.data;
+
+    if (!phoneNumber || !code) {
+      return NextResponse.json(
+        { error: "شماره موبایل و کد تایید الزامی است" },
+        { status: 400 },
+      );
+    }
+
+    const { token, user, message } = await verifyOtp({ phoneNumber, code });
 
     const res = NextResponse.json({ user, message }, { status: 200 });
-    // Set token in cookie
     res.cookies.set("token", token, {
       httpOnly: false,
       secure: process.env.NODE_ENV === "production",
       sameSite: "lax",
-      maxAge: 30 * 24 * 60 * 60, 
+      maxAge: 30 * 24 * 60 * 60,
       path: "/",
     });
 
@@ -29,7 +43,7 @@ export async function POST(req: Request) {
   } catch (err: any) {
     return NextResponse.json(
       { error: err.message || "Verification failed" },
-      { status: 400 }
+      { status: 400 },
     );
   }
 }

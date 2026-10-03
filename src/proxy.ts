@@ -47,7 +47,7 @@ export async function proxy(request: NextRequest) {
     // Admin route access control
     if (adminPaths.some((path) => pathname.startsWith(path))) {
       if (decoded.role !== "admin") {
-        console.warn(`🚫 ${decoded.email} tried to access admin route`);
+        console.warn(`🚫 ${decoded.phoneNumber} tried to access admin route`);
         return NextResponse.redirect(new URL("/403", request.url));
       }
     }

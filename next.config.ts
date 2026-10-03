@@ -35,7 +35,6 @@ const nextConfig: NextConfig = {
         destination: "/shop/:slug*",
         permanent: true,
       },
-      // ۲. ریدایرکت بدون www (تنظیمات قبلی خودت)
       {
         source: "/:path*",
         has: [

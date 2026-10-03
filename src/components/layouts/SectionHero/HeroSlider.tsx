@@ -1,6 +1,6 @@
 "use client";
 
-import { useCallback, useEffect, useState } from "react";
+import { useCallback, useEffect, useId, useMemo, useState } from "react";
 import { FiChevronLeft, FiChevronRight } from "react-icons/fi";
 import HeroSlide from "./HeroSlide";
 import type { Slide } from "./hero.data";
@@ -16,117 +16,142 @@ export default function HeroSliderClient({ slides }: Props) {
   const [isPaused, setIsPaused] = useState(false);
   const [reduceMotion, setReduceMotion] = useState(false);
 
+  const tablistId = useId();
+
+  const safeSlides = useMemo(() => slides ?? [], [slides]);
+  const count = safeSlides.length;
+
   const goTo = useCallback(
     (i: number) => {
-      setIndex((i + slides.length) % slides.length);
+      if (count <= 0) return;
+      setIndex((i + count) % count);
     },
-    [slides.length],
+    [count],
   );
 
   const next = useCallback(() => {
-    setIndex((prev) => (prev + 1) % slides.length);
-  }, [slides.length]);
+    if (count <= 1) return;
+    setIndex((prev) => (prev + 1) % count);
+  }, [count]);
 
   const prev = useCallback(() => {
-    setIndex((prev) => (prev - 1 + slides.length) % slides.length);
-  }, [slides.length]);
+    if (count <= 1) return;
+    setIndex((prev) => (prev - 1 + count) % count);
+  }, [count]);
 
   useEffect(() => {
     const mq = window.matchMedia("(prefers-reduced-motion: reduce)");
-    setReduceMotion(mq.matches);
-    const onChange = () => setReduceMotion(mq.matches);
-    mq.addEventListener("change", onChange);
-    return () => mq.removeEventListener("change", onChange);
+    const apply = () => setReduceMotion(mq.matches);
+    apply();
+    mq.addEventListener("change", apply);
+    return () => mq.removeEventListener("change", apply);
   }, []);
 
   useEffect(() => {
-    if (isPaused || reduceMotion || slides.length <= 1) return;
+    if (isPaused || reduceMotion || count <= 1) return;
     const id = window.setInterval(next, AUTOPLAY_MS);
     return () => window.clearInterval(id);
-  }, [isPaused, next, reduceMotion, slides.length]);
+  }, [isPaused, next, reduceMotion, count]);
+
+  if (count === 0) return null;
 
   return (
-    <div
-      className="relative"
+    <section
+      className="relative w-full"
+      aria-label="اسلایدر هیرو"
       onMouseEnter={() => setIsPaused(true)}
       onMouseLeave={() => setIsPaused(false)}
       onFocusCapture={() => setIsPaused(true)}
       onBlurCapture={(e) => {
-        if (!e.currentTarget.contains(e.relatedTarget as Node)) {
+        if (!e.currentTarget.contains(e.relatedTarget as Node))
           setIsPaused(false);
-        }
       }}
     >
-      <div className="relative w-full min-h-[70svh] aspect-[4/5] sm:aspect-[16/10] sm:min-h-0 lg:aspect-auto lg:h-[100dvh] lg:min-h-[640px]">
-        {slides.map((slide, i) => {
-          const isActive = i === index;
-          const isNear =
-            Math.abs(i - index) <= 1 ||
-            (index === 0 && i === slides.length - 1) ||
-            (index === slides.length - 1 && i === 0);
+      {/* Viewport */}
+      <div className="relative w-full overflow-hidden rounded-none">
+        <div className="relative w-full min-h-[280px] aspect-[4/3] sm:min-h-0 sm:aspect-[16/9]
+         lg:aspect-auto lg:h-[80dvh] lg:min-h-[640px]">
+          {safeSlides.map((slide, i) => {
+            const isActive = i === index;
 
-          if (!isActive && !isNear) return null;
+            const isNear =
+              Math.abs(i - index) <= 1 ||
+              (index === 0 && i === count - 1) ||
+              (index === count - 1 && i === 0);
 
-          return (
-            <div
-              key={slide.id}
-              className={`absolute inset-0 transition-opacity ${
-                reduceMotion ? "duration-0" : "duration-700"
-              } ${
-                isActive
-                  ? "opacity-100 z-10"
-                  : "opacity-0 z-0 pointer-events-none"
-              }`}
-              aria-hidden={!isActive}
-            >
-              <HeroSlide
-                slide={slide}
-                isPrimary={i === 0}
-                isActive={isActive}
+            if (!isActive && !isNear) return null;
+
+            return (
+              <div
+                key={slide.id}
+                className={[
+                  "absolute inset-0",
+                  "transition-opacity",
+                  reduceMotion ? "duration-0" : "duration-700",
+                  isActive
+                    ? "opacity-100 z-10"
+                    : "opacity-0 z-0 pointer-events-none",
+                ].join(" ")}
+                aria-hidden={!isActive}
+              >
+                <HeroSlide
+                  slide={slide}
+                  isPrimary={i === 0}
+                  isActive={isActive}
+                />
+              </div>
+            );
+          })}
+        </div>
+
+        {/* Controls */}
+        <div className="pointer-events-none absolute inset-x-0 bottom-4 sm:bottom-7 z-20 flex items-center justify-between px-4 sm:px-8 lg:px-12">
+          {/* Dots */}
+          <div
+            className="pointer-events-auto flex items-center gap-2"
+            role="tablist"
+            aria-label="اسلایدها"
+            id={tablistId}
+          >
+            {safeSlides.map((_, i) => (
+              <button
+                key={i}
+                type="button"
+                role="tab"
+                onClick={() => goTo(i)}
+                aria-controls={`slide-${tablistId}-${i}`}
+                aria-label={`اسلاید ${i + 1}`}
+                aria-selected={i === index}
+                className={[
+                  "h-1.5 rounded-full transition-all duration-300",
+                  i === index
+                    ? "w-10 bg-white"
+                    : "w-3 bg-white/40 hover:bg-white/60",
+                ].join(" ")}
               />
-            </div>
-          );
-        })}
-      </div>
+            ))}
+          </div>
 
-      <div className="absolute bottom-5 sm:bottom-8 inset-x-0 z-20 flex items-center justify-between px-4 sm:px-8 lg:px-12">
-        <div className="flex items-center gap-2" role="tablist" aria-label="اسلایدها">
-          {slides.map((_, i) => (
+          <div className="pointer-events-auto hidden sm:flex gap-2">
             <button
-              key={i}
               type="button"
-              role="tab"
-              onClick={() => goTo(i)}
-              aria-label={`اسلاید ${i + 1}`}
-              aria-selected={i === index}
-              className={`h-1 rounded-full transition-all duration-500 ${
-                i === index
-                  ? "w-10 bg-white"
-                  : "w-3 bg-white/35 hover:bg-white/55"
-              }`}
-            />
-          ))}
-        </div>
-
-        <div className="hidden sm:flex gap-2">
-          <button
-            type="button"
-            onClick={prev}
-            aria-label="اسلاید قبلی"
-            className="grid h-11 w-11 place-items-center border border-white/25 text-white transition hover:bg-white hover:text-slate-900"
-          >
-            <FiChevronRight size={22} />
-          </button>
-          <button
-            type="button"
-            onClick={next}
-            aria-label="اسلاید بعدی"
-            className="grid h-11 w-11 place-items-center border border-white/25 text-white transition hover:bg-white hover:text-slate-900"
-          >
-            <FiChevronLeft size={22} />
-          </button>
+              onClick={prev}
+              aria-label="اسلاید قبلی"
+              className="grid h-11 w-11 place-items-center border border-white/30 text-white transition hover:bg-white hover:text-slate-900"
+            >
+              <FiChevronRight size={22} />
+            </button>
+            <button
+              type="button"
+              onClick={next}
+              aria-label="اسلاید بعدی"
+              className="grid h-11 w-11 place-items-center border border-white/30 text-white transition hover:bg-white hover:text-slate-900"
+            >
+              <FiChevronLeft size={22} />
+            </button>
+          </div>
         </div>
       </div>
-    </div>
+    </section>
   );
 }

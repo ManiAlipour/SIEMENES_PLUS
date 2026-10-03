@@ -10,7 +10,7 @@ const productSchema = new Schema(
     brand: { type: String },
     category: { type: String, index: true },
     modelNumber: { type: String, index: true },
-    image: { type: String, required: true },
+    image: { type: String, default: "" },
     description: { type: String },
     specifications: {
       type: Map,
