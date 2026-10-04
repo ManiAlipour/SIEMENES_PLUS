@@ -1,31 +1,39 @@
 import { NextResponse } from "next/server";
 import { z } from "zod";
 import { resetPassword } from "@/lib/auth";
-
-const ResetPasswordSchema = z.object({
-  email: z.string().email("Invalid email"),
-  token: z.string().min(10, "Invalid token"),
-  password: z.string().min(8, "Password must be at least 8 characters"),
-});
+import { resetPasswordSchema } from "@/lib/validations/authValidator";
 
 export async function POST(req: Request) {
   try {
     const body = await req.json();
-    const parsed = ResetPasswordSchema.safeParse(body);
-
-    if (!parsed.success) {
+    const validatedData = resetPasswordSchema.safeParse(body);
+    if (!validatedData.success) {
       return NextResponse.json(
-        { error: "Invalid input", issues: parsed.error.flatten() },
+        {
+          message:
+            validatedData.error.issues[0]?.message ||
+            "اطلاعات وارد شده معتبر نیست.",
+          errors: validatedData.error.flatten().fieldErrors,
+        },
         { status: 400 },
       );
     }
 
-    const { email, token, password } = parsed.data;
+    const { phoneNumber, code, newPassword, confirmPassword } =
+      validatedData.data;
+
+    if (newPassword !== confirmPassword)
+      return NextResponse.json(
+        {
+          message: "رمز عبور و تایید رمز عبور یکسان نیست",
+        },
+        { status: 400 },
+      );
 
     const result = await resetPassword({
-      email,
-      token,
-      newPassword: password,
+      phoneNumber,
+      code,
+      newPassword,
     });
 
     return NextResponse.json(result, { status: 200 });

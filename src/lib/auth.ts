@@ -10,6 +10,7 @@ const OTP_EXPIRES_IN_MS = 5 * 60 * 1000;
 const OTP_RESEND_COOLDOWN_MS = 60 * 1000;
 const MAX_OTP_ATTEMPTS = 5;
 const SMS_OTP_TEMPLATE_ID = 462822;
+const SMS_RESET_PASS_TEMPLATE_ID = 652327;
 
 export interface IRegister {
   phoneNumber: string;
@@ -25,6 +26,16 @@ export interface ILogin {
 export interface IVerifyOtp {
   phoneNumber: string;
   code: string;
+}
+
+export interface IForgotPassword {
+  phoneNumber: string;
+}
+
+export interface IResetPassword {
+  phoneNumber: string;
+  code: string;
+  newPassword: string;
 }
 
 export interface SafeUser {
@@ -282,5 +293,122 @@ export async function resendOtp({ phoneNumber }: { phoneNumber: string }) {
 
   return {
     message: "کد تأیید جدید با موفقیت ارسال شد.",
+  };
+}
+
+const PASSWORD_RESET_GENERIC_MESSAGE =
+  "اگر حساب کاربری فعالی با این شماره وجود داشته باشد، کد بازیابی ارسال می‌شود.";
+
+export async function forgotPassword({ phoneNumber }: IForgotPassword) {
+  await connectDB();
+
+  const normalizedPhone = normalizeIranPhone(phoneNumber);
+
+  const user = await User.findOne({
+    phoneNumber: normalizedPhone,
+    isDeleted: false,
+    verified: true,
+    active: true,
+  });
+
+  if (!user) {
+    return { message: PASSWORD_RESET_GENERIC_MESSAGE };
+  }
+
+  if (user.passwordResetLastSentAt) {
+    const elapsed = Date.now() - user.passwordResetLastSentAt.getTime();
+
+    if (elapsed < OTP_RESEND_COOLDOWN_MS) {
+      return { message: PASSWORD_RESET_GENERIC_MESSAGE };
+    }
+  }
+
+  const otp = generateOtpCode();
+
+  user.passwordResetCodeHash = hashOtp(otp);
+  user.passwordResetCodeExpiresAt = new Date(Date.now() + OTP_EXPIRES_IN_MS);
+  user.passwordResetAttempts = 0;
+  user.passwordResetLastSentAt = new Date();
+
+  await user.save();
+
+  try {
+    const smsRes = await sendOtpSms({
+      mobile: normalizedPhone!,
+      templateId: SMS_RESET_PASS_TEMPLATE_ID,
+      parameters: [{ name: "CODE", value: otp }],
+    });
+
+    if (!smsRes.success) {
+      console.error("Password reset SMS failed:", smsRes.message);
+    }
+  } catch (error) {
+    console.error("Password reset SMS error:", error);
+  }
+
+  return { message: PASSWORD_RESET_GENERIC_MESSAGE };
+}
+
+export async function resetPassword({
+  phoneNumber,
+  code,
+  newPassword,
+}: IResetPassword) {
+  await connectDB();
+
+  const normalizedPhone = normalizeIranPhone(phoneNumber);
+
+  const user = await User.findOne({
+    phoneNumber: normalizedPhone,
+    isDeleted: false,
+    verified: true,
+    active: true,
+  });
+
+  const invalidCodeMessage = "کد بازیابی معتبر نیست یا منقضی شده است.";
+
+  if (
+    !user ||
+    !user.passwordResetCodeHash ||
+    !user.passwordResetCodeExpiresAt
+  ) {
+    throw new Error(invalidCodeMessage);
+  }
+
+  if (user.passwordResetAttempts >= MAX_OTP_ATTEMPTS) {
+    user.passwordResetCodeHash = null;
+    user.passwordResetCodeExpiresAt = null;
+    await user.save();
+
+    throw new Error(invalidCodeMessage);
+  }
+
+  if (user.passwordResetCodeExpiresAt.getTime() <= Date.now()) {
+    user.passwordResetCodeHash = null;
+    user.passwordResetCodeExpiresAt = null;
+    await user.save();
+
+    throw new Error(invalidCodeMessage);
+  }
+
+  const isValid = otpMatches(code, user.passwordResetCodeHash);
+
+  if (!isValid) {
+    user.passwordResetAttempts += 1;
+    await user.save();
+
+    throw new Error(invalidCodeMessage);
+  }
+
+  user.password = await bcrypt.hash(newPassword, 12);
+
+  user.passwordResetCodeHash = null;
+  user.passwordResetCodeExpiresAt = null;
+  user.passwordResetAttempts = 0;
+
+  await user.save();
+
+  return {
+    message: "رمز عبور با موفقیت تغییر کرد.",
   };
 }

@@ -36,7 +36,7 @@ const toEnglishDigits = (str: string): string => {
 };
 
 export const iranianPhoneSchema = z
-  .string({ required_error: "شماره موبایل الزامی است." })
+  .string("شماره موبایل الزامی است.")
   .trim()
   .transform(toEnglishDigits)
   .refine(
@@ -45,18 +45,18 @@ export const iranianPhoneSchema = z
   );
 
 export const otpCodeSchema = z
-  .string({ required_error: "کد تایید الزامی است." })
+  .string("کد تایید الزامی است.")
   .trim()
   .transform(toEnglishDigits)
   .refine((code) => /^\d{6}$/.test(code), "کد تایید باید یک عدد ۶ رقمی باشد.");
 
 export const passwordSchema = z
-  .string({ required_error: "رمز عبور الزامی است." })
+  .string("رمز عبور الزامی است.")
   .min(6, "رمز عبور باید حداقل ۶ کاراکتر باشد.")
   .max(100, "رمز عبور طولانی‌تر از حد مجاز است.");
 
 export const nameSchema = z
-  .string({ required_error: "نام و نام خانوادگی الزامی است." })
+  .string("نام و نام خانوادگی الزامی است.")
   .trim()
   .min(3, "نام باید حداقل ۳ حرف باشد.")
   .max(50, "نام نمی‌تواند بیشتر از ۵۰ کاراکتر باشد.");
@@ -80,7 +80,7 @@ export const registerSchema = z.object({
 export const loginSchema = z.object({
   phoneNumber: iranianPhoneSchema,
   password: z
-    .string({ required_error: "رمز عبور الزامی است." })
+    .string("رمز عبور الزامی است.")
     .min(1, "رمز عبور نمی‌تواند خالی باشد."),
 });
 
@@ -108,6 +108,25 @@ export const updateProfileSchema = z.object({
   name: nameSchema.optional(),
   email: emailOptionalSchema,
 });
+
+export const forgotPasswordSchema = z.object({
+  phoneNumber: iranianPhoneSchema,
+});
+
+export const resetPasswordSchema = z
+  .object({
+    phoneNumber: iranianPhoneSchema,
+    code: otpCodeSchema,
+    newPassword: z
+      .string()
+      .min(6, "رمز عبور باید حداقل ۶ کاراکتر باشد.")
+      .max(100, "رمز عبور طولانی‌تر از حد مجاز است."),
+    confirmPassword: z.string(),
+  })
+  .refine((data) => data.newPassword === data.confirmPassword, {
+    message: "تکرار رمز عبور با رمز جدید مطابقت ندارد.",
+    path: ["confirmPassword"],
+  });
 
 export type RegisterInput = z.infer<typeof registerSchema>;
 export type LoginInput = z.infer<typeof loginSchema>;

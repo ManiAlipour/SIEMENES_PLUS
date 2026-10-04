@@ -18,8 +18,10 @@ export interface IUser extends Document {
   active: boolean;
   isDeleted: boolean;
 
-  resetPasswordTokenHash?: string | null;
-  resetPasswordExpiresAt?: Date | null;
+  passwordResetCodeHash: string | null;
+  passwordResetCodeExpiresAt: Date | null;
+  passwordResetAttempts: number;
+  passwordResetLastSentAt: Date | null;
 
   createdAt: Date;
   updatedAt: Date;
@@ -97,12 +99,19 @@ const UserSchema = new Schema<IUser>(
       default: false,
     },
 
-    resetPasswordTokenHash: {
+    passwordResetCodeHash: {
       type: String,
       default: null,
     },
-
-    resetPasswordExpiresAt: {
+    passwordResetCodeExpiresAt: {
+      type: Date,
+      default: null,
+    },
+    passwordResetAttempts: {
+      type: Number,
+      default: 0,
+    },
+    passwordResetLastSentAt: {
       type: Date,
       default: null,
     },

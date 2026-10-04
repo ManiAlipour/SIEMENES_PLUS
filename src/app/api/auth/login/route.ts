@@ -1,19 +1,27 @@
 import { NextResponse } from "next/server";
 import { login } from "@/lib/auth";
+import { loginSchema } from "@/lib/validations/authValidator";
 
 export async function POST(req: Request) {
   try {
     const body = await req.json();
-    const { email, password } = body;
 
-    if (!email || !password) {
+    const validatedData = loginSchema.safeParse(body);
+    if (!validatedData.success) {
       return NextResponse.json(
-        { error: "Email and password are required" },
-        { status: 400 }
+        {
+          message:
+            validatedData.error.issues[0]?.message ||
+            "اطلاعات وارد شده معتبر نیست.",
+          errors: validatedData.error.flatten().fieldErrors,
+        },
+        { status: 400 },
       );
     }
 
-    const { token, user } = await login({ email, password });
+    const { phoneNumber, password } = validatedData.data;
+
+    const { token, user } = await login({ phoneNumber, password });
 
     const res = NextResponse.json({ user });
     res.cookies.set("token", token, {
@@ -28,7 +36,7 @@ export async function POST(req: Request) {
   } catch (err: any) {
     return NextResponse.json(
       { error: err.message || "Login failed" },
-      { status: 401 }
+      { status: 401 },
     );
   }
 }
