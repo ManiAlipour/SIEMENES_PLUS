@@ -23,6 +23,8 @@ export interface IUser extends Document {
   passwordResetAttempts: number;
   passwordResetLastSentAt: Date | null;
 
+  tokenVersion: number;
+
   createdAt: Date;
   updatedAt: Date;
 }
@@ -114,6 +116,11 @@ const UserSchema = new Schema<IUser>(
     passwordResetLastSentAt: {
       type: Date,
       default: null,
+    },
+    tokenVersion: {
+      type: Number,
+      default: 0,
+      required: true,
     },
   },
   {

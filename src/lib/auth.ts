@@ -38,6 +38,12 @@ export interface IResetPassword {
   newPassword: string;
 }
 
+export interface IChangePassword {
+  userId: string;
+  currentPassword: string;
+  newPassword: string;
+}
+
 export interface SafeUser {
   id: string;
   name: string;
@@ -54,6 +60,7 @@ export interface ITokenPayload {
   id: string;
   phoneNumber: string;
   role: "user" | "admin";
+  tokenVersion: number;
 }
 
 export function sanitizeUser(user: IUser): SafeUser {
@@ -78,9 +85,37 @@ export function generateToken(user: IUser): string {
     id: user._id.toString(),
     phoneNumber: user.phoneNumber,
     role: user.role,
+    tokenVersion: user.tokenVersion ?? 0,
   };
 
   return jwt.sign(payload, secret, { expiresIn: "30d" });
+}
+
+export async function authenticateToken(token: string): Promise<IUser> {
+  const secret = process.env.JWT_SECRET;
+  if (!secret) throw new Error("JWT_SECRET is not configured");
+
+  let payload: ITokenPayload;
+  try {
+    payload = jwt.verify(token, secret) as ITokenPayload;
+  } catch {
+    throw new Error("توکن نامعتبر یا منقضی شده است.");
+  }
+
+  await connectDB();
+  const user = await User.findOne({ _id: payload.id, isDeleted: false });
+
+  if (!user || !user.active) {
+    throw new Error("کاربر یافت نشد یا حساب مسدود است.");
+  }
+
+  if (user.tokenVersion !== payload.tokenVersion) {
+    throw new Error(
+      "نشست شما به دلیل تغییر اطلاعات باطل شده است. لطفاً مجدداً وارد شوید.",
+    );
+  }
+
+  return user;
 }
 
 export function verifyToken(token: string): ITokenPayload {
@@ -410,5 +445,58 @@ export async function resetPassword({
 
   return {
     message: "رمز عبور با موفقیت تغییر کرد.",
+  };
+}
+
+export async function changePassword({
+  userId,
+  currentPassword,
+  newPassword,
+}: IChangePassword) {
+  await connectDB();
+
+  const user = await User.findOne({
+    _id: userId,
+    isDeleted: false,
+  });
+
+  if (!user) {
+    throw new Error("کاربر یافت نشد.");
+  }
+
+  if (!user.active) {
+    throw new Error("حساب کاربری شما مسدود شده است.");
+  }
+
+  const isCurrentPasswordCorrect = await bcrypt.compare(
+    currentPassword,
+    user.password,
+  );
+
+  if (!isCurrentPasswordCorrect) {
+    throw new Error("رمز عبور فعلی نادرست است.");
+  }
+
+  const isSamePassword = await bcrypt.compare(newPassword, user.password);
+  if (isSamePassword) {
+    throw new Error("رمز عبور جدید نمی‌تواند با رمز عبور فعلی یکسان باشد.");
+  }
+
+  user.password = await bcrypt.hash(newPassword, 12);
+
+  user.tokenVersion = (user.tokenVersion || 0) + 1;
+
+  user.passwordResetCodeHash = null;
+  user.passwordResetCodeExpiresAt = null;
+  user.passwordResetAttempts = 0;
+
+  await user.save();
+
+  const newToken = generateToken(user);
+
+  return {
+    message: "رمز عبور با موفقیت تغییر یافت.",
+    token: newToken,
+    user: sanitizeUser(user),
   };
 }

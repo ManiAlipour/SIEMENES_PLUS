@@ -1,115 +1,62 @@
-import {
-  sanitizeUser,
-  verifyToken,
-  generateToken,
-  mapUserToTokenData,
-} from "@/lib/auth";
-import { connectDB } from "@/lib/db";
-import { authOnly } from "@/lib/middlewares/auth";
-import User from "@/models/User";
-import { compare, hash } from "bcryptjs";
-import { NextRequest, NextResponse } from "next/server";
+import { NextResponse } from "next/server";
+import { changePasswordSchema } from "@/lib/validations/authValidator";
+import { changePassword, verifyToken } from "@/lib/auth";
 
-export async function PATCH(req: NextRequest) {
+export async function POST(req: Request) {
   try {
-    await authOnly(req);
-    await connectDB();
+    const authHeader = req.headers.get("authorization");
+    const token = authHeader?.startsWith("Bearer ")
+      ? authHeader.substring(7)
+      : null;
 
-    const { currentPassword, newPassword, confirmPassword } = await req.json();
-
-    if (!currentPassword || !newPassword || !confirmPassword) {
-      return NextResponse.json(
-        {
-          message: "تمام فیلدها الزامی است.",
-          data: null,
-          success: false,
-        },
-        { status: 400 },
-      );
-    }
-
-    if (currentPassword === newPassword) {
-      return NextResponse.json(
-        {
-          message: "پسورد جدید نمی‌تواند با پسورد فعلی یکسان باشد.",
-          data: null,
-          success: false,
-        },
-        { status: 400 },
-      );
-    }
-
-    if (newPassword !== confirmPassword) {
-      return NextResponse.json(
-        {
-          message: "پسورد جدید و تکرار آن یکسان نیست.",
-          data: null,
-          success: false,
-        },
-        { status: 400 },
-      );
-    }
-
-    const token = req.cookies.get("token")?.value;
     if (!token) {
       return NextResponse.json(
-        { message: "احراز هویت نامعتبر است.", success: false },
+        { message: "لطفاً ابتدا وارد حساب کاربری خود شوید." },
         { status: 401 },
       );
     }
 
-    let decoded;
-    try {
-      decoded = verifyToken(token);
-    } catch {
-      return NextResponse.json(
-        { message: "توکن نامعتبر یا منقضی شده است.", success: false },
-        { status: 401 },
-      );
-    }
+    const decoded = verifyToken(token);
 
-    const user = await User.findById(decoded.id);
-    if (!user) {
-      return NextResponse.json(
-        { message: "کاربر یافت نشد.", success: false },
-        { status: 404 },
-      );
-    }
+    const body = await req.json();
 
-    const isPasswordValid = await compare(currentPassword, user.password);
-
-    if (!isPasswordValid) {
+    const validatedData = changePasswordSchema.safeParse(body);
+    if (!validatedData.success) {
       return NextResponse.json(
         {
-          message: "پسورد فعلی اشتباه است.",
-          success: false,
+          message:
+            validatedData.error.issues[0]?.message ||
+            "اطلاعات ورودی نامعتبر است.",
+          errors: validatedData.error.flatten().fieldErrors,
         },
-        { status: 401 },
+        { status: 400 },
       );
     }
 
-    user.password = await hash(newPassword, 10);
-    const updatedUser = await user.save();
-
-    const res = NextResponse.json({
-      message: "رمز عبور با موفقیت تغییر کرد.",
-      data: sanitizeUser(user),
-      success: true,
+    const {
+      user,
+      token: newToken,
+      message,
+    } = await changePassword({
+      userId: decoded.id,
+      currentPassword: validatedData.data.currentPassword,
+      newPassword: validatedData.data.newPassword,
     });
 
-    res.cookies.delete("token");
-    const newToken = generateToken(mapUserToTokenData(updatedUser));
-    res.cookies.set("token", newToken);
+    const response = NextResponse.json({ user, message }, { status: 200 });
 
-    return res;
-  } catch (error) {
+    response.cookies.set("token", newToken, {
+      httpOnly: true,
+      secure: process.env.NODE_ENV === "production",
+      sameSite: "lax",
+      maxAge: 30 * 24 * 60 * 60,
+      path: "/",
+    });
+    return response;
+  } catch (error: any) {
     return NextResponse.json(
-      {
-        message: "خطای ارتباط با سرور",
-        data: null,
-        success: false,
-      },
-      { status: 500 },
+      { message: error.message || "خطایی در تغییر رمز عبور رخ داد." },
+      { status: 400 },
     );
   }
 }
