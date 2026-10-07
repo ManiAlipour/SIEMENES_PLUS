@@ -2,7 +2,7 @@ import { NextResponse } from "next/server";
 import { connectDB } from "@/lib/db";
 import Contact from "@/models/Contact";
 import { adminOnly } from "@/lib/middlewares/adminOnly";
-import { transporter } from "@/lib/auth";
+import { transporter } from "@/lib/nodemailer";
 
 async function sendEmailToUser(to: string, subject: string, body: string) {
   await transporter.sendMail({

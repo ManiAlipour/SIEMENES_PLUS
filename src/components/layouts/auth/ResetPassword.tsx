@@ -139,8 +139,6 @@ export default function ResetPasswordForm() {
         <InputField
           label="کد تأیید ۶ رقمی"
           type="text"
-          dir="ltr"
-          placeholder="123456"
           register={register("code")}
           error={errors.code?.message}
         />
