@@ -10,7 +10,6 @@ interface SendOtpParams {
 }
 
 const SMS_API_URL = "https://api.sms.ir/v1/send/verify";
-const SMS_BULK_URL = "https://api.sms.ir/v1/send/bulk";
 
 export async function sendOtpSms({
   mobile,

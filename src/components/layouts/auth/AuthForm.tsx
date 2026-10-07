@@ -11,6 +11,7 @@ import {
   FiCheckCircle,
   FiAlertCircle,
   FiX,
+  FiRotateCw,
 } from "react-icons/fi";
 import { useRouter, useSearchParams } from "next/navigation";
 import Link from "next/link";
@@ -27,11 +28,13 @@ interface AuthFormProps {
   mode: AuthMode;
 }
 
+const RESEND_COOLDOWN = 60;
+
 export default function AuthForm({ mode }: AuthFormProps) {
   const router = useRouter();
   const searchParams = useSearchParams();
-  const emailFromQuery =
-    mode === "verify" ? searchParams.get("email") || "" : "";
+  const phoneFromQuery =
+    mode === "verify" ? searchParams.get("phone") || "" : "";
 
   const schema = getAuthSchema(mode);
   type ModeFormData = z.infer<typeof schema>;
@@ -44,94 +47,108 @@ export default function AuthForm({ mode }: AuthFormProps) {
   } = useForm<ModeFormData>({
     resolver: zodResolver(schema),
     defaultValues:
-      mode === "verify" && emailFromQuery
-        ? ({ email: emailFromQuery, code: "" } as ModeFormData)
+      mode === "verify" && phoneFromQuery
+        ? ({ phoneNumber: phoneFromQuery, code: "" } as unknown as ModeFormData)
         : undefined,
   });
 
   const [loading, setLoading] = useState(false);
   const [serverError, setServerError] = useState<string | null>(null);
+  const [countdown, setCountdown] = useState(RESEND_COOLDOWN);
+  const [canResend, setCanResend] = useState(false);
+  const [resending, setResending] = useState(false);
 
   useEffect(() => {
-    if (mode === "verify" && emailFromQuery)
-      setValue("email", emailFromQuery as never);
-  }, [mode, emailFromQuery, setValue]);
+    if (mode === "verify" && phoneFromQuery) {
+      setValue("phoneNumber" as never, phoneFromQuery as never);
+    }
+  }, [mode, phoneFromQuery, setValue]);
+
+  // مدیریت تایمر شمارش معکوس ارسال مجدد پیامک
+  useEffect(() => {
+    let timer: NodeJS.Timeout;
+    if (mode === "verify" && countdown > 0) {
+      setCanResend(false);
+      timer = setInterval(() => setCountdown((c) => c - 1), 1000);
+    } else if (countdown === 0) {
+      setCanResend(true);
+    }
+    return () => clearInterval(timer);
+  }, [mode, countdown]);
+
+  const handleResendOtp = async () => {
+    if (!phoneFromQuery || !canResend || resending) return;
+    setResending(true);
+    try {
+      const res = await fetch("/api/auth/resend-otp", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ phoneNumber: phoneFromQuery }),
+      });
+      const data = await res.json();
+      if (!res.ok) throw new Error(data.message || "خطا در ارسال مجدد");
+
+      toast.success("کد جدید پیامک شد");
+      setCountdown(RESEND_COOLDOWN);
+      setCanResend(false);
+    } catch (err: unknown) {
+      toast.error(getAuthErrorMessage(err));
+    } finally {
+      setResending(false);
+    }
+  };
 
   const onSubmit = async (data: ModeFormData) => {
     setLoading(true);
     setServerError(null);
 
-    if (mode === "verify" && !emailFromQuery) {
-      setServerError("ایمیل یافت نشد. لطفاً از صفحه ثبت‌نام وارد شوید.");
+    if (mode === "verify" && !phoneFromQuery) {
+      setServerError(
+        "شماره موبایل یافت نشد. لطفاً مجدداً از فرم ثبت‌نام اقدام کنید.",
+      );
       setLoading(false);
       return;
     }
 
     const submitData =
-      mode === "verify" ? { ...data, email: emailFromQuery } : data;
+      mode === "verify" ? { ...data, phoneNumber: phoneFromQuery } : data;
     const url = `/api/auth/${mode === "register" ? "signup" : mode}`;
 
     try {
       const controller = new AbortController();
       const timeoutId = setTimeout(() => controller.abort(), 30000);
-      let res: Response;
-      try {
-        res = await fetch(url, {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify(submitData),
-          signal: controller.signal,
-        });
-        clearTimeout(timeoutId);
-      } catch (fetchError: unknown) {
-        clearTimeout(timeoutId);
-        const err = fetchError as Error & { name?: string; message?: string };
-        const isNetworkError =
-          err?.name === "TypeError" ||
-          err?.name === "NetworkError" ||
-          err?.name === "AbortError" ||
-          err?.message?.includes("fetch") ||
-          err?.message?.includes("network") ||
-          err?.message?.includes("Failed to fetch");
-        const msg =
-          err?.name === "AbortError"
-            ? "درخواست بیش از حد طول کشید. لطفاً دوباره تلاش کنید."
-            : "خطا در اتصال به سرور. لطفاً اتصال اینترنت خود را بررسی کنید.";
-        if (isNetworkError || err?.name === "AbortError") {
-          setServerError(msg);
-          toast.error(msg, { duration: 5000 });
-          return;
-        }
-        const errorMsg = getAuthErrorMessage(fetchError);
-        setServerError(errorMsg);
-        toast.error(errorMsg, { duration: 5000 });
-        return;
-      }
+
+      const res = await fetch(url, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(submitData),
+        signal: controller.signal,
+      });
+      clearTimeout(timeoutId);
 
       if (!res.ok) {
         const errorMessage = await extractAuthErrorFromResponse(res);
-
         const lower = errorMessage.toLowerCase();
         const isNotVerified =
-          lower.includes("account not verified") ||
-          errorMessage.includes("حساب شما تأیید نشده است");
+          lower.includes("not verified") || errorMessage.includes("تأیید نشده");
 
-        // ایمیل را از فرم بردار (در login ایمیل داریم)
-        const email = (data as any)?.email as string | undefined;
+        const phone = (data as Record<string, unknown>)?.phoneNumber as
+          | string
+          | undefined;
 
-        if (mode === "login" && isNotVerified && email) {
+        if (mode === "login" && isNotVerified && phone) {
           try {
-            await fetch("/api/auth/resend-verification", {
+            await fetch("/api/auth/resend-otp", {
               method: "POST",
               headers: { "Content-Type": "application/json" },
-              body: JSON.stringify({ email }),
+              body: JSON.stringify({ phoneNumber: phone }),
             });
-            toast.success("کد تأیید برای شما ارسال شد");
+            toast.success("کد تأیید به شماره شما ارسال شد");
           } catch {
-            toast.error("ارسال کد با خطا مواجه شد. لطفاً دوباره تلاش کنید");
+            toast.error("ارسال کد با خطا مواجه شد");
           }
 
-          router.push(`/verify?email=${encodeURIComponent(email)}`);
+          router.push(`/verify?phone=${encodeURIComponent(phone)}`);
           setLoading(false);
           return;
         }
@@ -142,19 +159,16 @@ export default function AuthForm({ mode }: AuthFormProps) {
         return;
       }
 
-      try {
-        const json = await res.json();
-        toast.success(json.message || "عملیات موفقیت‌آمیز بود");
-        if (mode === "register") {
-          const email = (data as { email?: string }).email;
-          router.push(`/verify?email=${encodeURIComponent(email ?? "")}`);
-        } else {
-          window.dispatchEvent(new Event("auth-changed"));
-          router.push("/");
-        }
-      } catch {
-        toast.success("عملیات موفقیت‌آمیز بود");
-        router.push(mode === "register" ? "/verify" : "/");
+      const json = await res.json();
+      toast.success(json.message || "عملیات موفقیت‌آمیز بود");
+
+      if (mode === "register") {
+        const phone = (data as { phoneNumber?: string }).phoneNumber;
+        router.push(`/verify?phone=${encodeURIComponent(phone ?? "")}`);
+      } else {
+        window.dispatchEvent(new Event("auth-changed"));
+        router.push("/");
+        router.refresh();
       }
     } catch (err: unknown) {
       const errorMessage = getAuthErrorMessage(err);
@@ -166,19 +180,19 @@ export default function AuthForm({ mode }: AuthFormProps) {
   };
 
   return (
-    <form onSubmit={handleSubmit(onSubmit)} className="space-y-6">
+    <form onSubmit={handleSubmit(onSubmit)} className="space-y-5">
       <AnimatePresence>
         {serverError && (
           <motion.div
             initial={{ opacity: 0, y: -10, height: 0 }}
             animate={{ opacity: 1, y: 0, height: "auto" }}
             exit={{ opacity: 0, y: -10, height: 0 }}
-            className="bg-red-50 border-2 border-red-200 rounded-xl p-4 flex items-start gap-3"
+            className="bg-red-50 border border-red-200 rounded-xl p-3.5 flex items-start gap-3"
           >
             <FiAlertCircle className="w-5 h-5 text-red-600 shrink-0 mt-0.5" />
             <div className="flex-1 min-w-0">
-              <p className="text-sm font-semibold text-red-800 mb-1">خطا</p>
-              <p className="text-sm text-red-700 wrap-break-word">
+              <p className="text-xs font-bold text-red-800 mb-0.5">خطا</p>
+              <p className="text-xs text-red-700 leading-relaxed wrap-break-word">
                 {serverError}
               </p>
             </div>
@@ -186,87 +200,94 @@ export default function AuthForm({ mode }: AuthFormProps) {
               type="button"
               onClick={() => setServerError(null)}
               className="shrink-0 text-red-400 hover:text-red-600 transition-colors"
-              aria-label="بستن خطا"
+              aria-label="بستن"
             >
-              <FiX className="w-5 h-5" />
+              <FiX className="w-4 h-4" />
             </button>
           </motion.div>
         )}
       </AnimatePresence>
 
+      {/* نام کاربر هنگام ثبت‌نام */}
       {mode === "register" && (
         <motion.div
-          initial={{ opacity: 0, x: -20 }}
+          initial={{ opacity: 0, x: -15 }}
           animate={{ opacity: 1, x: 0 }}
-          transition={{ delay: 0.1 }}
+          transition={{ delay: 0.05 }}
         >
           <InputField
-            label="نام کامل"
+            label="نام و نام خانوادگی"
             register={register("name" as never)}
             error={(errors as { name?: { message?: string } }).name?.message}
           />
         </motion.div>
       )}
 
+      {/* فیلد شماره موبایل */}
       {mode !== "verify" && (
         <motion.div
-          initial={{ opacity: 0, x: -20 }}
+          initial={{ opacity: 0, x: -15 }}
           animate={{ opacity: 1, x: 0 }}
-          transition={{ delay: mode === "register" ? 0.2 : 0.1 }}
+          transition={{ delay: mode === "register" ? 0.1 : 0.05 }}
         >
           <InputField
-            label="ایمیل"
-            type="email"
-            register={register("email" as never)}
-            error={errors.email?.message}
+            label="شماره تلفن همراه"
+            type="tel"
+            register={register("phoneNumber" as never)}
+            error={
+              (errors as { phoneNumber?: { message?: string } }).phoneNumber
+                ?.message
+            }
           />
         </motion.div>
       )}
 
-      {mode === "verify" && emailFromQuery && (
+      {/* نمایش شماره در حالت وریفای */}
+      {mode === "verify" && phoneFromQuery && (
         <motion.div
-          initial={{ opacity: 0, x: -20 }}
+          initial={{ opacity: 0, x: -15 }}
           animate={{ opacity: 1, x: 0 }}
-          transition={{ delay: 0.1 }}
-          className="mb-4"
+          className="bg-slate-50 border border-slate-200 rounded-xl p-3.5 flex items-center justify-between"
         >
-          <label className="block mb-2 text-sm font-semibold text-gray-700">
-            ایمیل
-          </label>
-          <div className="w-full px-4 py-3.5 rounded-xl bg-gray-100 border-2 border-gray-200 text-gray-600">
-            {emailFromQuery}
+          <div>
+            <span className="block text-xs text-slate-500">
+              ارسال کد به شماره:
+            </span>
+            <span
+              className="font-semibold text-slate-800 text-sm font-mono tracking-wider"
+              dir="ltr"
+            >
+              {phoneFromQuery}
+            </span>
           </div>
-          <input
-            type="hidden"
-            {...register("email" as never)}
-            value={emailFromQuery}
-          />
-        </motion.div>
-      )}
-
-      {mode === "verify" && !emailFromQuery && (
-        <motion.div
-          initial={{ opacity: 0 }}
-          animate={{ opacity: 1 }}
-          className="bg-yellow-50 border-2 border-yellow-200 rounded-xl p-4 mb-4"
-        >
-          <p className="text-sm text-yellow-800">
-            لطفاً از طریق صفحه ثبت‌نام وارد شوید.
-          </p>
           <Link
             href="/register"
-            className="text-sm text-yellow-700 underline mt-2 inline-block"
+            className="text-xs font-medium text-primary hover:underline"
           >
-            بازگشت به صفحه ثبت‌نام
+            تغییر شماره
           </Link>
         </motion.div>
       )}
 
+      {mode === "verify" && !phoneFromQuery && (
+        <motion.div
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          className="bg-amber-50 border border-amber-200 rounded-xl p-4 text-xs text-amber-800"
+        >
+          <span>اطلاعات شماره یافت نشد. </span>
+          <Link href="/register" className="font-bold underline text-amber-900">
+            بازگشت به ثبت‌نام
+          </Link>
+        </motion.div>
+      )}
+
+      {/* فیلد رمز عبور */}
       {mode !== "verify" && (
         <motion.div
-          initial={{ opacity: 0, x: -20 }}
+          initial={{ opacity: 0, x: -15 }}
           animate={{ opacity: 1, x: 0 }}
-          transition={{ delay: mode === "register" ? 0.3 : 0.2 }}
+          transition={{ delay: mode === "register" ? 0.15 : 0.1 }}
         >
           <InputField
             label="رمز عبور"
@@ -279,52 +300,77 @@ export default function AuthForm({ mode }: AuthFormProps) {
         </motion.div>
       )}
 
-      {mode === "verify" && emailFromQuery && (
+      {/* فیلد کد تأیید */}
+      {mode === "verify" && phoneFromQuery && (
         <motion.div
-          initial={{ opacity: 0, x: -20 }}
+          initial={{ opacity: 0, x: -15 }}
           animate={{ opacity: 1, x: 0 }}
-          transition={{ delay: 0.2 }}
+          transition={{ delay: 0.1 }}
+          className="space-y-3"
         >
           <InputField
-            label="کد تأیید"
+            label="کد تأیید ۶ رقمی"
             register={register("code" as never)}
             error={(errors as { code?: { message?: string } }).code?.message}
           />
+
+          <div className="flex items-center justify-between text-xs pt-1">
+            {canResend ? (
+              <button
+                type="button"
+                disabled={resending}
+                onClick={handleResendOtp}
+                className="text-primary font-semibold hover:underline flex items-center gap-1.5"
+              >
+                <FiRotateCw
+                  className={`w-3.5 h-3.5 ${resending ? "animate-spin" : ""}`}
+                />
+                <span>ارسال مجدد پیامک کد</span>
+              </button>
+            ) : (
+              <span className="text-slate-400">
+                ارسال مجدد تا{" "}
+                <b className="font-mono text-slate-700">{countdown}</b> ثانیه
+                دیگر
+              </span>
+            )}
+          </div>
         </motion.div>
       )}
 
+      {/* فراموشی رمز عبور */}
       {mode === "login" && (
         <motion.div
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
-          transition={{ delay: 0.3 }}
-          className="flex items-center justify-between text-sm"
+          transition={{ delay: 0.15 }}
+          className="flex items-center justify-end"
         >
           <Link
             href="/forgot-password"
-            className="text-primary hover:underline font-semibold text-sm sm:text-base min-h-[44px] flex items-center touch-manipulation"
+            className="text-xs sm:text-sm text-primary hover:underline font-medium"
           >
             رمز عبور را فراموش کرده‌اید؟
           </Link>
         </motion.div>
       )}
 
+      {/* دکمه سابمیت */}
       <motion.button
         type="submit"
         disabled={loading}
-        initial={{ opacity: 0, y: 20 }}
+        initial={{ opacity: 0, y: 15 }}
         animate={{ opacity: 1, y: 0 }}
-        transition={{ delay: 0.4 }}
-        whileHover={{ scale: loading ? 1 : 1.02 }}
+        transition={{ delay: 0.2 }}
+        whileHover={{ scale: loading ? 1 : 1.01 }}
         whileTap={{ scale: loading ? 1 : 0.98 }}
         className={`
-          w-full py-3.5 sm:py-4 min-h-[52px] rounded-xl font-bold text-white text-base sm:text-lg
-          transition-all duration-300 flex items-center justify-center gap-2
-          touch-manipulation active:scale-[0.98]
+          w-full py-3 sm:py-3.5 rounded-xl font-bold text-white text-sm sm:text-base
+          transition-all duration-200 flex items-center justify-center gap-2 shadow-md
           ${
             loading
-              ? "bg-gray-400 cursor-not-allowed"
-              : "bg-linear-to-r from-primary to-primary/80 hover:from-primary/90 hover:to-primary/70 shadow-lg hover:shadow-xl active:shadow-md"
+              ? "bg-slate-400 cursor-not-allowed"
+              : "bg-primary hover:bg-primary/90 shadow-primary/20 hover:shadow-lg active:scale-[0.99]"
           }
         `}
       >
@@ -336,17 +382,17 @@ export default function AuthForm({ mode }: AuthFormProps) {
         ) : mode === "register" ? (
           <>
             <FiUserPlus className="w-5 h-5" />
-            <span>ثبت‌نام</span>
+            <span>ثبت‌نام در زیمنس‌پلاس</span>
           </>
         ) : mode === "login" ? (
           <>
             <FiLogIn className="w-5 h-5" />
-            <span>ورود</span>
+            <span>ورود به حساب کاربری</span>
           </>
         ) : (
           <>
             <FiCheckCircle className="w-5 h-5" />
-            <span>تأیید حساب</span>
+            <span>تأیید و ادامه</span>
           </>
         )}
       </motion.button>
