@@ -31,12 +31,9 @@ export default function Footer() {
   );
 
   return (
-    // Main Footer Container with a deep, rich gradient background
     <footer className="w-full bg-gradient-to-b from-slate-900 to-slate-950 text-slate-300 pt-16 pb-8 border-t border-slate-800">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        {/* Top Section: Main Grid */}
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-12 gap-10 lg:gap-8 mb-12">
-          {/* Column 1: Brand & Contact (Spans 4 cols on desktop) */}
           <div className="lg:col-span-4 space-y-6">
             <Link
               href="/"
@@ -72,7 +69,7 @@ export default function Footer() {
               <li className="flex items-center gap-3 text-sm group">
                 <FaPhoneAlt className="text-cyan-500 group-hover:rotate-12 transition-transform" />
                 <span className="font-mono dir-ltr group-hover:text-white transition-colors">
-                  0919-988-3772
+                  0912-926-3779
                 </span>
               </li>
               <li className="flex items-center gap-3 text-sm group">
@@ -84,7 +81,6 @@ export default function Footer() {
             </ul>
           </div>
 
-          {/* Column 2: Quick Links (Spans 2 cols) */}
           <div className="lg:col-span-2 lg:pl-4">
             <h3 className="font-bold text-white text-lg mb-6 relative inline-block">
               لینک‌های سریع
@@ -113,7 +109,6 @@ export default function Footer() {
             </ul>
           </div>
 
-          {/* Column 3: Categories (Spans 2 cols) */}
           <div className="lg:col-span-2">
             <h3 className="font-bold text-white text-lg mb-6 relative inline-block">
               محصولات
@@ -145,7 +140,6 @@ export default function Footer() {
             </ul>
           </div>
 
-          {/* Column 4: Newsletter (Spans 4 cols) */}
           <div className="lg:col-span-4 bg-slate-800/30 rounded-2xl p-6 border border-white/5 backdrop-blur-sm">
             <h3 className="font-bold text-white text-lg mb-2">
               مارا دنبال کنید.
@@ -155,9 +149,21 @@ export default function Footer() {
             </p>
 
             <div className="flex items-center gap-4">
-              <SocialLink href="#" icon={<FaInstagram />} label="Instagram" />
-              <SocialLink href="#" icon={<FaTelegram />} label="Telegram" />
-              <SocialLink href="#" icon={<FaWhatsapp />} label="WhatsApp" />
+              <SocialLink
+                href="https://instagram.com/siemenes.plus1"
+                icon={<FaInstagram />}
+                label="Instagram"
+              />
+              <SocialLink
+                href="https://t.me/Siemensplus1"
+                icon={<FaTelegram />}
+                label="Telegram"
+              />
+              <SocialLink
+                href="https://wa.me/989129263779"
+                icon={<FaWhatsapp />}
+                label="WhatsApp"
+              />
             </div>
           </div>
         </div>

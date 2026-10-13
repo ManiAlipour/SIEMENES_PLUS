@@ -2,10 +2,7 @@ import { FiPhone } from "react-icons/fi";
 
 export default function ContactCTA() {
   return (
-    <section
-      className="bg-primary"
-      aria-labelledby="contact-cta-heading"
-    >
+    <section className="bg-primary" aria-labelledby="contact-cta-heading">
       <div className="mx-auto flex max-w-7xl flex-col items-start justify-between gap-6 px-4 py-12 sm:px-6 md:flex-row md:items-center md:py-14">
         <div className="max-w-xl">
           <h2
@@ -21,13 +18,13 @@ export default function ContactCTA() {
 
         <div className="flex w-full flex-col gap-3 sm:w-auto sm:flex-row">
           <a
-            href="tel:09199883772"
+            href="tel:09129263779"
             className="inline-flex min-h-[48px] items-center justify-center gap-2 bg-white px-6 text-sm font-bold text-primary transition hover:bg-slate-100"
             style={{ direction: "ltr" }}
             aria-label="تماس تلفنی"
           >
             <FiPhone size={16} aria-hidden />
-            0919 988 3772
+            0912 926 3779
           </a>
           <a
             href="https://instagram.com/siemens.plus1"

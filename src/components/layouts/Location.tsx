@@ -107,7 +107,11 @@ export default function LocationSection() {
                   onClick={handleCopyAddress}
                   className="inline-flex items-center gap-2 border border-slate-200 px-3 py-2 text-xs font-medium text-slate-600 transition hover:border-slate-300"
                 >
-                  {copied ? <FiCheck className="text-emerald-600" /> : <FiCopy />}
+                  {copied ? (
+                    <FiCheck className="text-emerald-600" />
+                  ) : (
+                    <FiCopy />
+                  )}
                   {copied ? "کپی شد" : "کپی آدرس"}
                 </button>
                 <button
@@ -131,7 +135,7 @@ export default function LocationSection() {
                       dir="ltr"
                       className="mt-0.5 text-right font-mono text-sm text-slate-600"
                     >
-                      09199883772
+                      09129263779
                     </p>
                   </div>
                 </div>

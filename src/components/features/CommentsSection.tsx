@@ -1,6 +1,5 @@
 "use client";
 
-import Link from "next/link";
 import { useCallback, useEffect, useRef, useState } from "react";
 import {
   FaPaperPlane,
@@ -10,6 +9,8 @@ import {
 } from "react-icons/fa";
 import { FiChevronDown } from "react-icons/fi";
 import { useAuth } from "@/components/providers/AuthProvider";
+// ۱. ایمپورت کامپوننت مودال
+import AuthModal from "@/components/modals/AuthModal";
 
 interface Comment {
   _id: string;
@@ -80,8 +81,7 @@ const formatRelativeTime = (dateStr: string) => {
     relative = `${diffMin.toLocaleString("fa-IR")} دقیقه پیش`;
   else if (diffHour < 24)
     relative = `${diffHour.toLocaleString("fa-IR")} ساعت پیش`;
-  else if (diffDay < 7)
-    relative = `${diffDay.toLocaleString("fa-IR")} روز پیش`;
+  else if (diffDay < 7) relative = `${diffDay.toLocaleString("fa-IR")} روز پیش`;
   else if (diffWeek < 4)
     relative = `${diffWeek.toLocaleString("fa-IR")} هفته پیش`;
   else if (diffMonth < 12)
@@ -135,6 +135,9 @@ export default function CommentsSection({
   const [highlightId, setHighlightId] = useState<string | null>(null);
   const [currentUserName, setCurrentUserName] = useState<string | null>(null);
 
+  // ۲. استیت باز و بسته بودن مودال ورود
+  const [isAuthModalOpen, setIsAuthModalOpen] = useState(false);
+
   const fetchComments = useCallback(async () => {
     try {
       setLoading(true);
@@ -162,6 +165,9 @@ export default function CommentsSection({
       setCurrentUserName(null);
       return;
     }
+
+    // به محض اینکه لاگین شد، مودال اگر باز بود بسته بشه
+    setIsAuthModalOpen(false);
 
     let cancelled = false;
     fetch("/api/users/get-one", { credentials: "include" })
@@ -322,7 +328,10 @@ export default function CommentsSection({
             >
               {getInitial(currentUserName ?? undefined)}
             </div>
-            <label htmlFor="new-comment" className="text-sm font-semibold text-slate-800">
+            <label
+              htmlFor="new-comment"
+              className="text-sm font-semibold text-slate-800"
+            >
               {currentUserName ? `${currentUserName}، نظر شما` : "نظر شما"}
             </label>
           </div>
@@ -371,7 +380,9 @@ export default function CommentsSection({
               <p className="text-sm text-red-600">{submitError}</p>
             )}
             {success && (
-              <p className="text-sm text-emerald-600 animate-fadeIn">{success}</p>
+              <p className="text-sm text-emerald-600 animate-fadeIn">
+                {success}
+              </p>
             )}
           </div>
         </div>
@@ -386,12 +397,14 @@ export default function CommentsSection({
           <p className="mt-1 text-xs text-slate-500">
             پس از ورود می‌توانید نظر خود را ثبت کنید.
           </p>
-          <Link
-            href="/auth/login"
-            className="mt-4 inline-flex min-h-[44px] items-center justify-center rounded-xl bg-cyan-600 px-6 py-2.5 text-sm font-semibold text-white hover:bg-cyan-700 transition-colors"
+          {/* ۳. دکمه باز کردن مودال به جای ریدایرکت Link */}
+          <button
+            type="button"
+            onClick={() => setIsAuthModalOpen(true)}
+            className="mt-4 inline-flex min-h-[44px] items-center justify-center rounded-xl bg-cyan-600 px-6 py-2.5 text-sm font-semibold text-white hover:bg-cyan-700 shadow-sm hover:shadow transition-all active:scale-95"
           >
             ورود به حساب
-          </Link>
+          </button>
         </div>
       )}
 
@@ -409,7 +422,11 @@ export default function CommentsSection({
       )}
 
       {loading ? (
-        <ul className="space-y-5" aria-busy="true" aria-label="در حال بارگذاری نظرات">
+        <ul
+          className="space-y-5"
+          aria-busy="true"
+          aria-label="در حال بارگذاری نظرات"
+        >
           {Array.from({ length: 3 }).map((_, i) => (
             <CommentSkeleton key={i} />
           ))}
@@ -486,13 +503,22 @@ export default function CommentsSection({
                 className="inline-flex items-center gap-2 rounded-xl border border-slate-200 px-6 py-2.5 text-sm font-medium text-slate-600 hover:border-cyan-200 hover:bg-cyan-50 hover:text-cyan-700 transition-colors"
               >
                 <FiChevronDown size={16} />
-                نمایش {(sortedComments.length - visibleCount).toLocaleString("fa-IR")}{" "}
+                نمایش{" "}
+                {(sortedComments.length - visibleCount).toLocaleString(
+                  "fa-IR",
+                )}{" "}
                 نظر دیگر
               </button>
             </div>
           )}
         </>
       )}
+
+      <AuthModal
+        isOpen={isAuthModalOpen}
+        onClose={() => setIsAuthModalOpen(false)}
+        initialMode="login"
+      />
     </section>
   );
 }

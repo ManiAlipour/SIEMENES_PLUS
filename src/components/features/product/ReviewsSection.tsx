@@ -1,15 +1,10 @@
 "use client";
 
-import Link from "next/link";
 import { useCallback, useEffect, useRef, useState } from "react";
-import {
-  FaPaperPlane,
-  FaSpinner,
-  FaStar,
-  FaUserLock,
-} from "react-icons/fa";
+import { FaPaperPlane, FaSpinner, FaStar, FaUserLock } from "react-icons/fa";
 import { FiChevronDown } from "react-icons/fi";
 import { useAuth } from "@/components/providers/AuthProvider";
+import AuthModal from "@/components/modals/AuthModal";
 
 interface Review {
   _id: string;
@@ -79,8 +74,7 @@ const formatRelativeTime = (dateStr: string) => {
     relative = `${diffMin.toLocaleString("fa-IR")} دقیقه پیش`;
   else if (diffHour < 24)
     relative = `${diffHour.toLocaleString("fa-IR")} ساعت پیش`;
-  else if (diffDay < 7)
-    relative = `${diffDay.toLocaleString("fa-IR")} روز پیش`;
+  else if (diffDay < 7) relative = `${diffDay.toLocaleString("fa-IR")} روز پیش`;
   else if (diffWeek < 4)
     relative = `${diffWeek.toLocaleString("fa-IR")} هفته پیش`;
   else if (diffMonth < 12)
@@ -139,7 +133,7 @@ function Stars({
             onFocus={() => setHover(n)}
             onBlur={() => setHover(0)}
             onClick={() => onChange?.(n)}
-            className="rounded p-0.5 transition-transform hover:scale-110 focus:outline-none focus-visible:ring-2 focus-visible:ring-amber-400"
+            className="rounded p-0.5 transition-transform hover:scale-110 focus:outline-none focus-visible:ring-2 focus-visible:ring-amber-400 cursor-pointer"
           >
             <FaStar
               size={size}
@@ -194,6 +188,9 @@ export default function ReviewsSection({
   const [highlightId, setHighlightId] = useState<string | null>(null);
   const [currentUserName, setCurrentUserName] = useState<string | null>(null);
 
+  // استیت کنترل مودال لاگین
+  const [isAuthModalOpen, setIsAuthModalOpen] = useState(false);
+
   const fetchReviews = useCallback(async () => {
     try {
       setLoading(true);
@@ -220,6 +217,9 @@ export default function ReviewsSection({
       setCurrentUserName(null);
       return;
     }
+
+    // بستن خودکار مودال به محض ورود موفق
+    setIsAuthModalOpen(false);
 
     let cancelled = false;
     fetch("/api/users/get-one", { credentials: "include" })
@@ -298,7 +298,9 @@ export default function ReviewsSection({
         });
       }
     } catch (err: any) {
-      setSubmitError(err?.message || "خطا در ارسال نظر. لطفاً دوباره تلاش کنید.");
+      setSubmitError(
+        err?.message || "خطا در ارسال نظر. لطفاً دوباره تلاش کنید.",
+      );
     } finally {
       setSubmitting(false);
     }
@@ -328,7 +330,7 @@ export default function ReviewsSection({
             id="reviews-section-heading"
             className="text-lg sm:text-xl font-bold text-slate-900"
           >
-            امتیاز و نظرات کاربران
+            امتیاز و نظرات خریداران
           </h2>
         </div>
         <span className="rounded-full bg-amber-50 px-3 py-1 text-xs font-semibold text-amber-800">
@@ -399,12 +401,7 @@ export default function ReviewsSection({
           </div>
 
           <div className="mb-4">
-            <Stars
-              value={rating}
-              size={28}
-              interactive
-              onChange={setRating}
-            />
+            <Stars value={rating} size={28} interactive onChange={setRating} />
           </div>
 
           <input
@@ -437,7 +434,7 @@ export default function ReviewsSection({
               type="button"
               onClick={submitReview}
               disabled={submitting || !rating || text.trim().length < 5}
-              className="inline-flex items-center gap-2 rounded-xl bg-amber-500 px-5 py-2.5 text-sm font-semibold text-white hover:bg-amber-600 disabled:cursor-not-allowed disabled:opacity-50 transition-colors"
+              className="inline-flex items-center gap-2 rounded-xl bg-amber-500 px-5 py-2.5 text-sm font-semibold text-white hover:bg-amber-600 disabled:cursor-not-allowed disabled:opacity-50 transition-colors cursor-pointer"
             >
               {submitting ? (
                 <FaSpinner className="animate-spin" />
@@ -452,9 +449,7 @@ export default function ReviewsSection({
             {submitError && (
               <p className="text-sm text-red-600">{submitError}</p>
             )}
-            {success && (
-              <p className="text-sm text-emerald-600">{success}</p>
-            )}
+            {success && <p className="text-sm text-emerald-600">{success}</p>}
           </div>
         </div>
       ) : (
@@ -463,14 +458,19 @@ export default function ReviewsSection({
             <FaUserLock size={20} />
           </div>
           <p className="text-sm font-medium text-slate-700">
-            برای ثبت امتیاز وارد حساب کاربری شوید
+            برای ثبت امتیاز و نظر، وارد حساب کاربری شوید
           </p>
-          <Link
-            href="/auth/login"
-            className="mt-4 inline-flex min-h-[44px] items-center justify-center rounded-xl bg-amber-500 px-6 py-2.5 text-sm font-semibold text-white hover:bg-amber-600 transition-colors"
+          <p className="mt-1 text-xs text-slate-500">
+            تنها چند ثانیه زمان می‌برد تا وارد حساب خود شوید.
+          </p>
+          {/* دکمه باز کردن مودال درجا بدون ریدایرکت */}
+          <button
+            type="button"
+            onClick={() => setIsAuthModalOpen(true)}
+            className="mt-4 inline-flex min-h-[44px] items-center justify-center rounded-xl bg-amber-500 px-6 py-2.5 text-sm font-semibold text-white hover:bg-amber-600 shadow-sm transition-all active:scale-95 cursor-pointer"
           >
             ورود به حساب
-          </Link>
+          </button>
         </div>
       )}
 
@@ -568,16 +568,25 @@ export default function ReviewsSection({
                 onClick={() =>
                   setVisibleCount((prev) => prev + REVIEWS_PER_PAGE)
                 }
-                className="inline-flex items-center gap-2 rounded-xl border border-slate-200 px-6 py-2.5 text-sm font-medium text-slate-600 hover:border-amber-200 hover:bg-amber-50 hover:text-amber-800 transition-colors"
+                className="inline-flex items-center gap-2 rounded-xl border border-slate-200 px-6 py-2.5 text-sm font-medium text-slate-600 hover:border-amber-200 hover:bg-amber-50 hover:text-amber-800 transition-colors cursor-pointer"
               >
                 <FiChevronDown size={16} />
-                نمایش {(reviews.length - visibleCount).toLocaleString("fa-IR")}{" "}
+                نمایش {(reviews.length - visibleCount).toLocaleString(
+                  "fa-IR",
+                )}{" "}
                 نظر دیگر
               </button>
             </div>
           )}
         </>
       )}
+
+      {/* مودال ورود یکپارچه */}
+      <AuthModal
+        isOpen={isAuthModalOpen}
+        onClose={() => setIsAuthModalOpen(false)}
+        initialMode="login"
+      />
     </section>
   );
 }

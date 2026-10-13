@@ -26,15 +26,26 @@ import {
 
 interface AuthFormProps {
   mode: AuthMode;
+  phoneNumberProp?: string;
+  onSuccess?: () => void;
+  onSwitchMode?: (nextMode: AuthMode, phone?: string) => void;
 }
 
 const RESEND_COOLDOWN = 60;
 
-export default function AuthForm({ mode }: AuthFormProps) {
+export default function AuthForm({
+  mode,
+  phoneNumberProp,
+  onSuccess,
+  onSwitchMode,
+}: AuthFormProps) {
   const router = useRouter();
   const searchParams = useSearchParams();
-  const phoneFromQuery =
-    mode === "verify" ? searchParams.get("phone") || "" : "";
+
+  // گرفتن شماره چه از طریق پراپ (در مودال) چه از کوئری (در پیج)
+  const activePhoneNumber =
+    phoneNumberProp ||
+    (mode === "verify" ? searchParams.get("phone") || "" : "");
 
   const schema = getAuthSchema(mode);
   type ModeFormData = z.infer<typeof schema>;
@@ -47,8 +58,11 @@ export default function AuthForm({ mode }: AuthFormProps) {
   } = useForm<ModeFormData>({
     resolver: zodResolver(schema),
     defaultValues:
-      mode === "verify" && phoneFromQuery
-        ? ({ phoneNumber: phoneFromQuery, code: "" } as unknown as ModeFormData)
+      mode === "verify" && activePhoneNumber
+        ? ({
+            phoneNumber: activePhoneNumber,
+            code: "",
+          } as unknown as ModeFormData)
         : undefined,
   });
 
@@ -59,12 +73,11 @@ export default function AuthForm({ mode }: AuthFormProps) {
   const [resending, setResending] = useState(false);
 
   useEffect(() => {
-    if (mode === "verify" && phoneFromQuery) {
-      setValue("phoneNumber" as never, phoneFromQuery as never);
+    if (mode === "verify" && activePhoneNumber) {
+      setValue("phoneNumber" as never, activePhoneNumber as never);
     }
-  }, [mode, phoneFromQuery, setValue]);
+  }, [mode, activePhoneNumber, setValue]);
 
-  // مدیریت تایمر شمارش معکوس ارسال مجدد پیامک
   useEffect(() => {
     let timer: NodeJS.Timeout;
     if (mode === "verify" && countdown > 0) {
@@ -77,13 +90,13 @@ export default function AuthForm({ mode }: AuthFormProps) {
   }, [mode, countdown]);
 
   const handleResendOtp = async () => {
-    if (!phoneFromQuery || !canResend || resending) return;
+    if (!activePhoneNumber || !canResend || resending) return;
     setResending(true);
     try {
       const res = await fetch("/api/auth/resend-otp", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ phoneNumber: phoneFromQuery }),
+        body: JSON.stringify({ phoneNumber: activePhoneNumber }),
       });
       const data = await res.json();
       if (!res.ok) throw new Error(data.message || "خطا در ارسال مجدد");
@@ -102,16 +115,14 @@ export default function AuthForm({ mode }: AuthFormProps) {
     setLoading(true);
     setServerError(null);
 
-    if (mode === "verify" && !phoneFromQuery) {
-      setServerError(
-        "شماره موبایل یافت نشد. لطفاً مجدداً از فرم ثبت‌نام اقدام کنید.",
-      );
+    if (mode === "verify" && !activePhoneNumber) {
+      setServerError("شماره موبایل یافت نشد. لطفاً مجدداً از فرم اقدام کنید.");
       setLoading(false);
       return;
     }
 
     const submitData =
-      mode === "verify" ? { ...data, phoneNumber: phoneFromQuery } : data;
+      mode === "verify" ? { ...data, phoneNumber: activePhoneNumber } : data;
     const url = `/api/auth/${mode === "register" ? "signup" : mode}`;
 
     try {
@@ -136,6 +147,7 @@ export default function AuthForm({ mode }: AuthFormProps) {
           | string
           | undefined;
 
+        // اگر کاربر قبلاً ثبت‌نام کرده ولی تأیید نشده
         if (mode === "login" && isNotVerified && phone) {
           try {
             await fetch("/api/auth/resend-otp", {
@@ -148,7 +160,11 @@ export default function AuthForm({ mode }: AuthFormProps) {
             toast.error("ارسال کد با خطا مواجه شد");
           }
 
-          router.push(`/verify?phone=${encodeURIComponent(phone)}`);
+          if (onSwitchMode) {
+            onSwitchMode("verify", phone);
+          } else {
+            router.push(`/verify?phone=${encodeURIComponent(phone)}`);
+          }
           setLoading(false);
           return;
         }
@@ -163,12 +179,22 @@ export default function AuthForm({ mode }: AuthFormProps) {
       toast.success(json.message || "عملیات موفقیت‌آمیز بود");
 
       if (mode === "register") {
-        const phone = (data as { phoneNumber?: string }).phoneNumber;
-        router.push(`/verify?phone=${encodeURIComponent(phone ?? "")}`);
+        const phone = (data as { phoneNumber?: string }).phoneNumber || "";
+        if (onSwitchMode) {
+          onSwitchMode("verify", phone);
+        } else {
+          router.push(`/verify?phone=${encodeURIComponent(phone)}`);
+        }
       } else {
+        // ورود موفق یا تایید کد موفق
         window.dispatchEvent(new Event("auth-changed"));
-        router.push("/");
-        router.refresh();
+
+        if (onSuccess) {
+          onSuccess();
+        } else {
+          router.push("/");
+          router.refresh();
+        }
       }
     } catch (err: unknown) {
       const errorMessage = getAuthErrorMessage(err);
@@ -180,7 +206,7 @@ export default function AuthForm({ mode }: AuthFormProps) {
   };
 
   return (
-    <form onSubmit={handleSubmit(onSubmit)} className="space-y-5">
+    <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
       <AnimatePresence>
         {serverError && (
           <motion.div
@@ -192,7 +218,7 @@ export default function AuthForm({ mode }: AuthFormProps) {
             <FiAlertCircle className="w-5 h-5 text-red-600 shrink-0 mt-0.5" />
             <div className="flex-1 min-w-0">
               <p className="text-xs font-bold text-red-800 mb-0.5">خطا</p>
-              <p className="text-xs text-red-700 leading-relaxed wrap-break-word">
+              <p className="text-xs text-red-700 leading-relaxed break-words">
                 {serverError}
               </p>
             </div>
@@ -211,9 +237,9 @@ export default function AuthForm({ mode }: AuthFormProps) {
       {/* نام کاربر هنگام ثبت‌نام */}
       {mode === "register" && (
         <motion.div
-          initial={{ opacity: 0, x: -15 }}
+          initial={{ opacity: 0, x: -10 }}
           animate={{ opacity: 1, x: 0 }}
-          transition={{ delay: 0.05 }}
+          transition={{ duration: 0.2 }}
         >
           <InputField
             label="نام و نام خانوادگی"
@@ -226,9 +252,9 @@ export default function AuthForm({ mode }: AuthFormProps) {
       {/* فیلد شماره موبایل */}
       {mode !== "verify" && (
         <motion.div
-          initial={{ opacity: 0, x: -15 }}
+          initial={{ opacity: 0, x: -10 }}
           animate={{ opacity: 1, x: 0 }}
-          transition={{ delay: mode === "register" ? 0.1 : 0.05 }}
+          transition={{ duration: 0.2 }}
         >
           <InputField
             label="شماره تلفن همراه"
@@ -243,51 +269,49 @@ export default function AuthForm({ mode }: AuthFormProps) {
       )}
 
       {/* نمایش شماره در حالت وریفای */}
-      {mode === "verify" && phoneFromQuery && (
+      {mode === "verify" && activePhoneNumber && (
         <motion.div
-          initial={{ opacity: 0, x: -15 }}
-          animate={{ opacity: 1, x: 0 }}
-          className="bg-slate-50 border border-slate-200 rounded-xl p-3.5 flex items-center justify-between"
+          initial={{ opacity: 0, y: -5 }}
+          animate={{ opacity: 1, y: 0 }}
+          className="bg-slate-50 border border-slate-200 rounded-xl p-3 flex items-center justify-between"
         >
           <div>
-            <span className="block text-xs text-slate-500">
-              ارسال کد به شماره:
+            <span className="block text-[11px] text-slate-500">
+              کد ارسال شده به:
             </span>
             <span
               className="font-semibold text-slate-800 text-sm font-mono tracking-wider"
               dir="ltr"
             >
-              {phoneFromQuery}
+              {activePhoneNumber}
             </span>
           </div>
-          <Link
-            href="/register"
-            className="text-xs font-medium text-primary hover:underline"
-          >
-            تغییر شماره
-          </Link>
-        </motion.div>
-      )}
 
-      {mode === "verify" && !phoneFromQuery && (
-        <motion.div
-          initial={{ opacity: 0 }}
-          animate={{ opacity: 1 }}
-          className="bg-amber-50 border border-amber-200 rounded-xl p-4 text-xs text-amber-800"
-        >
-          <span>اطلاعات شماره یافت نشد. </span>
-          <Link href="/register" className="font-bold underline text-amber-900">
-            بازگشت به ثبت‌نام
-          </Link>
+          {onSwitchMode ? (
+            <button
+              type="button"
+              onClick={() => onSwitchMode("register")}
+              className="text-xs font-semibold text-cyan-600 hover:text-cyan-700 hover:underline"
+            >
+              تغییر شماره
+            </button>
+          ) : (
+            <Link
+              href="/register"
+              className="text-xs font-medium text-cyan-600 hover:underline"
+            >
+              تغییر شماره
+            </Link>
+          )}
         </motion.div>
       )}
 
       {/* فیلد رمز عبور */}
       {mode !== "verify" && (
         <motion.div
-          initial={{ opacity: 0, x: -15 }}
+          initial={{ opacity: 0, x: -10 }}
           animate={{ opacity: 1, x: 0 }}
-          transition={{ delay: mode === "register" ? 0.15 : 0.1 }}
+          transition={{ duration: 0.2 }}
         >
           <InputField
             label="رمز عبور"
@@ -301,11 +325,10 @@ export default function AuthForm({ mode }: AuthFormProps) {
       )}
 
       {/* فیلد کد تأیید */}
-      {mode === "verify" && phoneFromQuery && (
+      {mode === "verify" && (
         <motion.div
-          initial={{ opacity: 0, x: -15 }}
+          initial={{ opacity: 0, x: -10 }}
           animate={{ opacity: 1, x: 0 }}
-          transition={{ delay: 0.1 }}
           className="space-y-3"
         >
           <InputField
@@ -320,82 +343,101 @@ export default function AuthForm({ mode }: AuthFormProps) {
                 type="button"
                 disabled={resending}
                 onClick={handleResendOtp}
-                className="text-primary font-semibold hover:underline flex items-center gap-1.5"
+                className="text-cyan-600 font-semibold hover:underline flex items-center gap-1.5"
               >
                 <FiRotateCw
                   className={`w-3.5 h-3.5 ${resending ? "animate-spin" : ""}`}
                 />
-                <span>ارسال مجدد پیامک کد</span>
+                <span>ارسال مجدد کد</span>
               </button>
             ) : (
               <span className="text-slate-400">
                 ارسال مجدد تا{" "}
                 <b className="font-mono text-slate-700">{countdown}</b> ثانیه
-                دیگر
               </span>
             )}
           </div>
         </motion.div>
       )}
 
-      {/* فراموشی رمز عبور */}
+      {/* فراموشی رمز عبور در حالت لاگین */}
       {mode === "login" && (
-        <motion.div
-          initial={{ opacity: 0 }}
-          animate={{ opacity: 1 }}
-          transition={{ delay: 0.15 }}
-          className="flex items-center justify-end"
-        >
+        <div className="flex items-center justify-end">
           <Link
             href="/forgot-password"
-            className="text-xs sm:text-sm text-primary hover:underline font-medium"
+            className="text-xs text-cyan-600 hover:underline font-medium"
           >
             رمز عبور را فراموش کرده‌اید؟
           </Link>
-        </motion.div>
+        </div>
       )}
 
-      {/* دکمه سابمیت */}
+      {/* دکمه ارسال اصلی */}
       <motion.button
         type="submit"
         disabled={loading}
-        initial={{ opacity: 0, y: 15 }}
-        animate={{ opacity: 1, y: 0 }}
-        transition={{ delay: 0.2 }}
-        whileHover={{ scale: loading ? 1 : 1.01 }}
         whileTap={{ scale: loading ? 1 : 0.98 }}
         className={`
-          w-full py-3 sm:py-3.5 rounded-xl font-bold text-white text-sm sm:text-base
-          transition-all duration-200 flex items-center justify-center gap-2 shadow-md
+          w-full py-3 rounded-xl font-bold text-white text-sm
+          transition-all duration-200 flex items-center justify-center gap-2 shadow-md cursor-pointer
           ${
             loading
               ? "bg-slate-400 cursor-not-allowed"
-              : "bg-primary hover:bg-primary/90 shadow-primary/20 hover:shadow-lg active:scale-[0.99]"
+              : "bg-cyan-600 hover:bg-cyan-700 shadow-cyan-600/20 active:scale-[0.99]"
           }
         `}
       >
         {loading ? (
           <>
-            <FiLoader className="w-5 h-5 animate-spin" />
+            <FiLoader className="w-4 h-4 animate-spin" />
             <span>در حال ارسال...</span>
           </>
         ) : mode === "register" ? (
           <>
-            <FiUserPlus className="w-5 h-5" />
-            <span>ثبت‌نام در زیمنس‌پلاس</span>
+            <FiUserPlus className="w-4 h-4" />
+            <span>ثبت‌نام و دریافت کد</span>
           </>
         ) : mode === "login" ? (
           <>
-            <FiLogIn className="w-5 h-5" />
-            <span>ورود به حساب کاربری</span>
+            <FiLogIn className="w-4 h-4" />
+            <span>ورود به حساب</span>
           </>
         ) : (
           <>
-            <FiCheckCircle className="w-5 h-5" />
-            <span>تأیید و ادامه</span>
+            <FiCheckCircle className="w-4 h-4" />
+            <span>تأیید و تکمیل ورود</span>
           </>
         )}
       </motion.button>
+
+      {/* پیوندهای تغییر حالت در داخل مودال */}
+      {onSwitchMode && mode !== "verify" && (
+        <div className="pt-2 text-center text-xs text-slate-500 border-t border-slate-100 mt-3">
+          {mode === "login" ? (
+            <p>
+              حساب کاربری ندارید؟{" "}
+              <button
+                type="button"
+                onClick={() => onSwitchMode("register")}
+                className="font-bold text-cyan-600 hover:underline cursor-pointer"
+              >
+                ثبت‌نام کنید
+              </button>
+            </p>
+          ) : (
+            <p>
+              قبلاً ثبت‌نام کرده‌اید؟{" "}
+              <button
+                type="button"
+                onClick={() => onSwitchMode("login")}
+                className="font-bold text-cyan-600 hover:underline cursor-pointer"
+              >
+                وارد شوید
+              </button>
+            </p>
+          )}
+        </div>
+      )}
     </form>
   );
 }

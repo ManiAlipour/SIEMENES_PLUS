@@ -5,7 +5,7 @@ const contactInfo = [
   {
     Icon: Phone,
     label: "تلفن",
-    value: "09199883772",
+    value: "09129263779",
     color: "from-blue-500 to-blue-600",
   },
   {

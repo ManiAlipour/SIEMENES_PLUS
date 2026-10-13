@@ -45,17 +45,17 @@ const MortezaProfile = () => {
 
               <div className="space-y-4 text-gray-700">
                 <a
-                  href="tel:09199883772"
+                  href="tel:09129263779"
                   className="flex items-center gap-3 hover:text-blue-600 transition-colors"
                 >
                   <div className="bg-blue-50 p-2 rounded-lg text-[#003d66]">
                     <Phone size={20} />
                   </div>
-                  <span className="font-bold text-lg">۰۹۱۹۹۸۸۳۷۷۲</span>
+                  <span className="font-bold text-lg">09129263779</span>
                 </a>
 
                 <a
-                  href="https://www.siemensplus1.ir"
+                  href="https://siemensplus1.ir"
                   className="flex items-center gap-3 hover:text-blue-600 transition-colors"
                 >
                   <div className="bg-blue-50 p-2 rounded-lg text-[#003d66]">

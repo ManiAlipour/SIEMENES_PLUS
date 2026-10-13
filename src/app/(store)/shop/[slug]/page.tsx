@@ -2,7 +2,7 @@ import { Metadata } from "next";
 import Link from "next/link";
 import { Suspense } from "react";
 import { FiArrowLeft, FiCalendar, FiTag } from "react-icons/fi";
-import CommentsSection from "@/components/features/CommentsSection";
+// import CommentsSection from "@/components/features/CommentsSection";
 import ContactCTA from "@/components/layouts/ContactCTA";
 import ProductBreadcrumb from "@/components/features/product/ProductBreadcrumb";
 import ProductGallery from "@/components/features/product/ProductGallery";
@@ -324,11 +324,11 @@ export default async function ProductPage({ params }: IProductProps) {
               initialAggregate={{ averageRating, reviewCount }}
             />
 
-            <CommentsSection
+            {/* <CommentsSection
               targetId={product._id}
               targetType="product"
               title="پرسش‌های مشتریان"
-            />
+            /> */}
 
             {product.similarProducts && product.similarProducts.length > 0 && (
               <SimilarProductsSection

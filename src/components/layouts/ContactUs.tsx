@@ -37,8 +37,8 @@ export default function ContactUs() {
               <ContactRow
                 icon={<MdPhone />}
                 title="تماس تلفنی"
-                value="09199883772"
-                href="tel:09199883772"
+                value="09129263779"
+                href="tel:09129263779"
               />
               <ContactRow
                 icon={<MdEmail />}
@@ -49,8 +49,8 @@ export default function ContactUs() {
               <ContactRow
                 icon={<FaWhatsapp />}
                 title="واتس‌اپ"
-                value="09199883772"
-                href="https://wa.me/989199883772"
+                value="09129263779"
+                href="https://wa.me/989129263779"
               />
               <div className="flex items-center gap-3 border border-white/10 bg-white/[0.03] px-4 py-3.5">
                 <span className="text-lg text-[#7ec8e3]" aria-hidden>
