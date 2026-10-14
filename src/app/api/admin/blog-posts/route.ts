@@ -66,9 +66,12 @@ export async function POST(req: NextRequest) {
       }
     }
 
-    const slugBase = rawSlug?.trim()
+    const requestedSlug = rawSlug?.trim()
       ? slugify(rawSlug, { lower: true, strict: true })
       : slugify(title, { lower: true, strict: true });
+    // slugify removes Persian characters in strict mode, so keep Persian-titled
+    // posts publishable by falling back to a stable, URL-safe identifier.
+    const slugBase = requestedSlug || `post-${Date.now()}`;
     const slug = await ensureUniqueSlug(slugBase);
 
     const validEmbedded = Array.isArray(embeddedProducts)

@@ -42,26 +42,18 @@
 
   .admin-shell {
     background:
-      radial-gradient(
-        1200px 500px at 100% -10%,
-        rgba(0, 121, 194, 0.08),
-        transparent 55%
-      ),
-      radial-gradient(
-        900px 420px at 0% 100%,
-        rgba(0, 76, 151, 0.06),
-        transparent 50%
-      ),
-      linear-gradient(180deg, #f4f7fb 0%, #eef3f8 100%);
+      radial-gradient(900px 460px at 95% -15%, rgba(14, 165, 233, 0.08), transparent 65%),
+      radial-gradient(680px 400px at 0% 80%, rgba(37, 99, 235, 0.045), transparent 65%),
+      #f5f7fb;
   }
 
   .admin-sidebar {
-    background: linear-gradient(165deg, #0b1f33 0%, #0f2d4a 45%, #004c97 140%);
-    box-shadow: -8px 0 32px rgba(11, 31, 51, 0.18);
+    background: linear-gradient(165deg, #081a32 0%, #0b2545 52%, #103f69 120%);
+    box-shadow: -10px 0 38px rgba(8, 26, 50, 0.16);
   }
 
   .admin-main {
-    @apply px-4 py-5 md:px-6 lg:px-8;
+    @apply px-4 py-5 sm:px-6 sm:py-7 lg:px-8 lg:py-8;
   }
 
   .admin-card {

@@ -77,6 +77,9 @@ export async function PATCH(
             : null;
       if (slugBase) {
         update.slug = await ensureUniqueSlug(slugBase, id);
+      } else if (rawSlug !== undefined && title !== undefined) {
+        const fallback = `post-${Date.now()}`;
+        update.slug = await ensureUniqueSlug(fallback, id);
       }
     }
 

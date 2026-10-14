@@ -1,273 +1,87 @@
 "use client";
 
-import { useState, useEffect, useMemo } from "react";
+import { useCallback, useEffect, useMemo, useState } from "react";
 import Link from "next/link";
+import toast from "react-hot-toast";
 import AdminChartSection from "@/components/layouts/dash/admin/AdminChartSection";
 import RecentActionsWidget from "@/components/layouts/dash/admin/RecentActionsWidget";
-import InfoCard from "@/components/ui/admin/InfoCard";
-import { motion } from "framer-motion";
-import {
-  FiUsers,
-  FiPackage,
-  FiEdit3,
-  FiMessageSquare,
-  FiMail,
-  FiBarChart2,
-  FiRefreshCw,
-  FiFolder,
-} from "react-icons/fi";
+import { Activity, ArrowDownLeft, ArrowLeft, ArrowUpRight, BookOpenText, Mail, MessageSquareText, Package, RefreshCw, Users, Wrench } from "lucide-react";
 
-interface DashboardStats {
-  users: number;
-  activeUsers: number;
-  products: number;
-  blogPosts: number;
-  posts: number;
-  comments: number;
-  pendingTickets: number;
-  totalTickets: number;
-  newUsersThisMonth: number;
-  newCommentsThisMonth: number;
-  pageViewsToday: number;
-  pageViewsThisMonth: number;
-  viewsGrowth: string;
-  totalCategories?: number;
-}
-
-function DashboardSkeleton() {
-  return (
-    <div className="mb-8 grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-4 animate-pulse">
-      {Array.from({ length: 4 }).map((_, i) => (
-        <div key={i} className="h-36 rounded-2xl bg-white/70" />
-      ))}
-    </div>
-  );
-}
-
+type DashboardData = { totalUsers: number; activeUsers: number; totalProducts: number; totalBlogPosts: number; totalPosts: number; totalComments: number; pendingTickets: number; totalTickets: number; newUsersThisMonth: number; newCommentsThisMonth: number; totalCategories: number; pageViewsToday: number; pageViewsThisMonth: number; viewsGrowth: number };
 const quickLinks = [
-  { href: "/admin/products", label: "محصولات", icon: FiPackage },
-  { href: "/admin/categories", label: "دسته‌ها", icon: FiFolder },
-  { href: "/admin/blog", label: "وبلاگ", icon: FiEdit3 },
-  { href: "/admin/contacts", label: "پیام‌ها", icon: FiMail },
-  { href: "/admin/stats", label: "آمار", icon: FiBarChart2 },
+  { href: "/admin/products", label: "افزودن محصول", icon: Package, color: "text-blue-700 bg-blue-50" },
+  { href: "/admin/repairs", label: "ثبت تعمیر", icon: Wrench, color: "text-emerald-700 bg-emerald-50" },
+  { href: "/admin/blog", label: "نوشتن مقاله", icon: BookOpenText, color: "text-violet-700 bg-violet-50" },
+  { href: "/admin/contacts", label: "پیام‌های مشتریان", icon: Mail, color: "text-amber-700 bg-amber-50" },
 ];
 
 export default function AdminDashboardPage() {
-  const [stats, setStats] = useState<DashboardStats | null>(null);
+  const [data, setData] = useState<DashboardData | null>(null);
   const [loading, setLoading] = useState(true);
   const [refreshing, setRefreshing] = useState(false);
-
-  const fetchStats = async (silent = false) => {
+  const [error, setError] = useState("");
+  const load = useCallback(async (silent = false) => {
+    if (silent) setRefreshing(true); else setLoading(true);
     try {
-      if (silent) setRefreshing(true);
-      else setLoading(true);
-
-      const [statsRes, analyticsRes] = await Promise.all([
+      const [statsResponse, analyticsResponse] = await Promise.all([
         fetch("/api/admin/stats", { cache: "no-store" }),
         fetch("/api/admin/analytics", { cache: "no-store" }),
       ]);
-
-      const statsData = await statsRes.json();
-      const analyticsJson = await analyticsRes.json();
-      const overview = analyticsJson?.data?.overview;
-      const trendStats = analyticsJson?.data?.trendStats;
-
-      setStats({
-        users: statsData.totalUsers ?? 0,
-        activeUsers: statsData.activeUsers ?? 0,
-        products: statsData.totalProducts ?? 0,
-        blogPosts: statsData.totalBlogPosts ?? 0,
-        posts: statsData.totalPosts ?? 0,
-        comments: statsData.totalComments ?? 0,
-        pendingTickets: statsData.pendingTickets ?? 0,
-        totalTickets: statsData.totalTickets ?? 0,
-        newUsersThisMonth: statsData.newUsersThisMonth ?? 0,
-        newCommentsThisMonth: statsData.newCommentsThisMonth ?? 0,
-        pageViewsToday: overview?.pageViewsToday ?? 0,
-        pageViewsThisMonth: overview?.pageViewsThisMonth ?? 0,
-        viewsGrowth: trendStats?.viewsGrowth ?? "0",
-        totalCategories: statsData.totalCategories,
+      const [stats, analytics] = await Promise.all([statsResponse.json(), analyticsResponse.json()]);
+      if (!statsResponse.ok) throw new Error(stats.message || "دریافت آمار انجام نشد.");
+      const overview = analytics?.data?.overview || {};
+      const trends = analytics?.data?.trendStats || {};
+      setData({
+        totalUsers: stats.totalUsers ?? 0, activeUsers: stats.activeUsers ?? 0,
+        totalProducts: stats.totalProducts ?? 0, totalBlogPosts: stats.totalBlogPosts ?? 0,
+        totalPosts: stats.totalPosts ?? 0, totalComments: stats.totalComments ?? 0,
+        pendingTickets: stats.pendingTickets ?? 0, totalTickets: stats.totalTickets ?? 0,
+        newUsersThisMonth: stats.newUsersThisMonth ?? 0, newCommentsThisMonth: stats.newCommentsThisMonth ?? 0,
+        totalCategories: stats.totalCategories ?? 0, pageViewsToday: overview.pageViewsToday ?? 0,
+        pageViewsThisMonth: overview.pageViewsThisMonth ?? 0, viewsGrowth: Number.parseFloat(trends.viewsGrowth || "0") || 0,
       });
+      setError("");
     } catch (err) {
-      console.error("خطا در دریافت آمار:", err);
-    } finally {
-      setLoading(false);
-      setRefreshing(false);
-    }
-  };
-
-  useEffect(() => {
-    fetchStats();
+      const message = err instanceof Error ? err.message : "دریافت اطلاعات داشبورد انجام نشد.";
+      setError(message); if (silent) toast.error(message);
+    } finally { setLoading(false); setRefreshing(false); }
   }, []);
+  useEffect(() => { void load(); }, [load]);
 
-  const ticketAnswerRate = useMemo(() => {
-    if (!stats?.totalTickets) return 0;
-    const answered = stats.totalTickets - stats.pendingTickets;
-    return Math.round((answered / stats.totalTickets) * 100);
-  }, [stats]);
+  const responseRate = useMemo(() => data?.totalTickets ? Math.round(((data.totalTickets - data.pendingTickets) / data.totalTickets) * 100) : 0, [data]);
+  const metrics = [
+    { title: "محصولات فروشگاه", value: data?.totalProducts ?? 0, detail: `${(data?.totalCategories ?? 0).toLocaleString("fa-IR")} دسته‌بندی فعال`, icon: Package, color: "blue" },
+    { title: "مقاله‌های وبلاگ", value: data?.totalBlogPosts ?? 0, detail: `${(data?.totalPosts ?? 0).toLocaleString("fa-IR")} ویدیوی منتشرشده`, icon: BookOpenText, color: "violet" },
+    { title: "کاربران", value: data?.totalUsers ?? 0, detail: `${(data?.newUsersThisMonth ?? 0).toLocaleString("fa-IR")} کاربر تازه این ماه`, icon: Users, color: "emerald" },
+    { title: "پیام‌های پاسخ‌نداده", value: data?.pendingTickets ?? 0, detail: `${(data?.totalTickets ?? 0).toLocaleString("fa-IR")} پیام دریافتی`, icon: Mail, color: "amber" },
+  ] as const;
 
-  const viewsTrend = stats ? parseFloat(stats.viewsGrowth) : 0;
+  return <div dir="rtl" className="mx-auto max-w-[1440px] space-y-6">
+    <section className="relative overflow-hidden rounded-[1.75rem] bg-gradient-to-l from-[#0c3564] via-[#0b2b50] to-[#071b36] px-5 py-6 text-white shadow-xl shadow-blue-950/10 sm:px-8 sm:py-8">
+      <div className="absolute -left-14 -top-20 h-56 w-56 rounded-full bg-cyan-300/10 blur-3xl" />
+      <div className="relative flex flex-wrap items-end justify-between gap-5"><div><span className="inline-flex items-center gap-1.5 rounded-full border border-white/10 bg-white/5 px-3 py-1.5 text-[10px] font-semibold text-blue-100"><Activity size={13} className="text-emerald-300" /> مرکز فرمان سایت</span><h2 className="mt-4 text-2xl font-black sm:text-3xl">خوش آمدید 👋</h2><p className="mt-1.5 max-w-xl text-xs leading-6 text-blue-100/75 sm:text-sm">وضعیت فروشگاه، محتوا و ارتباط با مشتریان را از اینجا مدیریت کنید.</p></div><button type="button" onClick={() => void load(true)} disabled={refreshing} className="inline-flex h-10 items-center gap-2 rounded-xl border border-white/15 bg-white/10 px-4 text-xs font-bold text-white transition hover:bg-white/15 disabled:opacity-60"><RefreshCw size={14} className={refreshing ? "animate-spin" : ""} /> بروزرسانی آمار</button></div>
+    </section>
 
-  return (
-    <div dir="rtl" className="mx-auto max-w-7xl">
-      <motion.header
-        initial={{ opacity: 0, y: -12 }}
-        animate={{ opacity: 1, y: 0 }}
-        className="mb-7 flex flex-wrap items-start justify-between gap-4"
-      >
-        <div>
-          <h1 className="text-2xl font-extrabold text-[#0b1f33] md:text-3xl">
-            داشبورد
-          </h1>
-          <p className="mt-1 text-sm text-[#64748b]">
-            خلاصه وضعیت محتوا، کاربران و تعاملات سایت
-          </p>
-        </div>
-        <div className="flex items-center gap-2">
-          <button
-            type="button"
-            onClick={() => fetchStats(true)}
-            disabled={refreshing}
-            className="admin-btn-ghost"
-          >
-            <FiRefreshCw
-              size={16}
-              className={refreshing ? "animate-spin" : ""}
-            />
-            به‌روزرسانی
-          </button>
-          <Link href="/admin/stats" className="admin-btn">
-            <FiBarChart2 size={16} />
-            آمار کامل
-          </Link>
-        </div>
-      </motion.header>
+    {error && !data && <div className="flex flex-wrap items-center justify-between gap-3 rounded-2xl border border-rose-200 bg-rose-50 p-4 text-sm text-rose-700"><span>{error}</span><button type="button" onClick={() => void load()} className="rounded-lg bg-white px-3 py-2 text-xs font-bold">تلاش دوباره</button></div>}
 
-      {loading ? (
-        <DashboardSkeleton />
-      ) : (
-        <div className="mb-7 grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-4">
-          <InfoCard
-            title="کاربران"
-            desc={`${stats?.activeUsers ?? 0} تأییدشده · ${stats?.newUsersThisMonth ?? 0} جدید`}
-            count={stats?.users ?? 0}
-            color="primary"
-            icon={<FiUsers className="h-5 w-5" />}
-          />
-          <InfoCard
-            title="محصولات"
-            desc="محصولات ثبت‌شده در کاتالوگ"
-            count={stats?.products ?? 0}
-            color="success"
-            icon={<FiPackage className="h-5 w-5" />}
-          />
-          <InfoCard
-            title="وبلاگ"
-            desc={`${stats?.posts ?? 0} ویدیو ثبت‌شده`}
-            count={stats?.blogPosts ?? 0}
-            color="warn"
-            icon={<FiEdit3 className="h-5 w-5" />}
-          />
-          <InfoCard
-            title="نظرات"
-            desc={`${stats?.newCommentsThisMonth ?? 0} نظر این ماه`}
-            count={stats?.comments ?? 0}
-            color="danger"
-            icon={<FiMessageSquare className="h-5 w-5" />}
-          />
-        </div>
-      )}
+    <section className="grid gap-3 sm:grid-cols-2 xl:grid-cols-4">
+      {metrics.map(({ title, value, detail, icon: Icon, color }) => <MetricCard key={title} title={title} value={value} detail={detail} icon={<Icon size={19} />} color={color} loading={loading} />)}
+    </section>
 
-      <div className="mb-7 grid grid-cols-1 gap-4 lg:grid-cols-3">
-        <div className="admin-card p-5 lg:col-span-2">
-          <h2 className="mb-4 text-base font-bold text-[#0b1f33]">
-            شاخص‌های کلیدی
-          </h2>
-          <div className="mb-5 grid grid-cols-1 gap-3 sm:grid-cols-3">
-            <div className="rounded-xl bg-[#f3f7fb] px-4 py-3 text-center">
-              <p className="text-xs text-[#64748b]">بازدید امروز</p>
-              <p className="mt-1 text-2xl font-bold tabular-nums text-[#004c97]">
-                {(stats?.pageViewsToday ?? 0).toLocaleString("fa-IR")}
-              </p>
-            </div>
-            <div className="rounded-xl bg-[#f3f7fb] px-4 py-3 text-center">
-              <p className="text-xs text-[#64748b]">بازدید این ماه</p>
-              <p className="mt-1 text-2xl font-bold tabular-nums text-[#0079c2]">
-                {(stats?.pageViewsThisMonth ?? 0).toLocaleString("fa-IR")}
-              </p>
-              {viewsTrend !== 0 && (
-                <p
-                  className={`mt-1 text-xs font-medium ${viewsTrend >= 0 ? "text-emerald-600" : "text-rose-600"}`}
-                >
-                  {viewsTrend >= 0 ? "+" : ""}
-                  {viewsTrend.toLocaleString("fa-IR")}٪ نسبت به ماه قبل
-                </p>
-              )}
-            </div>
-            <div className="rounded-xl bg-[#f3f7fb] px-4 py-3 text-center">
-              <p className="text-xs text-[#64748b]">پیام‌های در انتظار</p>
-              <p className="mt-1 text-2xl font-bold tabular-nums text-rose-600">
-                {(stats?.pendingTickets ?? 0).toLocaleString("fa-IR")}
-              </p>
-              {!!stats?.pendingTickets && (
-                <Link
-                  href="/admin/contacts"
-                  className="mt-1 inline-block text-xs text-[#0079c2] hover:underline"
-                >
-                  مشاهده پیام‌ها
-                </Link>
-              )}
-            </div>
-          </div>
+    <div className="grid gap-5 xl:grid-cols-[minmax(0,1.65fr)_minmax(280px,.8fr)]">
+      <section className="rounded-2xl border border-slate-200 bg-white p-4 shadow-sm sm:p-6"><div className="mb-5 flex flex-wrap items-start justify-between gap-3"><div><h2 className="text-base font-black text-slate-900">نمای کلی بازدیدها</h2><p className="mt-1 text-xs text-slate-500">رفتار بازدیدکنندگان در سایت</p></div><Link href="/admin/stats" className="inline-flex items-center gap-1 text-xs font-bold text-blue-700 hover:text-blue-900">گزارش کامل <ArrowLeft size={14} /></Link></div><div className="grid gap-3 sm:grid-cols-3"><MiniMetric label="بازدید امروز" value={data?.pageViewsToday ?? 0} /><MiniMetric label="بازدید این ماه" value={data?.pageViewsThisMonth ?? 0} /><div className="rounded-xl bg-slate-50 p-3"><p className="text-[10px] text-slate-500">تغییر نسبت به ماه قبل</p><p className={`mt-1 flex items-center gap-1 text-lg font-black ${data?.viewsGrowth && data.viewsGrowth < 0 ? "text-rose-600" : "text-emerald-700"}`}>{data?.viewsGrowth && data.viewsGrowth < 0 ? <ArrowDownLeft size={15} /> : <ArrowUpRight size={15} />}{Math.abs(data?.viewsGrowth ?? 0).toLocaleString("fa-IR")}٪</p></div></div><div className="mt-6"><AdminChartSection /></div></section>
 
-          <div>
-            <div className="mb-2 flex items-center justify-between">
-              <span className="text-sm font-semibold text-[#475569]">
-                نرخ پاسخ‌دهی پیام‌ها
-              </span>
-              <span className="text-sm font-bold text-amber-600">
-                {ticketAnswerRate.toLocaleString("fa-IR")}٪
-              </span>
-            </div>
-            <div className="h-2.5 overflow-hidden rounded-full bg-[#e8eef5]">
-              <motion.div
-                initial={{ width: 0 }}
-                animate={{ width: `${ticketAnswerRate}%` }}
-                transition={{ duration: 0.8 }}
-                className="h-full rounded-full bg-gradient-to-l from-amber-500 to-amber-400"
-              />
-            </div>
-          </div>
-        </div>
-
-        <div className="admin-card p-5">
-          <h2 className="mb-4 text-base font-bold text-[#0b1f33]">
-            دسترسی سریع
-          </h2>
-          <div className="grid grid-cols-2 gap-2">
-            {quickLinks.map((link) => {
-              const Icon = link.icon;
-              return (
-                <Link
-                  key={link.href}
-                  href={link.href}
-                  className="flex flex-col items-center gap-2 rounded-xl border border-[#e8eef5] bg-[#f8fafc] px-3 py-4 text-sm font-medium text-[#334155] transition hover:border-[#0079c2]/30 hover:bg-white hover:text-[#004c97]"
-                >
-                  <Icon className="h-5 w-5" />
-                  {link.label}
-                </Link>
-              );
-            })}
-          </div>
-        </div>
-      </div>
-
-      <div className="mb-7 grid grid-cols-1 gap-4 xl:grid-cols-3">
-        <div className="xl:col-span-2">
-          <AdminChartSection />
-        </div>
-        <RecentActionsWidget />
-      </div>
+      <div className="space-y-5"><section className="rounded-2xl border border-slate-200 bg-white p-5 shadow-sm"><div className="mb-4 flex items-center justify-between"><div><h2 className="font-black text-slate-900">دسترسی سریع</h2><p className="mt-1 text-[11px] text-slate-500">کارهای پرتکرار</p></div><ArrowUpRight size={17} className="text-slate-300" /></div><div className="grid grid-cols-2 gap-2">{quickLinks.map(({ href, label, icon: Icon, color }) => <Link key={href} href={href} className="group rounded-xl border border-slate-100 p-3 transition hover:border-blue-100 hover:bg-blue-50/40"><span className={`mb-2 flex h-9 w-9 items-center justify-center rounded-lg ${color}`}><Icon size={17} /></span><span className="text-[11px] font-bold text-slate-700 group-hover:text-blue-800">{label}</span></Link>)}</div></section>
+        <section className="rounded-2xl border border-slate-200 bg-white p-5 shadow-sm"><div className="flex items-start justify-between"><div><h2 className="font-black text-slate-900">پاسخ‌گویی به پیام‌ها</h2><p className="mt-1 text-[11px] text-slate-500">درصد پیام‌های پاسخ‌داده‌شده</p></div><MessageSquareText size={18} className="text-blue-600" /></div><div className="mt-5 flex items-end justify-between"><span className="text-3xl font-black tabular-nums text-slate-900">{responseRate.toLocaleString("fa-IR")}٪</span><span className="text-[11px] text-slate-500">{(data?.pendingTickets ?? 0).toLocaleString("fa-IR")} پیام در انتظار</span></div><div className="mt-3 h-2 overflow-hidden rounded-full bg-slate-100"><div className="h-full rounded-full bg-gradient-to-l from-emerald-500 to-teal-400 transition-all" style={{ width: `${responseRate}%` }} /></div><Link href="/admin/contacts" className="mt-4 inline-flex items-center gap-1 text-xs font-bold text-blue-700">مدیریت پیام‌ها <ArrowLeft size={14} /></Link></section></div>
     </div>
-  );
+
+    <section className="rounded-2xl border border-slate-200 bg-white p-4 shadow-sm sm:p-6"><RecentActionsWidget /></section>
+  </div>;
 }
+
+function MetricCard({ title, value, detail, icon, color, loading }: { title: string; value: number; detail: string; icon: React.ReactNode; color: "blue" | "violet" | "emerald" | "amber"; loading: boolean }) {
+  const themes = { blue: "bg-blue-50 text-blue-700", violet: "bg-violet-50 text-violet-700", emerald: "bg-emerald-50 text-emerald-700", amber: "bg-amber-50 text-amber-700" };
+  return <article className="rounded-2xl border border-slate-200 bg-white p-4 shadow-sm transition hover:-translate-y-0.5 hover:shadow-md"><div className="flex items-start justify-between"><span className={`flex h-10 w-10 items-center justify-center rounded-xl ${themes[color]}`}>{icon}</span><span className="rounded-lg bg-slate-50 px-2 py-1 text-[9px] font-bold text-slate-400">کل</span></div><p className="mt-5 text-xs font-semibold text-slate-500">{title}</p>{loading ? <div className="mt-1 h-8 w-20 animate-pulse rounded-lg bg-slate-100" /> : <p className="mt-1 text-2xl font-black tabular-nums text-slate-900">{value.toLocaleString("fa-IR")}</p>}<p className="mt-2 text-[10px] text-slate-400">{detail}</p></article>;
+}
+
+function MiniMetric({ label, value }: { label: string; value: number }) { return <div className="rounded-xl bg-slate-50 p-3"><p className="text-[10px] text-slate-500">{label}</p><p className="mt-1 text-lg font-black tabular-nums text-slate-900">{value.toLocaleString("fa-IR")}</p></div>; }

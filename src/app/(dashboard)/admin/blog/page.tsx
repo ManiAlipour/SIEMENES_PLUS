@@ -1,338 +1,83 @@
 "use client";
 
-import { useEffect, useState } from "react";
-import { FiEdit2, FiTrash2, FiPlus, FiFileText } from "react-icons/fi";
+import { useCallback, useEffect, useMemo, useState } from "react";
+import Link from "next/link";
 import toast from "react-hot-toast";
+import { ArrowUpRight, CalendarDays, CheckCircle2, Edit3, FileText, Plus, Search, Trash2, XCircle } from "lucide-react";
 import AddBlogPostModal from "@/components/layouts/dash/admin/AddBlogPostModal";
 import EditBlogPostCard from "@/components/layouts/dash/admin/EditBlogPostCard";
 import DeleteBlogPostConfirmModal from "@/components/layouts/dash/admin/DeleteBlogPostConfirmModal";
 
-interface BlogPost {
-  _id: string;
-  title: string;
-  slug?: string | null;
-  excerpt?: string;
-  content?: string;
-  coverImage?: string;
-  video?: string;
-  tags?: string[];
-  status: "draft" | "published";
-  createdAt: string;
-}
+interface BlogPost { _id: string; title: string; slug?: string | null; excerpt?: string; content?: string; coverImage?: string; video?: string; tags?: string[]; status: "draft" | "published"; createdAt: string }
+type Filter = "all" | "published" | "draft";
 
 export default function AdminBlogPage() {
   const [posts, setPosts] = useState<BlogPost[]>([]);
-  const [isModalOpen, setIsModalOpen] = useState(false);
-  const [isEditOpen, setIsEditOpen] = useState(false);
-  const [editPost, setEditPost] = useState<BlogPost | null>(null);
   const [loading, setLoading] = useState(true);
-  const [deleteId, setDeleteId] = useState<string | null>(null);
-  const [deleteTitle, setDeleteTitle] = useState<string | null>(null);
-  const [isDeleteOpen, setIsDeleteOpen] = useState(false);
+  const [refreshing, setRefreshing] = useState(false);
+  const [search, setSearch] = useState("");
+  const [filter, setFilter] = useState<Filter>("all");
+  const [createOpen, setCreateOpen] = useState(false);
+  const [editPost, setEditPost] = useState<BlogPost | null>(null);
+  const [deletePost, setDeletePost] = useState<BlogPost | null>(null);
 
-  useEffect(() => {
-    fetchPosts();
+  const fetchPosts = useCallback(async (silent = false) => {
+    try {
+      if (silent) setRefreshing(true); else setLoading(true);
+      const response = await fetch("/api/admin/blog-posts", { cache: "no-store" });
+      const result = await response.json();
+      if (!response.ok) throw new Error(result.error || "دریافت مقاله‌ها انجام نشد.");
+      setPosts(result.data || []);
+    } catch (error) {
+      toast.error(error instanceof Error ? error.message : "ارتباط با سرور برقرار نشد.");
+    } finally { setLoading(false); setRefreshing(false); }
   }, []);
 
-  const fetchPosts = async () => {
-    try {
-      setLoading(true);
-      const res = await fetch("/api/admin/blog-posts");
-      const data = await res.json();
-      if (data?.data) setPosts(data.data);
-    } catch (err) {
-      console.error("Error fetching blog posts:", err);
-      toast.error("خطا در دریافت مطالب");
-    } finally {
-      setLoading(false);
-    }
-  };
+  useEffect(() => { void fetchPosts(); }, [fetchPosts]);
+  const counts = useMemo(() => ({ all: posts.length, published: posts.filter((post) => post.status === "published").length, draft: posts.filter((post) => post.status === "draft").length }), [posts]);
+  const filtered = useMemo(() => {
+    const query = search.trim().toLocaleLowerCase("fa-IR");
+    return posts.filter((post) => (filter === "all" || post.status === filter) && (!query || `${post.title} ${post.slug || ""} ${post.tags?.join(" ") || ""}`.toLocaleLowerCase("fa-IR").includes(query)));
+  }, [posts, search, filter]);
 
-  const openDelete = (id: string, title: string) => {
-    setDeleteId(id);
-    setDeleteTitle(title);
-    setIsDeleteOpen(true);
-  };
+  return <div dir="rtl" className="mx-auto max-w-[1440px] space-y-6">
+    <header className="flex flex-col justify-between gap-4 sm:flex-row sm:items-end">
+      <div><div className="mb-2 inline-flex items-center gap-2 rounded-full bg-blue-50 px-3 py-1.5 text-[11px] font-bold text-blue-700"><FileText size={14} /> تحریریه</div><h1 className="text-2xl font-black tracking-tight text-slate-950 sm:text-3xl">مقاله‌های وبلاگ</h1><p className="mt-2 text-sm text-slate-500">مقاله‌های آموزشی و تخصصی سایت را بنویسید و منتشر کنید.</p></div>
+      <div className="flex gap-2"><button type="button" onClick={() => void fetchPosts(true)} disabled={refreshing} className="rounded-xl border border-slate-200 bg-white px-4 py-2.5 text-xs font-bold text-slate-600 shadow-sm transition hover:bg-slate-50 disabled:opacity-60">{refreshing ? "در حال بروزرسانی…" : "بروزرسانی"}</button><button type="button" onClick={() => setCreateOpen(true)} className="inline-flex items-center justify-center gap-2 rounded-xl bg-blue-700 px-4 py-2.5 text-xs font-extrabold text-white shadow-lg shadow-blue-700/15 transition hover:bg-blue-800"><Plus size={16} /> مقاله جدید</button></div>
+    </header>
 
-  const closeDelete = () => {
-    setIsDeleteOpen(false);
-    setDeleteId(null);
-    setDeleteTitle(null);
-  };
+    <section className="grid grid-cols-1 gap-3 sm:grid-cols-3">
+      <Metric label="همه مقاله‌ها" value={counts.all} icon={<FileText size={18} />} tone="blue" />
+      <Metric label="منتشرشده" value={counts.published} icon={<CheckCircle2 size={18} />} tone="green" />
+      <Metric label="پیش‌نویس" value={counts.draft} icon={<XCircle size={18} />} tone="amber" />
+    </section>
 
-  const handleDeleted = () => {
-    fetchPosts();
-    closeDelete();
-  };
-
-  return (
-    <div className="mx-auto max-w-7xl">
-      <div className="admin-card mb-6 flex flex-col items-center justify-between gap-4 bg-gradient-to-l from-[#004c97] to-[#0079c2] p-5 text-white sm:flex-row">
-        <div>
-          <h1 className="text-xl font-bold sm:text-2xl">مدیریت وبلاگ</h1>
-          <p className="mt-1 text-sm text-white/75">مقالات و محتوای متنی سایت</p>
-        </div>
-        <button
-          onClick={() => setIsModalOpen(true)}
-          className="flex items-center gap-2 rounded-xl bg-white px-5 py-2.5 font-semibold text-[#004c97] shadow-md transition-all duration-200 hover:bg-white/95 active:scale-[0.98]"
-        >
-          <FiPlus size={20} /> افزودن مطلب جدید
-        </button>
+    <section className="overflow-hidden rounded-2xl border border-slate-200 bg-white shadow-sm">
+      <div className="flex flex-col gap-3 border-b border-slate-100 p-4 sm:flex-row sm:items-center sm:justify-between sm:px-5">
+        <div className="relative w-full sm:max-w-sm"><Search size={16} className="pointer-events-none absolute right-3 top-1/2 -translate-y-1/2 text-slate-400" /><input value={search} onChange={(event) => setSearch(event.target.value)} placeholder="جستجو در عنوان، نشانی یا برچسب…" className="h-10 w-full rounded-xl border border-slate-200 bg-slate-50 pr-9 pl-3 text-xs outline-none transition focus:border-blue-400 focus:bg-white focus:ring-4 focus:ring-blue-500/10" /></div>
+        <div className="flex rounded-xl bg-slate-100 p-1">{([ ["all", "همه"], ["published", "منتشرشده"], ["draft", "پیش‌نویس"] ] as [Filter, string][]).map(([value, label]) => <button key={value} type="button" onClick={() => setFilter(value)} className={`rounded-lg px-3 py-2 text-[11px] font-bold transition ${filter === value ? "bg-white text-blue-800 shadow-sm" : "text-slate-500 hover:text-slate-800"}`}>{label}<span className="mr-1.5 text-[10px] opacity-60">{counts[value].toLocaleString("fa-IR")}</span></button>)}</div>
       </div>
 
-      <div className="hidden md:block overflow-x-auto rounded-2xl border border-slate-200 bg-white shadow-sm">
-        <table className="min-w-full text-slate-700">
-          <thead>
-            <tr className="bg-slate-50 text-slate-600 text-xs font-semibold border-b border-slate-200">
-              <th className="py-3.5 px-4 text-right">عنوان</th>
-              <th className="py-3.5 px-4 text-right">اسلاگ</th>
-              <th className="py-3.5 px-4 text-center">وضعیت</th>
-              <th className="py-3.5 px-4 text-center">تاریخ</th>
-              <th className="py-3.5 px-4 text-center w-28">عملیات</th>
-            </tr>
-          </thead>
-          <tbody>
-            {loading ? (
-              [...Array(5)].map((_, i) => (
-                <tr
-                  key={i}
-                  className="border-b border-slate-100 last:border-0 animate-pulse"
-                >
-                  <td className="px-4 py-3">
-                    <div className="h-5 bg-slate-200 rounded w-3/4" />
-                    <div className="h-3 bg-slate-100 rounded w-1/2 mt-2" />
-                  </td>
-                  <td className="px-4 py-3">
-                    <div className="h-4 bg-slate-100 rounded w-24" />
-                  </td>
-                  <td className="px-4 py-3">
-                    <div className="h-6 bg-slate-100 rounded-full w-20 mx-auto" />
-                  </td>
-                  <td className="px-4 py-3">
-                    <div className="h-4 bg-slate-100 rounded w-16 mx-auto" />
-                  </td>
-                  <td className="px-4 py-3">
-                    <div className="flex justify-center gap-2">
-                      <div className="h-8 w-8 bg-slate-100 rounded-lg" />
-                      <div className="h-8 w-8 bg-slate-100 rounded-lg" />
-                    </div>
-                  </td>
-                </tr>
-              ))
-            ) : posts.length > 0 ? (
-              posts.map((post) => (
-                <tr
-                  key={post._id}
-                  className="hover:bg-cyan-50/50 border-b border-slate-100 last:border-0 transition-colors"
-                >
-                  <td className="px-4 py-3 max-w-[220px]">
-                    <span className="font-medium text-slate-800 truncate block">
-                      {post.title}
-                    </span>
-                    {post.excerpt && (
-                      <span className="text-xs text-slate-500 truncate block mt-0.5">
-                        {post.excerpt.slice(0, 50)}…
-                      </span>
-                    )}
-                  </td>
-                  <td className="px-4 py-3 text-sm text-slate-600 font-mono">
-                    {post.slug || "—"}
-                  </td>
-                  <td className="px-4 py-3 text-center">
-                    <span
-                      className={`inline-block px-3 py-1.5 text-xs rounded-full font-medium ${
-                        post.status === "published"
-                          ? "bg-green-100 text-green-700"
-                          : "bg-amber-100 text-amber-700"
-                      }`}
-                    >
-                      {post.status === "published" ? "منتشر شده" : "پیش‌نویس"}
-                    </span>
-                  </td>
-                  <td className="px-4 py-3 text-center text-xs text-slate-500">
-                    {new Date(post.createdAt).toLocaleDateString("fa-IR")}
-                  </td>
-                  <td className="px-4 py-3">
-                    <div className="flex justify-center gap-1">
-                      <button
-                        onClick={() => {
-                          setEditPost(post);
-                          setIsEditOpen(true);
-                        }}
-                        className="p-2.5 text-cyan-600 rounded-xl hover:bg-cyan-50 transition-colors focus:outline-none focus-visible:ring-2 focus-visible:ring-cyan-500"
-                        aria-label="ویرایش"
-                      >
-                        <FiEdit2 size={17} />
-                      </button>
-                      <button
-                        onClick={() => openDelete(post._id, post.title)}
-                        className="p-2.5 text-red-500 rounded-xl hover:bg-red-50 transition-colors focus:outline-none focus-visible:ring-2 focus-visible:ring-red-500"
-                        aria-label="حذف"
-                      >
-                        <FiTrash2 size={17} />
-                      </button>
-                    </div>
-                  </td>
-                </tr>
-              ))
-            ) : (
-              <tr>
-                <td colSpan={5} className="p-0">
-                  <div className="flex flex-col items-center justify-center py-16 px-4">
-                    <div className="w-16 h-16 rounded-2xl bg-slate-100 flex items-center justify-center text-slate-400 mb-4">
-                      <FiFileText size={32} />
-                    </div>
-                    <p className="text-slate-600 font-medium mb-1">
-                      هنوز مطلبی ثبت نشده
-                    </p>
-                    <p className="text-slate-500 text-sm mb-5">
-                      اولین مطلب وبلاگ را اضافه کنید.
-                    </p>
-                    <button
-                      onClick={() => setIsModalOpen(true)}
-                      className="flex items-center gap-2 bg-cyan-500 text-white rounded-xl px-5 py-2.5 font-semibold hover:bg-cyan-600 transition-colors focus:outline-none focus-visible:ring-2 focus-visible:ring-cyan-500 focus-visible:ring-offset-2"
-                    >
-                      <FiPlus size={18} /> افزودن مطلب
-                    </button>
-                  </div>
-                </td>
-              </tr>
-            )}
-          </tbody>
-        </table>
-      </div>
+      {loading ? <div className="grid gap-3 p-4 md:grid-cols-2 xl:grid-cols-3">{Array.from({ length: 6 }, (_, index) => <div key={index} className="h-52 animate-pulse rounded-xl bg-slate-100" />)}</div>
+        : filtered.length ? <div className="grid gap-3 p-3 sm:p-4 md:grid-cols-2 xl:grid-cols-3">{filtered.map((post) => <article key={post._id} className="group flex min-w-0 flex-col overflow-hidden rounded-xl border border-slate-200 bg-white transition duration-200 hover:-translate-y-0.5 hover:border-blue-200 hover:shadow-lg hover:shadow-slate-900/5">
+          <div className="flex gap-3 p-4"><div className="h-[76px] w-[92px] shrink-0 overflow-hidden rounded-lg bg-gradient-to-br from-blue-50 to-slate-100">{post.coverImage ? <img src={post.coverImage} alt="" className="h-full w-full object-cover" /> : <div className="flex h-full items-center justify-center text-blue-300"><FileText size={22} /></div>}</div><div className="min-w-0 flex-1"><div className="mb-2 flex items-center gap-2"><span className={`rounded-full px-2 py-1 text-[10px] font-bold ${post.status === "published" ? "bg-emerald-50 text-emerald-700" : "bg-amber-50 text-amber-700"}`}>{post.status === "published" ? "منتشرشده" : "پیش‌نویس"}</span><span className="inline-flex items-center gap-1 text-[10px] text-slate-400"><CalendarDays size={11} />{new Date(post.createdAt).toLocaleDateString("fa-IR")}</span></div><h2 className="line-clamp-2 text-sm font-extrabold leading-6 text-slate-900">{post.title}</h2><p dir="ltr" className="mt-1 truncate text-left font-mono text-[10px] text-slate-400">/{post.slug || "بدون نشانی"}</p></div></div>
+          {post.excerpt && <p className="mx-4 line-clamp-2 min-h-10 border-t border-slate-100 pt-3 text-xs leading-5 text-slate-500">{post.excerpt}</p>}
+          <div className="mt-auto flex items-center justify-between border-t border-slate-100 px-3 py-2"><div className="flex min-w-0 gap-1 overflow-hidden">{post.tags?.slice(0, 2).map((tag) => <span key={tag} className="truncate rounded-md bg-slate-50 px-2 py-1 text-[9px] text-slate-500">{tag}</span>)}</div><div className="flex shrink-0 items-center gap-1">
+            {post.status === "published" && post.slug && <Link href={`/blog/${post.slug}`} target="_blank" aria-label="مشاهده مقاله" className="rounded-lg p-2 text-slate-400 transition hover:bg-blue-50 hover:text-blue-700"><ArrowUpRight size={15} /></Link>}
+            <button type="button" onClick={() => setEditPost(post)} aria-label="ویرایش مقاله" className="rounded-lg p-2 text-slate-400 transition hover:bg-blue-50 hover:text-blue-700"><Edit3 size={15} /></button>
+            <button type="button" onClick={() => setDeletePost(post)} aria-label="حذف مقاله" className="rounded-lg p-2 text-slate-400 transition hover:bg-rose-50 hover:text-rose-600"><Trash2 size={15} /></button>
+          </div></div>
+        </article>)}</div>
+        : <div className="flex flex-col items-center px-5 py-16 text-center"><span className="flex h-14 w-14 items-center justify-center rounded-2xl bg-blue-50 text-blue-600"><FileText size={25} /></span><h2 className="mt-4 text-sm font-extrabold text-slate-800">{search || filter !== "all" ? "مقاله‌ای با این مشخصات پیدا نشد" : "هنوز مقاله‌ای ثبت نشده است"}</h2><p className="mt-1 max-w-sm text-xs leading-6 text-slate-500">{search || filter !== "all" ? "عبارت جستجو یا فیلتر را تغییر دهید." : "اولین مقاله‌ی آموزشی سایت را ایجاد کنید."}</p>{!search && filter === "all" && <button type="button" onClick={() => setCreateOpen(true)} className="mt-4 inline-flex items-center gap-2 rounded-xl bg-blue-700 px-4 py-2.5 text-xs font-bold text-white"><Plus size={15} /> نوشتن مقاله</button>}</div>}
+    </section>
 
-      <div className="md:hidden space-y-4">
-        {loading ? (
-          [...Array(3)].map((_, i) => (
-            <div
-              key={i}
-              className="bg-white rounded-2xl border border-slate-200 overflow-hidden animate-pulse"
-            >
-              <div className="flex gap-3 p-4">
-                <div className="w-20 h-20 rounded-xl bg-slate-200 flex-shrink-0" />
-                <div className="flex-1 space-y-2">
-                  <div className="h-4 bg-slate-200 rounded w-full" />
-                  <div className="h-3 bg-slate-100 rounded w-2/3" />
-                  <div className="h-5 w-16 bg-slate-100 rounded-full" />
-                </div>
-              </div>
-              <div className="h-12 bg-slate-50" />
-            </div>
-          ))
-        ) : posts.length > 0 ? (
-          posts.map((post) => (
-            <div
-              key={post._id}
-              className="bg-white rounded-2xl border border-slate-200 shadow-sm overflow-hidden hover:shadow-md hover:border-cyan-100 transition-all"
-            >
-              <div className="flex gap-3 p-4">
-                {post.coverImage ? (
-                  <img
-                    src={post.coverImage}
-                    alt=""
-                    className="w-20 h-20 object-cover rounded-xl flex-shrink-0"
-                  />
-                ) : (
-                  <div className="w-20 h-20 rounded-xl bg-slate-100 flex-shrink-0 flex items-center justify-center text-slate-400 text-xs">
-                    بدون تصویر
-                  </div>
-                )}
-                <div className="flex-1 min-w-0">
-                  <h3 className="font-semibold text-slate-800 text-sm line-clamp-2">
-                    {post.title}
-                  </h3>
-                  {post.slug && (
-                    <p className="text-xs text-slate-500 mt-0.5 font-mono truncate">
-                      {post.slug}
-                    </p>
-                  )}
-                  <span
-                    className={`inline-block mt-2 px-2.5 py-1 text-[10px] rounded-full font-medium ${
-                      post.status === "published"
-                        ? "bg-green-100 text-green-700"
-                        : "bg-amber-100 text-amber-700"
-                    }`}
-                  >
-                    {post.status === "published" ? "منتشر" : "پیش‌نویس"}
-                  </span>
-                  <p className="text-[11px] text-slate-400 mt-1">
-                    {new Date(post.createdAt).toLocaleDateString("fa-IR")}
-                  </p>
-                </div>
-              </div>
-              <div className="flex border-t border-slate-100">
-                <button
-                  onClick={() => {
-                    setEditPost(post);
-                    setIsEditOpen(true);
-                  }}
-                  className="flex-1 py-3.5 flex items-center justify-center gap-2 text-cyan-600 text-sm font-medium hover:bg-cyan-50 transition-colors active:bg-cyan-100"
-                >
-                  <FiEdit2 size={15} /> ویرایش
-                </button>
-                <button
-                  onClick={() => openDelete(post._id, post.title)}
-                  className="flex-1 py-3.5 flex items-center justify-center gap-2 text-red-500 text-sm font-medium border-r border-slate-100 hover:bg-red-50 transition-colors active:bg-red-100"
-                >
-                  <FiTrash2 size={15} /> حذف
-                </button>
-              </div>
-            </div>
-          ))
-        ) : (
-          <div className="flex flex-col items-center justify-center py-16 px-4 bg-white rounded-2xl border border-slate-200">
-            <div className="w-16 h-16 rounded-2xl bg-slate-100 flex items-center justify-center text-slate-400 mb-4">
-              <FiFileText size={32} />
-            </div>
-            <p className="text-slate-600 font-medium mb-1">
-              هنوز مطلبی ثبت نشده
-            </p>
-            <p className="text-slate-500 text-sm mb-5 text-center">
-              اولین مطلب وبلاگ را اضافه کنید.
-            </p>
-            <button
-              onClick={() => setIsModalOpen(true)}
-              className="flex items-center gap-2 bg-cyan-500 text-white rounded-xl px-5 py-2.5 font-semibold hover:bg-cyan-600 transition-colors"
-            >
-              <FiPlus size={18} /> افزودن مطلب
-            </button>
-          </div>
-        )}
-      </div>
+    {createOpen && <AddBlogPostModal onClose={() => setCreateOpen(false)} onAdd={() => void fetchPosts(true)} />}
+    {editPost && <EditBlogPostCard post={editPost} onClose={() => setEditPost(null)} onEdit={() => void fetchPosts(true)} />}
+    {deletePost && <DeleteBlogPostConfirmModal postId={deletePost._id} postTitle={deletePost.title} onClose={() => setDeletePost(null)} onDeleted={() => { setPosts((items) => items.filter((item) => item._id !== deletePost._id)); setDeletePost(null); }} />}
+  </div>;
+}
 
-      {isModalOpen && (
-        <div className="overflow-x-hidden">
-          <AddBlogPostModal
-            onClose={() => setIsModalOpen(false)}
-            onAdd={fetchPosts}
-          />
-        </div>
-      )}
-
-      {isEditOpen && editPost && (
-        <EditBlogPostCard
-          post={editPost}
-          onClose={() => {
-            setIsEditOpen(false);
-            setEditPost(null);
-          }}
-          onEdit={() => {
-            fetchPosts();
-            setIsEditOpen(false);
-            setEditPost(null);
-          }}
-        />
-      )}
-
-      {isDeleteOpen && deleteId && deleteTitle && (
-        <DeleteBlogPostConfirmModal
-          postId={deleteId}
-          postTitle={deleteTitle}
-          onClose={closeDelete}
-          onDeleted={handleDeleted}
-        />
-      )}
-    </div>
-  );
+function Metric({ label, value, icon, tone }: { label: string; value: number; icon: React.ReactNode; tone: "blue" | "green" | "amber" }) {
+  const colors = { blue: "bg-blue-50 text-blue-700", green: "bg-emerald-50 text-emerald-700", amber: "bg-amber-50 text-amber-700" };
+  return <div className="flex items-center gap-3 rounded-2xl border border-slate-200 bg-white p-4 shadow-sm"><span className={`flex h-10 w-10 items-center justify-center rounded-xl ${colors[tone]}`}>{icon}</span><div><p className="text-[11px] font-medium text-slate-500">{label}</p><p className="mt-0.5 text-xl font-black tabular-nums text-slate-900">{value.toLocaleString("fa-IR")}</p></div></div>;
 }
