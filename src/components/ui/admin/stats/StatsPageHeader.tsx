@@ -1,6 +1,8 @@
 "use client";
 
 import { FiRefreshCw } from "react-icons/fi";
+import AdminPageHeading from "@/components/layouts/dash/admin/AdminPageHeading";
+import { BarChart3 } from "lucide-react";
 
 type Props = {
   isMock?: boolean;
@@ -24,44 +26,14 @@ export function StatsPageHeader({
       })
     : null;
 
-  return (
-    <div className="flex flex-col gap-4 sm:flex-row sm:items-start sm:justify-between">
-      <div>
-        <h1 className="text-xl font-extrabold tracking-tight text-[#0b1f33] md:text-2xl">
-          آمار و تحلیل سایت
-        </h1>
-        <p className="mt-1 text-xs text-[#64748b] md:text-sm">
-          ترافیک، تعامل، محتوا و استعلام قیمت محصولات
-        </p>
-        {formattedTime && (
-          <p className="mt-1 text-[11px] text-[#94a3b8]">
-            آخرین به‌روزرسانی: {formattedTime}
-          </p>
-        )}
-      </div>
-
-      <div className="flex flex-wrap items-center gap-2">
-        {isMock && (
-          <span className="inline-flex items-center gap-1 rounded-full border border-amber-300/70 bg-amber-50 px-3 py-1 text-[11px] font-medium text-amber-700">
-            <span className="h-1.5 w-1.5 rounded-full bg-amber-500" />
-            داده‌های نمونه
-          </span>
-        )}
-        {onRefresh && (
-          <button
-            type="button"
-            onClick={onRefresh}
-            disabled={isRefreshing}
-            className="admin-btn-ghost text-xs"
-          >
-            <FiRefreshCw
-              size={14}
-              className={isRefreshing ? "animate-spin" : ""}
-            />
-            {isRefreshing ? "در حال بارگذاری..." : "به‌روزرسانی"}
-          </button>
-        )}
-      </div>
-    </div>
-  );
+  return <AdminPageHeading
+    title="آمار و تحلیل سایت"
+    description={`ترافیک، تعامل، محتوا و استعلام قیمت محصولات${formattedTime ? ` · آخرین به‌روزرسانی ${formattedTime}` : ""}`}
+    icon={BarChart3}
+    eyebrow="گزارش عملکرد"
+    actions={<>
+      {isMock && <span className="rounded-full border border-amber-200 bg-amber-50 px-3 py-2 text-[11px] font-bold text-amber-700">داده‌های نمونه</span>}
+      {onRefresh && <button type="button" onClick={onRefresh} disabled={isRefreshing} className="inline-flex items-center gap-2 rounded-xl border border-slate-200 bg-white px-4 py-2.5 text-xs font-bold text-slate-600 transition hover:bg-slate-50 disabled:opacity-60"><FiRefreshCw size={14} className={isRefreshing ? "animate-spin" : ""} />{isRefreshing ? "در حال بارگذاری..." : "به‌روزرسانی"}</button>}
+    </>}
+  />;
 }

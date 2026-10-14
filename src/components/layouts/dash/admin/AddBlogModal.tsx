@@ -5,9 +5,9 @@ import toast from "react-hot-toast";
 import { useScrollLock } from "iso-hooks";
 
 const glass =
-  "bg-white/40 backdrop-blur-lg border border-white/30 shadow-cyan-500/20";
+  "border border-slate-200 bg-white shadow-2xl shadow-slate-950/20";
 const inputBase =
-  "w-full px-4 py-2 rounded-xl bg-white/40 backdrop-blur-md border border-white/30 focus:ring-2 focus:ring-cyan-500 outline-none transition-all";
+  "w-full rounded-xl border border-slate-200 bg-white px-4 py-3 text-sm outline-none transition placeholder:text-slate-400 focus:border-blue-500 focus:ring-4 focus:ring-blue-500/10";
 
 interface AddBlogModalProps {
   onClose: () => void;
@@ -74,6 +74,8 @@ export default function AddBlogModal({ onClose, onAdd }: AddBlogModalProps) {
         const err = await res.json();
         toast.error(err.error || "خطا در افزودن پست");
       }
+    } catch {
+      toast.error("خطا در ارتباط با سرور. دوباره تلاش کنید.");
     } finally {
       setLoading(false);
     }
@@ -81,17 +83,18 @@ export default function AddBlogModal({ onClose, onAdd }: AddBlogModalProps) {
 
   return (
     <div
-      className="max-w-full fixed inset-0 z-50 flex items-center justify-center bg-black/50 backdrop-blur-sm animate-fadeIn 
-      overflow-x-hidden overflow-y-auto"
-      onClick={onClose}
+      className="fixed inset-0 z-50 flex items-center justify-center overflow-y-auto bg-slate-950/60 p-3 backdrop-blur-sm sm:p-5"
+      onClick={(event) => { if (event.target === event.currentTarget && !loading) onClose(); }}
+      role="dialog"
+      aria-modal="true"
     >
       {/* --- Modal Container --- */}
       <div
         onClick={(e) => e.stopPropagation()}
-        className="relative w-full max-w-3xl sm:max-w-2xl mx-auto px-4 sm:px-6 rounded-2xl overflow-visible animate-slideUp"
+        className={`relative mx-auto w-full max-w-2xl overflow-hidden rounded-2xl ${glass}`}
       >
         {/* --- Header --- */}
-        <div className="bg-gradient-to-r from-cyan-500 to-cyan-700 p-4 text-white font-bold text-lg flex justify-between items-center">
+        <div className="flex items-center justify-between bg-[#0b2545] p-4 text-base font-extrabold text-white sm:px-6 sm:py-5">
           <span>افزودن پست جدید</span>
           <button onClick={onClose}>
             <FiX size={20} />
@@ -100,7 +103,7 @@ export default function AddBlogModal({ onClose, onAdd }: AddBlogModalProps) {
 
         {/* --- Body --- */}
         <div
-          className={`${glass} p-6 max-h-[90vh] overflow-y-auto scrollbar-thin scrollbar-thumb-cyan-400/40 scrollbar-track-transparent`}
+          className="max-h-[82vh] overflow-y-auto p-4 sm:p-6"
         >
           <form onSubmit={handleSubmit} className="space-y-5">
             <div className="animate-fadeIn [animation-delay:0.05s]">
@@ -121,6 +124,7 @@ export default function AddBlogModal({ onClose, onAdd }: AddBlogModalProps) {
               </div>
               <input
                 className={`${inputBase} mt-2`}
+                dir="ltr"
                 placeholder="https://www.aparat.com/v/..."
                 value={video}
                 onChange={(e) => setVideo(e.target.value)}
@@ -152,7 +156,7 @@ export default function AddBlogModal({ onClose, onAdd }: AddBlogModalProps) {
             <button
               disabled={loading}
               type="submit"
-              className="w-full mt-6 py-3 rounded-xl bg-gradient-to-r from-cyan-500 to-cyan-700 text-white font-semibold shadow-inner shadow-cyan-500/30 hover:shadow-cyan-500 transition-all active:scale-95 animate-fadeIn [animation-delay:0.2s]"
+              className="mt-6 w-full rounded-xl bg-blue-700 py-3 text-sm font-extrabold text-white shadow-lg shadow-blue-700/15 transition hover:bg-blue-800 disabled:cursor-wait disabled:opacity-60"
             >
               {loading ? "در حال ارسال..." : "افزودن پست"}
             </button>

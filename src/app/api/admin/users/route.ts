@@ -11,9 +11,10 @@ export async function GET(request: NextRequest) {
   try {
     await connectDB();
 
-    await adminOnly(request);
+    const authResult = await adminOnly(request);
+    if (authResult) return authResult;
 
-    const users = await User.find({}, "-password -verificationCode").sort({
+    const users = await User.find({}, "-password -verificationCode -verificationCodeHash -passwordResetCodeHash -passwordResetCodeExpiresAt -passwordResetAttempts -verificationAttempts -lastOtpSentAt -tokenVersion -isDeleted").sort({
       createdAt: -1,
     });
     return NextResponse.json({

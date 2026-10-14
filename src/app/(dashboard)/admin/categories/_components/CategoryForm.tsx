@@ -2,6 +2,7 @@
 
 import { useRef } from "react";
 import { Formik, Form, Field } from "formik";
+import toast from "react-hot-toast";
 import type { Category, CategoryFormValues } from "./types";
 import { categoryFormSchema } from "./types";
 
@@ -35,35 +36,39 @@ export default function CategoryForm({ categories, onSuccess }: CategoryFormProp
   const imageInputRef = useRef<HTMLInputElement>(null);
 
   const handleSubmit = async (values: CategoryFormValues, resetForm: () => void) => {
-    const file = imageInputRef.current?.files?.[0];
-    let res: Response;
+    try {
+      const file = imageInputRef.current?.files?.[0];
+      let res: Response;
 
-    if (file) {
-      const formData = new FormData();
-      formData.append("name", values.name);
-      formData.append("slug", values.slug);
-      if (values.parent) formData.append("parent", values.parent);
-      if (values.description) formData.append("description", values.description);
-      formData.append("isFeatured", String(values.isFeatured));
-      formData.append("image", file);
-      res = await fetch("/api/admin/categories", { method: "POST", body: formData });
-    } else {
-      const cleanValues: Record<string, unknown> = { ...values };
-      if (!cleanValues.parent) delete cleanValues.parent;
-      res = await fetch("/api/admin/categories", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(cleanValues),
-      });
-    }
+      if (file) {
+        const formData = new FormData();
+        formData.append("name", values.name);
+        formData.append("slug", values.slug);
+        if (values.parent) formData.append("parent", values.parent);
+        if (values.description) formData.append("description", values.description);
+        formData.append("isFeatured", String(values.isFeatured));
+        formData.append("image", file);
+        res = await fetch("/api/admin/categories", { method: "POST", body: formData });
+      } else {
+        const cleanValues: Record<string, unknown> = { ...values };
+        if (!cleanValues.parent) delete cleanValues.parent;
+        res = await fetch("/api/admin/categories", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify(cleanValues),
+        });
+      }
 
-    if (res.ok) {
+      if (!res.ok) {
+        const data = await res.json();
+        throw new Error(data.message || "ثبت دسته انجام نشد.");
+      }
       resetForm();
       if (imageInputRef.current) imageInputRef.current.value = "";
+      toast.success("دسته‌بندی با موفقیت ثبت شد.");
       onSuccess();
-    } else {
-      const data = await res.json();
-      alert(data.message || "خطا در ثبت دسته");
+    } catch (error) {
+      toast.error(error instanceof Error ? error.message : "خطا در ثبت دسته‌بندی");
     }
   };
 
@@ -78,7 +83,7 @@ export default function CategoryForm({ categories, onSuccess }: CategoryFormProp
         validationSchema={categoryFormSchema}
         onSubmit={async (values, { resetForm }) => handleSubmit(values, resetForm)}
       >
-        {({ errors, touched, setFieldValue, values }) => (
+        {({ errors, touched, setFieldValue, values, isSubmitting }) => (
           <Form className="space-y-3 sm:space-y-4">
             {/* Name — typing here auto-fills slug */}
             <div>
@@ -187,9 +192,10 @@ export default function CategoryForm({ categories, onSuccess }: CategoryFormProp
 
             <button
               type="submit"
-              className="admin-btn w-full"
+              disabled={isSubmitting}
+              className="admin-btn w-full disabled:cursor-wait disabled:opacity-60"
             >
-              ثبت دسته
+              {isSubmitting ? "در حال ثبت…" : "ثبت دسته"}
             </button>
           </Form>
         )}

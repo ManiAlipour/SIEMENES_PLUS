@@ -1,7 +1,7 @@
 "use client";
 
 import Link from "next/link";
-import { useEffect, useMemo, useState } from "react";
+import { useCallback, useEffect, useMemo, useState } from "react";
 import toast from "react-hot-toast";
 import {
   FiTrash2,
@@ -65,13 +65,13 @@ export default function AdminReviewsPage() {
   );
   const [deletingId, setDeletingId] = useState<string | null>(null);
 
-  const fetchReviews = async (silent = false) => {
+  const fetchReviews = useCallback(async (silent = false) => {
     try {
       if (silent) setRefreshing(true);
       else setLoading(true);
       const res = await fetch("/api/admin/reviews", { cache: "no-store" });
       const { data, error } = await res.json();
-      if (!res.ok) throw new Error(error);
+      if (!res.ok) throw new Error(error || "دریافت نظرها انجام نشد.");
       setReviews(data ?? []);
     } catch {
       toast.error("خطا در دریافت نظرات");
@@ -79,11 +79,11 @@ export default function AdminReviewsPage() {
       setLoading(false);
       setRefreshing(false);
     }
-  };
+  }, []);
 
   useEffect(() => {
-    fetchReviews();
-  }, []);
+    void fetchReviews();
+  }, [fetchReviews]);
 
   const filtered = useMemo(() => {
     const q = search.trim().toLowerCase();
@@ -153,8 +153,8 @@ export default function AdminReviewsPage() {
   };
 
   return (
-    <div className="space-y-6">
-      <header className="flex flex-col gap-4 border-b border-slate-200 pb-4 sm:flex-row sm:items-center sm:justify-between">
+    <div dir="rtl" className="mx-auto max-w-[1440px] space-y-5">
+      <header className="flex flex-col gap-4 rounded-2xl border border-slate-200 bg-white p-5 shadow-sm sm:flex-row sm:items-center sm:justify-between">
         <div>
           <h1 className="text-2xl font-bold text-slate-900">امتیاز و نظرات</h1>
           <p className="mt-1 text-sm text-slate-500">

@@ -8,6 +8,8 @@ import { useCallback } from "react";
 import { useCategories } from "@/hooks/useCategories";
 import CategoryForm from "./_components/CategoryForm";
 import CategoriesList, { getParentNameFromList } from "./_components/CategoriesList";
+import AdminPageHeading from "@/components/layouts/dash/admin/AdminPageHeading";
+import { FolderTree } from "lucide-react";
 
 export default function AdminCategoriesPage() {
   const { categories, loading, error, refetch, deleteCategory } = useCategories();
@@ -21,20 +23,11 @@ export default function AdminCategoriesPage() {
   return (
     <div
       dir="rtl"
-      className="mx-auto max-w-7xl transition-colors duration-300"
+      className="mx-auto max-w-[1440px] space-y-5 transition-colors duration-300"
     >
-      <header className="mb-6 flex flex-col items-start justify-between gap-3 border-b border-[#d7e3ef] pb-4 sm:flex-row sm:items-center">
-        <div>
-          <h1 className="text-xl font-extrabold tracking-tight text-[#0b1f33] sm:text-2xl">
-            مدیریت دسته‌بندی‌ها
-          </h1>
-          <p className="mt-1 text-sm text-[#64748b]">
-            ساختار دسته‌بندی محصولات فروشگاه
-          </p>
-        </div>
-      </header>
+      <AdminPageHeading title="دسته‌بندی محصولات" description="ساختار فروشگاه را مرتب کنید، زیردسته بسازید و دسته‌های شاخص را مشخص کنید." icon={FolderTree} eyebrow="کاتالوگ محصولات" />
 
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-4 md:gap-8">
+      <div className="grid grid-cols-1 gap-4 xl:grid-cols-[minmax(340px,.8fr)_minmax(0,1.2fr)]">
         <CategoryForm categories={categories} onSuccess={refetch} />
         <CategoriesList
           categories={categories}
