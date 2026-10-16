@@ -35,6 +35,12 @@ import {
   RiParagraph,
 } from "react-icons/ri";
 import { FaSuperscript, FaSubscript } from "react-icons/fa6";
+import type { Editor } from "@tiptap/react";
+import {
+  AlignRight, Bold, ChevronDown, Code2, Heading2, ImagePlus, Italic,
+  Link2, List, ListOrdered, Minus, PackagePlus, Quote, Redo2, Table2,
+  Underline as UnderlineIcon, Undo2, Video, WandSparkles,
+} from "lucide-react";
 import BlogProductPickerModal, {
   type ProductOption,
 } from "../BlogProductPickerModal";
@@ -622,6 +628,80 @@ const CustomMenuBar = ({
   );
 };
 
+function EditorToolbar({
+  editor,
+  onImageClick,
+  onTableClick,
+  onProductClick,
+  onDividerClick,
+}: {
+  editor: Editor;
+  onImageClick: () => void;
+  onTableClick: () => void;
+  onProductClick: () => void;
+  onDividerClick: () => void;
+}) {
+  const button = "inline-flex h-9 shrink-0 items-center justify-center gap-1.5 rounded-lg px-2.5 text-xs font-semibold text-slate-600 transition hover:bg-slate-100 hover:text-slate-950 disabled:cursor-not-allowed disabled:opacity-35";
+  const active = "bg-blue-50 text-blue-700 hover:bg-blue-100 hover:text-blue-800";
+  const run = (action: () => void) => (event: React.MouseEvent<HTMLButtonElement>) => {
+    event.preventDefault();
+    action();
+  };
+  const control = (label: string, icon: React.ReactNode, action: () => void, isActive = false, disabled = false) => (
+    <button type="button" aria-label={label} title={label} onMouseDown={(event) => event.preventDefault()} onClick={run(action)} disabled={disabled} className={`${button} ${isActive ? active : ""}`}>
+      {icon}<span className="hidden xl:inline">{label}</span>
+    </button>
+  );
+
+  return <div className="sticky top-0 z-20 border-b border-slate-200 bg-white/95 px-3 py-2 backdrop-blur-xl sm:px-4">
+    <div className="flex flex-wrap items-center gap-1.5">
+      <div className="flex items-center gap-1 rounded-xl bg-slate-50 p-1">
+        {control("بازگشت", <Undo2 size={16} />, () => editor.chain().focus().undo().run(), false, !editor.can().undo())}
+        {control("انجام دوباره", <Redo2 size={16} />, () => editor.chain().focus().redo().run(), false, !editor.can().redo())}
+      </div>
+      <span className="mx-1 hidden h-7 w-px bg-slate-200 sm:block" />
+      <label className="relative">
+        <span className="sr-only">سبک متن</span>
+        <select aria-label="سبک متن" value={editor.isActive("heading") ? `h${editor.getAttributes("heading").level}` : "p"} onChange={(event) => {
+          const value = event.target.value;
+          if (value === "p") editor.chain().focus().setParagraph().run();
+          else editor.chain().focus().toggleHeading({ level: Number(value.slice(1)) as 1 | 2 | 3 }).run();
+        }} className="h-10 appearance-none rounded-xl border border-slate-200 bg-white py-2 pl-8 pr-3 text-xs font-bold text-slate-700 outline-none transition focus:border-blue-400 focus:ring-4 focus:ring-blue-500/10">
+          <option value="p">متن عادی</option><option value="h1">عنوان اصلی</option><option value="h2">عنوان بخش</option><option value="h3">زیرعنوان</option>
+        </select><ChevronDown size={14} className="pointer-events-none absolute left-2.5 top-3 text-slate-400" />
+      </label>
+      <div className="flex items-center gap-0.5 rounded-xl border border-slate-200 p-0.5">
+        {control("ضخیم", <Bold size={16} />, () => editor.chain().focus().toggleBold().run(), editor.isActive("bold"))}
+        {control("ایتالیک", <Italic size={16} />, () => editor.chain().focus().toggleItalic().run(), editor.isActive("italic"))}
+        {control("زیرخط", <UnderlineIcon size={16} />, () => editor.chain().focus().toggleUnderline().run(), editor.isActive("underline"))}
+        {control("نقل‌قول", <Quote size={16} />, () => editor.chain().focus().toggleBlockquote().run(), editor.isActive("blockquote"))}
+      </div>
+      <div className="flex items-center gap-0.5 rounded-xl border border-slate-200 p-0.5">
+        {control("فهرست نشانه‌دار", <List size={16} />, () => editor.chain().focus().toggleBulletList().run(), editor.isActive("bulletList"))}
+        {control("فهرست شماره‌دار", <ListOrdered size={16} />, () => editor.chain().focus().toggleOrderedList().run(), editor.isActive("orderedList"))}
+        {control("کد", <Code2 size={16} />, () => editor.chain().focus().toggleCode().run(), editor.isActive("code"))}
+      </div>
+      <details className="group relative mr-auto">
+        <summary className={`${button} h-10 cursor-pointer list-none border border-slate-200 bg-white px-3 hover:border-blue-200`}><WandSparkles size={15} className="text-blue-600" />افزودن محتوا<ChevronDown size={14} className="text-slate-400 transition group-open:rotate-180" /></summary>
+        <div className="absolute left-0 top-12 z-30 grid w-52 gap-1 rounded-2xl border border-slate-200 bg-white p-2 shadow-xl shadow-slate-900/10">
+          <button type="button" onClick={onImageClick} className="flex items-center gap-2 rounded-xl px-3 py-2.5 text-right text-xs font-semibold text-slate-700 hover:bg-slate-50"><ImagePlus size={16} className="text-blue-600" />تصویر مقاله</button>
+          <button type="button" onClick={onTableClick} className="flex items-center gap-2 rounded-xl px-3 py-2.5 text-right text-xs font-semibold text-slate-700 hover:bg-slate-50"><Table2 size={16} className="text-indigo-600" />جدول</button>
+          <button type="button" onClick={onProductClick} className="flex items-center gap-2 rounded-xl px-3 py-2.5 text-right text-xs font-semibold text-slate-700 hover:bg-slate-50"><PackagePlus size={16} className="text-emerald-600" />محصول مرتبط</button>
+          <button type="button" onClick={onDividerClick} className="flex items-center gap-2 rounded-xl px-3 py-2.5 text-right text-xs font-semibold text-slate-700 hover:bg-slate-50"><Minus size={16} className="text-slate-500" />جداکننده</button>
+          {control("افزودن لینک", <Link2 size={16} />, () => {
+            const href = window.prompt("آدرس لینک را وارد کنید:", "https://");
+            if (href) editor.chain().focus().setLink({ href }).run();
+          }, editor.isActive("link"))}
+          {control("ویدیو", <Video size={16} />, () => {
+            const src = window.prompt("لینک ویدیوی یوتیوب را وارد کنید:");
+            if (src) editor.chain().focus().setYoutubeVideo({ src, width: 640, height: 360 }).run();
+          })}
+        </div>
+      </details>
+    </div>
+  </div>;
+}
+
 // ============= Editor Component =============
 
 export default function BlogRichEditor({
@@ -764,19 +844,23 @@ export default function BlogRichEditor({
     Math.max(2, Math.min(10, Number(value) || 2));
 
   return (
-    <div className={`${BG} ${BORDER} ${ROUNDED} ${SHADOW} relative`}>
+    <div className={`${BORDER} ${ROUNDED} ${SHADOW} relative overflow-hidden bg-slate-100`}>
       <CustomStyles />
-      <CustomMenuBar
+      {editor && <EditorToolbar
         editor={editor}
         onImageClick={handleImageClick}
-        onTablePickerClick={handleTablePickerClick}
+        onTableClick={handleTablePickerClick}
         onProductClick={handleProductClick}
         onDividerClick={handleDividerClick}
-      />
+      />}
 
       {/* Editor */}
-      <div>
+      <div className="mx-auto max-w-4xl px-3 py-5 sm:px-6 sm:py-8">
         <EditorContent editor={editor} />
+      </div>
+      <div className="flex items-center justify-between border-t border-slate-200 bg-white px-4 py-2 text-[10px] text-slate-400">
+        <span>ویرایشگر مقاله</span>
+        <span className="inline-flex items-center gap-1.5"><span className="h-1.5 w-1.5 rounded-full bg-emerald-500" />تغییرات در فرم ذخیره می‌شوند</span>
       </div>
 
       {/* Table Picker Modal */}

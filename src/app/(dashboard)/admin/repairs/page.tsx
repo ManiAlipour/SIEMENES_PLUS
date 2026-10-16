@@ -1,6 +1,6 @@
 "use client";
 
-import { useCallback, useEffect, useMemo, useState } from "react";
+import RepairQrTools from "@/components/repair/RepairQrTools";
 import {
   ArrowUpRight,
   ClipboardCheck,
@@ -12,6 +12,7 @@ import {
   Search,
   Wrench,
 } from "lucide-react";
+import { useCallback, useEffect, useMemo, useState } from "react";
 import toast from "react-hot-toast";
 
 const STAGES = [
@@ -65,6 +66,7 @@ export default function RepairsAdminPage() {
   const [loading, setLoading] = useState(true);
   const [creating, setCreating] = useState(false);
   const [workingToken, setWorkingToken] = useState("");
+  const [qrOrder, setQrOrder] = useState<Repair | null>(null);
 
   const load = useCallback(async () => {
     try {
@@ -449,15 +451,14 @@ export default function RepairsAdminPage() {
                     </p>
                   </div>
                   <div className="flex flex-col justify-between gap-3 rounded-xl bg-slate-50 p-3">
-                    <a
-                      href={`/api/admin/repairs/${order.trackingToken}/qr`}
-                      target="_blank"
-                      rel="noreferrer"
+                    <button
+                      type="button"
+                      onClick={() => setQrOrder(order)}
                       className="inline-flex items-center justify-center gap-2 rounded-lg border border-slate-200 bg-white px-3 py-2.5 text-xs font-extrabold text-slate-700 transition hover:border-blue-200 hover:text-blue-700"
                     >
                       <QrCode size={16} />
                       دریافت QR برای لیبل
-                    </a>
+                    </button>
                     <div className="grid grid-cols-2 gap-2">
                       {(
                         [
@@ -516,6 +517,14 @@ export default function RepairsAdminPage() {
           </div>
         )}
       </section>
+      {qrOrder && (
+        <RepairQrTools
+          admin
+          token={qrOrder.trackingToken}
+          acceptanceNumber={qrOrder.acceptanceNumber}
+          onClose={() => setQrOrder(null)}
+        />
+      )}
     </main>
   );
 }

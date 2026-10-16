@@ -163,16 +163,13 @@ export async function sendRepairStatusUpdateSms({
     };
   }
 
-  const appBaseUrl =
-    process.env.NEXT_PUBLIC_APP_URL || "https://siemensplus.ir";
-  const trackingUrl = `${appBaseUrl}/track/${trackingToken}`;
-
-  // این نام‌ها دقیقا باید با متغیرهایی که داخل پنل sms.ir تعریف می‌کنی یکی باشد
+  // نام پارامترها با پنل یکی می‌ماند؛ مقدار TRACKING_LINK فقط توکن ۱۴ کاراکتری است.
+  // در متن ثابت قالب پنل، قبل از این پارامتر https://siemensplus1.ir/track/ قرار بده.
   const parameters: SmsParameter[] = [
     { name: "ACCEPTANCE_NO", value: acceptanceNumber },
     { name: "DEVICE_NAME", value: deviceName },
     { name: "STATUS_TITLE", value: statusTitle },
-    { name: "TRACKING_LINK", value: trackingUrl },
+    { name: "TRACKING_LINK", value: trackingToken },
   ];
 
   return await sendOtpSms({
@@ -208,14 +205,12 @@ export async function sendInitialAcceptanceSms({
     };
   }
 
-  const appBaseUrl =
-    process.env.NEXT_PUBLIC_APP_URL || "https://siemensplus.ir";
-  const trackingUrl = `${appBaseUrl}/track/${trackingToken}`;
-
+  // مقدار TRACKING_LINK توکن ۱۴ کاراکتری است؛ در متن ثابت قالب پنل،
+  // https://siemensplus1.ir/track/ را پیش از پارامتر قرار بده.
   const parameters: SmsParameter[] = [
     { name: "ACCEPTANCE_NO", value: acceptanceNumber },
     { name: "DEVICE_NAME", value: deviceName },
-    { name: "TRACKING_LINK", value: trackingUrl },
+    { name: "TRACKING_LINK", value: trackingToken },
   ];
 
   return await sendOtpSms({

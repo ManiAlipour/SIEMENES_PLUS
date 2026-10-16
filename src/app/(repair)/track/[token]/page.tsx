@@ -3,6 +3,7 @@ import Link from "next/link";
 import { notFound } from "next/navigation";
 import { connectDB } from "@/lib/db";
 import RepairOrder, { REPAIR_STAGES } from "@/models/RepairOrder";
+import RepairQrTools from "@/components/repair/RepairQrTools";
 import {
   ArrowRight,
   BadgeCheck,
@@ -115,6 +116,10 @@ export default async function TrackRepairPage({
               </div>
             </div>
           </div>
+        </section>
+
+        <section className="mt-5" aria-label="QR و لینک پیگیری">
+          <RepairQrTools token={token} acceptanceNumber={order.acceptanceNumber} />
         </section>
 
         <div className="mt-5 grid gap-5 lg:grid-cols-[minmax(0,1.4fr)_minmax(280px,.8fr)]">
