@@ -13,12 +13,12 @@ export default function AdminLayout({ children }: AdminLayoutProps) {
   const toggleSidebar = () => setSidebarOpen((v) => !v);
 
   return (
-    <div className="admin-shell flex min-h-screen">
+    <div dir="rtl" className="admin-shell flex min-h-screen">
       <AdminSideBar open={sidebarOpen} toggleOpen={toggleSidebar} />
 
-      <div className="flex min-w-0 flex-1 flex-col md:mr-[17.5rem]">
+      <div className="flex min-w-0 flex-1 flex-col md:mr-[17rem]">
         <Header onToggleSidebar={toggleSidebar} />
-        <main className="admin-main flex-1 w-full">{children}</main>
+        <main className="admin-main min-h-[calc(100vh-76px)] flex-1 w-full">{children}</main>
       </div>
     </div>
   );

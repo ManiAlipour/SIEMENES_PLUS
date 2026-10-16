@@ -5,6 +5,7 @@ declare interface User {
   password: string;
   role: string;
   verified: boolean;
+  active?: boolean;
   verificationCode: null | string;
   createdAt: string;
   updatedAt: string;

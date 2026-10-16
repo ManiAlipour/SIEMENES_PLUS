@@ -1,6 +1,7 @@
 "use client";
 
 import { useCallback, useEffect, useState } from "react";
+import toast from "react-hot-toast";
 import type { Category } from "@/types/category";
 
 const API_CATEGORIES = "/api/categories";
@@ -25,11 +26,10 @@ export function useCategories(): UseCategoriesReturn {
       setError("");
       const res = await fetch(API_CATEGORIES);
       const json = await res.json();
+      if (!res.ok) throw new Error(json.message || "خطا در دریافت دسته‌ها");
       setCategories(json.data ?? []);
-      if (!res.ok) setError(json.message || "خطا در دریافت دسته‌ها");
     } catch (err) {
-      console.error(err);
-      setError("خطا در دریافت دسته‌ها!");
+      setError(err instanceof Error ? err.message : "خطا در دریافت دسته‌ها!");
     } finally {
       setLoading(false);
     }
@@ -41,20 +41,20 @@ export function useCategories(): UseCategoriesReturn {
 
   const deleteCategory = useCallback(
     async (id: string) => {
-      if (!confirm("آیا از حذف این دسته مطمئن هستید؟")) return;
+      if (!window.confirm("آیا از حذف این دسته مطمئن هستید؟")) return;
       try {
         const res = await fetch(`${API_ADMIN_CATEGORIES}/${id}`, {
           method: "DELETE",
         });
         if (res.ok) {
+          toast.success("دسته با موفقیت حذف شد.");
           await refetch();
         } else {
           const data = await res.json();
-          alert(data.message || "حذف دسته با خطا مواجه شد!");
+          toast.error(data.message || "حذف دسته انجام نشد.");
         }
       } catch (err) {
-        console.error(err);
-        alert("حذف دسته با خطا مواجه شد!");
+        toast.error(err instanceof Error ? err.message : "حذف دسته با خطا مواجه شد!");
       }
     },
     [refetch]

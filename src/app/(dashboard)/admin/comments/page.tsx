@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useMemo, useState } from "react";
+import { useCallback, useEffect, useMemo, useState } from "react";
 import toast from "react-hot-toast";
 import {
   FiTrash2,
@@ -12,6 +12,8 @@ import {
 } from "react-icons/fi";
 import CommentPreviewModal from "@/components/ui/admin/comments/CommentPreviewModal";
 import DeleteCommentModal from "@/components/ui/admin/comments/DeleteCommentModal";
+import AdminPageHeading from "@/components/layouts/dash/admin/AdminPageHeading";
+import { MessageSquareText } from "lucide-react";
 
 interface CommentUser {
   _id: string;
@@ -81,12 +83,14 @@ export default function AdminCommentsPage() {
   >("all");
   const [previewComment, setPreviewComment] = useState<Comment | null>(null);
 
-  const fetchComments = async (silent = false) => {
+  const fetchComments = useCallback(async (silent = false) => {
     try {
       if (silent) setRefreshing(true);
       else setLoading(true);
       const res = await fetch("/api/admin/comments", { cache: "no-store" });
-      const { data } = await res.json();
+      const result = await res.json();
+      if (!res.ok) throw new Error(result.error || "دریافت دیدگاه‌ها انجام نشد.");
+      const { data } = result;
       setComments(data ?? []);
     } catch {
       toast.error("خطا در دریافت کامنت‌ها");
@@ -94,11 +98,11 @@ export default function AdminCommentsPage() {
       setLoading(false);
       setRefreshing(false);
     }
-  };
+  }, []);
 
   useEffect(() => {
-    fetchComments();
-  }, []);
+    void fetchComments();
+  }, [fetchComments]);
 
   const filtered = useMemo(() => {
     let temp = [...comments];
@@ -147,37 +151,10 @@ export default function AdminCommentsPage() {
   };
 
   return (
-    <div className="mx-auto max-w-7xl space-y-6">
-      <div className="admin-card flex flex-col justify-between gap-4 bg-gradient-to-l from-[#004c97] to-[#0079c2] p-5 text-white">
-        <div className="flex flex-col justify-between gap-4 sm:flex-row sm:items-center">
-          <div className="flex items-center gap-3">
-            <div className="flex h-11 w-11 items-center justify-center rounded-xl bg-white/15">
-              <FiMessageSquare size={22} />
-            </div>
-            <div>
-              <h1 className="text-xl font-bold">مدیریت نظرات</h1>
-              <p className="mt-0.5 text-sm text-white/75">
-                مشاهده، جستجو و حذف نظرات کاربران
-              </p>
-            </div>
-          </div>
+    <div dir="rtl" className="mx-auto max-w-[1440px] space-y-5">
+      <AdminPageHeading title="دیدگاه‌های کاربران" description="دیدگاه‌های ثبت‌شده در فروشگاه و وبلاگ را جستجو، بررسی و مدیریت کنید." icon={MessageSquareText} eyebrow="ارتباط با مشتریان" actions={<button type="button" onClick={() => void fetchComments(true)} disabled={refreshing} className="inline-flex items-center gap-2 rounded-xl border border-slate-200 bg-white px-4 py-2.5 text-xs font-bold text-slate-600 transition hover:bg-slate-50 disabled:opacity-60"><FiRefreshCw size={14} className={refreshing ? "animate-spin" : ""} />به‌روزرسانی</button>} />
 
-          <button
-            type="button"
-            onClick={() => fetchComments(true)}
-            disabled={refreshing}
-            className="inline-flex items-center gap-2 self-start rounded-xl bg-white/15 px-4 py-2 text-sm font-medium transition-colors hover:bg-white/25 disabled:opacity-60 sm:self-center"
-          >
-            <FiRefreshCw
-              size={14}
-              className={refreshing ? "animate-spin" : ""}
-            />
-            به‌روزرسانی
-          </button>
-        </div>
-      </div>
-
-      <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
+      <div className="grid grid-cols-2 gap-3 sm:grid-cols-4">
         <StatMini label="کل نظرات" value={stats.total} accent="text-slate-800" />
         <StatMini label="وبلاگ" value={stats.blog} accent="text-cyan-600" />
         <StatMini label="محصول" value={stats.product} accent="text-emerald-600" />

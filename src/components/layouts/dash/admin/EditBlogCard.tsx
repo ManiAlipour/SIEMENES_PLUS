@@ -4,9 +4,9 @@ import { FiX, FiLink } from "react-icons/fi";
 import toast from "react-hot-toast";
 
 const glass =
-  "bg-white/40 backdrop-blur-lg border border-white/30 shadow-cyan-500/20";
+  "border border-slate-200 bg-white shadow-2xl shadow-slate-950/20";
 const inputBase =
-  "w-full px-4 py-2 rounded-xl bg-white/40 backdrop-blur-md border border-white/30 focus:ring-2 focus:ring-cyan-500 outline-none transition-all";
+  "w-full rounded-xl border border-slate-200 bg-white px-4 py-3 text-sm outline-none transition focus:border-blue-500 focus:ring-4 focus:ring-blue-500/10";
 
 interface EditBlogCardProps {
   blog: {
@@ -93,9 +93,11 @@ export default function EditBlogCard({
 
   return (
     <div
-      className={`fixed inset-0 z-50 flex items-center justify-center bg-black/20 backdrop-blur-[2px]`}
+      className="fixed inset-0 z-50 flex items-center justify-center overflow-y-auto bg-slate-950/60 p-3 backdrop-blur-sm sm:p-5"
+      role="dialog"
+      aria-modal="true"
     >
-      <div className={`${glass} w-full max-w-md rounded-2xl p-6 relative`}>
+      <div className={`${glass} relative w-full max-w-xl overflow-hidden rounded-2xl`}>
         {/* Close Button */}
         <button
           className="absolute left-4 top-4 text-slate-800 bg-white/70 rounded-full p-2 hover:bg-cyan-50 transition"
@@ -105,10 +107,10 @@ export default function EditBlogCard({
         >
           <FiX size={22} />
         </button>
-        <h2 className="text-lg font-bold mb-5 text-slate-700 text-center">
+        <h2 className="bg-[#0b2545] px-6 py-5 text-right text-base font-extrabold text-white">
           ویرایش پست
         </h2>
-        <form onSubmit={handleEdit} className="space-y-4">
+        <form onSubmit={handleEdit} className="space-y-4 p-5 sm:p-6">
           {/* Title */}
           <div>
             <label className="block text-sm font-semibold mb-2">عنوان</label>
@@ -137,6 +139,7 @@ export default function EditBlogCard({
               required
               maxLength={300}
               placeholder="https://aparat.com/..."
+              dir="ltr"
             />
           </div>
           {/* Status */}

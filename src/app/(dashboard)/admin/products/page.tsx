@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState, useEffect, useCallback } from "react";
 import TitleBar from "@/components/ui/dash/TitleBar";
 import { CiShoppingCart } from "react-icons/ci";
 import { FiSearch, FiPackage } from "react-icons/fi";
@@ -25,35 +25,29 @@ export default function ProductsPage() {
     totalPage: 1,
   });
 
-  const fetchProducts = async () => {
+  const fetchProducts = useCallback(async (page = pagination.page, searchTerm = query) => {
     try {
       setLoading(true);
-      const res = await fetch(
-        `/api/products?limit=${pagination.limit}&page=${pagination.page}`,
-      );
-      const { items, page, total, pages: totalPage } = await res.json();
-      setProducts(items);
-      setPagination((prev) => ({ ...prev, page, totalPage }));
-      setTotalProduct(total);
+      const params = new URLSearchParams({ limit: String(pagination.limit), page: String(page), search: searchTerm.trim() });
+      const res = await fetch(`/api/products?${params.toString()}`, { cache: "no-store" });
+      if (!res.ok) throw new Error("دریافت فهرست محصولات انجام نشد.");
+      const { items, page: responsePage, total, pages: totalPage } = await res.json();
+      setProducts(items ?? []);
+      setPagination((prev) => ({ ...prev, page: responsePage, totalPage }));
+      setTotalProduct(total ?? 0);
     } catch (err) {
-      console.error(err);
+      toast.error(err instanceof Error ? err.message : "خطا در دریافت محصولات");
     } finally {
       setLoading(false);
     }
-  };
+  }, [pagination.limit, pagination.page, query]);
 
-  const changePageHandler = async (page: number) => {
-    setPagination((prev) => ({
-      ...prev,
-      page,
-    }));
-    await fetchProducts();
-  };
+  const changePageHandler = (page: number) => setPagination((prev) => ({ ...prev, page }));
 
   useEffect(() => {
-    fetchProducts();
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
+    const timer = window.setTimeout(() => { void fetchProducts(pagination.page, query); }, query ? 250 : 0);
+    return () => window.clearTimeout(timer);
+  }, [fetchProducts, pagination.page, query]);
 
   if (loading && products.length === 0) {
     return (
@@ -62,10 +56,6 @@ export default function ProductsPage() {
       </div>
     );
   }
-
-  const filtered = products.filter((p: any) =>
-    p.name.toLowerCase().includes(query.toLowerCase().trim()),
-  );
 
   const addProductHandler = () => {
     setAddProductModalOpen(false);
@@ -89,7 +79,7 @@ export default function ProductsPage() {
             type="text"
             placeholder="جستجوی محصول..."
             value={query}
-            onChange={(e) => setQuery(e.target.value)}
+            onChange={(e) => { setQuery(e.target.value); setPagination((prev) => ({ ...prev, page: 1 })); }}
             className="w-full bg-transparent text-sm text-[#0b1f33] outline-none placeholder:text-[#94a3b8]"
           />
         </div>
@@ -126,7 +116,7 @@ export default function ProductsPage() {
       </div>
 
       <ProductTable
-        products={filtered}
+        products={products}
         onRefresh={fetchProducts}
         pagination={pagination}
         onPageChange={changePageHandler}
