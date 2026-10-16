@@ -26,6 +26,7 @@ interface CommentsSectionProps {
   targetType: "product" | "post" | "blogPost";
   targetId: string;
   title?: string;
+  modelNumber?: string;
 }
 
 type SortOrder = "newest" | "oldest";
@@ -118,6 +119,7 @@ export default function CommentsSection({
   targetType,
   targetId,
   title = "نظرات",
+  modelNumber,
 }: CommentsSectionProps) {
   const { isAuthenticated } = useAuth();
   const listRef = useRef<HTMLUListElement>(null);
@@ -279,6 +281,7 @@ export default function CommentsSection({
           >
             {title}
           </h2>
+          {modelNumber && <span className="rounded-full bg-slate-100 px-2.5 py-1 text-xs font-medium text-slate-600">ویژه مدل {modelNumber}</span>}
         </div>
 
         <div className="flex flex-wrap items-center gap-2">

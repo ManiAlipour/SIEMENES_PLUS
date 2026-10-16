@@ -326,9 +326,16 @@ export default async function ProductPage({ params }: IProductProps) {
 
             {/* <CommentsSection
               targetId={product._id}
+<<<<<<< HEAD
               targetType="product"
               title="پرسش‌های مشتریان"
             /> */}
+=======
+            targetType="product"
+            title="پرسش‌های مشتریان"
+            modelNumber={product.modelNumber}
+            />
+>>>>>>> repair
 
             {product.similarProducts && product.similarProducts.length > 0 && (
               <SimilarProductsSection

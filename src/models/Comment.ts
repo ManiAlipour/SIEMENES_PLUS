@@ -8,6 +8,7 @@ export interface IComment extends Document {
   targetType: "post" | "product" | "blogPost";
   targetId: Types.ObjectId;
   text: string;
+  modelNumber?: string;
   approved: boolean;
   createdAt: Date;
   updatedAt: Date;
@@ -37,6 +38,7 @@ const CommentSchema = new Schema<IComment>(
       trim: true,
       maxlength: 2000,
     },
+    modelNumber: { type: String, trim: true, index: true, default: "" },
     approved: {
       type: Boolean,
       default: true,
